@@ -1,15 +1,15 @@
 # Video-Downloader
 
-# Preparing
+# Preparing...
 
 # To Do:
-- [] Douyin
-- [] Wangyiyun
-- [] Yinyuetai
-- [] Tengxun
-- [] Iqiyi
-- [] Bilibili
-- [] YouTube
+- [ ] Douyin
+- [ ] Wangyiyun
+- [ ] Yinyuetai
+- [ ] Tengxun
+- [ ] Iqiyi
+- [ ] Bilibili
+- [ ] YouTube
 
 # Platform[Tested]:
 Windows  
