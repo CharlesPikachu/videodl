@@ -1,5 +1,3 @@
 # 作者：Charles
 # 公众号：Charles的皮卡丘
-# 主界面
-from utils.utils import *
-
+# 网易云课堂视频下载

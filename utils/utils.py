@@ -18,7 +18,7 @@ def transfer(origin_file, target_format, savepath='results'):
 	if not os.path.exists(savepath):
 		os.mkdir(savepath)
 	pattern = re.compile('\..*')
-	temp = pattern.sub('.%s' % target_format, origin_file)
+	temp = pattern.sub('.%s' % target_format, origin_file.split('/')[-1])
 	target_file = os.path.join(savepath, temp)
 	try:
 		os.system('{}/utils/ffmpeg.exe -i {} {}'.format(os.getcwd(), origin_file, target_file))
