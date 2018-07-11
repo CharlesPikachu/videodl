@@ -37,9 +37,9 @@ Three platforms supported.
 
 # Running Screenshot:
 ### Demo.py:
-![img](Screenshot1.png =100x100)
+![img](Screenshot1.png){:height="100%" width="100%"}
 ### Cmd.py:
-![img](Screenshot2.png =100x100)
+![img](Screenshot2.png){:height="100%" width="100%"}
 
 # More:
 ## WeChat Official Accounts:
