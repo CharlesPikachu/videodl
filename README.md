@@ -36,8 +36,10 @@ Version: V1.0
 Three platforms supported.  
 
 # Running Screenshot:
-![img](Screenshot1.png)  
-![img](Screenshot2.png)  
+### Demo.py:
+![img](Screenshot1.png)
+### Cmd.py:
+![img](Screenshot2.png)
 
 # More:
 ## WeChat Official Accounts:
