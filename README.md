@@ -7,9 +7,9 @@ You can star this repository to keep track of the project if it's helpful for yo
 - [x] Video convert(Just use ffmpeg, to realize a simple additional function).
 
 # Support(Download):
-- [x] Wangyiyun
-- [x] Yinyuetai
-- [x] Bilibili
+- [x] [Wangyiyun](https://study.163.com/) → [Url Example](http://study.163.com/course/courseMain.htm?courseId=1003842018)
+- [x] [Yinyuetai](http://www.yinyuetai.com) → [Url Example](http://v.yinyuetai.com/video/3247548)
+- [x] [Bilibili](https://www.bilibili.com/) → [Url Example](https://www.bilibili.com/video/av26443123?spm_id_from=333.338.__bofqi.13)
 - [ ] Douyin
 - [ ] Tengxun
 - [ ] Iqiyi

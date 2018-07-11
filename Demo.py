@@ -1,7 +1,7 @@
 # 代码仅供学习交流，不得用于商业/非法使用
 # 作者：Charles
 # 公众号：Charles的皮卡丘
-# 视频下载器
+# 视频下载器-Demo版
 # 目前支持的平台:
 # 	网易云课堂: wangyiyun.wangyiyun()
 # 	音悦台: yinyuetai.yinyuetai()
@@ -30,19 +30,42 @@ class Download_Thread(threading.Thread):
 		# 	音悦台 -> '2'
 		# 	B站 -> '3'
 		self.engine = None
+		self.url = None
+		self.savepath = './videos'
 	def run(self):
 		while self.__running.isSet():
 			self.__pause.wait()
 			self.flag = True
 			if self.engine == '1':
-				pass
+				self.show_start_info()
+				try:
+					res = wangyiyun.wangyiyun().get(self.url, savepath=self.savepath, app='demo')
+					if res != 200:
+						raise RuntimeError('url request error...')
+				except:
+					self.show_parse_error()
+				self.show_end_info(savepath=self.savepath)
 			elif self.engine == '2':
-				pass
+				self.show_start_info()
+				try:
+					res = yinyuetai.yinyuetai().get(self.url, savepath=self.savepath, app='demo')
+					if res != 200:
+						raise RuntimeError('url request error...')
+				except:
+					self.show_parse_error()
+				self.show_end_info(savepath=self.savepath)
 			elif self.engine == '3':
-				pass
+				self.show_start_info()
+				try:
+					res = bilibili.bilibili().get(self.url, savepath=self.savepath, app='demo')
+					if res != 200:
+						raise RuntimeError('url request error...')
+				except:
+					self.show_parse_error()
+				self.show_end_info(savepath=self.savepath)
 			else:
 				title = '解析失败'
-				msg = '输入框参数解析失败！'
+				msg = '平台选项参数解析失败！'
 				messagebox.showerror(title, msg)
 			self.pause()
 	def pause(self):
@@ -51,6 +74,18 @@ class Download_Thread(threading.Thread):
 		self.__pause.set()
 	def stop(self):
 		self.__running.clear()
+	def show_start_info(self):
+		title = '开始下载'
+		msg = '搜索平台: {}\n已开始下载{}，请耐心等待。'.format(self.engine, self.url)
+		messagebox.showinfo(title, msg)
+	def show_end_info(self, savepath='./videos'):
+		title = '下载成功'
+		msg = '{}下载成功。'.format(self.url)
+		messagebox.showinfo(title, msg)
+	def show_parse_error(self):
+		title = '解析失败'
+		msg = '视频链接解析失败！'
+		messagebox.showerror(title, msg)
 t_download = Download_Thread()
 
 
@@ -76,7 +111,7 @@ class Transfer_Thread(threading.Thread):
 			try:
 				result = transfer(origin_file=self.origin_file, target_format=self.target_format, savepath=self.savepath)
 				if result is False:
-					raise ValueError('origin_file unsupported...')
+					raise RuntimeError('origin_file unsupported...')
 			except:
 				title = '转换失败'
 				msg = '视频转换失败！'
@@ -92,9 +127,10 @@ t_transfer = Transfer_Thread()
 
 
 # 下载器
-def downloader(options, op_engine_var):
+def downloader(options, op_engine_var, en_videourl_var):
 	engine = str(options.index(str(op_engine_var.get())) + 1)
 	t_download.engine = engine
+	t_download.url = str(en_videourl_var.get())
 	if t_download.flag is False:
 		t_download.start()
 	t_download.resume()
@@ -174,7 +210,7 @@ def Demo(options):
 	op_engine = OptionMenu(root, op_engine_var, *options)
 	op_engine.place(relx=0.26, rely=0.25, anchor=CENTER)
 	# 	Button组件(下载与退出)
-	bt_download = Button(root, text='下载视频', bd=2, width=15, height=2, command=lambda: downloader(options, op_engine_var), font=('楷体', 10))
+	bt_download = Button(root, text='下载视频', bd=2, width=15, height=2, command=lambda: downloader(options, op_engine_var, en_videourl_var), font=('楷体', 10))
 	bt_download.place(relx=0.26, rely=0.38, anchor=CENTER)
 	bt_quit = Button(root, text='退出程序', bd=2, width=15, height=2, command=lambda: stopDemo(root), font=('楷体', 10))
 	bt_quit.place(relx=0.52, rely=0.38, anchor=CENTER)
