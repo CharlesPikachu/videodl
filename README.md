@@ -22,9 +22,9 @@ Clone or download.
 ### Step2-Install some dependencies:
 "pip install -r requirements.txt" or  
 "py -3 -m pip install -r requirements.txt"  
-### Step3-Run Demo.py:
-"python Demo.py" or 
-"py -3 Demo.py"
+### Step3-Run Demo.py or Cmd.py:
+"python Demo.py" or "py -3 Demo.py" or  
+"python Cmd.py" or "py -3 Cmd.py"
 
 # Platform[Tested]:
 Windows  
