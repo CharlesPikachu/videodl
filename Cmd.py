@@ -19,7 +19,7 @@ def Cmd(options):
 	for option in options:
 		print('*' + option)
 	print('-'*81)
-	choice = input('请输入平台号(1-3):')
+	choice = input('请输入平台号(1-%d):' % len(options))
 	if choice == 'q' or choice == 'Q':
 		print('Bye...')
 		exit(-1)
@@ -53,7 +53,7 @@ def Cmd(options):
 		except:
 			print('[Error]: 链接解析失败...')
 	else:
-		print('[Error]: 平台号输入错误，必须在(1-3)之间...')
+		print('[Error]: 平台号输入错误，必须在(1-%d)之间...' % len(options))
 
 
 if __name__ == '__main__':
