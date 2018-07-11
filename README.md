@@ -35,6 +35,10 @@ Python3.6
 Version: V1.0  
 Three platforms supported.  
 
+# Running Screenshot:
+![img](Screenshot1.png)  
+![img](Screenshot2.png)  
+
 # More:
 ## WeChat Official Accounts:
 Charles_pikachu  
