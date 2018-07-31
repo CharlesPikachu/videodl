@@ -17,7 +17,7 @@ You can star this repository to keep track of the project if it's helpful for yo
 - [ ] YouTube
 - [ ] Youku
 ### not in Downloader:
-- [x] [douyin](https://github.com/CharlesPikachu/Video-Downloader/tree/master/not_in_downloader/douyin)
+- [x] [Douyin](https://github.com/CharlesPikachu/Video-Downloader/tree/master/not_in_downloader/douyin)
 
 # Usage:
 ### Step1-download this repository:
