@@ -1,7 +1,6 @@
 # 作者: Charles
 # 公众号: Charles的皮卡丘
 # 抖音下载器V4.0
-# refer: 
 import os
 import re
 import json
@@ -39,7 +38,7 @@ class douyin():
 		self.share_url = 'https://www.amemv.com/share/user/{}'
 		self.user_url = 'https://www.amemv.com/aweme/v1/aweme/post/?user_id={}&max_cursor=0&count={}&aid=1128&_signature={}&dytk={}'
 		print('[INFO]:Douyin App-Video downloader...')
-		print('[Version]: V4.0')
+		print('[Version]: V4.1')
 		print('[Author]: Charles')
 		print('[HELP]: Enter user id to download videos, Enter <q> to quit...')
 	# 外部调用运行
@@ -91,6 +90,8 @@ class douyin():
 			return res.status_code
 	# 根据抖音号获得账号所有视频下载地址
 	def _get_urls_by_userid(self, user_id):
+		# 搜索接口失效，通过分享的方式获得真实id方可下载，有空再更新
+		'''
 		device_id = str(random.randint(3, 5)) + ''.join(map(str, (random.randint(0, 9) for _ in range(10))))
 		res = requests.get(self.search_url.format(user_id, device_id), headers=self.headers)
 		res_json = json.loads(res.text)
@@ -103,6 +104,10 @@ class douyin():
 				return None, None, None
 		aweme_count = res_json['user_list'][0]['user_info']['aweme_count']
 		nickname = res_json['user_list'][0]['user_info']['nickname']
+		'''
+		uid = user_id
+		nickname = str(uid)
+		aweme_count = 100
 		try:
 			process = Popen(['node', 'fuck-byted-acrawler.js', str(uid)], stdout=PIPE, stderr=PIPE)
 		except:
@@ -110,7 +115,11 @@ class douyin():
 			exit(-1)
 		signature = process.communicate()[0].decode().strip('\n')
 		res = requests.get(self.share_url.format(uid), headers=self.headers)
-		dytk = re.findall(r"dytk: '(.+)'", res.text)[0]
+		try:
+			dytk = re.findall(r"dytk: '(.+)'", res.text)[0]
+		except:
+			print('[Error]: User Id error...')
+			return None, None, None
 		res = requests.get(self.user_url.format(uid, aweme_count, signature, dytk), headers=self.headers)
 		res_json = json.loads(res.text)
 		video_names = []

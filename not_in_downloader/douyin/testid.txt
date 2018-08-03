@@ -1,1 +1,3 @@
-274110380
+# 分享之后获得的用户id，例如（随便找的）：
+https://www.douyin.com/share/user/92683516474?share_type=link
+用户id是92683516474
