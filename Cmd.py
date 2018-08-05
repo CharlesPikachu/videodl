@@ -12,7 +12,7 @@ from platforms import *
 
 def Cmd(options):
 	print('-'*36 + '<Welcome>' + '-'*36)
-	print('[简介]:视频下载器V1.0')
+	print('[简介]:视频下载器V1.1')
 	print('[Author]:Charles')
 	print('[公众号]: Charles的皮卡丘')
 	print('[退出方式]: 输入q或者按Ctrl+C键退出')

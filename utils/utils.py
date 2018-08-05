@@ -40,7 +40,7 @@ def download_m3u8(video_url, savename, savepath='./videos'):
 	if not os.path.exists(savepath):
 		os.mkdir(savepath)
 	if os.path.isfile(os.path.join(savepath, savename)):
-		savename += '0'
+		savename = '0' + savename
 	try:
 		os.system('{}/utils/ffmpeg.exe -i {} -c copy {}'.format(os.getcwd(), '"%s"' % video_url, os.path.join(savepath, savename)))
 		return True
