@@ -46,9 +46,9 @@ Support downloading zhihu video.
 
 # Running Screenshot:
 ### Demo.py:
-![img](Screenshot1.png)
+![img](./Screenshot/Screenshot1.png)
 ### Cmd.py:
-![img](Screenshot2.png)
+![img](./Screenshot/Screenshot2.png)
 
 # More:
 ## WeChat Official Accounts:
