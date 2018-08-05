@@ -10,7 +10,7 @@
 from platforms import *
 
 
-def Cmd(options):
+def Cmd(options, savepath = './videos'):
 	print('-'*36 + '<Welcome>' + '-'*36)
 	print('[简介]:视频下载器V1.1')
 	print('[Author]:Charles')
@@ -20,15 +20,21 @@ def Cmd(options):
 	for option in options:
 		print('*' + option)
 	print('-'*81)
+	# 平台选择
 	choice = input('请输入平台号(1-%d):' % len(options))
 	if choice == 'q' or choice == 'Q':
 		print('Bye...')
 		exit(-1)
+	choice_range = [str(i) for i in range(1, len(options)+1)]
+	if choice not in choice_range:
+		print('[Error]: 平台号输入错误，必须在(1-%d)之间...' % len(options))
+		return
+	# 视频地址
 	url = input('请输入视频链接:\n')
 	if url == 'q' or url == 'Q':
 		print('Bye...')
 		exit(-1)
-	savepath = './videos'
+	# 开始下载
 	if choice == '1':
 		try:
 			res = wangyiyun.wangyiyun().get(url, savepath, app='cmd')
@@ -61,8 +67,6 @@ def Cmd(options):
 			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
 		except:
 			print('[Error]: 链接解析失败...')
-	else:
-		print('[Error]: 平台号输入错误，必须在(1-%d)之间...' % len(options))
 
 
 if __name__ == '__main__':
