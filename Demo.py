@@ -6,6 +6,7 @@
 # 	网易云课堂: wangyiyun.wangyiyun()
 # 	音悦台: yinyuetai.yinyuetai()
 # 	B站: bilibili.bilibili()
+# 	知乎: https://www.zhihu.com/
 import os
 import threading
 from platforms import *
@@ -29,6 +30,7 @@ class Download_Thread(threading.Thread):
 		# 	网易云课堂 -> '1'
 		# 	音悦台 -> '2'
 		# 	B站 -> '3'
+		# 	知乎 -> '4'
 		self.engine = None
 		self.url = None
 		self.savepath = './videos'
@@ -63,6 +65,15 @@ class Download_Thread(threading.Thread):
 				except:
 					self.show_parse_error()
 				self.show_end_info(savepath=self.savepath)
+			elif self.engine == '4':
+				self.show_start_info()
+				try:
+					res = zhihu.zhihu().get(self.url, savepath=self.savepath, app='demo')
+					if res != 200:
+						raise RuntimeError('url request error...')
+				except:
+					self.show_parse_error()
+				self.show_end_info(savepath=self.savepath)
 			else:
 				title = '解析失败'
 				msg = '平台选项参数解析失败！'
@@ -89,7 +100,7 @@ class Download_Thread(threading.Thread):
 t_download = Download_Thread()
 
 
-# 下载器类
+# 视频转换类
 class Transfer_Thread(threading.Thread):
 	def __init__(self, *args, **kwargs):
 		super(Transfer_Thread, self).__init__(*args, **kwargs)
@@ -172,7 +183,7 @@ def Demo(options):
 	assert len(options) > 0
 	# 初始化
 	root = Tk()
-	root.title('视频下载器V1.0——公众号:Charles的皮卡丘')
+	root.title('视频下载器V1.1——公众号:Charles的皮卡丘')
 	root.resizable(False, False)
 	root.geometry('600x375+400+120')
 	image_path = './bgimgs/bg1_demo.jpg'
@@ -240,5 +251,5 @@ def Demo(options):
 
 
 if __name__ == '__main__':
-	options = ["1.网易云课堂", "2.音悦台", "3.B站"]
+	options = ["1.网易云课堂", "2.音悦台", "3.B站", "4.知乎"]
 	Demo(options)

@@ -1,2 +1,2 @@
 # __init__
-__all__ = ['wangyiyun', 'yinyuetai', 'bilibili']
+__all__ = ['wangyiyun', 'yinyuetai', 'bilibili', 'zhihu']

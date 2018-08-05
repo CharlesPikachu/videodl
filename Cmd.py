@@ -6,6 +6,7 @@
 # 	网易云课堂: wangyiyun.wangyiyun()
 # 	音悦台: yinyuetai.yinyuetai()
 # 	B站: bilibili.bilibili()
+# 	知乎: https://www.zhihu.com/
 from platforms import *
 
 
@@ -52,12 +53,20 @@ def Cmd(options):
 			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
 		except:
 			print('[Error]: 链接解析失败...')
+	elif choice == '4':
+		try:
+			res = zhihu.zhihu().get(url, savepath, app='cmd')
+			if res != 200:
+				raise RuntimeError('url request error...')
+			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
+		except:
+			print('[Error]: 链接解析失败...')
 	else:
 		print('[Error]: 平台号输入错误，必须在(1-%d)之间...' % len(options))
 
 
 if __name__ == '__main__':
-	options = ["1.网易云课堂", "2.音悦台", "3.B站"]
+	options = ["1.网易云课堂", "2.音悦台", "3.B站", "4.知乎"]
 	while True:
 		try:
 			Cmd(options)

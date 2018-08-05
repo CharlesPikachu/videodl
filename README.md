@@ -11,6 +11,7 @@ You can star this repository to keep track of the project if it's helpful for yo
 - [x] [Wangyiyun](https://study.163.com/) → [Url Example](http://study.163.com/course/courseMain.htm?courseId=1003842018)
 - [x] [Yinyuetai](http://www.yinyuetai.com) → [Url Example](http://v.yinyuetai.com/video/3247548)
 - [x] [Bilibili](https://www.bilibili.com/) → [Url Example](https://www.bilibili.com/video/av26443123?spm_id_from=333.338.__bofqi.13)
+- [x] [Zhihu](https://www.zhihu.com/) → [Url Example](https://www.zhihu.com/question/21395276/answer/425130152)
 - [ ] Imooc
 - [ ] Tengxun
 - [ ] Iqiyi
@@ -39,6 +40,9 @@ Version: V1.0
 Three platforms supported.  
 ### 2018-07-22:
 add "not_in_downloader" folder to support downloading douyin videos by douyin user id.
+### 2018-08-05:
+Version: V1.1  
+Support downloading zhihu video.
 
 # Running Screenshot:
 ### Demo.py:
