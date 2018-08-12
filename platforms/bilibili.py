@@ -37,12 +37,11 @@ class bilibili():
 	# 外部调用
 	def get(self, url, savepath='./videos', app='demo'):
 		Vurlinfos = self._getvideoinfos(url)
+		res = None
 		if app == 'cmd':
 			res = self._download_cmd(Vurlinfos, savepath)
 		elif app == 'demo':
 			res = self._download_demo(Vurlinfos, savepath)
-		else:
-			res = None
 		return res
 	# Demo用
 	def _download_demo(self, Vurlinfos, savepath):

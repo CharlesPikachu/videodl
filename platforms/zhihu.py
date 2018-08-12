@@ -32,14 +32,13 @@ class zhihu():
 	# 外部调用
 	def get(self, url, savepath='./videos', app='demo'):
 		Vurlinfos = self._getvideoinfos(url)
+		res = None
 		if app == 'cmd':
 			for Vurlinfo in Vurlinfos:
 				res = self._download_cmd(Vurlinfo, savepath)
 		elif app == 'demo':
 			for Vurlinfo in Vurlinfos:
 				res = self._download_demo(Vurlinfo, savepath)
-		else:
-			res = None
 		return res
 	# Demo用
 	def _download_demo(self, Vurlinfos, savepath):

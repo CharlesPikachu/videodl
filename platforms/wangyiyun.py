@@ -20,22 +20,34 @@ Output:
 '''
 class wangyiyun():
 	def __init__(self):
-		self.headers = {
-						'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
-					}
-		self.info_url = 'http://study.163.com/dwr/call/plaincall/PlanNewBean.getPlanCourseDetail.dwr?1530406230904'
-		self.video_url = 'http://study.163.com/dwr/call/plaincall/LessonLearnBean.getVideoLearnInfo.dwr?1530407525366'
+		self.info_headers = {
+								'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36',
+							}
+		self.video_headers = {
+								'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36',
+								'Host': 'vod.study.163.com',
+								'Origin': 'http://study.163.com',
+								'Accept': '*/*',
+								'Accept-Encoding': 'gzip, deflate',
+								'Accept-Language': 'zh-CN,zh;q=0.9',
+								'Connection': 'keep-alive',
+								'Content-Length': '346',
+								'Content-Type': 'application/x-www-form-urlencoded',
+								'Referer': None
+							}
+		self.info_url1 = 'http://study.163.com/dwr/call/plaincall/PlanNewBean.getPlanCourseDetail.dwr?1534053024193'
+		self.info_url2 = 'http://study.163.com/dwr/call/plaincall/LessonLearnBean.getVideoLearnInfo.dwr?1534053176205'
+		self.video_url = 'http://vod.study.163.com/eds/api/v1/vod/video'
 	# 外部调用
 	def get(self, url, savepath='./videos', app='demo'):
 		Vurlinfos = self._getvideoinfos(url)
+		res = None
 		if app == 'cmd':
 			for Vurlinfo in Vurlinfos:
 				res = self._download_cmd(Vurlinfo, savepath)
 		elif app == 'demo':
 			for Vurlinfo in Vurlinfos:
 				res = self._download_demo(Vurlinfo, savepath)
-		else:
-			res = None
 		return res
 	# Demo用
 	def _download_demo(self, Vurlinfos, savepath):
@@ -44,12 +56,12 @@ class wangyiyun():
 		name = Vurlinfos[1]
 		download_url = Vurlinfos[0]
 		try:
-			urllib.request.urlretrieve(download_url, os.path.join(savepath, 'wyy_'+name+'.flv'))
+			urllib.request.urlretrieve(download_url, os.path.join(savepath, 'wyy_'+name+'.mp4'))
 			return 200
 		except:
-			with closing(requests.get(download_url, headers=self.headers, stream=True, verify=False)) as res:
+			with closing(requests.get(download_url, headers=self.info_headers, stream=True, verify=False)) as res:
 				if res.status_code == 200:
-					with open(os.path.join(savepath, 'wyy_'+name+'.flv'), "wb") as f:
+					with open(os.path.join(savepath, 'wyy_'+name+'.mp4'), "wb") as f:
 						for chunk in res.iter_content(chunk_size=1024):
 							if chunk:
 								f.write(chunk)
@@ -60,12 +72,12 @@ class wangyiyun():
 			os.mkdir(savepath)
 		name = Vurlinfos[1]
 		download_url = Vurlinfos[0]
-		with closing(requests.get(download_url, headers=self.headers, stream=True, verify=False)) as res:
+		with closing(requests.get(download_url, headers=self.info_headers, stream=True, verify=False)) as res:
 			total_size = int(res.headers['content-length'])
 			if res.status_code == 200:
 				label = '[FileSize]:%0.2f MB' % (total_size/(1024*1024))
 				with click.progressbar(length=total_size, label=label) as progressbar:
-					with open(os.path.join(savepath, 'wyy_'+name+'.flv'), "wb") as f:
+					with open(os.path.join(savepath, 'wyy_'+name+'.mp4'), "wb") as f:
 						for chunk in res.iter_content(chunk_size=1024):
 							if chunk:
 								f.write(chunk)
@@ -85,9 +97,9 @@ class wangyiyun():
 				'c0-param0': 'string:' + Vid,
 				'c0-param1': 'number:0',
 				'c0-param2': 'null:null',
-				'batchId': '1530406230876'
+				'batchId': '1534053018270'
 				}
-		res = requests.post(self.info_url, data=data, headers=self.headers)
+		res = requests.post(self.info_url1, data=data, headers=self.info_headers)
 		LessonInfo = re.findall(r's\w*?\.id=(.*?);.*?s(\w*?)\.lessonName="(.*?)";', res.text)
 		Vurlinfos = []
 		i = 0
@@ -103,11 +115,16 @@ class wangyiyun():
 					'c0-id': '0',
 					'c0-param0': 'string:' + Vnum,
 					'c0-param1': 'string:' + Vid,
-					'batchId': '1530407525332'
+					'batchId': '1534053176093'
 					}
-			res = requests.post(self.video_url, data=data, headers=self.headers)
+			res = requests.post(self.info_url2, data=data, headers=self.info_headers)
+			videoId = re.findall(r's1\.videoId=(.*?);', res.text)[0]
+			signature = re.findall(r's1\.signature="(.*?)";', res.text)[0]
+			self.video_headers['Referer'] = 'http://study.163.com/course/courseLearn.htm?courseId={}'.format(Vid)
+			data = 'videoId={}&signature={}&clientType=1'.format(videoId, signature)
+			res = requests.post(self.video_url, data=data, headers=self.video_headers)
 			try:
-				download_url = re.findall(r'flvHdUrl="(.*?)"', res.text)[0]
+				download_url = re.findall(r'"videoUrl":"(.*?)"', res.text)[0]
 			except:
 				download_url = None
 			Vurlinfos.append([download_url, Vname])
