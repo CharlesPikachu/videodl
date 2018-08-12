@@ -85,8 +85,6 @@ class zhihu():
 			if 'ld' in res_json['playlist'] and download_url is None:
 				download_url = res_json['playlist']['hd']['play_url']
 			Vurlinfos.append([download_url, Vname])
-			print(download_url)
-			break
 		return Vurlinfos
 
 
