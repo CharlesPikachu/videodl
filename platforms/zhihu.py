@@ -73,6 +73,8 @@ class zhihu():
 			res_json = json.loads(res.text)
 			try:
 				Vname = res_json['title']
+				if not Vname.strip():
+					Vname = str(vid)
 			except:
 				Vname = str(vid)
 			download_url = None
