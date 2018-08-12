@@ -6,7 +6,7 @@
 # 	网易云课堂: wangyiyun.wangyiyun()
 # 	音悦台: yinyuetai.yinyuetai()
 # 	B站: bilibili.bilibili()
-# 	知乎: https://www.zhihu.com/
+# 	知乎: zhihu.zhihu()
 from platforms import *
 
 
