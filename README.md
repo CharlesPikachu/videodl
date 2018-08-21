@@ -12,6 +12,7 @@ You can star this repository to keep track of the project if it's helpful for yo
 - [x] [Yinyuetai](http://www.yinyuetai.com) → [Url Example](http://v.yinyuetai.com/video/3247548)
 - [x] [Bilibili](https://www.bilibili.com/) → [Url Example](https://www.bilibili.com/video/av26443123?spm_id_from=333.338.__bofqi.13)
 - [x] [Zhihu](https://www.zhihu.com/) → [Url Example](https://www.zhihu.com/question/21395276/answer/425130152)
+- [x] [Douyu](https://www.douyu.com/) → [Url Example](https://v.douyu.com/show/8KxjMdB3GQQvVLwb)
 - [ ] Imooc
 - [ ] Tengxun
 - [ ] Iqiyi
@@ -43,6 +44,9 @@ add "not_in_downloader" folder to support downloading douyin videos by douyin us
 ### 2018-08-05:
 Version: V1.1  
 Support downloading zhihu video.
+### 2018-08-21:
+Version: V1.2  
+Support downloading douyu video.
 
 # Running Screenshot:
 ### Demo.py:

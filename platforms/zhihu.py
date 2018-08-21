@@ -44,25 +44,28 @@ class zhihu():
 	def _download_demo(self, Vurlinfos, savepath):
 		if not os.path.exists(savepath):
 			os.mkdir(savepath)
-		name = Vurlinfos[1] + '.mp4'
+		name = 'zhihu_' + Vurlinfos[1] + '.mp4'
 		download_url = Vurlinfos[0]
+		if not download_url:
+			return 404
 		try:
 			download_m3u8(download_url, name)
 			return 200
 		except:
-			return None
+			return 404
 	# Cmd用
 	def _download_cmd(self, Vurlinfos, savepath):
 		if not os.path.exists(savepath):
 			os.mkdir(savepath)
-		name = Vurlinfos[1] + '.mp4'
+		name = 'zhihu_' + Vurlinfos[1] + '.mp4'
 		download_url = Vurlinfos[0]
-		download_m3u8(download_url, name)
+		if not download_url:
+			return 404
 		try:
 			download_m3u8(download_url, name)
 			return 200
 		except:
-			return None
+			return 404
 	# 获得视频信息
 	def _getvideoinfos(self, url):
 		res = requests.get(url=url, headers=self.headers)

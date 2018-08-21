@@ -39,6 +39,8 @@ class yinyuetai():
 			os.mkdir(savepath)
 		name = Vurlinfos[1]
 		download_url = Vurlinfos[0]
+		if not download_url:
+			return 404
 		try:
 			urllib.request.urlretrieve(download_url, os.path.join(savepath, 'yyt_'+name+'.mp4'))
 			return 200
@@ -56,6 +58,8 @@ class yinyuetai():
 			os.mkdir(savepath)
 		name = Vurlinfos[1]
 		download_url = Vurlinfos[0]
+		if not download_url:
+			return 404
 		with closing(requests.get(download_url, headers=self.headers, stream=True, verify=False)) as res:
 			total_size = int(res.headers['content-length'])
 			if res.status_code == 200:

@@ -49,6 +49,8 @@ class bilibili():
 			os.mkdir(savepath)
 		name = Vurlinfos[1]
 		download_url = Vurlinfos[0]
+		if not download_url:
+			return 404
 		try:
 			urllib.request.urlretrieve(download_url, os.path.join(savepath, 'bili_'+name+'.flv'))
 			return 200
@@ -66,6 +68,8 @@ class bilibili():
 			os.mkdir(savepath)
 		name = Vurlinfos[1]
 		download_url = Vurlinfos[0]
+		if not download_url:
+			return 404
 		with closing(requests.get(download_url, headers=self.downheaders, stream=True, verify=False)) as res:
 			total_size = int(res.headers['content-length'])
 			if res.status_code == 200:
@@ -85,7 +89,10 @@ class bilibili():
 		pattern = '.__playinfo__=(.*)</script><script>window.__INITIAL_STATE__='
 		re_result = re.findall(pattern, res.text)[0]
 		temp = json.loads(re_result)
-		download_url = temp['durl'][0]['url']
+		try:
+			download_url = temp['durl'][0]['url']
+		except:
+			download_url = None
 		if 'mirrork' in download_url:
 			vid = download_url.split('/')[6]
 		else:

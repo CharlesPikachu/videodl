@@ -7,6 +7,7 @@
 # 	音悦台: yinyuetai.yinyuetai()
 # 	B站: bilibili.bilibili()
 # 	知乎: zhihu.zhihu()
+# 	斗鱼: douyu.douyu()
 import os
 import threading
 from platforms import *
@@ -31,6 +32,7 @@ class Download_Thread(threading.Thread):
 		# 	音悦台 -> '2'
 		# 	B站 -> '3'
 		# 	知乎 -> '4'
+		#	斗鱼 -> '5'
 		self.engine = None
 		self.url = None
 		self.savepath = './videos'
@@ -69,6 +71,15 @@ class Download_Thread(threading.Thread):
 				self.show_start_info()
 				try:
 					res = zhihu.zhihu().get(self.url, savepath=self.savepath, app='demo')
+					if res != 200:
+						raise RuntimeError('url request error...')
+				except:
+					self.show_parse_error()
+				self.show_end_info(savepath=self.savepath)
+			elif self.engine == '5':
+				self.show_start_info()
+				try:
+					res = douyu.douyu().get(self.url, savepath=self.savepath, app='demo')
 					if res != 200:
 						raise RuntimeError('url request error...')
 				except:
@@ -183,7 +194,7 @@ def Demo(options):
 	assert len(options) > 0
 	# 初始化
 	root = Tk()
-	root.title('视频下载器V1.1——公众号:Charles的皮卡丘')
+	root.title('视频下载器V1.2——公众号:Charles的皮卡丘')
 	root.resizable(False, False)
 	root.geometry('600x375+400+120')
 	image_path = './bgimgs/bg1_demo.jpg'
@@ -251,5 +262,5 @@ def Demo(options):
 
 
 if __name__ == '__main__':
-	options = ["1.网易云课堂", "2.音悦台", "3.B站", "4.知乎"]
+	options = ["1.网易云课堂", "2.音悦台", "3.B站", "4.知乎", "5.斗鱼"]
 	Demo(options)
