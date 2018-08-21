@@ -13,11 +13,7 @@ You can star this repository to keep track of the project if it's helpful for yo
 - [x] [Bilibili](https://www.bilibili.com/) → [Url Example](https://www.bilibili.com/video/av26443123?spm_id_from=333.338.__bofqi.13)
 - [x] [Zhihu](https://www.zhihu.com/) → [Url Example](https://www.zhihu.com/question/21395276/answer/425130152)
 - [x] [Douyu](https://www.douyu.com/) → [Url Example](https://v.douyu.com/show/8KxjMdB3GQQvVLwb)
-- [ ] Imooc
-- [ ] Tengxun
-- [ ] Iqiyi
-- [ ] YouTube
-- [ ] Youku
+- [x] [Ted](https://www.ted.com/talks?language=zh-cn) → [Url Example](https://www.ted.com/talks/tina_seelig_the_little_risks_you_can_take_to_increase_your_luck?language=zh-cn)
 ### not in Downloader:
 - [x] [Douyin](https://github.com/CharlesPikachu/Video-Downloader/tree/master/not_in_downloader/douyin)
 
@@ -46,7 +42,7 @@ Version: V1.1
 Support downloading zhihu video.
 ### 2018-08-21:
 Version: V1.2  
-Support downloading douyu video.
+Support downloading douyu and ted video.
 
 # Running Screenshot:
 ### Demo.py:
