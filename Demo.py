@@ -9,6 +9,7 @@
 # 	知乎: zhihu.zhihu()
 # 	斗鱼: douyu.douyu()
 #	Ted演讲: ted.ted()
+#	CNTV: cntv.cntv()
 import os
 import threading
 from platforms import *
@@ -35,6 +36,7 @@ class Download_Thread(threading.Thread):
 		# 	知乎 -> '4'
 		#	斗鱼 -> '5'
 		# 	Ted演讲 -> '6'
+		# 	CNTV -> '7'
 		self.engine = None
 		self.url = None
 		self.savepath = './videos'
@@ -91,6 +93,15 @@ class Download_Thread(threading.Thread):
 				self.show_start_info()
 				try:
 					res = ted.ted().get(self.url, savepath=self.savepath, app='demo')
+					if res != 200:
+						raise RuntimeError('url request error...')
+				except:
+					self.show_parse_error()
+				self.show_end_info(savepath=self.savepath)
+			elif self.engine == '7':
+				self.show_start_info()
+				try:
+					res = cntv.cntv().get(self.url, savepath=self.savepath, app='demo')
 					if res != 200:
 						raise RuntimeError('url request error...')
 				except:
@@ -273,5 +284,5 @@ def Demo(options):
 
 
 if __name__ == '__main__':
-	options = ["1.网易云课堂", "2.音悦台", "3.B站", "4.知乎", "5.斗鱼", "6.Ted演讲"]
+	options = ["1.网易云课堂", "2.音悦台", "3.B站", "4.知乎", "5.斗鱼", "6.Ted演讲", "7.CNTV"]
 	Demo(options)

@@ -5,8 +5,10 @@ import os
 import re
 import sys
 import time
+import click
 import requests
 import urllib.parse as urlparse
+from contextlib import closing
 
 
 # 视频转换
@@ -31,6 +33,85 @@ def transfer(origin_file, target_format, savepath='results'):
 		return True
 	except:
 		return False
+#########################################################################################################################
+
+
+# 视频合并
+#########################################################################################################################
+'''
+Function: 将下载的视频合并(CNTV中用到了)
+Input:
+	-videos_dict: 待合并的视频集合, 格式为{idx: 'path+vname'}
+	-outpath: 合并后的视频保存路径
+	-outname: 合并后的视频文件名
+Output:
+	-表示合并是否成功的Bool值	
+'''
+def videos_merge(videos_dict, outpath, outname):
+	print('[INFO]: Start to merge video files...')
+	if not os.path.exists(outpath):
+		os.mkdir(outpath)
+	outfile = ''
+	for i in range(len(videos_dict.keys())):
+		if not outfile:
+			outfile = open(os.path.join(outpath, outname), 'wb')
+		infile = open(videos_dict.get(i), 'rb')
+		outfile.write(infile.read())
+		infile.close()
+		os.remove(videos_dict.get(i))
+	if outfile:
+		outfile.close()
+		return True
+	else:
+		return False
+#########################################################################################################################
+
+
+# 切片格式(TMS)-视频下载
+#########################################################################################################################
+'''
+Function: TMS-视频下载
+Input:
+	-video_urls: 视频地址集合
+	-savepath: 视频下载后的保存路径
+	-savename: 视频保存名称
+	-max_retry: 下载失败最大重试次数
+Output:
+	-表示合并是否成功的Bool值	
+'''
+def download_tms(video_urls, savename, savepath='./videos', max_retry=5):
+	headers = {
+				'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
+			}
+	videos_dict = dict()
+	i = -1
+	is_success = False
+	while True:
+		i += 1
+		if i == len(video_urls):
+			videos_merge(videos_dict=videos_dict, outpath=savepath, outname=savename)
+			is_success = True
+			break
+		if max_retry < 1:
+			is_success = False
+			break
+		video_url = video_urls[i]
+		with closing(requests.get(video_url, headers=headers, stream=True, verify=False)) as res:
+			total_size = int(res.headers['content-length'])
+			tempfile = os.path.join(savepath, 'cntv_temp_%d.mp4' % i)
+			if res.status_code == 200:
+				label = '<%d>.[FileSize]:%0.2f MB' % (i, total_size/(1024*1024))
+				with click.progressbar(length=total_size, label=label) as progressbar:
+					with open(tempfile, "wb") as f:
+						for chunk in res.iter_content(chunk_size=1024):
+							if chunk:
+								f.write(chunk)
+								progressbar.update(1024)
+				videos_dict[i] = tempfile
+			else:
+				max_retry -= 1
+				i -= 1
+	return is_success
 #########################################################################################################################
 
 
@@ -150,7 +231,7 @@ def download_m3u8(video_url, savename, savepath='./videos'):
 #########################################################################################################################
 def show_progress_bar(num, total):
 	rate_num = int((float(num) / float(total)) * 100)
-	progress_bar = '\r[%s%s]%d%%\n' % ('#'*(rate_num//2), ' '*(50-rate_num//2), rate_num)
+	progress_bar = '\r[%s%s]%d%%' % ('#'*(rate_num//2), ' '*(50-rate_num//2), rate_num)
 	sys.stdout.write(progress_bar)
 	sys.stdout.flush()
 #########################################################################################################################

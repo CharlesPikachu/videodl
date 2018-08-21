@@ -9,6 +9,7 @@
 # 	知乎: zhihu.zhihu()
 # 	斗鱼: douyu.douyu()
 #	Ted演讲: ted.ted()
+# 	CNTV: cntv.cntv()
 from platforms import *
 
 
@@ -85,10 +86,18 @@ def Cmd(options, savepath = './videos'):
 			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
 		except:
 			print('[Error]: 链接解析失败...')
+	elif choice == '7':
+		try:
+			res = cntv.cntv().get(url, savepath, app='cmd')
+			if res != 200:
+				raise RuntimeError('url request error...')
+			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
+		except:
+			print('[Error]: 链接解析失败...')
 
 
 if __name__ == '__main__':
-	options = ["1.网易云课堂", "2.音悦台", "3.B站", "4.知乎", "5.斗鱼", "6.Ted演讲"]
+	options = ["1.网易云课堂", "2.音悦台", "3.B站", "4.知乎", "5.斗鱼", "6.Ted演讲", "7.CNTV"]
 	while True:
 		try:
 			Cmd(options)

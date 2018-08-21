@@ -14,6 +14,7 @@ You can star this repository to keep track of the project if it's helpful for yo
 - [x] [Zhihu](https://www.zhihu.com/) → [Url Example](https://www.zhihu.com/question/21395276/answer/425130152)
 - [x] [Douyu](https://www.douyu.com/) → [Url Example](https://v.douyu.com/show/8KxjMdB3GQQvVLwb)
 - [x] [Ted](https://www.ted.com/talks?language=zh-cn) → [Url Example](https://www.ted.com/talks/tina_seelig_the_little_risks_you_can_take_to_increase_your_luck?language=zh-cn)
+- [x] [CNTV](http://tv.cntv.cn/) → [Url Example](http://tv.cntv.cn/video/C10881/4ec8c6c1bdd941b0b11280769b036e8b)
 ### not in Downloader:
 - [x] [Douyin](https://github.com/CharlesPikachu/Video-Downloader/tree/master/not_in_downloader/douyin)
 
@@ -42,7 +43,7 @@ Version: V1.1
 Support downloading zhihu video.
 ### 2018-08-21:
 Version: V1.2  
-Support downloading douyu and ted video.
+Support downloading douyu, ted, cntv video.
 
 # Running Screenshot:
 ### Demo.py:
