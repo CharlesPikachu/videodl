@@ -99,7 +99,7 @@ def download_tms(video_urls, savename, savepath='./videos', max_retry=5, headers
 		video_url = video_urls[i]
 		with closing(requests.get(video_url, headers=headers, stream=True, verify=False)) as res:
 			total_size = int(res.headers['content-length'])
-			tempfile = os.path.join(savepath, 'cntv_temp_%d.mp4' % i)
+			tempfile = os.path.join(savepath, 'temp_%d.%s' % (i, savename.split('.')[-1]))
 			if res.status_code == 200:
 				label = '<%d>.[FileSize]:%0.2f MB' % (i, total_size/(1024*1024))
 				with click.progressbar(length=total_size, label=label) as progressbar:
