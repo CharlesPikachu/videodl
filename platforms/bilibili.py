@@ -4,10 +4,14 @@
 # 	-https://www.bilibili.com/
 import os
 import re
+import sys
 import json
+import time
 import click
 import urllib
 import requests
+sys.path.append('..')
+from utils.utils import *
 from contextlib import closing
 
 
@@ -47,64 +51,48 @@ class bilibili():
 	def _download_demo(self, Vurlinfos, savepath):
 		if not os.path.exists(savepath):
 			os.mkdir(savepath)
-		name = Vurlinfos[1]
+		name = 'bili_' + Vurlinfos[1] + '.flv'
 		download_url = Vurlinfos[0]
 		if not download_url:
 			return 404
 		try:
-			urllib.request.urlretrieve(download_url, os.path.join(savepath, 'bili_'+name+'.flv'))
+			download_tms(download_url, name, savepath='./videos', headers=self.downheaders)
 			return 200
 		except:
-			with closing(requests.get(download_url, headers=self.downheaders, stream=True, verify=False)) as res:
-				if res.status_code == 200:
-					with open(os.path.join(savepath, 'bili_'+name+'.flv'), "wb") as f:
-						for chunk in res.iter_content(chunk_size=1024):
-							if chunk:
-								f.write(chunk)
-				return res.status_code
+			return 404
 	# Cmd用
 	def _download_cmd(self, Vurlinfos, savepath):
 		if not os.path.exists(savepath):
 			os.mkdir(savepath)
-		name = Vurlinfos[1]
+		name = 'bili_' + Vurlinfos[1] + '.flv'
 		download_url = Vurlinfos[0]
 		if not download_url:
 			return 404
-		with closing(requests.get(download_url, headers=self.downheaders, stream=True, verify=False)) as res:
-			total_size = int(res.headers['content-length'])
-			if res.status_code == 200:
-				label = '[FileSize]:%0.2f MB' % (total_size/(1024*1024))
-				with click.progressbar(length=total_size, label=label) as progressbar:
-					with open(os.path.join(savepath, 'bili_'+name+'.flv'), "wb") as f:
-						for chunk in res.iter_content(chunk_size=1024):
-							if chunk:
-								f.write(chunk)
-								progressbar.update(1024)
-			else:
-				print('[ERROR]:Connect error...')
-			return res.status_code
+		try:
+			download_tms(download_url, name, savepath='./videos', headers=self.downheaders)
+			return 200
+		except:
+			return 404
 	# 获得视频信息
 	def _getvideoinfos(self, url):
+		qualities = {'1080P': 80, '720P': 48, '480P': 32, '360P': 16}
 		res = requests.get(url=url, headers=self.infoheaders)
-		pattern = '.__playinfo__=(.*)</script><script>window.__INITIAL_STATE__='
+		try:
+			title = re.findall(r'\<h1 title="(.*?)"\>', res.text)[20]
+		except:
+			title = str(time.time()).split('.')[0]
+		pattern = r'\<script\>window\.__playinfo__=(.*?)\</script\>'
 		re_result = re.findall(pattern, res.text)[0]
 		temp = json.loads(re_result)
-		try:
-			download_url = temp['durl'][0]['url']
-		except:
-			download_url = None
-		if 'mirrork' in download_url:
-			vid = download_url.split('/')[6]
-		else:
-			vid = download_url.split('/')[7]
-			if len(vid) >= 10:
-				vid = download_url.split('/')[6]
-		Vurlinfos = [download_url, vid]
+		download_url = []
+		for d in temp['durl']:
+			download_url.append(d['url'])
+		Vurlinfos = [download_url, title]
 		return Vurlinfos
 
 
 # 测试用
 if __name__ == '__main__':
-	url = 'https://www.bilibili.com/video/av26443123?spm_id_from=333.338.__bofqi.13'
+	url = 'https://www.bilibili.com/video/av6142859/?p=2'
 	# bilibili().get(url, savepath='./videos', app='demo')
 	bilibili().get(url, savepath='./videos', app='cmd')

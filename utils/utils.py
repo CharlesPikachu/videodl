@@ -79,10 +79,11 @@ Input:
 Output:
 	-表示合并是否成功的Bool值	
 '''
-def download_tms(video_urls, savename, savepath='./videos', max_retry=5):
-	headers = {
-				'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
-			}
+def download_tms(video_urls, savename, savepath='./videos', max_retry=5, headers=None):
+	if headers is None:
+		headers = {
+					'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'
+				}
 	videos_dict = dict()
 	i = -1
 	is_success = False
