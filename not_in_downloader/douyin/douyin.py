@@ -34,9 +34,8 @@ class douyin():
 			if ip.is_private:
 				self.headers['X-Real-IP'], self.headers['X-Forwarded-For'] = str(ip), str(ip)
 				break
-		self.search_url = 'https://api.amemv.com/aweme/v1/discover/search/?cursor=0&keyword={}&count=10&type=1&device_id={}&aid=1128&app_name=aweme&version_code=162&version_name=1.6.2'
 		self.share_url = 'https://www.amemv.com/share/user/{}'
-		self.user_url = 'https://www.amemv.com/aweme/v1/aweme/post/?user_id={}&max_cursor=0&count={}&aid=1128&_signature={}&dytk={}'
+		self.user_url = 'https://www.amemv.com/aweme/v1/aweme/post/?user_id={}&max_cursor={}&count=21&aid=1128&_signature={}&dytk={}'
 		print('[INFO]:Douyin App-Video downloader...')
 		print('[Version]: V4.1')
 		print('[Author]: Charles')
@@ -90,24 +89,7 @@ class douyin():
 			return res.status_code
 	# 根据抖音号获得账号所有视频下载地址
 	def _get_urls_by_userid(self, user_id):
-		# 搜索接口失效，通过分享的方式获得真实id方可下载，有空再更新
-		'''
-		device_id = str(random.randint(3, 5)) + ''.join(map(str, (random.randint(0, 9) for _ in range(10))))
-		res = requests.get(self.search_url.format(user_id, device_id), headers=self.headers)
-		res_json = json.loads(res.text)
-		uid = res_json['user_list'][0]['user_info']['uid']
-		unique_id = res_json['user_list'][0]['user_info']['unique_id']
-		if unique_id != user_id:
-			short_id = res_json['user_list'][0]['user_info']['short_id']
-			if short_id != user_id:
-				print('[Error]: User Id error...')
-				return None, None, None
-		aweme_count = res_json['user_list'][0]['user_info']['aweme_count']
-		nickname = res_json['user_list'][0]['user_info']['nickname']
-		'''
 		uid = user_id
-		nickname = str(uid)
-		aweme_count = 100
 		try:
 			process = Popen(['node', 'fuck-byted-acrawler.js', str(uid)], stdout=PIPE, stderr=PIPE)
 		except:
@@ -120,15 +102,24 @@ class douyin():
 		except:
 			print('[Error]: User Id error...')
 			return None, None, None
-		res = requests.get(self.user_url.format(uid, aweme_count, signature, dytk), headers=self.headers)
-		res_json = json.loads(res.text)
+		try:
+			nickname = re.findall(r'"nickname"\>(.+?)\<', res.text)[0].replace(' ', '').replace('\\', '').replace('/', '')
+		except:
+			nickname = str(uid)
+		max_cursor = 0
 		video_names = []
 		video_urls = []
-		for aweme in res_json['aweme_list']:
-			aweme_id = aweme['aweme_id']
-			video_url = aweme['video']['play_addr']['url_list'][0]
-			video_names.append('aweme_id'+'_'+aweme_id+'.mp4')
-			video_urls.append(video_url)
+		while True:
+			res = requests.get(self.user_url.format(uid, max_cursor, signature, dytk), headers=self.headers)
+			res_json = json.loads(res.text)
+			for aweme in res_json['aweme_list']:
+				aweme_id = aweme['aweme_id']
+				video_url = aweme['video']['play_addr']['url_list'][0]
+				video_names.append('aweme_id'+'_'+aweme_id+'.mp4')
+				video_urls.append(video_url)
+			max_cursor = res_json['max_cursor']
+			if not res_json['has_more']:
+				break
 		return video_names, video_urls, nickname
 
 
