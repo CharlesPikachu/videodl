@@ -10,6 +10,7 @@
 # 	斗鱼: douyu.douyu()
 #	Ted演讲: ted.ted()
 #	CNTV: cntv.cntv()
+# 	战旗: zhanqi.zhanqi()
 import os
 import threading
 from platforms import *
@@ -37,6 +38,7 @@ class Download_Thread(threading.Thread):
 		#	斗鱼 -> '5'
 		# 	Ted演讲 -> '6'
 		# 	CNTV -> '7'
+		#	战旗 -> '8'
 		self.engine = None
 		self.url = None
 		self.savepath = './videos'
@@ -102,6 +104,15 @@ class Download_Thread(threading.Thread):
 				self.show_start_info()
 				try:
 					res = cntv.cntv().get(self.url, savepath=self.savepath, app='demo')
+					if res != 200:
+						raise RuntimeError('url request error...')
+				except:
+					self.show_parse_error()
+				self.show_end_info(savepath=self.savepath)
+			elif self.engine == '8':
+				self.show_start_info()
+				try:
+					res = zhanqi.zhanqi().get(self.url, savepath=self.savepath, app='demo')
 					if res != 200:
 						raise RuntimeError('url request error...')
 				except:
@@ -216,7 +227,7 @@ def Demo(options):
 	assert len(options) > 0
 	# 初始化
 	root = Tk()
-	root.title('视频下载器V1.2——公众号:Charles的皮卡丘')
+	root.title('视频下载器V1.3——公众号:Charles的皮卡丘')
 	root.resizable(False, False)
 	root.geometry('600x375+400+120')
 	image_path = './bgimgs/bg1_demo.jpg'
@@ -284,5 +295,5 @@ def Demo(options):
 
 
 if __name__ == '__main__':
-	options = ["1.网易云课堂", "2.音悦台", "3.B站", "4.知乎", "5.斗鱼", "6.Ted演讲", "7.CNTV"]
+	options = ["1.网易云课堂", "2.音悦台", "3.B站", "4.知乎", "5.斗鱼", "6.Ted演讲", "7.CNTV", "8.战旗"]
 	Demo(options)

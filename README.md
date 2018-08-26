@@ -15,6 +15,7 @@ You can star this repository to keep track of the project if it's helpful for yo
 - [x] [Douyu](https://www.douyu.com/) → [Url Example](https://v.douyu.com/show/8KxjMdB3GQQvVLwb)
 - [x] [Ted](https://www.ted.com/talks?language=zh-cn) → [Url Example](https://www.ted.com/talks/tina_seelig_the_little_risks_you_can_take_to_increase_your_luck?language=zh-cn)
 - [x] [CNTV](http://tv.cntv.cn/) → [Url Example](http://tv.cntv.cn/video/C10881/4ec8c6c1bdd941b0b11280769b036e8b)
+- [x] [Zhanqi](https://videos.zhanqi.tv/) → [Url Example](https://www.zhanqi.tv/v2/videos/767817.html)
 ### not in Downloader:
 - [x] [Douyin](https://github.com/CharlesPikachu/Video-Downloader/tree/master/not_in_downloader/douyin)
 
@@ -29,8 +30,8 @@ Clone or download.
 "python Cmd.py" or "py -3 Cmd.py"
 
 # Platform[Tested]:
-Windows  
-Python3.6  
+- [Win10]  
+- [Python3.6]  
 
 # Record:
 ### 2018-07-11:
@@ -44,6 +45,9 @@ Support downloading zhihu video.
 ### 2018-08-21:
 Version: V1.2  
 Support downloading douyu, ted, cntv video.
+### 2018-08-26:
+Version: V1.3  
+Support downloading zhanqi video.
 
 # Running Screenshot:
 ### Demo.py:

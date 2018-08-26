@@ -10,12 +10,13 @@
 # 	斗鱼: douyu.douyu()
 #	Ted演讲: ted.ted()
 # 	CNTV: cntv.cntv()
+# 	战旗: zhanqi.zhanqi()
 from platforms import *
 
 
 def Cmd(options, savepath = './videos'):
 	print('-'*36 + '<Welcome>' + '-'*36)
-	print('[简介]:视频下载器V1.2')
+	print('[简介]:视频下载器V1.3')
 	print('[Author]:Charles')
 	print('[公众号]: Charles的皮卡丘')
 	print('[退出方式]: 输入q或者按Ctrl+C键退出')
@@ -94,10 +95,18 @@ def Cmd(options, savepath = './videos'):
 			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
 		except:
 			print('[Error]: 链接解析失败...')
+	elif choice == '8':
+		try:
+			res = zhanqi.zhanqi().get(url, savepath, app='cmd')
+			if res != 200:
+				raise RuntimeError('url request error...')
+			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
+		except:
+			print('[Error]: 链接解析失败...')
 
 
 if __name__ == '__main__':
-	options = ["1.网易云课堂", "2.音悦台", "3.B站", "4.知乎", "5.斗鱼", "6.Ted演讲", "7.CNTV"]
+	options = ["1.网易云课堂", "2.音悦台", "3.B站", "4.知乎", "5.斗鱼", "6.Ted演讲", "7.CNTV", "8.战旗"]
 	while True:
 		try:
 			Cmd(options)

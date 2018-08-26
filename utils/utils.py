@@ -232,7 +232,7 @@ def download_m3u8(video_url, savename, savepath='./videos'):
 #########################################################################################################################
 def show_progress_bar(num, total):
 	rate_num = int((float(num) / float(total)) * 100)
-	progress_bar = '\r[%s%s]%d%%' % ('#'*(rate_num//2), ' '*(50-rate_num//2), rate_num)
+	progress_bar = '\r下载进度: [%s%s]%d%%' % ('#'*(rate_num//2), ' '*(50-rate_num//2), rate_num)
 	sys.stdout.write(progress_bar)
 	sys.stdout.flush()
 #########################################################################################################################
