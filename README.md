@@ -30,8 +30,8 @@ Clone or download.
 "python Cmd.py" or "py -3 Cmd.py"
 
 # Platform[Tested]:
-- [Win10]  
-- [Python3.6]  
+- Win10  
+- Python3.6  
 
 # Record:
 ### 2018-07-11:
