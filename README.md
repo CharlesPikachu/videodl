@@ -8,14 +8,14 @@ You can star this repository to keep track of the project if it's helpful for yo
 
 # Support
 ### in Downloader:
-- [x] [Wangyiyun](https://study.163.com/) → [Url Example](http://study.163.com/course/courseMain.htm?courseId=1003842018)
-- [x] [Yinyuetai](http://www.yinyuetai.com) → [Url Example](http://v.yinyuetai.com/video/3247548)
-- [x] [Bilibili](https://www.bilibili.com/) → [Url Example](https://www.bilibili.com/video/av26443123?spm_id_from=333.338.__bofqi.13)
-- [x] [Zhihu](https://www.zhihu.com/) → [Url Example](https://www.zhihu.com/question/21395276/answer/425130152)
-- [x] [Douyu](https://www.douyu.com/) → [Url Example](https://v.douyu.com/show/8KxjMdB3GQQvVLwb)
 - [x] [Ted](https://www.ted.com/talks?language=zh-cn) → [Url Example](https://www.ted.com/talks/tina_seelig_the_little_risks_you_can_take_to_increase_your_luck?language=zh-cn)
 - [x] [CNTV](http://tv.cntv.cn/) → [Url Example](http://tv.cntv.cn/video/C10881/4ec8c6c1bdd941b0b11280769b036e8b)
+- [x] [Zhihu](https://www.zhihu.com/) → [Url Example](https://www.zhihu.com/question/21395276/answer/425130152)
+- [x] [Douyu](https://www.douyu.com/) → [Url Example](https://v.douyu.com/show/8KxjMdB3GQQvVLwb)
 - [x] [Zhanqi](https://videos.zhanqi.tv/) → [Url Example](https://www.zhanqi.tv/v2/videos/767817.html)
+- [x] [Bilibili](https://www.bilibili.com/) → [Url Example](https://www.bilibili.com/video/av26443123?spm_id_from=333.338.__bofqi.13)
+- [x] [Wangyiyun](https://study.163.com/) → [Url Example](http://study.163.com/course/courseMain.htm?courseId=1003842018)
+- [x] [Yinyuetai](http://www.yinyuetai.com) → [Url Example](http://v.yinyuetai.com/video/3247548)
 ### not in Downloader:
 - [x] [Douyin](https://github.com/CharlesPikachu/Video-Downloader/tree/master/not_in_downloader/douyin)
 
