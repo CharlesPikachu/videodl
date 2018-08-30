@@ -43,10 +43,10 @@ add "not_in_downloader" folder to support downloading douyin videos by douyin us
 Version: V1.1  
 Support downloading zhihu video.
 ### 2018-08-21:
-Version: V1.2  
+Version: V1.2.0  
 Support downloading douyu, ted, cntv video.
 ### 2018-08-26:
-Version: V1.3  
+Version: V1.2.1  
 Support downloading zhanqi video.
 
 # Running Screenshot:

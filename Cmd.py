@@ -106,7 +106,7 @@ def Cmd(options, savepath = './videos'):
 
 
 if __name__ == '__main__':
-	options = ["1.网易云课堂", "2.音悦台", "3.B站", "4.知乎", "5.斗鱼", "6.Ted演讲", "7.CNTV", "8.战旗"]
+	options = ["1.网易云课堂(已不支持)", "2.音悦台", "3.B站", "4.知乎", "5.斗鱼", "6.Ted演讲", "7.CNTV", "8.战旗"]
 	while True:
 		try:
 			Cmd(options)
