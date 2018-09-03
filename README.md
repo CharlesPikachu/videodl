@@ -18,6 +18,7 @@ You can star this repository to keep track of the project if it's helpful for yo
 - [x] [Yinyuetai](http://www.yinyuetai.com) → [Url Example](http://v.yinyuetai.com/video/3247548)
 ### not in Downloader:
 - [x] [Douyin](https://github.com/CharlesPikachu/Video-Downloader/tree/master/not_in_downloader/douyin)
+- [x] [liveCache](https://github.com/CharlesPikachu/Video-Downloader/tree/master/not_in_downloader/liveCache)
 
 # Usage:
 ### Step1-download this repository:
@@ -48,6 +49,8 @@ Support downloading douyu, ted, cntv video.
 ### 2018-08-26:
 Version: V1.2.1  
 Support downloading zhanqi video.
+### 2018-09-03:
+Start to support live cache.
 
 # Running Screenshot:
 ### Demo.py:
