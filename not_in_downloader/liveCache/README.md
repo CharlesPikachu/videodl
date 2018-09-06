@@ -1,7 +1,8 @@
 # Live Video Cache
 
 # Support
-- [douyu](https://www.douyu.com/)
+- [douyu](https://www.douyu.com/) -> [Introduction](https://mp.weixin.qq.com/s/lhDLv6sKmEVfaCpIidXUvw
+)
 
 # Usage:
 ### Step1:
