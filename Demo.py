@@ -11,6 +11,7 @@
 #	Ted演讲: ted.ted()
 #	CNTV: cntv.cntv()
 # 	战旗: zhanqi.zhanqi()
+# 	腾讯: tecent.tecent()
 import os
 import threading
 from platforms import *
@@ -39,6 +40,7 @@ class Download_Thread(threading.Thread):
 		# 	Ted演讲 -> '6'
 		# 	CNTV -> '7'
 		#	战旗 -> '8'
+		# 	腾讯 -> '9'
 		self.engine = None
 		self.url = None
 		self.savepath = './videos'
@@ -52,72 +54,81 @@ class Download_Thread(threading.Thread):
 					res = wangyiyun.wangyiyun().get(self.url, savepath=self.savepath, app='demo')
 					if res != 200:
 						raise RuntimeError('url request error...')
+					self.show_end_info(savepath=self.savepath)
 				except:
 					self.show_parse_error()
-				self.show_end_info(savepath=self.savepath)
 			elif self.engine == '2':
 				self.show_start_info()
 				try:
 					res = yinyuetai.yinyuetai().get(self.url, savepath=self.savepath, app='demo')
 					if res != 200:
 						raise RuntimeError('url request error...')
+					self.show_end_info(savepath=self.savepath)
 				except:
 					self.show_parse_error()
-				self.show_end_info(savepath=self.savepath)
 			elif self.engine == '3':
 				self.show_start_info()
 				try:
 					res = bilibili.bilibili().get(self.url, savepath=self.savepath, app='demo')
 					if res != 200:
 						raise RuntimeError('url request error...')
+					self.show_end_info(savepath=self.savepath)
 				except:
 					self.show_parse_error()
-				self.show_end_info(savepath=self.savepath)
 			elif self.engine == '4':
 				self.show_start_info()
 				try:
 					res = zhihu.zhihu().get(self.url, savepath=self.savepath, app='demo')
 					if res != 200:
 						raise RuntimeError('url request error...')
+					self.show_end_info(savepath=self.savepath)
 				except:
 					self.show_parse_error()
-				self.show_end_info(savepath=self.savepath)
 			elif self.engine == '5':
 				self.show_start_info()
 				try:
 					res = douyu.douyu().get(self.url, savepath=self.savepath, app='demo')
 					if res != 200:
 						raise RuntimeError('url request error...')
+					self.show_end_info(savepath=self.savepath)
 				except:
 					self.show_parse_error()
-				self.show_end_info(savepath=self.savepath)
 			elif self.engine == '6':
 				self.show_start_info()
 				try:
 					res = ted.ted().get(self.url, savepath=self.savepath, app='demo')
 					if res != 200:
 						raise RuntimeError('url request error...')
+					self.show_end_info(savepath=self.savepath)
 				except:
 					self.show_parse_error()
-				self.show_end_info(savepath=self.savepath)
 			elif self.engine == '7':
 				self.show_start_info()
 				try:
 					res = cntv.cntv().get(self.url, savepath=self.savepath, app='demo')
 					if res != 200:
 						raise RuntimeError('url request error...')
+					self.show_end_info(savepath=self.savepath)
 				except:
 					self.show_parse_error()
-				self.show_end_info(savepath=self.savepath)
 			elif self.engine == '8':
 				self.show_start_info()
 				try:
 					res = zhanqi.zhanqi().get(self.url, savepath=self.savepath, app='demo')
 					if res != 200:
 						raise RuntimeError('url request error...')
+					self.show_end_info(savepath=self.savepath)
 				except:
 					self.show_parse_error()
-				self.show_end_info(savepath=self.savepath)
+			elif self.engine == '9':
+				self.show_start_info()
+				try:
+					res = tecent.tecent().get(self.url, savepath=self.savepath, app='demo')
+					if res != 200:
+						raise RuntimeError('url request error...')
+					self.show_end_info(savepath=self.savepath)
+				except:
+					self.show_parse_error()
 			else:
 				title = '解析失败'
 				msg = '平台选项参数解析失败！'
@@ -295,5 +306,5 @@ def Demo(options):
 
 
 if __name__ == '__main__':
-	options = ["1.网易云课堂(已不支持)", "2.音悦台", "3.B站", "4.知乎", "5.斗鱼", "6.Ted演讲", "7.CNTV", "8.战旗"]
+	options = ["1.网易云课堂(失效)", "2.音悦台", "3.B站", "4.知乎", "5.斗鱼", "6.Ted演讲", "7.CNTV", "8.战旗", "9.腾讯视频"]
 	Demo(options)

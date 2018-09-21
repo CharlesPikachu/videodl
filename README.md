@@ -16,6 +16,7 @@ You can star this repository to keep track of the project if it's helpful for yo
 - [x] [Bilibili](https://www.bilibili.com/) → [Url Example](https://www.bilibili.com/video/av26443123?spm_id_from=333.338.__bofqi.13)
 - [x] [Wangyiyun](https://study.163.com/) → [Url Example](http://study.163.com/course/courseMain.htm?courseId=1003842018)
 - [x] [Yinyuetai](http://www.yinyuetai.com) → [Url Example](http://v.yinyuetai.com/video/3247548)
+- [x] [tecent](https://v.qq.com/) -> [Url Example](https://v.qq.com/x/cover/7r83y1oca851nq6/n0711wto8h4.html)
 ### not in Downloader:
 - [x] [Douyin](https://github.com/CharlesPikachu/Video-Downloader/tree/master/not_in_downloader/douyin)
 - [x] [liveCache](https://github.com/CharlesPikachu/Video-Downloader/tree/master/not_in_downloader/liveCache)
@@ -51,6 +52,9 @@ Version: V1.2.1
 Support downloading zhanqi video.
 ### 2018-09-03:
 Start to support live cache.
+### 2018-09-21:
+Version: V1.3  
+Support downloading tecent video.
 
 # Running Screenshot:
 ### Demo.py:
