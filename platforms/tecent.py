@@ -27,6 +27,7 @@ class tecent():
 		self.headers = {
 						'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
 					}
+		# [fhd, shd, hd, sd]
 		self.info_url = 'http://vv.video.qq.com/getinfo?otype=json&appver=3.2.19.335&platform={}&defnpayver=1&defn=shd&vid={}'
 		self.key_url = 'http://vv.video.qq.com/getkey?otype=json&platform=11&format={}&vid={}&filename={}&appver=3.2.19.335'
 	# 外部调用
