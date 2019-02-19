@@ -74,6 +74,6 @@ Run Demo.py or Cmd.py:
 ![img](./Screenshot/Screenshot2.png)
 
 # More
-### WeChat Official Accounts
-Charles_pikachu  
+#### WeChat Official Accounts
+*Charles_pikachu* 
 ![img](pikachu.jpg)
