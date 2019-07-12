@@ -17,7 +17,7 @@ from contextlib import closing
 
 '''进度条下载'''
 # -------------------------------------------------------------------------------------------
-def downloaderBASE(url, savename, savepath, headers, stream=True, verify=False):
+def downloadBASE(url, savename, savepath, headers, stream=True, verify=False):
 	checkFolder(savepath)
 	with closing(requests.get(url, headers=headers, stream=stream, verify=verify)) as res:
 		total_size = int(res.headers['content-length'])
@@ -106,7 +106,7 @@ def downloadTMS(video_urls, savename, savepath='videos', max_retries=5, headers=
 			is_success = False
 			break
 		video_url = video_urls[i]
-		flag = downloaderBASE(video_url, savename='temp_%d.%s' % (i, savename.split('.')[-1]), savepath=savepath, headers=headers, stream=True, verify=False)
+		flag = downloadBASE(video_url, savename='temp_%d.%s' % (i, savename.split('.')[-1]), savepath=savepath, headers=headers, stream=True, verify=False)
 		if not flag:
 			i -= 1
 			max_retries -= 1

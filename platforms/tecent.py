@@ -66,7 +66,7 @@ class tecent():
 			fc = info_json['vl']['vi'][0]['cl']['fc']
 			fn = info_json['vl']['vi'][0]['fn']
 		except:
-			return [None, None]
+			return ['', '']
 		assert fn.split('.')[0] == lnk
 		constant, video_type = fn.split('.')[-2], fn.split('.')[-1]
 		flag = True
@@ -87,7 +87,7 @@ class tecent():
 					key = res_json['v1']['vi'][0]['fvkey']
 					download_url_part = '{}{}?vkey={}'.format(url, lnk+'.'+video_type, key)
 				except:
-					download_url_part = None
+					download_url_part = ''
 			else:
 				key = res_json.get('key')
 				download_url_part = '{}{}?vkey={}'.format(url, fn, key)

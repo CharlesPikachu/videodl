@@ -28,7 +28,7 @@ Function: 视频下载器 V2.0.0
 	当前路径下的videos文件夹内
 ************************************************************
 '''
-		self.RESOURCES = ['腾讯视频']
+		self.RESOURCES = ['腾讯视频', '音悦台MV']
 		self.platform_now = None
 		self.platform_now_name = None
 		self.is_select_platform = False
@@ -40,7 +40,9 @@ Function: 视频下载器 V2.0.0
 			print(self.INFO)
 			url = self.__input('[%s-INFO]: 请输入视频链接 --> ' % self.platform_now_name)
 			try:
-				self.__download(url, 'videos')
+				res = self.__download(url, 'videos')
+				if not res:
+					raise RuntimeError('error')
 			except:
 				print('<ERROR>--链接解析失败, 请确定输入的链接与平台对应--<ERROR>')
 	'''下载视频'''
@@ -56,6 +58,8 @@ Function: 视频下载器 V2.0.0
 			platform_idx = self.__input('请选择平台号(1-%d):' % len(self.RESOURCES))
 			if platform_idx == '1':
 				return tecent.tecent(), 'tecent'
+			elif platform_idx == '2':
+				return yinyuetai.yinyuetai(), 'yinyuetai'
 			else:
 				print('<ERROR>--平台号输入有误, 请重新输入--<ERROR>')
 	'''处理用户输入'''

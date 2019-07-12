@@ -1,1 +1,1 @@
-__all__ = ['tecent']
+__all__ = ['tecent', 'yinyuetai']

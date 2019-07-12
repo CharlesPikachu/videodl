@@ -9,6 +9,7 @@ prepare
 
 # Support
 - [x] [tecent](https://v.qq.com/)
+- [x] [yinyuetai](http://www.yinyuetai.com)
 
 # Usage
 #### Step1
@@ -37,7 +38,7 @@ run cmd.py, for example:
 ![img](./Screenshot/cmd.png)
 
 # Log
-see Log dir → [click](./Log)
+see Log dir → [click](./LOG)
 
 # More
 #### WeChat Official Accounts

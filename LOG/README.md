@@ -22,4 +22,4 @@
 - Detail: Support downloading tecent video.
 #### 2019-07-12
 - Version: V2.0.0
-- Detail: Clear the code
+- Detail: Clean the code
