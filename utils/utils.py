@@ -57,6 +57,7 @@ Output:
 # -------------------------------------------------------------------------------------------
 def mergeVideos(videos_dict, outpath, outname):
 	checkFolder(outpath)
+	outname = outname.replace(' ', '')
 	try:
 		filelistpath = 'filelist.txt'
 		with open(filelistpath, 'w') as f:
