@@ -1,26 +1,24 @@
-# 作者：Charles
-# 公众号：Charles的皮卡丘
-# 腾讯视频下载:
-# 	-https://v.qq.com/
+'''
+Function:
+	腾讯视频下载: https://v.qq.com/
+Author:
+	Charles
+微信公众号:
+	Charles的皮卡丘
+'''
 import os
 import re
-import sys
 import json
-import click
-import urllib
 import requests
-from contextlib import closing
-sys.path.append('..')
 from utils.utils import *
 
 
 '''
 Input:
-	-url: 视频地址
-	-savepath: 视频下载后保存的路径
-	-app: 在cmd窗口运行还是在Demo中调用该类
+	--url: 视频地址
+	--savepath: 视频下载后保存的路径
 Output:
-	-返回下载响应码
+	--is_success: 下载是否成功的BOOL值
 '''
 class tecent():
 	def __init__(self):
@@ -30,46 +28,23 @@ class tecent():
 		# [fhd, shd, hd, sd]
 		self.info_url = 'http://vv.video.qq.com/getinfo?otype=json&appver=3.2.19.335&platform={}&defnpayver=1&defn=shd&vid={}'
 		self.key_url = 'http://vv.video.qq.com/getkey?otype=json&platform=11&format={}&vid={}&filename={}&appver=3.2.19.335'
-	# 外部调用
-	def get(self, url, savepath='./videos', app='demo'):
-		Vurlinfos = self._getvideoinfos(url)
-		res = None
-		if app == 'cmd':
-			for Vurlinfo in Vurlinfos:
-				res = self._download_cmd(Vurlinfo, savepath)
-		elif app == 'demo':
-			for Vurlinfo in Vurlinfos:
-				res = self._download_demo(Vurlinfo, savepath)
-		return res
-	# Demo用
-	def _download_demo(self, Vurlinfos, savepath):
-		if not os.path.exists(savepath):
-			os.mkdir(savepath)
-		name = 'tecent_' + Vurlinfos[1] + '.mp4'
-		download_url = Vurlinfos[0]
-		if not download_url:
-			return 404
+	'''外部调用'''
+	def get(self, url, savepath='videos'):
+		video_infos = self.__getvideoinfos(url)
+		is_success = self.__download(video_infos, savepath)
+		return is_success
+	'''下载'''
+	def __download(self, video_infos, savepath):
+		checkFolder(savepath)
+		download_url = video_infos[0]
+		video_name = 'tecent_' + video_infos[1] + '.mp4'
 		try:
-			download_tms(download_url, name)
-			return 200
+			is_success = downloadTMS(video_urls=download_url, savename=video_name, savepath=savepath)
 		except:
-			return 404
-	# Cmd用
-	def _download_cmd(self, Vurlinfos, savepath):
-		if not os.path.exists(savepath):
-			os.mkdir(savepath)
-		name = 'tecent_' + Vurlinfos[1] + '.mp4'
-		download_url = Vurlinfos[0]
-		if not download_url:
-			return 404
-		try:
-			download_tms(download_url, name)
-			return 200
-		except:
-			return 404
-	# 获得视频信息
-	def _getvideoinfos(self, url):
-		Vurlinfos = []
+			is_success = False
+		return is_success
+	'''获得视频信息'''
+	def __getvideoinfos(self, url):
 		platforms = [4100201, 11]
 		vid = url.split('/')[-1].split('.')[0]
 		if len(vid) != 11:
@@ -117,13 +92,11 @@ class tecent():
 				key = res_json.get('key')
 				download_url_part = '{}{}?vkey={}'.format(url, fn, key)
 			download_url.append(download_url_part)
-		Vname = title
-		Vurlinfos.append([download_url, Vname])
-		return Vurlinfos
+		video_infos = [download_url, title]
+		return video_infos
 
 
-# 测试用
+'''test'''
 if __name__ == '__main__':
 	url = 'https://v.qq.com/x/cover/7r83y1oca851nq6/g07185bhudr.html'
-	# tecent().get(url, savepath='./videos', app='demo')
-	tecent().get(url, savepath='./videos', app='cmd')
+	tecent().get(url, savepath='videos')

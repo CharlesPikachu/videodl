@@ -1,124 +1,86 @@
-# 代码仅供学习交流，不得用于商业/非法使用
-# 作者：Charles
-# 公众号：Charles的皮卡丘
-# 视频下载器-Cmd版
-# 目前支持的平台:
-# 	网易云课堂: wangyiyun.wangyiyun()
-# 	音悦台: yinyuetai.yinyuetai()
-# 	B站: bilibili.bilibili()
-# 	知乎: zhihu.zhihu()
-# 	斗鱼: douyu.douyu()
-#	Ted演讲: ted.ted()
-# 	CNTV: cntv.cntv()
-# 	战旗: zhanqi.zhanqi()
-# 	腾讯: tecent.tecent()
+'''
+Function:
+	视频下载器v2.0.0-cmd版, 目前支持的平台:
+		--tecent: 腾讯视频
+Author:
+	Charles
+微信公众号:
+	Charles的皮卡丘
+声明:
+	代码仅供学习交流，不得用于商业/非法使用
+'''
+import sys
 from platforms import *
+sys.path.append('ffmpeg')
 
 
-def Cmd(options, savepath = './videos'):
-	print('-'*36 + '<Welcome>' + '-'*36)
-	print('[简介]:视频下载器V1.3')
-	print('[Author]:Charles')
-	print('[公众号]: Charles的皮卡丘')
-	print('[退出方式]: 输入q或者按Ctrl+C键退出')
-	print('[目前支持的平台]:')
-	for option in options:
-		print('*' + option)
-	print('-'*81)
-	# 平台选择
-	choice = input('请输入平台号(1-%d):' % len(options))
-	if choice == 'q' or choice == 'Q':
-		print('Bye...')
-		exit(-1)
-	choice_range = [str(i) for i in range(1, len(options)+1)]
-	if choice not in choice_range:
-		print('[Error]: 平台号输入错误，必须在(1-%d)之间...' % len(options))
-		return
-	# 视频地址
-	url = input('请输入视频链接:\n')
-	if url == 'q' or url == 'Q':
-		print('Bye...')
-		exit(-1)
-	# 开始下载
-	if choice == '1':
-		try:
-			res = wangyiyun.wangyiyun().get(url, savepath, app='cmd')
-			if res != 200:
-				raise RuntimeError('url request error...')
-			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
-		except:
-			print('[Error]: 链接解析失败...')
-	elif choice == '2':
-		try:
-			res = yinyuetai.yinyuetai().get(url, savepath, app='cmd')
-			if res != 200:
-				raise RuntimeError('url request error...')
-			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
-		except:
-			print('[Error]: 链接解析失败...')
-	elif choice == '3':
-		try:
-			res = bilibili.bilibili().get(url, savepath, app='cmd')
-			if res != 200:
-				raise RuntimeError('url request error...')
-			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
-		except:
-			print('[Error]: 链接解析失败...')
-	elif choice == '4':
-		try:
-			res = zhihu.zhihu().get(url, savepath, app='cmd')
-			if res != 200:
-				raise RuntimeError('url request error...')
-			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
-		except:
-			print('[Error]: 链接解析失败...')
-	elif choice == '5':
-		try:
-			res = douyu.douyu().get(url, savepath, app='cmd')
-			if res != 200:
-				raise RuntimeError('url request error...')
-			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
-		except:
-			print('[Error]: 链接解析失败...')
-	elif choice == '6':
-		try:
-			res = ted.ted().get(url, savepath, app='cmd')
-			if res != 200:
-				raise RuntimeError('url request error...')
-			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
-		except:
-			print('[Error]: 链接解析失败...')
-	elif choice == '7':
-		try:
-			res = cntv.cntv().get(url, savepath, app='cmd')
-			if res != 200:
-				raise RuntimeError('url request error...')
-			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
-		except:
-			print('[Error]: 链接解析失败...')
-	elif choice == '8':
-		try:
-			res = zhanqi.zhanqi().get(url, savepath, app='cmd')
-			if res != 200:
-				raise RuntimeError('url request error...')
-			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
-		except:
-			print('[Error]: 链接解析失败...')
-	elif choice == '9':
-		try:
-			res = tecent.tecent().get(url, savepath, app='cmd')
-			if res != 200:
-				raise RuntimeError('url request error...')
-			print('[INFO]: 视频下载完成，视频保存在{}...'.format(savepath))
-		except:
-			print('[Error]: 链接解析失败...')
-
-
-if __name__ == '__main__':
-	options = ["1.网易云课堂(已失效)", "2.音悦台", "3.B站", "4.知乎", "5.斗鱼", "6.Ted演讲", "7.CNTV", "8.战旗", "9.腾讯视频"]
-	while True:
-		try:
-			Cmd(options)
-		except KeyboardInterrupt:
+'''视频下载器'''
+class VideoDownloader():
+	def __init__(self, **kwargs):
+		self.INFO = '''************************************************************
+Author: Charles
+微信公众号: Charles的皮卡丘
+Function: 视频下载器 V2.0.0
+操作帮助:
+	输入r: 返回主菜单(即重新选择平台号)
+	输入q: 退出程序
+视频保存路径:
+	当前路径下的videos文件夹内
+************************************************************
+'''
+		self.RESOURCES = ['腾讯视频']
+		self.platform_now = None
+		self.platform_now_name = None
+		self.is_select_platform = False
+	'''外部调用'''
+	def run(self):
+		self.platform_now, self.platform_now_name = self.__selectPlatform()
+		self.is_select_platform = True
+		while True:
+			print(self.INFO)
+			url = self.__input('[%s-INFO]: 请输入视频链接 --> ' % self.platform_now_name)
+			try:
+				self.__download(url, 'videos')
+			except:
+				print('<ERROR>--链接解析失败, 请确定输入的链接与平台对应--<ERROR>')
+	'''下载视频'''
+	def __download(self, url, savepath='videos'):
+		return self.platform_now.get(url=url, savepath=savepath)
+	'''选择平台'''
+	def __selectPlatform(self):
+		while True:
+			print(self.INFO)
+			print('目前支持的平台:')
+			for idx, resource in enumerate(self.RESOURCES):
+				print('--%d. %s' % ((idx+1), resource))
+			platform_idx = self.__input('请选择平台号(1-%d):' % len(self.RESOURCES))
+			if platform_idx == '1':
+				return tecent.tecent(), 'tecent'
+			else:
+				print('<ERROR>--平台号输入有误, 请重新输入--<ERROR>')
+	'''处理用户输入'''
+	def __input(self, tip=None):
+		if tip is None:
+			user_input = input()
+		else:
+			user_input = input(tip)
+		if user_input.lower() == 'q':
 			print('Bye...')
-			exit(-1)
+			sys.exit(-1)
+		elif user_input.lower() == 'r':
+			self.is_select_platform = False
+			if not self.is_select_platform:
+				self.platform_now, self.platform_now_name = self.__selectPlatform()
+				self.is_select_platform = True
+			return None
+		else:
+			return user_input
+
+
+'''run'''
+if __name__ == '__main__':
+	try:
+		VideoDownloader().run()
+	except KeyboardInterrupt:
+		print('Bye...')
+		sys.exit(-1)
