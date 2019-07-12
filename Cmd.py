@@ -6,6 +6,7 @@ Function:
 		--cntv: 中国网络电视台
 		--ted: TED演讲
 		--douyu: 斗鱼TV
+		--zhanqi: 战旗TV
 Author:
 	Charles
 微信公众号:
@@ -32,7 +33,7 @@ Function: 视频下载器 V2.0.0
 	当前路径下的videos文件夹内
 ************************************************************
 '''
-		self.RESOURCES = ['腾讯视频', '音悦台MV', 'CNTV中国网络电视台', 'TED演讲', '斗鱼TV']
+		self.RESOURCES = ['腾讯视频', '音悦台MV', 'CNTV中国网络电视台', 'TED演讲', '斗鱼TV', '战旗TV']
 		self.platform_now = None
 		self.platform_now_name = None
 		self.is_select_platform = False
@@ -73,6 +74,8 @@ Function: 视频下载器 V2.0.0
 				return ted.ted(), 'ted'
 			elif platform_idx == '5':
 				return douyu.douyu(), 'douyu'
+			elif platform_idx == '6':
+				return zhanqi.zhanqi(), 'zhanqi'
 			else:
 				print('<ERROR>--平台号输入有误, 请重新输入--<ERROR>')
 	'''处理用户输入'''

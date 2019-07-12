@@ -13,6 +13,7 @@ prepare
 - [x] [cntv](http://tv.cntv.cn/)
 - [x] [ted](https://www.ted.com/talks?language=zh-cn)
 - [x] [douyu](https://www.douyu.com/)
+- [x] [zhanqi](https://videos.zhanqi.tv/)
 
 # Usage
 #### Step1
@@ -38,6 +39,7 @@ yinyuetai: http://v.yinyuetai.com/video/324
 cntv: http://tv.cntv.cn/video/C10881/4ec8c6c1bdd941b0b11280769b036e8b
 ted: https://www.ted.com/talks/glenn_cantave_how_augmented_reality_is_changing_activism?language=zh-tw
 douyu: https://v.douyu.com/show/8KxjMdB3GQQvVLwb
+zhanqi: https://www.zhanqi.tv/v2/videos/767817.html
 ```
 
 # Environment

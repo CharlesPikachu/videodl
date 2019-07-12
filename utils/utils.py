@@ -222,6 +222,6 @@ class m3u8Parser():
 
 def downloadM3U8(video_url, savename, savepath='videos'):
 	checkFolder(savepath)
-	is_success = m3u8Parser().run(video_url, savename, savepath)
+	is_success = m3u8Parser().run(video_url=video_url, savename=savename, savepath=savepath)
 	return is_success
 # -------------------------------------------------------------------------------------------
