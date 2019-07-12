@@ -222,6 +222,10 @@ class m3u8Parser():
 
 def downloadM3U8(video_url, savename, savepath='videos'):
 	checkFolder(savepath)
-	is_success = m3u8Parser().run(video_url=video_url, savename=savename, savepath=savepath)
+	try:
+		is_success = m3u8Parser().run(video_url=video_url, savename=savename, savepath=savepath)
+	except:
+		os.system('ffmpeg.exe -i {} -c copy {}'.format('"%s"' % video_url, os.path.join(savepath, savename)))
+		is_success = True
 	return is_success
 # -------------------------------------------------------------------------------------------

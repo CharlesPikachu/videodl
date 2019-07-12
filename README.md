@@ -15,6 +15,7 @@ prepare
 - [x] [douyu](https://www.douyu.com/)
 - [x] [zhanqi](https://videos.zhanqi.tv/)
 - [x] [bilibili](https://www.bilibili.com/)
+- [x] [zhihu](https://www.zhihu.com/)
 
 # Usage
 #### Step1
@@ -42,6 +43,7 @@ ted: https://www.ted.com/talks/glenn_cantave_how_augmented_reality_is_changing_a
 douyu: https://v.douyu.com/show/8KxjMdB3GQQvVLwb
 zhanqi: https://www.zhanqi.tv/v2/videos/767817.html
 bilibili: https://www.bilibili.com/video/av6142859/?p=2
+zhihu: https://www.zhihu.com/question/21395276/answer/425130152
 ```
 
 # Environment
