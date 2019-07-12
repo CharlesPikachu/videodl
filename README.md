@@ -10,6 +10,7 @@ prepare
 # Support
 - [x] [tecent](https://v.qq.com/)
 - [x] [yinyuetai](http://www.yinyuetai.com)
+- [x] [cntv](http://tv.cntv.cn/)
 
 # Usage
 #### Step1
@@ -27,6 +28,12 @@ Install some dependencies:
 ```sh
 run cmd.py, for example:  
 "python cmd.py" or "python3 cmd.py"
+```
+#### Supplement: some example urls
+```sh
+tecent: https://v.qq.com/x/cover/7r83y1oca851nq6/g07185bhudr.html
+yinyuetai: http://v.yinyuetai.com/video/324
+cntv: http://tv.cntv.cn/video/C10881/4ec8c6c1bdd941b0b11280769b036e8b
 ```
 
 # Environment

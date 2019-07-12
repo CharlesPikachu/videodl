@@ -2,6 +2,8 @@
 Function:
 	视频下载器v2.0.0-cmd版, 目前支持的平台:
 		--tecent: 腾讯视频
+		--yinyuetai: 音悦台MV
+		--CNTV: 中国网络电视台
 Author:
 	Charles
 微信公众号:
@@ -28,7 +30,7 @@ Function: 视频下载器 V2.0.0
 	当前路径下的videos文件夹内
 ************************************************************
 '''
-		self.RESOURCES = ['腾讯视频', '音悦台MV']
+		self.RESOURCES = ['腾讯视频', '音悦台MV', 'CNTV中国网络电视台']
 		self.platform_now = None
 		self.platform_now_name = None
 		self.is_select_platform = False
@@ -60,6 +62,8 @@ Function: 视频下载器 V2.0.0
 				return tecent.tecent(), 'tecent'
 			elif platform_idx == '2':
 				return yinyuetai.yinyuetai(), 'yinyuetai'
+			elif platform_idx == '3':
+				return cntv.cntv(), 'cntv'
 			else:
 				print('<ERROR>--平台号输入有误, 请重新输入--<ERROR>')
 	'''处理用户输入'''
