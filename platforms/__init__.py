@@ -1,1 +1,1 @@
-__all__ = ['tecent', 'yinyuetai', 'cntv', 'ted']
+__all__ = ['tecent', 'yinyuetai', 'cntv', 'ted', 'douyu']

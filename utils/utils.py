@@ -9,9 +9,12 @@ Author:
 	代码仅供学习交流，不得用于商业/非法使用
 '''
 import os
+import sys
+import time
 import click
 import requests
 import subprocess
+import urllib.parse as urlparse
 from contextlib import closing
 
 
@@ -86,7 +89,7 @@ Input:
 	--savename: 视频保存名称
 	--max_retries: 下载失败最大重试次数
 Output:
-	--is_success: 下载是否成功的Bool值	
+	--is_success: 下载是否成功的Bool值
 '''
 # -------------------------------------------------------------------------------------------
 def downloadTMS(video_urls, savename, savepath='videos', max_retries=5, headers=None):
@@ -113,5 +116,112 @@ def downloadTMS(video_urls, savename, savepath='videos', max_retries=5, headers=
 			max_retries -= 1
 		else:
 			videos_dict[i] = savepath + '/temp_%d.%s' % (i, savename.split('.')[-1])
+	return is_success
+# -------------------------------------------------------------------------------------------
+
+
+'''
+Function:
+	m3u8视频下载
+Input:
+	--video_url: 视频地址
+	--savepath: 视频下载后的保存路径
+	--savename: 视频保存名称
+Output:
+	--is_success: 下载是否成功的Bool值	
+'''
+# -------------------------------------------------------------------------------------------
+class m3u8Parser():
+	def __init__(self, pool_size=50, max_retries=3, **kwargs):
+		self.pool_size = pool_size
+		self.max_retries = max_retries
+		self.session = self.__createSession()
+		self.downed = {}
+		self.fail_down = []
+		self.savepath = None
+		self.savename = None
+	'''外部调用'''
+	def run(self, video_url, savename, savepath):
+		self.savepath = savepath
+		self.savename = savename
+		res = self.session.get(video_url, timeout=60)
+		if res.ok:
+			content = res.content
+			if content:
+				content = content.decode()
+				ts_list = [urlparse.urljoin(video_url, line.strip()) for line in content.split('\n') if line and not line.startswith("#")]
+				self.num_ts = len(ts_list)
+				if ts_list:
+					ts_zip = zip(ts_list, [i for i in range(self.num_ts)])
+					self.__download(ts_zip)
+			print()
+			self.__mergeFile()
+			return True
+		else:
+			return False
+	'''下载传输流文件(全部)'''
+	def __download(self, ts_zip):
+		for ts_tuple in ts_zip:
+			self.__worker(ts_tuple)
+		if self.fail_down:
+			ts_list = self.fail_down
+			self.fail_down = []
+			self.__download(ts_list)
+		return True
+	'''下载传输流文件(单个)'''
+	def __worker(self, ts_tuple):
+		url = ts_tuple[0]
+		idx = ts_tuple[1]
+		max_retries = self.max_retries
+		while max_retries:
+			try:
+				res = self.session.get(url, timeout=30)
+				if res.ok:
+					filename = url.split('/')[-1].split('?')[0].replace('\\', '').replace('/', '')
+					with open(os.path.join(self.savepath, filename), 'wb') as f:
+						f.write(res.content)
+					self.downed[idx] = filename
+					self.__showProgressBar(len(self.downed), self.num_ts)
+					return True
+			except:
+				max_retries -= 1
+		self.fail_down.append((url, idx))
+		return False
+	'''合并下载的流文件'''
+	def __mergeFile(self):
+		idx = 0
+		outfile = ''
+		while idx < self.num_ts:
+			filename = self.downed.get(idx)
+			if filename:
+				infile = open(os.path.join(self.savepath, filename), 'rb')
+				if not outfile:
+					outfile = open(os.path.join(self.savepath, self.savename), 'wb')
+				outfile.write(infile.read())
+				infile.close()
+				os.remove(os.path.join(self.savepath, filename))
+				idx += 1
+			else:
+				time.sleep(1)
+		if outfile:
+			outfile.close()
+		return True
+	'''创建Session'''
+	def __createSession(self):
+		session = requests.Session()
+		adapter = requests.adapters.HTTPAdapter(pool_connections=self.pool_size, pool_maxsize=self.pool_size, max_retries=self.max_retries)
+		session.mount('https://', adapter)
+		session.mount('http://', adapter)
+		return session
+	'''简单实现进度条'''
+	def __showProgressBar(self, num, total):
+		rate_num = int((float(num) / float(total)) * 100)
+		progress_bar = '\rTS流文件下载进度: [%s%s]%d%%' % ('#'*(rate_num//2), ' '*(50-rate_num//2), rate_num)
+		sys.stdout.write(progress_bar)
+		sys.stdout.flush()
+
+def downloadM3U8(video_url, savename, savepath='videos'):
+	checkFolder(savepath)
+	is_success = m3u8Parser().run(video_url, savename, savepath)
 	return is_success
 # -------------------------------------------------------------------------------------------

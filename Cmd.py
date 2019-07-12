@@ -5,6 +5,7 @@ Function:
 		--yinyuetai: 音悦台MV
 		--cntv: 中国网络电视台
 		--ted: TED演讲
+		--douyu: 斗鱼TV
 Author:
 	Charles
 微信公众号:
@@ -31,10 +32,11 @@ Function: 视频下载器 V2.0.0
 	当前路径下的videos文件夹内
 ************************************************************
 '''
-		self.RESOURCES = ['腾讯视频', '音悦台MV', 'CNTV中国网络电视台', 'TED演讲']
+		self.RESOURCES = ['腾讯视频', '音悦台MV', 'CNTV中国网络电视台', 'TED演讲', '斗鱼TV']
 		self.platform_now = None
 		self.platform_now_name = None
 		self.is_select_platform = False
+		self.savepath = 'videos'
 	'''外部调用'''
 	def run(self):
 		self.platform_now, self.platform_now_name = self.__selectPlatform()
@@ -43,9 +45,11 @@ Function: 视频下载器 V2.0.0
 			print(self.INFO)
 			url = self.__input('[%s-INFO]: 请输入视频链接 --> ' % self.platform_now_name)
 			try:
-				res = self.__download(url, 'videos')
+				res = self.__download(url, self.savepath)
 				if not res:
 					raise RuntimeError('error')
+				else:
+					print('[%s-INFO]: 视频下载成功, 保存在%s文件夹下...' % (self.platform_now_name, self.savepath))
 			except:
 				print('<ERROR>--链接解析失败, 请确定输入的链接与平台对应--<ERROR>')
 	'''下载视频'''
@@ -67,6 +71,8 @@ Function: 视频下载器 V2.0.0
 				return cntv.cntv(), 'cntv'
 			elif platform_idx == '4':
 				return ted.ted(), 'ted'
+			elif platform_idx == '5':
+				return douyu.douyu(), 'douyu'
 			else:
 				print('<ERROR>--平台号输入有误, 请重新输入--<ERROR>')
 	'''处理用户输入'''
