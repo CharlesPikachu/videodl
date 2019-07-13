@@ -4,6 +4,11 @@ Video Downloader
 You can star this repository to keep track of the project if it's helpful for you, thank you for your support.
 ```
 
+# Statement
+```sh
+This repository is created just for learning python(Commercial prohibition).
+```
+
 # Introduction in Chinese
 https://mp.weixin.qq.com/s/IaIZSOPW94aOXUzwqrAc8g
 
