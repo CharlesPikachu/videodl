@@ -5,7 +5,7 @@ You can star this repository to keep track of the project if it's helpful for yo
 ```
 
 # Introduction in Chinese
-prepare
+https://mp.weixin.qq.com/s/IaIZSOPW94aOXUzwqrAc8g
 
 # Support
 - [x] [tecent](https://v.qq.com/)
