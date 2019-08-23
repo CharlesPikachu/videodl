@@ -1,6 +1,6 @@
 '''
 Function:
-	视频下载器v2.0.0-cmd版, 目前支持的平台:
+	视频下载器v2.0.1-cmd版, 目前支持的平台:
 		--tecent: 腾讯视频
 		--yinyuetai: 音悦台MV
 		--cntv: 中国网络电视台
@@ -27,7 +27,7 @@ class VideoDownloader():
 		self.INFO = '''************************************************************
 Author: Charles
 微信公众号: Charles的皮卡丘
-Function: 视频下载器 V2.0.0
+Function: 视频下载器 V2.0.1
 操作帮助:
 	输入r: 返回主菜单(即重新选择平台号)
 	输入q: 退出程序

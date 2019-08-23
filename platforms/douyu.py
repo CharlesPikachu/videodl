@@ -23,6 +23,7 @@ class douyu():
 	def __init__(self):
 		self.headers = {
 						'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36',
+						'cookie': 'dy_did=f4b3c1c49228dc8806fb2dd600081501;'
 						}
 		self.info_url = 'http://vmobile.douyu.com/video/getInfo?vid={}'
 	'''外部调用'''
@@ -45,7 +46,7 @@ class douyu():
 		vid = url.split('/')[-1]
 		res = requests.get(url, headers=self.headers)
 		title = re.findall(r'<h1>(.+?)</h1>', res.text)[0]
-		if title is None:
+		if not title:
 			title = vid
 		res = requests.get(self.info_url.format(vid), headers=self.headers)
 		res_json = json.loads(res.text)

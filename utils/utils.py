@@ -93,6 +93,8 @@ Output:
 '''
 # -------------------------------------------------------------------------------------------
 def downloadTMS(video_urls, savename, savepath='videos', max_retries=5, headers=None):
+	if not video_urls:
+		return False
 	checkFolder(savepath)
 	if headers is None:
 		headers = {
@@ -221,6 +223,8 @@ class m3u8Parser():
 		sys.stdout.flush()
 
 def downloadM3U8(video_url, savename, savepath='videos'):
+	if not video_url:
+		return False
 	checkFolder(savepath)
 	try:
 		is_success = m3u8Parser().run(video_url=video_url, savename=savename, savepath=savepath)
