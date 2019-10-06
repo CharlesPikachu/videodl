@@ -55,7 +55,7 @@ Input:
 	--outpath: 合并后的视频保存路径
 	--outname: 合并后的视频文件名
 Output:
-	--is_success: 表示合并是否成功的Bool值	
+	--is_success: 表示合并是否成功的Bool值
 '''
 # -------------------------------------------------------------------------------------------
 def mergeVideos(videos_dict, outpath, outname):
@@ -229,7 +229,7 @@ def downloadM3U8(video_url, savename, savepath='videos'):
 	try:
 		is_success = m3u8Parser().run(video_url=video_url, savename=savename, savepath=savepath)
 	except:
-		os.system('ffmpeg.exe -i {} -c copy {}'.format('"%s"' % video_url, os.path.join(savepath, savename)))
+		os.system('ffmpeg -i {} -c copy {}'.format('"%s"' % video_url, os.path.join(savepath, savename)))
 		is_success = True
 	return is_success
 # -------------------------------------------------------------------------------------------

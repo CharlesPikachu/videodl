@@ -18,7 +18,7 @@ Author:
 '''
 import sys
 from platforms import *
-sys.path.append('ffmpeg')
+import ffmpeg
 
 
 '''视频下载器'''
