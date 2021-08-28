@@ -18,7 +18,7 @@ Finally, if there are any infringements, please contact me to delete this reposi
 # Support List
 | Websites                          | Introduction                                               | Code                                         |  in Chinese   |
 | :----:                            | :----:                                                     | :----:                                       |  :----:       |
-| [cntv](https://v.cctv.com/)       | [click]()                                                  | [click](./videodl/modules/sources/cntv.py)   |  央视网       |
+| [cntv](https://v.cctv.com/)       | [click](https://mp.weixin.qq.com/s/xjl7SLEOlEbYu3d8RHZaGQ) | [click](./videodl/modules/sources/cntv.py)   |  央视网       |
 | [douyin](https://www.douyin.com/) | [click](https://mp.weixin.qq.com/s/7N4pt1kLnVEJlve75zpdwA) | [click](./videodl/modules/sources/douyin.py) |  抖音         |
 
 # Install
