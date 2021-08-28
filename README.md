@@ -18,7 +18,8 @@ Finally, if there are any infringements, please contact me to delete this reposi
 # Support List
 | Websites                          | Introduction                                               | Code                                         |  in Chinese   |
 | :----:                            | :----:                                                     | :----:                                       |  :----:       |
-| [douyin](https://www.douyin.com/) | [click](https://mp.weixin.qq.com/s/7N4pt1kLnVEJlve75zpdwA) | [click](./videodl/modules/sources/douyin.py) |  抖音          |
+| [cntv](https://v.cctv.com/)       | [click]()                                                  | [click](./videodl/modules/sources/cntv.py)   |  央视网       |
+| [douyin](https://www.douyin.com/) | [click](https://mp.weixin.qq.com/s/7N4pt1kLnVEJlve75zpdwA) | [click](./videodl/modules/sources/douyin.py) |  抖音         |
 
 # Install
 #### Pip install
@@ -33,6 +34,14 @@ Step2: cd videodl -> run "python setup.py install"
 (2) Online
 run "pip install git+https://github.com/CharlesPikachu/videodl.git@master"
 ```
+
+# Quick Start
+```python
+preparing
+```
+
+# Screenshot
+preparing
 
 # More
 #### WeChat Official Accounts
