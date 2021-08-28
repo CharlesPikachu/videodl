@@ -1,0 +1,5 @@
+{
+    "logfilepath": "videodl.log",
+    "proxies": {},
+    "savedir": "downloaded"
+}
