@@ -3,6 +3,8 @@
 </div>
 <br />
 
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/videofetch)](https://pypi.org/project/videofetch/)
+[![PyPI](https://img.shields.io/pypi/v/videofetch)](https://pypi.org/project/videofetch)
 [![license](https://img.shields.io/github/license/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/blob/master/LICENSE)
 [![issue resolution](https://isitmaintained.com/badge/resolution/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/issues)
 [![open issues](https://isitmaintained.com/badge/open/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/issues)
@@ -38,10 +40,15 @@ Finally, if there are any infringements, please contact me to delete this reposi
 
 
 # Install
+
+#### Preparation
+- [ffmpeg](https://ffmpeg.org/): You should set ffmpeg in environment variable.
+
 #### Pip install
 ```sh
-run "pip install videodl"
+run "pip install videofetch"
 ```
+
 #### Source code install
 ```sh
 (1) Offline

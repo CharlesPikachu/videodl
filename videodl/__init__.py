@@ -1,5 +1,5 @@
 '''title'''
-__title__ = 'videodl'
+__title__ = 'videofetch'
 '''description'''
 __description__ = 'A lightweight video downloader written by pure python'
 '''url'''
