@@ -1,13 +1,20 @@
-# Video-Downloader
+<div align="center">
+  <img src="./docs/logo.png" width="600"/>
+</div>
+<br />
+
+[![license](https://img.shields.io/github/license/SegmentationBLWX/sssegmentation.svg)](https://github.com/SegmentationBLWX/sssegmentation/blob/master/LICENSE)
+[![issue resolution](https://isitmaintained.com/badge/resolution/SegmentationBLWX/sssegmentation.svg)](https://github.com/SegmentationBLWX/sssegmentation/issues)
+[![open issues](https://isitmaintained.com/badge/open/SegmentationBLWX/sssegmentation.svg)](https://github.com/SegmentationBLWX/sssegmentation/issues)
+
+Documents: still on the way
+
+
+# Videodl
 ```
 A lightweight video downloader written by pure python.
 You can star this repository to keep track of the project if it's helpful for you, thank you for your support.
 ```
-
-
-# Documents
-#### In Chinese
-still on the way
 
 
 # Statement
@@ -45,12 +52,20 @@ run "pip install git+https://github.com/CharlesPikachu/videodl.git@master"
 
 # Quick Start
 ```python
-preparing
+from videodl import videodl
+
+config = {
+    "logfilepath": "videodl.log",
+    "proxies": {},
+    "savedir": "downloaded"
+}
+dl_client = videodl.videodl(config=config)
+dl_client.run()
 ```
 
 
 # Screenshot
-preparing
+![img](./docs/screenshot.jpg)
 
 
 # More
