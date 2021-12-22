@@ -6,9 +6,11 @@ Author:
 微信公众号:
     Charles的皮卡丘
 '''
+import os
 import click
 import warnings
 import requests
+import subprocess
 from .misc import *
 warnings.filterwarnings('ignore')
 
@@ -21,7 +23,12 @@ class Downloader():
         self.__setheaders(videoinfo['source'])
     '''外部调用'''
     def start(self):
-        videoinfo, session, headers = self.videoinfo, self.session, self.headers
+        if self.videoinfo['ext'] in ['mp4']: return self.defaultdownload()
+        elif self.videoinfo['ext'] in ['m3u8']: return self.m3u8download()
+        else: raise NotImplementedError('Unsupport download file type %s...' % self.videoinfo['ext'])
+    '''下载mp4等文件文件'''
+    def defaultdownload(self):
+        videoinfo, session, headers = self.videoinfo.copy(), self.session, self.headers.copy()
         checkDir(videoinfo['savedir'])
         try:
             is_success = False
@@ -39,12 +46,22 @@ class Downloader():
         except:
             is_success = False
         return is_success
+    '''下载m3u8文件'''
+    def m3u8download(self):
+        videoinfo = self.videoinfo.copy()
+        checkDir(videoinfo['savedir'])
+        download_url = videoinfo['download_url']
+        savepath = os.path.join(videoinfo['savedir'], videoinfo['savename']+'.mp4')
+        subprocess.Popen(f'ffmpeg -i "{download_url}" {savepath}')
+        return True
     '''设置请求头'''
     def __setheaders(self, source):
         self.douyin_headers = {
             'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Mobile Safari/537.36 Edg/87.0.664.66',
         }
-        self.cntv_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36',
-        }
-        self.headers = getattr(self, f'{source}_headers')
+        if hasattr(self, f'{source}_headers'):
+            self.headers = getattr(self, f'{source}_headers')
+        else:
+            self.headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36',
+            }

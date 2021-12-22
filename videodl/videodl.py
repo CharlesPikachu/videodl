@@ -61,7 +61,9 @@ class videodl():
     def initializeAllSources(self):
         supported_sources = {
             'cntv': cntv,
+            'mgtv': mgtv,
             'douyin': douyin,
+            'haokan': haokan,
         }
         return supported_sources
     '''处理用户输入'''

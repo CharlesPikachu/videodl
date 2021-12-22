@@ -1,29 +1,36 @@
 # Video-Downloader
-```sh
+```
 A lightweight video downloader written by pure python.
 You can star this repository to keep track of the project if it's helpful for you, thank you for your support.
 ```
 
+
 # Documents
+#### In Chinese
 still on the way
 
+
 # Statement
-```sh
+```
 This repository is created just for learning python(Commercial prohibition).
 All the apis used in this repository are from public network. So, if you want to download the paid videos, 
 please open a paid member on corresponding video platform by yourself (respect the video copyright please).
 Finally, if there are any infringements, please contact me to delete this repository.
 ```
 
+
 # Support List
-| Websites                          | Introduction                                               | Code                                         |  in Chinese   |
-| :----:                            | :----:                                                     | :----:                                       |  :----:       |
-| [cntv](https://v.cctv.com/)       | [click](https://mp.weixin.qq.com/s/xjl7SLEOlEbYu3d8RHZaGQ) | [click](./videodl/modules/sources/cntv.py)   |  央视网       |
-| [douyin](https://www.douyin.com/) | [click](https://mp.weixin.qq.com/s/7N4pt1kLnVEJlve75zpdwA) | [click](./videodl/modules/sources/douyin.py) |  抖音         |
+| Websites                            | Introduction                                               | Code                                         |  in Chinese   |
+| :----:                              | :----:                                                     | :----:                                       |  :----:       |
+| [cntv](https://v.cctv.com/)         | [click](https://mp.weixin.qq.com/s/xjl7SLEOlEbYu3d8RHZaGQ) | [click](./videodl/modules/sources/cntv.py)   |  央视网       |
+| [mgtv](https://www.mgtv.com/)       | [click]()                                                  | [click](./videodl/modules/sources/mgtv.py)   |  芒果TV       |
+| [douyin](https://www.douyin.com/)   | [click](https://mp.weixin.qq.com/s/7N4pt1kLnVEJlve75zpdwA) | [click](./videodl/modules/sources/douyin.py) |  抖音         |
+| [haokan](https://haokan.baidu.com/) | [click]()                                                  | [click](./videodl/modules/sources/haokan.py) |  好看视频     |
+
 
 # Install
 #### Pip install
-```
+```sh
 run "pip install videodl"
 ```
 #### Source code install
@@ -35,13 +42,16 @@ Step2: cd videodl -> run "python setup.py install"
 run "pip install git+https://github.com/CharlesPikachu/videodl.git@master"
 ```
 
+
 # Quick Start
 ```python
 preparing
 ```
 
+
 # Screenshot
 preparing
+
 
 # More
 #### WeChat Official Accounts
