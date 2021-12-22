@@ -62,6 +62,7 @@ class videodl():
         supported_sources = {
             'cntv': cntv,
             'mgtv': mgtv,
+            'migu': migu,
             'douyin': douyin,
             'haokan': haokan,
         }

@@ -65,7 +65,6 @@ class mgtv(Base):
             if response.json().get('info', ''): 
                 download_url = response.json()['info']
                 break
-        print(download_url)
         videoinfo = {
             'source': self.source,
             'download_url': download_url,
