@@ -6,8 +6,6 @@ Author:
 微信公众号:
     Charles的皮卡丘
 '''
-import re
-import json
 import time
 import uuid
 import base64

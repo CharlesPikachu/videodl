@@ -63,6 +63,7 @@ class videodl():
             'cntv': cntv,
             'mgtv': mgtv,
             'migu': migu,
+            'acfun': acfun,
             'douyin': douyin,
             'haokan': haokan,
         }

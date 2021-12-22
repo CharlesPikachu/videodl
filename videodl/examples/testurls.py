@@ -3,3 +3,4 @@ cntv_url = 'https://v.cctv.com/2021/06/05/VIDEwn0n7VRJokIL7rBi2ink210605.shtml?s
 haokan_url = 'https://haokan.baidu.com/v?vid=3167668612806495095&tab=recommend'
 mgtv_url = 'https://www.mgtv.com/l/100039685/14883791.html?fpa=26765&fpos=3&lastp=ch_home'
 migu_url = 'https://www.miguvideo.com/mgs/website/prd/detail.html?cid=720009671'
+acfun_url = 'https://www.acfun.cn/v/ac32799343'
