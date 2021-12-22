@@ -32,11 +32,11 @@ Finally, if there are any infringements, please contact me to delete this reposi
 | Websites                                | Introduction                                               | Code                                         |  in Chinese   |
 | :----:                                  | :----:                                                     | :----:                                       |  :----:       |
 | [cntv](https://v.cctv.com/)             | [click](https://mp.weixin.qq.com/s/xjl7SLEOlEbYu3d8RHZaGQ) | [click](./videodl/modules/sources/cntv.py)   |  央视网       |
-| [mgtv](https://www.mgtv.com/)           | [click]()                                                  | [click](./videodl/modules/sources/mgtv.py)   |  芒果TV       |
-| [migu](https://www.migu.cn/video.html)  | [click]()                                                  | [click](./videodl/modules/sources/migu.py)   |  咪咕视频     |
-| [acfun](https://www.acfun.cn/)          | [click]()                                                  | [click](./videodl/modules/sources/acfun.py)  |  AcFun视频    |
+| [mgtv](https://www.mgtv.com/)           | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | [click](./videodl/modules/sources/mgtv.py)   |  芒果TV       |
+| [migu](https://www.migu.cn/video.html)  | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | [click](./videodl/modules/sources/migu.py)   |  咪咕视频     |
+| [acfun](https://www.acfun.cn/)          | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | [click](./videodl/modules/sources/acfun.py)  |  AcFun视频    |
 | [douyin](https://www.douyin.com/)       | [click](https://mp.weixin.qq.com/s/7N4pt1kLnVEJlve75zpdwA) | [click](./videodl/modules/sources/douyin.py) |  抖音         |
-| [haokan](https://haokan.baidu.com/)     | [click]()                                                  | [click](./videodl/modules/sources/haokan.py) |  好看视频     |
+| [haokan](https://haokan.baidu.com/)     | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | [click](./videodl/modules/sources/haokan.py) |  好看视频     |
 
 
 # Install
