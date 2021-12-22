@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - name: "Zhenchao Jin"
+title: "videodl: A lightweight video downloader written by pure python."
+date-released: 2021-12-22
+url: "https://github.com/CharlesPikachu/videodl"
+license: MIT License
