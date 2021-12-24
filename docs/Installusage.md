@@ -48,5 +48,5 @@ dl_client.run()
 ```
 logfilepath: 日志文件保存路径
 proxies: 设置代理, 支持的代理格式参见https://requests.readthedocs.io/en/master/user/advanced/#proxies
-savedir: 下载的音乐保存路径  
+savedir: 下载的视频保存路径  
 ```
