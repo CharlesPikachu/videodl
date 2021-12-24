@@ -3,13 +3,14 @@
 </div>
 <br />
 
+[![docs](https://img.shields.io/badge/docs-latest-blue)](https://videofetch.readthedocs.io/)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/videofetch)](https://pypi.org/project/videofetch/)
 [![PyPI](https://img.shields.io/pypi/v/videofetch)](https://pypi.org/project/videofetch)
 [![license](https://img.shields.io/github/license/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/blob/master/LICENSE)
 [![issue resolution](https://isitmaintained.com/badge/resolution/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/issues)
 [![open issues](https://isitmaintained.com/badge/open/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/issues)
 
-Documents: still on the way
+Documents: https://videofetch.readthedocs.io/
 
 
 # Videodl
