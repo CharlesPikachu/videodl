@@ -1,6 +1,12 @@
 # 安装使用
 
 
+## 环境配置
+- 操作系统: Linux or macOS or Windows
+- Python版本: Python3.6+
+- ffmpeg: 部分视频为m3u8格式，需要借助[ffmpeg](https://ffmpeg.org/)解码，因此需要保证电脑中存在ffmpeg并在环境变量中
+
+
 ## PIP安装
 在终端运行如下命令即可(请保证python在环境变量中):
 ```sh

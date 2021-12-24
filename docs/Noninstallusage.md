@@ -1,6 +1,12 @@
 # 直接使用
 
 
+## 环境配置
+- 操作系统: Linux or macOS or Windows
+- Python版本: Python3.6+
+- ffmpeg: 部分视频为m3u8格式，需要借助[ffmpeg](https://ffmpeg.org/)解码，因此需要保证电脑中存在ffmpeg并在环境变量中
+
+
 ## 项目下载
 运行如下命令下载项目:
 ```sh
