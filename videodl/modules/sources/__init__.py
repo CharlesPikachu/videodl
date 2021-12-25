@@ -5,3 +5,4 @@ from .migu import migu
 from .acfun import acfun
 from .douyin import douyin
 from .haokan import haokan
+from .bilibili import bilibili

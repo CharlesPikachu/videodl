@@ -59,6 +59,10 @@ class Downloader():
         self.douyin_headers = {
             'User-Agent': 'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Mobile Safari/537.36 Edg/87.0.664.66',
         }
+        self.bilibili_headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
+            'Referer': 'http://player.bilibili.com/',
+        }
         if hasattr(self, f'{source}_headers'):
             self.headers = getattr(self, f'{source}_headers')
         else:
