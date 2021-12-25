@@ -65,6 +65,7 @@ class videodl():
             'mgtv': mgtv,
             'migu': migu,
             'acfun': acfun,
+            'zhihu': zhihu,
             'douyin': douyin,
             'haokan': haokan,
             'bilibili': bilibili,

@@ -5,3 +5,4 @@ mgtv_url = 'https://www.mgtv.com/l/100039685/14883791.html?fpa=26765&fpos=3&last
 migu_url = 'https://www.miguvideo.com/mgs/website/prd/detail.html?cid=720009671'
 acfun_url = 'https://www.acfun.cn/v/ac32799343'
 bilibili_url = 'https://www.bilibili.com/video/BV16Z4y1X784?spm_id_from=333.851.b_7265636f6d6d656e64.2'
+zhihu_url = 'https://www.zhihu.com/question/38557752/answer/2280634747'

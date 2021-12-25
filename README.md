@@ -40,6 +40,7 @@ Finally, if there are any infringements, please contact me to delete this reposi
 | [douyin](https://www.douyin.com/)       | [click](https://mp.weixin.qq.com/s/7N4pt1kLnVEJlve75zpdwA) | [click](./videodl/modules/sources/douyin.py)   |  抖音         |
 | [haokan](https://haokan.baidu.com/)     | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | [click](./videodl/modules/sources/haokan.py)   |  好看视频     |
 | [bilibili](https://www.bilibili.com/)   | [click]()                                                  | [click](./videodl/modules/sources/bilibili.py) |  B站视频      |
+| [zhihu](https://www.zhihu.com/)         | [click]()                                                  | [click](./videodl/modules/sources/zhihu.py)    |  知乎视频     |
 
 
 # Install

@@ -7,7 +7,6 @@ Author:
     Charles的皮卡丘
 '''
 import re
-import json
 import time
 from .base import Base
 from ..utils.misc import *

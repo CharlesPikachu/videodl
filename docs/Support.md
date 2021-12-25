@@ -9,3 +9,4 @@
 | [抖音](https://www.douyin.com/)            | [click](https://mp.weixin.qq.com/s/7N4pt1kLnVEJlve75zpdwA) | ✓               |
 | [好看视频](https://haokan.baidu.com/)      | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | ✓               |
 | [B站视频](https://www.bilibili.com/)       | [click]()                                                  | ✓               |
+| [知乎视频](https://www.zhihu.com/)         | [click]()                                                  | ✓               |
