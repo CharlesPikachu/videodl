@@ -14,9 +14,9 @@ from ..utils.misc import *
 
 
 '''AcFun视频下载器类'''
-class acfun(Base):
+class AcFun(Base):
     def __init__(self, config, logger_handle, **kwargs):
-        super(acfun, self).__init__(config, logger_handle, **kwargs)
+        super(AcFun, self).__init__(config, logger_handle, **kwargs)
         self.source = 'acfun'
         self.__initialize()
     '''视频解析'''

@@ -12,9 +12,9 @@ from ..utils.misc import *
 
 
 '''咪咕视频下载器类'''
-class migu(Base):
+class Migu(Base):
     def __init__(self, config, logger_handle, **kwargs):
-        super(migu, self).__init__(config, logger_handle, **kwargs)
+        super(Migu, self).__init__(config, logger_handle, **kwargs)
         self.source = 'migu'
         self.__initialize()
     '''视频解析'''

@@ -13,9 +13,9 @@ from ..utils.misc import *
 
 
 '''央视网视频下载器类'''
-class cntv(Base):
+class CNTV(Base):
     def __init__(self, config, logger_handle, **kwargs):
-        super(cntv, self).__init__(config, logger_handle, **kwargs)
+        super(CNTV, self).__init__(config, logger_handle, **kwargs)
         self.source = 'cntv'
         self.__initialize()
     '''视频解析'''

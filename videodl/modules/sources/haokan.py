@@ -14,9 +14,9 @@ from ..utils.misc import *
 
 
 '''好看视频下载器类'''
-class haokan(Base):
+class Haokan(Base):
     def __init__(self, config, logger_handle, **kwargs):
-        super(haokan, self).__init__(config, logger_handle, **kwargs)
+        super(Haokan, self).__init__(config, logger_handle, **kwargs)
         self.source = 'haokan'
         self.__initialize()
     '''视频解析'''

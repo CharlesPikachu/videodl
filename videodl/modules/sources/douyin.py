@@ -16,9 +16,9 @@ from ..utils.misc import *
 
 
 '''抖音视频下载器类'''
-class douyin(Base):
+class Douyin(Base):
     def __init__(self, config, logger_handle, **kwargs):
-        super(douyin, self).__init__(config, logger_handle, **kwargs)
+        super(Douyin, self).__init__(config, logger_handle, **kwargs)
         self.source = 'douyin'
         self.__initialize()
     '''视频解析'''

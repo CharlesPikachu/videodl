@@ -13,9 +13,9 @@ from ..utils.misc import *
 
 
 '''B站视频下载器类'''
-class bilibili(Base):
+class Bilibili(Base):
     def __init__(self, config, logger_handle, **kwargs):
-        super(bilibili, self).__init__(config, logger_handle, **kwargs)
+        super(Bilibili, self).__init__(config, logger_handle, **kwargs)
         self.source = 'bilibili'
         self.__initialize()
     '''视频解析'''

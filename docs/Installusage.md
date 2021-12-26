@@ -4,7 +4,8 @@
 ## 环境配置
 - 操作系统: Linux or macOS or Windows
 - Python版本: Python3.6+
-- ffmpeg: 部分视频为m3u8格式，需要借助[ffmpeg](https://ffmpeg.org/)解码，因此需要保证电脑中存在ffmpeg并在环境变量中
+- ffmpeg: 部分视频为m3u8格式, 需要借助[ffmpeg](https://ffmpeg.org/)解码, 因此需要保证电脑中存在ffmpeg并在环境变量中。
+- Nodejs: 部分视频网站(例如西瓜视频)里的信息需要依赖js来进行解码, 因此你需要在电脑上安装[nodejs](https://nodejs.org/en/)来正常下载这些网站上的视频。
 
 
 ## PIP安装

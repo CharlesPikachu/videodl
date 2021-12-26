@@ -14,9 +14,9 @@ from ..utils.misc import *
 
 
 '''知乎视频下载器类'''
-class zhihu(Base):
+class Zhihu(Base):
     def __init__(self, config, logger_handle, **kwargs):
-        super(zhihu, self).__init__(config, logger_handle, **kwargs)
+        super(Zhihu, self).__init__(config, logger_handle, **kwargs)
         self.source = 'zhihu'
         self.__initialize()
     '''视频解析'''

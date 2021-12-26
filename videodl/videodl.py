@@ -61,14 +61,15 @@ class videodl():
     '''初始化所有支持的搜索/下载源'''
     def initializeAllSources(self):
         supported_sources = {
-            'cntv': cntv,
-            'mgtv': mgtv,
-            'migu': migu,
-            'acfun': acfun,
-            'zhihu': zhihu,
-            'douyin': douyin,
-            'haokan': haokan,
-            'bilibili': bilibili,
+            'cntv': CNTV,
+            'mgtv': MGTV,
+            'migu': Migu,
+            'acfun': AcFun,
+            'zhihu': Zhihu,
+            'xigua': Xigua,
+            'douyin': Douyin,
+            'haokan': Haokan,
+            'bilibili': Bilibili,
         }
         return supported_sources
     '''处理用户输入'''

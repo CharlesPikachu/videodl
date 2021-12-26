@@ -14,9 +14,9 @@ from ..utils.misc import *
 
 
 '''芒果TV下载器类'''
-class mgtv(Base):
+class MGTV(Base):
     def __init__(self, config, logger_handle, **kwargs):
-        super(mgtv, self).__init__(config, logger_handle, **kwargs)
+        super(MGTV, self).__init__(config, logger_handle, **kwargs)
         self.source = 'mgtv'
         self.__initialize()
     '''视频解析'''
