@@ -11,3 +11,4 @@
 | [B站视频](https://www.bilibili.com/)            | [click]()                                                  | ✓               |
 | [知乎视频](https://www.zhihu.com/)              | [click]()                                                  | ✓               |
 | [西瓜视频](https://www.ixigua.com/?wid_try=1)   | [click]()                                                  | ✓               |
+| [爱奇艺视频](https://www.iqiyi.com/)            | [click]()                                                  | ✓               |

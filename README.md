@@ -42,6 +42,7 @@ Finally, if there are any infringements, please contact me to delete this reposi
 | [bilibili](https://www.bilibili.com/)      | [click]()                                                  | [click](./videodl/modules/sources/bilibili.py) |  B站视频      |
 | [zhihu](https://www.zhihu.com/)            | [click]()                                                  | [click](./videodl/modules/sources/zhihu.py)    |  知乎视频     |
 | [xigua](https://www.ixigua.com/?wid_try=1) | [click]()                                                  | [click](./videodl/modules/sources/xigua.py)    |  西瓜视频     |
+| [iqiyi](https://www.iqiyi.com/)            | [click]()                                                  | [click](./videodl/modules/sources/iqiyi.py)    |  爱奇艺视频   |
 
 
 # Install

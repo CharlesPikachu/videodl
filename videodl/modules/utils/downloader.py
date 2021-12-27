@@ -7,7 +7,9 @@ Author:
     Charles的皮卡丘
 '''
 import os
+import time
 import click
+import shutil
 import warnings
 import requests
 import subprocess
@@ -23,9 +25,15 @@ class Downloader():
         self.__setheaders(videoinfo['source'])
     '''外部调用'''
     def start(self):
-        if self.videoinfo['ext'] in ['mp4']: return self.defaultdownload()
-        elif self.videoinfo['ext'] in ['m3u8']: return self.m3u8download()
-        else: raise NotImplementedError('Unsupport download file type %s...' % self.videoinfo['ext'])
+        if self.videoinfo['ext'] in ['mp4']: 
+            return self.defaultdownload()
+        elif self.videoinfo['ext'] in ['m3u8']: 
+            if isinstance(self.videoinfo['download_url'], list):
+                return self.m3u8download('requests')
+            else:
+                return self.m3u8download('ffmpeg')
+        else: 
+            raise NotImplementedError('Unsupport download file type %s...' % self.videoinfo['ext'])
     '''下载mp4等文件文件'''
     def defaultdownload(self):
         videoinfo, session, headers = self.videoinfo.copy(), self.session, self.headers.copy()
@@ -47,13 +55,35 @@ class Downloader():
             is_success = False
         return is_success
     '''下载m3u8文件'''
-    def m3u8download(self):
+    def m3u8download(self, mode='ffmpeg'):
+        assert mode in ['ffmpeg', 'requests']
         videoinfo = self.videoinfo.copy()
         checkDir(videoinfo['savedir'])
-        download_url = videoinfo['download_url']
         savepath = os.path.join(videoinfo['savedir'], videoinfo['savename']+'.mp4')
-        subprocess.Popen(f'ffmpeg -i "{download_url}" {savepath}')
-        return True
+        if mode == 'ffmpeg':
+            download_url = videoinfo['download_url']
+            p = subprocess.Popen(f'ffmpeg -i "{download_url}" {savepath}')
+            while True:
+                if subprocess.Popen.poll(p) is not None: 
+                    return True
+        else:
+            tmp_dir = f'tmp_{int(time.time())}'
+            os.mkdir(tmp_dir)
+            fp = open(f'{tmp_dir}/filelist.txt', 'w')
+            for idx, url in enumerate(videoinfo['download_url']):
+                self.videoinfo['download_url'] = url
+                self.videoinfo['savedir'] = tmp_dir
+                self.videoinfo['savename'] = f'{idx}'
+                self.videoinfo['ext'] = self.videoinfo['split_ext']
+                self.defaultdownload()
+                fp.write(f'file {idx}.{self.videoinfo["ext"]}\n')
+            fp.close()
+            self.videoinfo = videoinfo
+            p = subprocess.Popen(f'ffmpeg -f concat -safe 0 -i {tmp_dir}/filelist.txt -y {savepath}')
+            while True:
+                if subprocess.Popen.poll(p) is not None: 
+                    shutil.rmtree(tmp_dir)
+                    return True
     '''设置请求头'''
     def __setheaders(self, source):
         self.douyin_headers = {

@@ -67,6 +67,7 @@ class videodl():
             'acfun': AcFun,
             'zhihu': Zhihu,
             'xigua': Xigua,
+            'iqiyi': Iqiyi,
             'douyin': Douyin,
             'haokan': Haokan,
             'bilibili': Bilibili,
