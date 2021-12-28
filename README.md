@@ -89,6 +89,7 @@ dl_client.run()
 - [DecryptLogin](https://github.com/CharlesPikachu/DecryptLogin): APIs for loginning some websites by using requests.
 - [Musicdl](https://github.com/CharlesPikachu/musicdl): A lightweight music downloader written by pure python.
 - [Pytools](https://github.com/CharlesPikachu/pytools): Some useful tools written by pure python.
+- [PikachuWeChat](https://github.com/CharlesPikachu/pikachuwechat): Play WeChat with itchat-uos.
 
 
 # More
