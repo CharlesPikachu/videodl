@@ -28,7 +28,7 @@ pip install git+https://github.com/CharlesPikachu/videodl.git@master
 ```sh
 git clone https://github.com/CharlesPikachu/videodl.git
 ```
-接着, 切到musicdl目录下:
+接着, 切到videodl目录下:
 ```sh
 cd videodl
 ```
