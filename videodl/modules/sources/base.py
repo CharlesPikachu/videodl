@@ -25,7 +25,7 @@ class Base():
     def download(self, videoinfos):
         for videoinfo in videoinfos:
             self.logger_handle.info('正在从%s下载 ——> %s...' % (self.source, videoinfo['savename']))
-            task = Downloader(videoinfo, self.session)
+            task = Downloader(videoinfo.copy(), self.session)
             if task.start():
                 self.logger_handle.info('成功从%s下载到了 ——> %s...' % (self.source, videoinfo['savename']))
             else:
