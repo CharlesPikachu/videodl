@@ -7,7 +7,7 @@
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/videofetch)](https://pypi.org/project/videofetch/)
 [![PyPI](https://img.shields.io/pypi/v/videofetch)](https://pypi.org/project/videofetch)
 [![license](https://img.shields.io/github/license/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/blob/master/LICENSE)
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/videofetch?style=flat-square)](https://pypi.org/project/videofetch/)
+[![PyPI - Downloads](https://pepy.tech/badge/videofetch)](https://pypi.org/project/videofetch/)
 [![issue resolution](https://isitmaintained.com/badge/resolution/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/issues)
 [![open issues](https://isitmaintained.com/badge/open/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/issues)
 
@@ -88,6 +88,7 @@ dl_client.run()
 - [Games](https://github.com/CharlesPikachu/Games): Create interesting games by pure python.
 - [DecryptLogin](https://github.com/CharlesPikachu/DecryptLogin): APIs for loginning some websites by using requests.
 - [Musicdl](https://github.com/CharlesPikachu/musicdl): A lightweight music downloader written by pure python.
+- [Videodl](https://github.com/CharlesPikachu/videodl): A lightweight video downloader written by pure python.
 - [Pytools](https://github.com/CharlesPikachu/pytools): Some useful tools written by pure python.
 - [PikachuWeChat](https://github.com/CharlesPikachu/pikachuwechat): Play WeChat with itchat-uos.
 

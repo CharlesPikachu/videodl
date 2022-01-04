@@ -26,7 +26,10 @@ class Downloader():
     '''外部调用'''
     def start(self):
         if self.videoinfo['ext'] in ['mp4']: 
-            return self.defaultdownload()
+            if isinstance(self.videoinfo['download_url'], list):
+                return self.defaultmultivideopartdownload()
+            else:
+                return self.defaultsinglevideodownload()
         elif self.videoinfo['ext'] in ['m3u8']: 
             if isinstance(self.videoinfo['download_url'], list):
                 return self.m3u8download('requests')
@@ -34,32 +37,51 @@ class Downloader():
                 return self.m3u8download('ffmpeg')
         else: 
             raise NotImplementedError('Unsupport download file type %s...' % self.videoinfo['ext'])
-    '''下载mp4等文件文件'''
-    def defaultdownload(self):
+    '''默认的下载函数'''
+    def defaultsinglevideodownload(self):
         videoinfo, session, headers = self.videoinfo.copy(), self.session, self.headers.copy()
         checkDir(videoinfo['savedir'])
-        try:
-            is_success = False
-            with session.get(videoinfo['download_url'], headers=headers, stream=True, verify=False) as response:
-                if response.status_code == 200:
-                    total_size, chunk_size = int(response.headers['content-length']), 1024
-                    label = '[FileSize]: %0.2fMB' % (total_size / 1024 / 1024)
-                    with click.progressbar(length=total_size, label=label) as progressbar:
-                        with open(os.path.join(videoinfo['savedir'], videoinfo['savename']+'.'+videoinfo['ext']), 'wb') as fp:
-                            for chunk in response.iter_content(chunk_size=chunk_size):
-                                if chunk:
-                                    fp.write(chunk)
-                                    progressbar.update(len(chunk))
-                    is_success = True
-        except:
-            is_success = False
-        return is_success
+        with session.get(videoinfo['download_url'], headers=headers, stream=True, verify=False) as response:
+            if response.status_code == 200:
+                total_size, chunk_size = int(response.headers['content-length']), 1024
+                label = '[FileSize]: %0.2fMB' % (total_size / 1024 / 1024)
+                with click.progressbar(length=total_size, label=label) as progressbar:
+                    with open(os.path.join(videoinfo['savedir'], videoinfo['savename']+'.'+videoinfo['ext']), 'wb') as fp:
+                        for chunk in response.iter_content(chunk_size=chunk_size):
+                            if chunk:
+                                fp.write(chunk)
+                                progressbar.update(len(chunk))
+        return True
+    '''下载多个mp4文件'''
+    def defaultmultivideopartdownload(self):
+        videoinfo = self.videoinfo.copy()
+        checkDir(videoinfo['savedir'])
+        savepath = os.path.join(videoinfo['savedir'], videoinfo['savename']+'.mp4')
+        savepath = savepath.replace(' ', '')
+        tmp_dir = f'tmp_{int(time.time())}'
+        os.mkdir(tmp_dir)
+        fp = open(f'{tmp_dir}/filelist.txt', 'w')
+        for idx, url in enumerate(videoinfo['download_url']):
+            self.videoinfo['download_url'] = url
+            self.videoinfo['savedir'] = tmp_dir
+            self.videoinfo['savename'] = f'{idx}'
+            self.videoinfo['ext'] = self.videoinfo['split_ext']
+            self.defaultsinglevideodownload()
+            fp.write(f'file {idx}.{self.videoinfo["ext"]}\n')
+        fp.close()
+        self.videoinfo = videoinfo
+        p = subprocess.Popen(f'ffmpeg -f concat -safe 0 -i {tmp_dir}/filelist.txt -y {savepath}')
+        while True:
+            if subprocess.Popen.poll(p) is not None: 
+                shutil.rmtree(tmp_dir)
+                return True
     '''下载m3u8文件'''
     def m3u8download(self, mode='ffmpeg'):
         assert mode in ['ffmpeg', 'requests']
         videoinfo = self.videoinfo.copy()
         checkDir(videoinfo['savedir'])
         savepath = os.path.join(videoinfo['savedir'], videoinfo['savename']+'.mp4')
+        savepath = savepath.replace(' ', '')
         if mode == 'ffmpeg':
             download_url = videoinfo['download_url']
             p = subprocess.Popen(f'ffmpeg -i "{download_url}" {savepath}')
@@ -75,7 +97,7 @@ class Downloader():
                 self.videoinfo['savedir'] = tmp_dir
                 self.videoinfo['savename'] = f'{idx}'
                 self.videoinfo['ext'] = self.videoinfo['split_ext']
-                self.defaultdownload()
+                self.defaultsinglevideodownload()
                 fp.write(f'file {idx}.{self.videoinfo["ext"]}\n')
             fp.close()
             self.videoinfo = videoinfo

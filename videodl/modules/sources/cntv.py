@@ -34,17 +34,19 @@ class CNTV(Base):
         }
         response = self.session.get(self.getHttpVideoInfo_url, params=params)
         response_json = response.json()
+        download_url = []
         for video_type in response_json['video']:
             for support_type in ['chapters4', 'chapters3', 'chapters2', 'chapters', 'lowChapters']:
                 if support_type == video_type:
-                    download_url = response_json['video'][video_type][0]['url']
-                    break
+                    for item in response_json['video'][video_type]:
+                        download_url.append(item['url'])
         videoinfo = {
             'source': self.source,
             'download_url': download_url,
             'savedir': self.config['savedir'],
             'savename': '_'.join([self.source, filterBadCharacter(response_json.get('title', f'视频走丢啦_{time.time()}'))]),
             'ext': 'mp4',
+            'split_ext': 'mp4',
         }
         return [videoinfo]
     '''初始化'''
