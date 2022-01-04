@@ -34,12 +34,16 @@ class CNTV(Base):
         }
         response = self.session.get(self.getHttpVideoInfo_url, params=params)
         response_json = response.json()
-        download_url = []
+        download_url, flag = [], False
         for video_type in response_json['video']:
             for support_type in ['chapters4', 'chapters3', 'chapters2', 'chapters', 'lowChapters']:
                 if support_type == video_type:
                     for item in response_json['video'][video_type]:
                         download_url.append(item['url'])
+                    flag = True
+                    break
+            if flag: break
+        if len(download_url) == 1: download_url = download_url[0]
         videoinfo = {
             'source': self.source,
             'download_url': download_url,
