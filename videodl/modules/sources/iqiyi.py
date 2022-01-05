@@ -10934,7 +10934,10 @@ class Iqiyi(Base):
         response = self.session.get(self.dash_url, params=params, headers=self.headers)
         response_text = response.text.replace('\/', '/').replace('\\n', '\n')
         response_json = response.json()
-        m3u8_info = response_json['data']['program']['video'][0]['m3u8']
+        for item in response_json['data']['program']['video']:
+            if 'm3u8' in item:
+                m3u8_info = item['m3u8']
+                break
         download_url = []
         for item in re.findall(r'http://(.*?)qd_vipres=0', m3u8_info):
             download_url.append(f'http://{item}qd_vipres=0')
