@@ -44,7 +44,7 @@ class MGTV(Base):
         response_json = response.json()
         title = response_json['data'].get('info', {}).get('title', f'视频走丢啦_{time.time()}')
         pm2 = response_json['data']['atc']['pm2']
-        # 进行请求, 默认下载清晰度最高的
+        # 进行请求, 默认下载清晰度最低的, 因为高清和蓝光的不登陆的话无权限下载
         params = {
             '_support': '10000000',
             'tk2': tk2,
@@ -57,12 +57,17 @@ class MGTV(Base):
         }
         response = self.session.get(self.getSource_url, headers=self.headers, params=params)
         response_json = response.json()
+        flag = False
         for domian in response_json['data']['stream_domain']:
-            stream_url = domian + response_json['data']['stream'][-1]['url']
-            response = self.session.get(stream_url)
-            if response.json().get('info', ''): 
-                download_url = response.json()['info']
-                break
+            for item in response_json['data']['stream']:
+                if item['url']:
+                    stream_url = domian + item['url']
+                    response = self.session.get(stream_url)
+                    if response.json().get('info', ''): 
+                        download_url = response.json()['info']
+                        flag = True
+                        break
+            if flag: break
         videoinfo = {
             'source': self.source,
             'download_url': download_url,
