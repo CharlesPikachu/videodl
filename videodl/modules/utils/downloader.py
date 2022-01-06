@@ -84,7 +84,11 @@ class Downloader():
         savepath = savepath.replace(' ', '')
         if mode == 'ffmpeg':
             download_url = videoinfo['download_url']
-            p = subprocess.Popen(f'ffmpeg -i "{download_url}" {savepath}')
+            if 'ffmpeg_headers' in videoinfo:
+                ffmpeg_headers = videoinfo['ffmpeg_headers']
+                p = subprocess.Popen(f'ffmpeg -headers "{ffmpeg_headers}" -i "{download_url}" {savepath}')
+            else:
+                p = subprocess.Popen(f'ffmpeg -i "{download_url}" {savepath}')
             while True:
                 if subprocess.Popen.poll(p) is not None: 
                     return True

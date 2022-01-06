@@ -74,6 +74,7 @@ class MGTV(Base):
             'savedir': self.config['savedir'],
             'savename': '_'.join([self.source, filterBadCharacter(title)]),
             'ext': 'm3u8',
+            'ffmpeg_headers': f'Referer: {url}'
         }
         return [videoinfo]
     '''初始化'''
