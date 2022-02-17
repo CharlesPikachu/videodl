@@ -61,6 +61,7 @@ class videodl():
     '''初始化所有支持的搜索/下载源'''
     def initializeAllSources(self):
         supported_sources = {
+            'ted': Ted,
             'cntv': CNTV,
             'mgtv': MGTV,
             'migu': Migu,

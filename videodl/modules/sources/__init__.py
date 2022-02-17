@@ -1,4 +1,5 @@
 '''import all'''
+from .ted import Ted
 from .cntv import CNTV
 from .mgtv import MGTV
 from .migu import Migu

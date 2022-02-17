@@ -8,3 +8,4 @@ bilibili_url = 'https://www.bilibili.com/video/BV16Z4y1X784?spm_id_from=333.851.
 zhihu_url = 'https://www.zhihu.com/question/38557752/answer/2280634747'
 xigua_url = 'https://www.ixigua.com/6924970687840911884?logTag=4288965b3959290a0698'
 iqiyi_url = 'https://www.iqiyi.com/v_k1x2lvbi20.html?vfrm=pcw_gaoxiao&vfrmblk=D&vfrmrst=711219_gaoxiao_hljx_image2'
+ted_url = 'https://www.ted.com/talks/alanna_shaikh_why_covid_19_is_hitting_us_now_and_how_to_prepare_for_the_next_outbreak'

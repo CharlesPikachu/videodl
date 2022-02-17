@@ -5,7 +5,7 @@ __description__ = 'Videodl: A lightweight video downloader written by pure pytho
 '''url'''
 __url__ = 'https://github.com/CharlesPikachu/videodl'
 '''version'''
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 '''author'''
 __author__ = 'Charles'
 '''email'''
