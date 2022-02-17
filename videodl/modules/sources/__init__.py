@@ -10,3 +10,4 @@ from .iqiyi import Iqiyi
 from .douyin import Douyin
 from .haokan import Haokan
 from .bilibili import Bilibili
+from .pipigaoxiao import Pipigaoxiao

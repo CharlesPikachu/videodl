@@ -72,6 +72,7 @@ class videodl():
             'douyin': Douyin,
             'haokan': Haokan,
             'bilibili': Bilibili,
+            'pipigaoxiao': Pipigaoxiao,
         }
         return supported_sources
     '''处理用户输入'''
@@ -89,5 +90,7 @@ class videodl():
 
 '''run'''
 if __name__ == '__main__':
-    dl_client = videodl('config.json')
+    import os
+    rootdir = os.path.split(os.path.abspath(__file__))[0]
+    dl_client = videodl(os.path.join(rootdir, 'config.json'))
     dl_client.run()
