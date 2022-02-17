@@ -14,3 +14,4 @@
 | [爱奇艺视频](https://www.iqiyi.com/)                        | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | ✓               |
 | [TED视频](https://www.ted.com/)                             | [click]()                                                  | ✓               |
 | [皮皮搞笑](https://h5.ippzone.com/pp/post/78266943052)      | [click]()                                                  | ✓               |
+| [皮皮虾](https://www.pipix.com/)                            | [click]()                                                  | ✓               |

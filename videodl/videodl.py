@@ -65,6 +65,7 @@ class videodl():
             'cntv': CNTV,
             'mgtv': MGTV,
             'migu': Migu,
+            'pipix': Pipix,
             'acfun': AcFun,
             'zhihu': Zhihu,
             'xigua': Xigua,
