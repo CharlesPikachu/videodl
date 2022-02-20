@@ -96,6 +96,7 @@ dl_client.run()
 - [PikachuWeChat](https://github.com/CharlesPikachu/pikachuwechat): Play WeChat with itchat-uos.
 - [Pydrawing](https://github.com/CharlesPikachu/pydrawing): Beautify your image or video.
 - [ImageCompressor](https://github.com/CharlesPikachu/imagecompressor): Image compressors written by pure python.
+- [FreeProxy](https://github.com/CharlesPikachu/freeproxy): Collecting free proxies from internet.
 
 
 # More
