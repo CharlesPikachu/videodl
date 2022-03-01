@@ -35,7 +35,7 @@ setup(
     author_email=videodl.__email__,
     license=videodl.__license__,
     include_package_data=True,
-    install_requires=['requests >= 2.22.0', 'click >= 7.0', 'prettytable >= 0.7.2'],
+    install_requires=list(open('requirements.txt', 'r').readlines()),
     zip_safe=True,
     packages=find_packages()
 )
