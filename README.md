@@ -70,6 +70,9 @@ run "pip install git+https://github.com/CharlesPikachu/videodl.git@master"
 
 
 # Quick Start
+
+#### Run by leveraging the API
+
 ```python
 from videodl import videodl
 
@@ -80,6 +83,19 @@ config = {
 }
 dl_client = videodl.videodl(config=config)
 dl_client.run()
+```
+
+#### Run by leveraging compiled file
+
+```sh
+Usage: videodl [OPTIONS]
+
+Options:
+  --version               Show the version and exit.
+  -l, --logfilepath TEXT  日志文件保存的路径
+  -p, --proxies TEXT      置顶代理
+  -s, --savedir TEXT      视频保存的文件夹
+  --help                  Show this message and exit.
 ```
 
 

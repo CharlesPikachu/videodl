@@ -8,6 +8,8 @@ Author:
 '''
 import sys
 import copy
+import json
+import click
 if __name__ == '__main__':
     from modules import *
     from __init__ import __version__
@@ -87,6 +89,22 @@ class videodl():
             self.run()
         else:
             return user_input
+
+
+'''cmd直接运行'''
+@click.command()
+@click.version_option()
+@click.option('-l', '--logfilepath', default='videodl.log', help='日志文件保存的路径')
+@click.option('-p', '--proxies', default='{}', help='置顶代理')
+@click.option('-s', '--savedir', default='videos', help='视频保存的文件夹')
+def videodlcmd(logfilepath, proxies, savedir):
+    config = {
+        'logfilepath': logfilepath,
+        'proxies': proxies,
+        'savedir': savedir,
+    }
+    dl_client = videodl(config=config)
+    dl_client.run()
 
 
 '''run'''

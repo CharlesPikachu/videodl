@@ -51,21 +51,29 @@ python setup.py install
 
 ## 快速开始
 
-#### 终端运行
+#### 通过利用编译文件运行
 
 在终端运行如下命令：
 
 ```sh
+Usage: videodl [OPTIONS]
+
+Options:
+  --version               Show the version and exit.
+  -l, --logfilepath TEXT  日志文件保存的路径
+  -p, --proxies TEXT      置顶代理
+  -s, --savedir TEXT      视频保存的文件夹
+  --help                  Show this message and exit.
 ```
 
 然后根据相应的提示进行操作即可，效果如下：
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/CharlesPikachu/videodl/main/docs/screenshot.gif" width="600"/>
+  <img src="https://github.com/CharlesPikachu/videodl/raw/master/docs/screenshot.gif" width="600"/>
 </div>
 <br />
 
-#### 调用运行
+#### 通过利用API运行
 
 安装完成后，简单写一段脚本：
 

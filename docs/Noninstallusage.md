@@ -38,6 +38,6 @@ python videodl.py
 然后根据相应的提示进行操作即可，效果如下：
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/CharlesPikachu/videodl/main/docs/screenshot.gif" width="600"/>
+  <img src="https://github.com/CharlesPikachu/videodl/raw/master/docs/screenshot.gif" width="600"/>
 </div>
 <br />
