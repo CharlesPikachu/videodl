@@ -100,7 +100,7 @@ class videodl():
 def videodlcmd(logfilepath, proxies, savedir):
     config = {
         'logfilepath': logfilepath,
-        'proxies': proxies,
+        'proxies': json.loads(proxies),
         'savedir': savedir,
     }
     dl_client = videodl(config=config)
