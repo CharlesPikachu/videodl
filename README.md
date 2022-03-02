@@ -8,6 +8,7 @@
 [![PyPI](https://img.shields.io/pypi/v/videofetch)](https://pypi.org/project/videofetch)
 [![license](https://img.shields.io/github/license/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/blob/master/LICENSE)
 [![PyPI - Downloads](https://pepy.tech/badge/videofetch)](https://pypi.org/project/videofetch/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/videofetch?style=flat-square)](https://pypi.org/project/videofetch/)
 [![issue resolution](https://isitmaintained.com/badge/resolution/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/issues)
 [![open issues](https://isitmaintained.com/badge/open/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/issues)
 
