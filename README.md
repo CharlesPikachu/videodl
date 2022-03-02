@@ -98,6 +98,7 @@ dl_client.run()
 - [ImageCompressor](https://github.com/CharlesPikachu/imagecompressor): Image compressors written by pure python.
 - [FreeProxy](https://github.com/CharlesPikachu/freeproxy): Collecting free proxies from internet.
 - [Paperdl](https://github.com/CharlesPikachu/paperdl): Search and download paper from specific websites.
+- [Sciogovterminal](https://github.com/CharlesPikachu/sciogovterminal): Browse "The State Council Information Office of the People's Republic of China" in the terminal.
 
 
 # More
