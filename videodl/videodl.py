@@ -109,7 +109,7 @@ def videodlcmd(url, logfilepath, proxies, savedir):
     else:
         source = dl_client.findsource(url)
         client = source(dl_client.config, dl_client.logger_handle)
-        videoinfos = client.parse(user_input)
+        videoinfos = client.parse(url)
         dl_client.logger_handle.info('\n' + videoinfos)
         client.download(videoinfos)
 

@@ -59,7 +59,7 @@ python setup.py install
 Usage: videodl [OPTIONS]
 
 Options:
-  --version               Show the version and exit.
+  -i, --url TEXT          想要下载的视频链接, 若不指定, 则进入videodl终端版
   -l, --logfilepath TEXT  日志文件保存的路径
   -p, --proxies TEXT      置顶代理
   -s, --savedir TEXT      视频保存的文件夹
