@@ -95,7 +95,7 @@ class videodl():
 @click.command()
 @click.option('-i', '--url', default=None, help='想要下载的视频链接, 若不指定, 则进入videodl终端版')
 @click.option('-l', '--logfilepath', default='videodl.log', help='日志文件保存的路径')
-@click.option('-p', '--proxies', default='{}', help='置顶代理')
+@click.option('-p', '--proxies', default='{}', help='设置的代理')
 @click.option('-s', '--savedir', default='videos', help='视频保存的文件夹')
 def videodlcmd(url, logfilepath, proxies, savedir):
     config = {
