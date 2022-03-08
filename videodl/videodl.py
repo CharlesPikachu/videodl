@@ -93,18 +93,25 @@ class videodl():
 
 '''cmd直接运行'''
 @click.command()
-@click.version_option()
+@click.option('-i', '--url', default=None, help='想要下载的视频链接, 若不指定, 则进入videodl终端版')
 @click.option('-l', '--logfilepath', default='videodl.log', help='日志文件保存的路径')
 @click.option('-p', '--proxies', default='{}', help='置顶代理')
 @click.option('-s', '--savedir', default='videos', help='视频保存的文件夹')
-def videodlcmd(logfilepath, proxies, savedir):
+def videodlcmd(url, logfilepath, proxies, savedir):
     config = {
         'logfilepath': logfilepath,
         'proxies': json.loads(proxies),
         'savedir': savedir,
     }
     dl_client = videodl(config=config)
-    dl_client.run()
+    if url is None:
+        dl_client.run()
+    else:
+        source = dl_client.findsource(url)
+        client = source(dl_client.config, dl_client.logger_handle)
+        videoinfos = client.parse(user_input)
+        dl_client.logger_handle.info('\n' + videoinfos)
+        client.download(videoinfos)
 
 
 '''run'''
