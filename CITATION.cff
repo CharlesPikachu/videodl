@@ -5,4 +5,4 @@ authors:
 title: "Videodl: A lightweight video downloader written by pure python."
 date-released: 2021-12-22
 url: "https://github.com/CharlesPikachu/videodl"
-license: MIT License
+license: Apache-2.0
