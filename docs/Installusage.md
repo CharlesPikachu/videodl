@@ -1,7 +1,7 @@
 # 安装使用
 
 
-## 环境配置
+#### 环境配置
 
 - 操作系统: Linux or macOS or Windows
 - Python版本: Python3.6+
@@ -9,7 +9,7 @@
 - Nodejs: 部分视频网站(例如西瓜视频)里的信息需要依赖js来进行解码, 因此你需要在电脑上安装[nodejs](https://nodejs.org/en/)来正常下载这些网站上的视频。
 
 
-## PIP安装
+#### PIP安装
 
 在终端运行如下命令即可(请保证python在环境变量中):
 
@@ -18,9 +18,9 @@ pip install videofetch --upgrade
 ```
 
 
-## 源代码安装
+#### 源代码安装
 
-#### 在线安装
+**1.在线安装**
 
 运行如下命令即可在线安装:
 
@@ -28,7 +28,7 @@ pip install videofetch --upgrade
 pip install git+https://github.com/CharlesPikachu/videodl.git@master
 ```
 
-#### 离线安装
+**2.离线安装**
 
 利用如下命令下载videodl源代码到本地:
 
@@ -49,9 +49,9 @@ python setup.py install
 ```
 
 
-## 快速开始
+#### 快速开始
 
-#### 通过利用编译文件运行
+**1.通过利用编译文件运行**
 
 在终端运行如下命令：
 
@@ -73,7 +73,7 @@ Options:
 </div>
 <br />
 
-#### 通过利用API运行
+**2.通过利用API运行**
 
 安装完成后，简单写一段脚本：
 

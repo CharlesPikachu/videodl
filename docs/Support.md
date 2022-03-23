@@ -12,6 +12,7 @@
 | [知乎视频](https://www.zhihu.com/)                          | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | ✓               |
 | [西瓜视频](https://www.ixigua.com/?wid_try=1)               | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | ✓               |
 | [爱奇艺视频](https://www.iqiyi.com/)                        | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | ✓               |
-| [TED视频](https://www.ted.com/)                             | [click]()                                                  | ✓               |
-| [皮皮搞笑](https://h5.ippzone.com/pp/post/78266943052)      | [click]()                                                  | ✓               |
-| [皮皮虾](https://www.pipix.com/)                            | [click]()                                                  | ✓               |
+| [TED视频](https://www.ted.com/)                             | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |
+| [皮皮搞笑](https://h5.ippzone.com/pp/post/78266943052)      | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |
+| [皮皮虾](https://www.pipix.com/)                            | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |
+| [音悦网](https://www.yinyuetai.com/)                        | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |

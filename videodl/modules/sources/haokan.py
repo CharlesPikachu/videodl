@@ -10,7 +10,7 @@ import re
 import json
 import time
 from .base import Base
-from ..utils.misc import *
+from ..utils import filterBadCharacter
 
 
 '''好看视频下载器类'''
@@ -28,7 +28,7 @@ class Haokan(Base):
             'source': self.source,
             'download_url': download_url,
             'savedir': self.config['savedir'],
-            'savename': '_'.join([self.source, filterBadCharacter(response_json.get('curVideoMeta', {}).get('title', f'视频走丢啦_{time.time()}'))]),
+            'savename': filterBadCharacter(response_json.get('curVideoMeta', {}).get('title', f'视频走丢啦_{time.time()}')),
             'ext': 'mp4',
         }
         return [videoinfo]

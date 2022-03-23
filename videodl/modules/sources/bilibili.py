@@ -9,7 +9,7 @@ Author:
 import re
 import time
 from .base import Base
-from ..utils.misc import *
+from ..utils import filterBadCharacter
 
 
 '''B站视频下载器类'''
@@ -39,7 +39,7 @@ class Bilibili(Base):
                 'source': self.source,
                 'download_url': download_url,
                 'savedir': self.config['savedir'],
-                'savename': '_'.join([self.source, filterBadCharacter(titles[idx])]),
+                'savename': filterBadCharacter(titles[idx]),
                 'ext': 'mp4',
             }
             videoinfos.append(videoinfo)

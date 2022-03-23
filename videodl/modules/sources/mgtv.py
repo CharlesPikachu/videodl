@@ -10,7 +10,7 @@ import time
 import uuid
 import base64
 from .base import Base
-from ..utils.misc import *
+from ..utils import filterBadCharacter
 
 
 '''芒果TV下载器类'''
@@ -72,7 +72,7 @@ class MGTV(Base):
             'source': self.source,
             'download_url': download_url,
             'savedir': self.config['savedir'],
-            'savename': '_'.join([self.source, filterBadCharacter(title)]),
+            'savename': filterBadCharacter(title),
             'ext': 'm3u8',
             'ffmpeg_headers': f'Referer: {url}'
         }

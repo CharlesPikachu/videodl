@@ -10,12 +10,14 @@ import sys
 import copy
 import json
 import click
+import warnings
 if __name__ == '__main__':
     from modules import *
     from __init__ import __version__
 else:
     from .modules import *
     from .__init__ import __version__
+warnings.filterwarnings('ignore')
 
 
 '''basic info'''
@@ -34,7 +36,7 @@ Author: Charles
 '''视频下载器'''
 class videodl():
     def __init__(self, configpath=None, config=None, **kwargs):
-        assert configpath or config, 'configpath of config should be given...'
+        assert configpath or config, 'configpath of config should be given'
         self.config = loadConfig(configpath) if config is None else config
         self.logger_handle = Logger(self.config['logfilepath'])
         self.supported_sources = self.initializeAllSources()
@@ -47,7 +49,7 @@ class videodl():
             # 判断视频链接类型是否支持解析下载
             source = self.findsource(user_input)
             if source is None:
-                self.logger_handle.warning('暂不支持解析视频链接: %s...' % user_input)
+                self.logger_handle.warning('暂不支持解析视频链接: %s' % user_input)
                 continue
             # 实例化
             client = source(self.config, self.logger_handle)
@@ -63,29 +65,20 @@ class videodl():
     '''初始化所有支持的搜索/下载源'''
     def initializeAllSources(self):
         supported_sources = {
-            'ted': Ted,
-            'cntv': CNTV,
-            'mgtv': MGTV,
-            'migu': Migu,
-            'pipix': Pipix,
-            'acfun': AcFun,
-            'zhihu': Zhihu,
-            'xigua': Xigua,
-            'iqiyi': Iqiyi,
-            'douyin': Douyin,
-            'haokan': Haokan,
-            'bilibili': Bilibili,
-            'pipigaoxiao': Pipigaoxiao,
+            'ted': Ted, 'cntv': CNTV, 'mgtv': MGTV, 'migu': Migu,
+            'pipix': Pipix, 'acfun': AcFun, 'zhihu': Zhihu, 'xigua': Xigua,
+            'iqiyi': Iqiyi, 'douyin': Douyin, 'haokan': Haokan, 'bilibili': Bilibili, 
+            'yinyuetai': Yinyuetai, 'pipigaoxiao': Pipigaoxiao,
         }
         return supported_sources
     '''处理用户输入'''
     def dealInput(self, tip=''):
         user_input = input(tip)
         if user_input.lower() == 'q':
-            self.logger_handle.info('ByeBye...')
+            self.logger_handle.info('ByeBye')
             sys.exit()
         elif user_input.lower() == 'r':
-            self.initializeAllSources()
+            self.supported_sources = self.initializeAllSources()
             self.run()
         else:
             return user_input

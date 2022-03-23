@@ -8,7 +8,7 @@ Author:
 '''
 import re
 from .base import Base
-from ..utils.misc import *
+from ..utils import filterBadCharacter
 
 
 '''皮皮虾视频下载器类'''
@@ -27,7 +27,7 @@ class Pipix(Base):
             'source': self.source,
             'download_url': response_json['data']['item']['video']['video_download']['url_list'][0]['url'],
             'savedir': self.config['savedir'],
-            'savename': '_'.join([self.source, filterBadCharacter(response_json['data']['item']['share']['title'])]),
+            'savename': filterBadCharacter(response_json['data']['item']['share']['title']),
             'ext': 'mp4',
         }
         return [videoinfo]

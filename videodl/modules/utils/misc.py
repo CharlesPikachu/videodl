@@ -11,10 +11,10 @@ import re
 import json
 
 
-'''检查文件夹是否存在'''
-def checkDir(dirpath):
-    if not os.path.exists(dirpath):
-        os.mkdir(dirpath)
+'''新建文件夹'''
+def touchdir(dirname):
+    if not os.path.exists(dirname):
+        os.mkdir(dirname)
         return False
     return True
 

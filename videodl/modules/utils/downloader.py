@@ -8,13 +8,12 @@ Author:
 '''
 import os
 import time
-import click
+import math
 import shutil
-import warnings
 import requests
 import subprocess
-from .misc import *
-warnings.filterwarnings('ignore')
+from .misc import touchdir
+from alive_progress import alive_bar
 
 
 '''下载器类'''
@@ -36,26 +35,28 @@ class Downloader():
             else:
                 return self.m3u8download('ffmpeg')
         else: 
-            raise NotImplementedError('Unsupport download file type %s...' % self.videoinfo['ext'])
+            raise NotImplementedError('Unsupport download file type %s' % self.videoinfo['ext'])
     '''默认的下载函数'''
     def defaultsinglevideodownload(self):
         videoinfo, session, headers = self.videoinfo.copy(), self.session, self.headers.copy()
-        checkDir(videoinfo['savedir'])
-        with session.get(videoinfo['download_url'], headers=headers, stream=True, verify=False) as response:
-            if response.status_code == 200:
-                total_size, chunk_size = int(response.headers['content-length']), 1024
-                label = '[FileSize]: %0.2fMB' % (total_size / 1024 / 1024)
-                with click.progressbar(length=total_size, label=label) as progressbar:
-                    with open(os.path.join(videoinfo['savedir'], videoinfo['savename']+'.'+videoinfo['ext']), 'wb') as fp:
-                        for chunk in response.iter_content(chunk_size=chunk_size):
-                            if chunk:
-                                fp.write(chunk)
-                                progressbar.update(len(chunk))
+        touchdir(videoinfo['savedir'])
+        with session.get(videoinfo['download_url'], headers=headers, stream=True) as response:
+            if response.status_code not in [200]: return False
+            total_size, chunk_size, downloaded_size = int(response.headers['content-length']), videoinfo.get('chunk_size', 1024), 0
+            savepath = os.path.join(videoinfo['savedir'], f"{videoinfo['savename']}.{videoinfo['ext']}")
+            text, fp = '[FileSize]: %0.2fMB/%0.2fMB', open(savepath, 'wb')
+            with alive_bar(manual=True) as bar:
+                for chunk in response.iter_content(chunk_size=chunk_size):
+                    if not chunk: continue
+                    fp.write(chunk)
+                    downloaded_size += chunk_size
+                    bar.text(text % (downloaded_size / 1024 / 1024, total_size / 1024 / 1024))
+                    bar(min(downloaded_size / total_size, 1))
         return True
     '''下载多个mp4文件'''
     def defaultmultivideopartdownload(self):
         videoinfo = self.videoinfo.copy()
-        checkDir(videoinfo['savedir'])
+        touchdir(videoinfo['savedir'])
         savepath = os.path.join(videoinfo['savedir'], videoinfo['savename']+'.mp4')
         savepath = savepath.replace(' ', '')
         tmp_dir = f'tmp_{int(time.time())}'
@@ -79,7 +80,7 @@ class Downloader():
     def m3u8download(self, mode='ffmpeg'):
         assert mode in ['ffmpeg', 'requests']
         videoinfo = self.videoinfo.copy()
-        checkDir(videoinfo['savedir'])
+        touchdir(videoinfo['savedir'])
         savepath = os.path.join(videoinfo['savedir'], videoinfo['savename']+'.mp4')
         savepath = savepath.replace(' ', '')
         if mode == 'ffmpeg':
@@ -119,6 +120,7 @@ class Downloader():
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36',
             'Referer': 'http://player.bilibili.com/',
         }
+        self.yinyuetai_headers = {}
         if hasattr(self, f'{source}_headers'):
             self.headers = getattr(self, f'{source}_headers')
         else:

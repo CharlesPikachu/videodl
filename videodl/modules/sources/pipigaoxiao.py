@@ -9,7 +9,7 @@ Author:
 import re
 import json
 from .base import Base
-from ..utils.misc import *
+from ..utils import filterBadCharacter
 
 
 '''皮皮搞笑视频下载器类'''
@@ -42,7 +42,7 @@ class Pipigaoxiao(Base):
             'source': self.source,
             'download_url': download_url,
             'savedir': self.config['savedir'],
-            'savename': '_'.join([self.source, filterBadCharacter(title)]),
+            'savename': filterBadCharacter(title),
             'ext': 'mp4',
         }
         return [videoinfo]

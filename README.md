@@ -44,9 +44,10 @@ Finally, if there are any infringements, please contact me to delete this reposi
 | [zhihu](https://www.zhihu.com/)                            | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | [click](./videodl/modules/sources/zhihu.py)            |  知乎视频     |
 | [xigua](https://www.ixigua.com/?wid_try=1)                 | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | [click](./videodl/modules/sources/xigua.py)            |  西瓜视频     |
 | [iqiyi](https://www.iqiyi.com/)                            | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | [click](./videodl/modules/sources/iqiyi.py)            |  爱奇艺视频   |
-| [ted](https://www.ted.com/)                                | [click]()                                                  | [click](./videodl/modules/sources/ted.py)              |  TED视频      |
-| [pipigaoxiao](https://h5.ippzone.com/pp/post/78266943052)  | [click]()                                                  | [click](./videodl/modules/sources/pipigaoxiao.py)      |  皮皮搞笑     |
-| [pipix](https://www.pipix.com/)                            | [click]()                                                  | [click](./videodl/modules/sources/pipix.py)            |  皮皮虾       |
+| [ted](https://www.ted.com/)                                | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/ted.py)              |  TED视频      |
+| [pipigaoxiao](https://h5.ippzone.com/pp/post/78266943052)  | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/pipigaoxiao.py)      |  皮皮搞笑     |
+| [pipix](https://www.pipix.com/)                            | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/pipix.py)            |  皮皮虾       |
+| [yinyuetai](https://www.yinyuetai.com/)                    | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/yinyuetai.py)        |  音悦网       |
 
 
 # Install

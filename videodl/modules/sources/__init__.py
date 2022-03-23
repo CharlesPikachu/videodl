@@ -11,4 +11,5 @@ from .iqiyi import Iqiyi
 from .douyin import Douyin
 from .haokan import Haokan
 from .bilibili import Bilibili
+from .yinyuetai import Yinyuetai
 from .pipigaoxiao import Pipigaoxiao

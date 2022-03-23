@@ -10,7 +10,7 @@ import re
 import json
 import time
 from .base import Base
-from ..utils.misc import *
+from ..utils import filterBadCharacter
 
 
 '''知乎视频下载器类'''
@@ -36,7 +36,7 @@ class Zhihu(Base):
                 'source': self.source,
                 'download_url': download_url,
                 'savedir': self.config['savedir'],
-                'savename': '_'.join([self.source, filterBadCharacter(title + '_' + video_id)]),
+                'savename': filterBadCharacter(title + '_' + video_id),
                 'ext': 'mp4',
             }
             videoinfos.append(videoinfo)

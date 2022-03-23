@@ -10,7 +10,7 @@ import re
 import time
 import base64
 from .base import Base
-from ..utils.misc import *
+from ..utils import filterBadCharacter
 
 
 '''西瓜getSign的js代码'''
@@ -497,7 +497,7 @@ class Xigua(Base):
             'source': self.source,
             'download_url': download_url,
             'savedir': self.config['savedir'],
-            'savename': '_'.join([self.source, filterBadCharacter(title)]),
+            'savename': filterBadCharacter(title),
             'ext': 'mp4',
         }
         return [videoinfo]

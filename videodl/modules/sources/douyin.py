@@ -12,7 +12,7 @@ import time
 import random
 import requests
 from .base import Base
-from ..utils.misc import *
+from ..utils import filterBadCharacter
 
 
 '''抖音视频下载器类'''
@@ -49,7 +49,7 @@ class Douyin(Base):
                     'aweme_id': aweme_list[idx].get('aweme_id', None),
                     'download_url': download_url,
                     'savedir': self.config['savedir'],
-                    'savename': '_'.join([self.source, filterBadCharacter(str(aweme_list[idx].get('desc', f'视频走丢啦_{time.time()}')))]),
+                    'savename': filterBadCharacter(str(aweme_list[idx].get('desc', f'视频走丢啦_{time.time()}'))),
                     'ext': 'mp4',
                 }
                 if videoinfo['download_url']: videoinfos.append(videoinfo)
@@ -65,7 +65,7 @@ class Douyin(Base):
             'source': self.source,
             'download_url': download_url,
             'savedir': self.config['savedir'],
-            'savename': '_'.join([self.source, filterBadCharacter(str(response_json.get('item_list', [{}])[0].get('desc', f'视频走丢啦_{time.time()}')))]),
+            'savename': filterBadCharacter(str(response_json.get('item_list', [{}])[0].get('desc', f'视频走丢啦_{time.time()}'))),
             'ext': 'mp4',
         }
         return [videoinfo]

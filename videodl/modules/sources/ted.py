@@ -8,7 +8,7 @@ Author:
 '''
 import re
 from .base import Base
-from ..utils.misc import *
+from ..utils import filterBadCharacter
 
 
 '''Ted视频下载器类'''
@@ -26,7 +26,7 @@ class Ted(Base):
             'source': self.source,
             'download_url': download_url + '.mp4',
             'savedir': self.config['savedir'],
-            'savename': '_'.join([self.source, filterBadCharacter(title)]),
+            'savename': filterBadCharacter(title),
             'ext': 'mp4',
         }
         return [videoinfo]

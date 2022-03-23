@@ -9,7 +9,7 @@ Author:
 import re
 import time
 from .base import Base
-from ..utils.misc import *
+from ..utils import filterBadCharacter
 
 
 '''央视网视频下载器类'''
@@ -20,7 +20,7 @@ class CNTV(Base):
         self.__initialize()
     '''视频解析'''
     def parse(self, url):
-        response = self.session.get(url)
+        response = self.session.get(url, headers=self.headers)
         pid = re.findall(r'var guid = "(\w+)"', response.text)[0]
         params = {
             'pid': pid,
@@ -32,7 +32,7 @@ class CNTV(Base):
             'uid': 'A15780E361D8094E78EAE9AB2BD31534',
             'wlan': '',
         }
-        response = self.session.get(self.getHttpVideoInfo_url, params=params)
+        response = self.session.get(self.getHttpVideoInfo_url, params=params, headers=self.headers)
         response_json = response.json()
         download_url, flag = [], False
         for video_type in response_json['video']:
@@ -48,7 +48,7 @@ class CNTV(Base):
             'source': self.source,
             'download_url': download_url,
             'savedir': self.config['savedir'],
-            'savename': '_'.join([self.source, filterBadCharacter(response_json.get('title', f'视频走丢啦_{time.time()}'))]),
+            'savename': filterBadCharacter(response_json.get('title', f'视频走丢啦_{time.time()}')),
             'ext': 'mp4',
             'split_ext': 'mp4',
         }

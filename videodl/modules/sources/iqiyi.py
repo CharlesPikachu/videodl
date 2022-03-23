@@ -10,7 +10,7 @@ import re
 import time
 import urllib
 from .base import Base
-from ..utils.misc import *
+from ..utils import filterBadCharacter
 
 
 '''cmd5x js'''
@@ -10945,7 +10945,7 @@ class Iqiyi(Base):
             'source': self.source,
             'download_url': download_url,
             'savedir': self.config['savedir'],
-            'savename': '_'.join([self.source, filterBadCharacter(title)]),
+            'savename': filterBadCharacter(title),
             'ext': 'm3u8',
             'split_ext': 'mp4',
         }
