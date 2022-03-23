@@ -12,3 +12,4 @@ ted_url = 'https://www.ted.com/talks/alanna_shaikh_why_covid_19_is_hitting_us_no
 pipigaoxiao_url = 'https://h5.ippzone.com/pp/post/350259149175?zy_to=copy_link&share_count=1&m=0cd13da8548a1bc85813d8c60d331e22&app=&type=post&did=d2bddf23159ae495&mid=1270840711117&pid=350259149175'
 pipix_url = 'https://h5.pipix.com/item/6740623460659108107?app_id=1319&app=super&timestamp=1574241444&user_id=1085910221863021&carrier_region=cn&region=cn&language=zh&utm_source=weixin'
 yinyuetai_url = 'https://www.yinyuetai.com/play?id=71'
+weibo_url = 'https://m.weibo.cn/detail/4749967266939049'

@@ -48,6 +48,7 @@ Finally, if there are any infringements, please contact me to delete this reposi
 | [pipigaoxiao](https://h5.ippzone.com/pp/post/78266943052)  | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/pipigaoxiao.py)      |  皮皮搞笑     |
 | [pipix](https://www.pipix.com/)                            | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/pipix.py)            |  皮皮虾       |
 | [yinyuetai](https://www.yinyuetai.com/)                    | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/yinyuetai.py)        |  音悦网       |
+| [weibo](https://m.weibo.cn/)                               | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/weibo.py)            |  微博         |
 
 
 # Install

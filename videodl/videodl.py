@@ -68,7 +68,7 @@ class videodl():
             'ted': Ted, 'cntv': CNTV, 'mgtv': MGTV, 'migu': Migu,
             'pipix': Pipix, 'acfun': AcFun, 'zhihu': Zhihu, 'xigua': Xigua,
             'iqiyi': Iqiyi, 'douyin': Douyin, 'haokan': Haokan, 'bilibili': Bilibili, 
-            'yinyuetai': Yinyuetai, 'pipigaoxiao': Pipigaoxiao,
+            'yinyuetai': Yinyuetai, 'pipigaoxiao': Pipigaoxiao, 'weibo': Weibo,
         }
         return supported_sources
     '''处理用户输入'''
