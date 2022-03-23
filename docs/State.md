@@ -1,7 +1,7 @@
 # 项目声明
 
 <div align="center">
-  <img src="https://github.com/CharlesPikachu/videodl/raw/master/docs/pikachu.jpg" width="600"/>
+  <img src="https://github.com/CharlesPikachu/videodl/raw/master/docs/logo.png" width="600"/>
 </div>
 <br />
 
