@@ -14,4 +14,5 @@ Videodl中文文档
 	Noninstallusage.md
 	Installusage.md
 	Changelog.md
+	RelatedProjects.md
 	Aboutme.md
