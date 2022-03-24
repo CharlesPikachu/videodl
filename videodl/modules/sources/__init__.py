@@ -1,5 +1,7 @@
 '''initialize'''
+from .ku6 import Ku6
 from .ted import Ted
+from .sohu import Sohu
 from .cntv import CNTV
 from .mgtv import MGTV
 from .migu import Migu
@@ -11,6 +13,7 @@ from .iqiyi import Iqiyi
 from .weibo import Weibo
 from .douyin import Douyin
 from .haokan import Haokan
+from .kuaishou import Kuaishou
 from .bilibili import Bilibili
 from .yinyuetai import Yinyuetai
 from .baidutieba import BaiduTieba

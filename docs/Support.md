@@ -18,3 +18,6 @@
 | [音悦网](https://www.yinyuetai.com/)                        | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |
 | [微博](https://m.weibo.cn/)                                 | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |
 | [百度贴吧](https://tieba.baidu.com/index.html)              | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |
+| [快手视频](https://www.kuaishou.com/)                       | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |
+| [酷6网](https://www.ku6.com/index)                          | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |
+| [搜狐TV](https://tv.sohu.com/)                              | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |

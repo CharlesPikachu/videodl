@@ -68,7 +68,8 @@ class videodl():
             'ted': Ted, 'cntv': CNTV, 'mgtv': MGTV, 'migu': Migu,
             'pipix': Pipix, 'acfun': AcFun, 'zhihu': Zhihu, 'xigua': Xigua,
             'iqiyi': Iqiyi, 'douyin': Douyin, 'haokan': Haokan, 'bilibili': Bilibili, 
-            'yinyuetai': Yinyuetai, 'pipigaoxiao': Pipigaoxiao, 'weibo': Weibo, 'baidutieba': BaiduTieba,
+            'yinyuetai': Yinyuetai, 'pipigaoxiao': Pipigaoxiao, 'weibo': Weibo, 'ku6': Ku6,
+            'baidutieba': BaiduTieba, 'kuaishou': Kuaishou, 'sohu': Sohu,
         }
         return supported_sources
     '''处理用户输入'''
@@ -82,6 +83,9 @@ class videodl():
             self.run()
         else:
             return user_input
+    '''str'''
+    def __str__(self):
+        return 'Welcome to use videodl!\nYou can visit https://github.com/CharlesPikachu/videodl for more details.'
 
 
 '''cmd直接运行'''
@@ -100,6 +104,7 @@ def videodlcmd(url, logfilepath, proxies, savedir):
     if url is None:
         dl_client.run()
     else:
+        print(dl_client)
         source = dl_client.findsource(url)
         client = source(dl_client.config, dl_client.logger_handle)
         videoinfos = client.parse(url)

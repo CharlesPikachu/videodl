@@ -32,7 +32,7 @@ Finally, if there are any infringements, please contact me to delete this reposi
 
 
 # Support List
-| Source_EN                                                  |  Source_CN    | Introduction                                               | Code                                                   |
+| Source_EN                                                  |  Source_CN    | Introduction                                               | Core Code                                              |
 | :----:                                                     |  :----:       | :----:                                                     | :----:                                                 |
 | [cntv](https://v.cctv.com/)                                |  央视网       | [click](https://mp.weixin.qq.com/s/xjl7SLEOlEbYu3d8RHZaGQ) | [click](./videodl/modules/sources/cntv.py)             |
 | [mgtv](https://www.mgtv.com/)                              |  芒果TV       | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | [click](./videodl/modules/sources/mgtv.py)             |
@@ -50,6 +50,9 @@ Finally, if there are any infringements, please contact me to delete this reposi
 | [yinyuetai](https://www.yinyuetai.com/)                    |  音悦网       | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/yinyuetai.py)        |
 | [weibo](https://m.weibo.cn/)                               |  微博         | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/weibo.py)            |
 | [baidutieba](https://tieba.baidu.com/index.html)           |  百度贴吧     | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/baidutieba.py)       |
+| [kuaishou](https://www.kuaishou.com/)                      |  快手视频     | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/kuaishou.py)         |
+| [ku6](https://www.ku6.com/index)                           |  酷6网        | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/ku6.py)              |
+| [sohu](https://tv.sohu.com/)                               |  搜狐TV       | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/sohu.py)             |
 
 
 # Install

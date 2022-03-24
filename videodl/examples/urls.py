@@ -14,3 +14,6 @@ pipix_url = 'https://h5.pipix.com/item/6740623460659108107?app_id=1319&app=super
 yinyuetai_url = 'https://www.yinyuetai.com/play?id=71'
 weibo_url = 'https://m.weibo.cn/detail/4749967266939049'
 baidutieba_url = 'https://tieba.baidu.com/p/6098286801?share=9105&fr=share&sfc=copy&client_type=2&client_version=11.3.8.2&st=1585294971&unique=190E4CEC3908756B412C7ABAE54C772F&red_tag=2618234446'
+ku6_url = 'https://www.ku6.com/video/detail?id=DYM2921gKRdLTOkkWdK00l7c6yU.'
+kuaishou_url = 'https://www.kuaishou.com/video/3xcqz4uhtxvi9wa?authorId=3xcjcwakv7x3np9&tabId=0'
+sohu_url = 'https://tv.sohu.com/v/MjAyMjAzMDIvbjYwMTE2MjAzNS5zaHRtbA==.html'
