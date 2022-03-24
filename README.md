@@ -49,6 +49,7 @@ Finally, if there are any infringements, please contact me to delete this reposi
 | [pipix](https://www.pipix.com/)                            | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/pipix.py)            |  皮皮虾       |
 | [yinyuetai](https://www.yinyuetai.com/)                    | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/yinyuetai.py)        |  音悦网       |
 | [weibo](https://m.weibo.cn/)                               | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/weibo.py)            |  微博         |
+| [baidutieba](https://tieba.baidu.com/index.html)           | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/baidutieba.py)       |  百度贴吧     |
 
 
 # Install

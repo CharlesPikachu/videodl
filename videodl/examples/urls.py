@@ -13,3 +13,4 @@ pipigaoxiao_url = 'https://h5.ippzone.com/pp/post/350259149175?zy_to=copy_link&s
 pipix_url = 'https://h5.pipix.com/item/6740623460659108107?app_id=1319&app=super&timestamp=1574241444&user_id=1085910221863021&carrier_region=cn&region=cn&language=zh&utm_source=weixin'
 yinyuetai_url = 'https://www.yinyuetai.com/play?id=71'
 weibo_url = 'https://m.weibo.cn/detail/4749967266939049'
+baidutieba_url = 'https://tieba.baidu.com/p/6098286801?share=9105&fr=share&sfc=copy&client_type=2&client_version=11.3.8.2&st=1585294971&unique=190E4CEC3908756B412C7ABAE54C772F&red_tag=2618234446'

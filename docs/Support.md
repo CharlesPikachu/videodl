@@ -16,3 +16,5 @@
 | [皮皮搞笑](https://h5.ippzone.com/pp/post/78266943052)      | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |
 | [皮皮虾](https://www.pipix.com/)                            | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |
 | [音悦网](https://www.yinyuetai.com/)                        | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |
+| [微博](https://m.weibo.cn/)                                 | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |
+| [百度贴吧](https://tieba.baidu.com/index.html)              | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | ✓               |

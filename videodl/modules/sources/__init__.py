@@ -13,4 +13,5 @@ from .douyin import Douyin
 from .haokan import Haokan
 from .bilibili import Bilibili
 from .yinyuetai import Yinyuetai
+from .baidutieba import BaiduTieba
 from .pipigaoxiao import Pipigaoxiao
