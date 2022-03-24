@@ -32,24 +32,24 @@ Finally, if there are any infringements, please contact me to delete this reposi
 
 
 # Support List
-| Websites                                                   | Introduction                                               | Code                                                   |  in Chinese   |
-| :----:                                                     | :----:                                                     | :----:                                                 |  :----:       |
-| [cntv](https://v.cctv.com/)                                | [click](https://mp.weixin.qq.com/s/xjl7SLEOlEbYu3d8RHZaGQ) | [click](./videodl/modules/sources/cntv.py)             |  央视网       |
-| [mgtv](https://www.mgtv.com/)                              | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | [click](./videodl/modules/sources/mgtv.py)             |  芒果TV       |
-| [migu](https://www.migu.cn/video.html)                     | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | [click](./videodl/modules/sources/migu.py)             |  咪咕视频     |
-| [acfun](https://www.acfun.cn/)                             | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | [click](./videodl/modules/sources/acfun.py)            |  AcFun视频    |
-| [douyin](https://www.douyin.com/)                          | [click](https://mp.weixin.qq.com/s/7N4pt1kLnVEJlve75zpdwA) | [click](./videodl/modules/sources/douyin.py)           |  抖音         |
-| [haokan](https://haokan.baidu.com/)                        | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | [click](./videodl/modules/sources/haokan.py)           |  好看视频     |
-| [bilibili](https://www.bilibili.com/)                      | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | [click](./videodl/modules/sources/bilibili.py)         |  B站视频      |
-| [zhihu](https://www.zhihu.com/)                            | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | [click](./videodl/modules/sources/zhihu.py)            |  知乎视频     |
-| [xigua](https://www.ixigua.com/?wid_try=1)                 | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | [click](./videodl/modules/sources/xigua.py)            |  西瓜视频     |
-| [iqiyi](https://www.iqiyi.com/)                            | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | [click](./videodl/modules/sources/iqiyi.py)            |  爱奇艺视频   |
-| [ted](https://www.ted.com/)                                | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/ted.py)              |  TED视频      |
-| [pipigaoxiao](https://h5.ippzone.com/pp/post/78266943052)  | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/pipigaoxiao.py)      |  皮皮搞笑     |
-| [pipix](https://www.pipix.com/)                            | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/pipix.py)            |  皮皮虾       |
-| [yinyuetai](https://www.yinyuetai.com/)                    | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/yinyuetai.py)        |  音悦网       |
-| [weibo](https://m.weibo.cn/)                               | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/weibo.py)            |  微博         |
-| [baidutieba](https://tieba.baidu.com/index.html)           | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/baidutieba.py)       |  百度贴吧     |
+| Source_EN                                                  |  Source_CN    | Introduction                                               | Code                                                   |
+| :----:                                                     |  :----:       | :----:                                                     | :----:                                                 |
+| [cntv](https://v.cctv.com/)                                |  央视网       | [click](https://mp.weixin.qq.com/s/xjl7SLEOlEbYu3d8RHZaGQ) | [click](./videodl/modules/sources/cntv.py)             |
+| [mgtv](https://www.mgtv.com/)                              |  芒果TV       | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | [click](./videodl/modules/sources/mgtv.py)             |
+| [migu](https://www.migu.cn/video.html)                     |  咪咕视频     | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | [click](./videodl/modules/sources/migu.py)             |
+| [acfun](https://www.acfun.cn/)                             |  AcFun视频    | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | [click](./videodl/modules/sources/acfun.py)            |
+| [douyin](https://www.douyin.com/)                          |  抖音         | [click](https://mp.weixin.qq.com/s/7N4pt1kLnVEJlve75zpdwA) | [click](./videodl/modules/sources/douyin.py)           |
+| [haokan](https://haokan.baidu.com/)                        |  好看视频     | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw) | [click](./videodl/modules/sources/haokan.py)           |
+| [bilibili](https://www.bilibili.com/)                      |  B站视频      | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | [click](./videodl/modules/sources/bilibili.py)         |
+| [zhihu](https://www.zhihu.com/)                            |  知乎视频     | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | [click](./videodl/modules/sources/zhihu.py)            |
+| [xigua](https://www.ixigua.com/?wid_try=1)                 |  西瓜视频     | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | [click](./videodl/modules/sources/xigua.py)            |
+| [iqiyi](https://www.iqiyi.com/)                            |  爱奇艺视频   | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA) | [click](./videodl/modules/sources/iqiyi.py)            |
+| [ted](https://www.ted.com/)                                |  TED视频      | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/ted.py)              |
+| [pipigaoxiao](https://h5.ippzone.com/pp/post/78266943052)  |  皮皮搞笑     | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/pipigaoxiao.py)      |
+| [pipix](https://www.pipix.com/)                            |  皮皮虾       | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/pipix.py)            |
+| [yinyuetai](https://www.yinyuetai.com/)                    |  音悦网       | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/yinyuetai.py)        |
+| [weibo](https://m.weibo.cn/)                               |  微博         | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/weibo.py)            |
+| [baidutieba](https://tieba.baidu.com/index.html)           |  百度贴吧     | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ) | [click](./videodl/modules/sources/baidutieba.py)       |
 
 
 # Install
