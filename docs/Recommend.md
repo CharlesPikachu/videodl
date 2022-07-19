@@ -36,4 +36,4 @@
 
 - [从零开始实现一个深度学习框架](https://github.com/CharlesPikachu/pytoydl)
 
- [小说下载器](https://github.com/CharlesPikachu/noveldl)
+- [小说下载器](https://github.com/CharlesPikachu/noveldl)
