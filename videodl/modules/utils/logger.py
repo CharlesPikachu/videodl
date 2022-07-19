@@ -20,27 +20,32 @@ class Logger():
             datefmt='%Y-%m-%d %H:%M:%S',
             handlers=[logging.FileHandler(logfilepath), logging.StreamHandler()],
         )
+    '''log'''
     @staticmethod
     def log(level, message):
         logging.log(level, message)
+    '''debug'''
     def debug(self, message, disable_print=False):
         if disable_print:
             fp = open(self.logfilepath, 'a')
             fp.write(message + '\n')
         else:
             Logger.log(logging.DEBUG, message)
+    '''info'''
     def info(self, message, disable_print=False):
         if disable_print:
             fp = open(self.logfilepath, 'a')
             fp.write(message + '\n')
         else:
             Logger.log(logging.INFO, message)
+    '''warning'''
     def warning(self, message, disable_print=False):
         if disable_print:
             fp = open(self.logfilepath, 'a')
             fp.write(message + '\n')
         else:
             Logger.log(logging.WARNING, message)
+    '''error'''
     def error(self, message, disable_print=False):
         if disable_print:
             fp = open(self.logfilepath, 'a')

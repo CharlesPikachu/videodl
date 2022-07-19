@@ -33,7 +33,7 @@ class Douyin(Base):
     '''批量下载用户的视频'''
     def multiparse(self, response):
         videoinfos = []
-        key = re.findall(r'/user/(.*?)\?', str(response.url))[0]
+        key = re.findall(r'/user/(.*?)', str(response.url))[0]
         if not key: key = response.url[28: 83]
         page_count, max_cursor = 35, 0
         while True:

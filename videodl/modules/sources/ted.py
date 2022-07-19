@@ -21,7 +21,10 @@ class Ted(Base):
     def parse(self, url):
         response = self.session.get(url)
         title = re.findall(r'<meta name="title" content="(.*?)"/>', response.text)[0]
-        download_url = re.findall(r'"(https://py\.tedcdn\.com/.*?).mp4', response.text)[-1]
+        download_url = re.findall(r'"(https://py\.tedcdn\.com/.*?).mp4', response.text)
+        if not download_url:
+            download_url = re.findall(r'"(https://download\.ted\.com/.*?).mp4', response.text)
+        download_url = download_url[-1]
         videoinfo = {
             'source': self.source,
             'download_url': download_url + '.mp4',
