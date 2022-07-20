@@ -36,7 +36,7 @@ setup(
     license=videodl.__license__,
     include_package_data=True,
     entry_points={'console_scripts': ['videodl = videodl.videodl:videodlcmd']},
-    install_requires=list(open('requirements.txt', 'r').readlines()),
+    install_requires=[lab.strip('\n') for lab in list(open('requirements.txt', 'r').readlines())],
     zip_safe=True,
     packages=find_packages()
 )
