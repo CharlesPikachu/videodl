@@ -1,34 +1,52 @@
 <div align="center">
-  <img src="./docs/logo.png" width="600"/>
+  <img src="https://raw.githubusercontent.com/CharlesPikachu/videodl/master/docs/logo.png" width="600"/>
 </div>
 <br />
 
-[![docs](https://img.shields.io/badge/docs-latest-blue)](https://videofetch.readthedocs.io/)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/videofetch)](https://pypi.org/project/videofetch/)
-[![PyPI](https://img.shields.io/pypi/v/videofetch)](https://pypi.org/project/videofetch)
-[![license](https://img.shields.io/github/license/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/blob/master/LICENSE)
-[![PyPI - Downloads](https://pepy.tech/badge/videofetch)](https://pypi.org/project/videofetch/)
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/videofetch?style=flat-square)](https://pypi.org/project/videofetch/)
-[![issue resolution](https://isitmaintained.com/badge/resolution/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/issues)
-[![open issues](https://isitmaintained.com/badge/open/CharlesPikachu/videodl.svg)](https://github.com/CharlesPikachu/videodl/issues)
+<div align="center">
+  <a href="https://videofetch.readthedocs.io/">
+    <img src="https://img.shields.io/badge/docs-latest-blue" alt="docs" />
+  </a>
+  <a href="https://pypi.org/project/videofetch/">
+    <img src="https://img.shields.io/pypi/pyversions/videofetch" alt="PyPI - Python Version" />
+  </a>
+  <a href="https://pypi.org/project/videofetch">
+    <img src="https://img.shields.io/pypi/v/videofetch" alt="PyPI" />
+  </a>
+  <a href="https://github.com/CharlesPikachu/videodl/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/CharlesPikachu/videodl.svg" alt="license" />
+  </a>
+  <a href="https://pypi.org/project/videofetch/">
+    <img src="https://pepy.tech/badge/videofetch" alt="PyPI - Downloads" />
+  </a>
+  <a href="https://pypi.org/project/videofetch/">
+    <img src="https://img.shields.io/pypi/dm/videofetch?style=flat-square" alt="downloads" />
+  </a>
+  <a href="https://github.com/CharlesPikachu/videodl/issues">
+    <img src="https://isitmaintained.com/badge/resolution/CharlesPikachu/videodl.svg" alt="issue resolution" />
+  </a>
+  <a href="https://github.com/CharlesPikachu/videodl/issues">
+    <img src="https://isitmaintained.com/badge/open/CharlesPikachu/videodl.svg" alt="open issues" />
+  </a>
+</div>
 
-Documents: https://videofetch.readthedocs.io/
+<p align="center">
+  📄 <strong><a href="https://videofetch.readthedocs.io/" target="_blank">Documents: videofetch.readthedocs.io</a></strong>
+</p>
 
 
-# Videodl
-```
-A lightweight video downloader written by pure python.
-You can star this repository to keep track of the project if it's helpful for you, thank you for your support.
-```
+# 🚀 Introduction
+
+A fast and lightweight video downloader built entirely in Python! 🚀 
+If you find this project useful, don't forget to star the repository and help us grow—your support means the world! 🙌
 
 
-# Statement
-```
-This repository is created just for learning python(Commercial prohibition).
-All the apis used in this repository are from public network. So, if you want to download the paid videos, 
-please open a paid member on corresponding video platform by yourself (respect the video copyright please).
-Finally, if there are any infringements, please contact me to delete this repository.
-```
+# 📜 Statement
+
+This repository is created solely for learning purposes (commercial use is prohibited). 
+All APIs used here are sourced from public networks. 
+If you wish to download paid videos, please ensure you have a paid membership on the respective video platform (respect copyright, please!). 
+If any content in this repository causes concerns or infringes on copyright, please reach out to me, and I’ll promptly remove it.
 
 
 # Support List

@@ -78,9 +78,10 @@ class BaseVideoClient():
                     if not chunk: continue
                     fp.write(chunk)
                     pbar.update(len(chunk) / (1024 * 1024))
+            downloaded_video_infos.append(video_info)
         except Exception as err:
             if pbar is not None: pbar.close()
-            self.logger_handle.error(f'{self.source}.download >>> {video_info['download_url']} (Error: {err})', disable_print=self.disable_print)
+            self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error: {err})', disable_print=self.disable_print)
         # return
         return downloaded_video_infos
     '''download'''
