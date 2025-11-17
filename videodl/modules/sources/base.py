@@ -11,6 +11,7 @@ import copy
 import math
 import pickle
 import requests
+import subprocess
 from tqdm import tqdm
 from freeproxy import freeproxy
 from urllib.parse import urlparse
@@ -69,8 +70,40 @@ class BaseVideoClient():
     '''search'''
     def search(self):
         raise NotImplementedError()
+    '''_downloadwithffmpeg'''
+    def _downloadwithffmpeg(self, video_info: dict, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = {}):
+        # not deal with video info with errors
+        if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
+        # prepare
+        touchdir(os.path.dirname(video_info['file_path']))
+        video_info = copy.deepcopy(video_info)
+        video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
+        headers = []
+        for k, v in self.default_download_headers.items():
+            headers.append(f"{k}: {v}\r\n")
+        headers_str = "".join(headers)
+        # start to download
+        cmd = ["ffmpeg", "-y", "-headers", headers_str, "-i", video_info["download_url"], "-c", "copy", "-bsf:a", "aac_adtstoasc"]
+        for _, proxy_url in request_overrides.get('proxies', {}).items():
+            cmd.extend(["-http_proxy", proxy_url])
+        cmd.append(video_info['file_path'])
+        capture_output = True if self.disable_print else False
+        ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
+        if ret.returncode == 0:
+            downloaded_video_infos.append(video_info)
+        else:
+            err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
+            self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
+        # return
+        return downloaded_video_infos
     '''_download'''
     def _download(self, video_info, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = {}):
+        # not deal with video info with errors
+        if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
+        # use ffmpeg to deal with m3u8 like files
+        if video_info.get('download_with_ffmpeg', False): return self._downloadwithffmpeg(
+            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
+        )
         # prepare
         touchdir(os.path.dirname(video_info['file_path']))
         video_info = copy.deepcopy(video_info)
@@ -103,6 +136,7 @@ class BaseVideoClient():
         return downloaded_video_infos
     '''download'''
     def download(self, video_infos: list, num_threadings: int = 5, request_overrides: dict = {}):
+        video_infos = [video_info for video_info in video_infos if video_info['download_url'] and video_info['download_url'] != 'NULL']
         if not video_infos: return []
         # logging
         self.logger_handle.info(f'Start to download videos using {self.source}.', disable_print=self.disable_print)

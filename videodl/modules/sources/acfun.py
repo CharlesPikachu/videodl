@@ -9,12 +9,10 @@ WeChat Official Account (微信公众号):
 import re
 import os
 import time
-import copy
-import subprocess
 import json_repair
 from datetime import datetime
 from .base import BaseVideoClient
-from ..utils import legalizestring, touchdir
+from ..utils import legalizestring
 
 
 '''AcFunVideoClient'''
@@ -30,36 +28,13 @@ class AcFunVideoClient(BaseVideoClient):
         }
         self.default_headers = self.default_parse_headers
         self._initsession()
-    '''_download'''
-    def _download(self, video_info: dict, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = {}):
-        # not deal with video info with errors
-        if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
-        # prepare
-        touchdir(os.path.dirname(video_info['file_path']))
-        video_info = copy.deepcopy(video_info)
-        video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
-        headers = []
-        for k, v in self.default_download_headers.items():
-            headers.append(f"{k}: {v}\r\n")
-        headers_str = "".join(headers)
-        # start to download
-        cmd = ["ffmpeg", "-y", "-headers", headers_str, "-i", video_info["download_url"], "-c", "copy", "-bsf:a", "aac_adtstoasc"]
-        for _, proxy_url in request_overrides.get('proxies', {}).items():
-            cmd.extend(["-http_proxy", proxy_url])
-        cmd.append(video_info['file_path'])
-        capture_output = True if self.disable_print else False
-        ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
-        if ret.returncode == 0:
-            downloaded_video_infos.append(video_info)
-        else:
-            err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
-            self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
-        # return
-        return downloaded_video_infos
     '''parsefromurl'''
     def parsefromurl(self, url: str, request_overrides: dict = {}):
         # prepare
-        video_info = {'source': self.source, 'raw_data': 'NULL', 'download_url': 'NULL', 'video_title': 'NULL', 'file_path': 'NULL', 'ext': 'mp4'}
+        video_info = {
+            'source': self.source, 'raw_data': 'NULL', 'download_url': 'NULL', 'video_title': 'NULL', 'file_path': 'NULL', 
+            'ext': 'mp4', 'download_with_ffmpeg': True,
+        }
         if not self.belongto(url=url): return [video_info]
         # try parse
         try:
@@ -74,7 +49,9 @@ class AcFunVideoClient(BaseVideoClient):
             video_info.update(dict(download_url=download_url))
             dt = datetime.fromtimestamp(time.time())
             date_str = dt.strftime("%Y-%m-%d-%H:%M:%S")
-            video_title = legalizestring(raw_data.get('title', f'{self.source}_null_{date_str}')).removesuffix('.')
+            video_title = legalizestring(
+                raw_data.get('title', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
+            ).removesuffix('.')
             video_info.update(dict(video_title=video_title, file_path=os.path.join(self.work_dir, video_title + f'.{video_info["ext"]}')))
         except Exception as err:
             self.logger_handle.error(f'{self.source}.parsefromurl >>> {url} (Error: {err})', disable_print=self.disable_print)
