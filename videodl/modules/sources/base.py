@@ -18,15 +18,15 @@ from urllib.parse import urlparse
 from fake_useragent import UserAgent
 from alive_progress import alive_bar
 from pathvalidate import sanitize_filepath
-from ..utils import touchdir, LoggerHandle
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from ..utils import touchdir, LoggerHandle, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies
 tqdm.__del__ = lambda self: None # some versions have bugs for tqdm.__del__
 
 
 '''BaseVideoClient'''
 class BaseVideoClient():
     source = 'BaseVideoClient'
-    def __init__(self, auto_set_proxies: bool = True, random_update_ua: bool = False, max_retries: int = 5, maintain_session: bool = False, 
+    def __init__(self, auto_set_proxies: bool = False, random_update_ua: bool = False, max_retries: int = 5, maintain_session: bool = False, 
                  logger_handle: LoggerHandle = None, disable_print: bool = False, work_dir: str = 'videodl_outputs', proxy_sources: list = None):
         # set up work dir
         touchdir(work_dir)
@@ -62,15 +62,19 @@ class BaseVideoClient():
             same_name_file_idx += 1
         return file_path
     '''parsefromurl'''
+    @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = {}):
         raise NotImplementedError('not be implemented')
     '''_search'''
+    @usesearchheaderscookies
     def _search(self):
         raise NotImplementedError()
     '''search'''
+    @usesearchheaderscookies
     def search(self):
         raise NotImplementedError()
     '''_downloadwithffmpeg'''
+    @usedownloadheaderscookies
     def _downloadwithffmpeg(self, video_info: dict, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = {}):
         # not deal with video info with errors
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
@@ -79,7 +83,7 @@ class BaseVideoClient():
         video_info = copy.deepcopy(video_info)
         video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
         headers = []
-        for k, v in self.default_download_headers.items():
+        for k, v in self.default_headers.items():
             headers.append(f"{k}: {v}\r\n")
         headers_str = "".join(headers)
         # start to download
@@ -97,6 +101,7 @@ class BaseVideoClient():
         # return
         return downloaded_video_infos
     '''_download'''
+    @usedownloadheaderscookies
     def _download(self, video_info, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = {}):
         # not deal with video info with errors
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
@@ -135,14 +140,13 @@ class BaseVideoClient():
         # return
         return downloaded_video_infos
     '''download'''
+    @usedownloadheaderscookies
     def download(self, video_infos: list, num_threadings: int = 5, request_overrides: dict = {}):
         video_infos = [video_info for video_info in video_infos if video_info['download_url'] and video_info['download_url'] != 'NULL']
         if not video_infos: return []
         # logging
         self.logger_handle.info(f'Start to download videos using {self.source}.', disable_print=self.disable_print)
         # multi threadings for downloading videos
-        self.default_headers = self.default_download_headers
-        self._initsession()
         downloaded_video_infos = []
         with tqdm(
             total=len(video_infos), desc="Overall videos", position=0, dynamic_ncols=True, unit="video", 

@@ -1,31 +1,30 @@
 '''
 Function:
-    Implementation of HaokanVideoClient
+    Implementation of PipigaoxiaoVideoClient
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
+import re
 import time
+import json
 from datetime import datetime
 from .base import BaseVideoClient
-from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, useparseheaderscookies, FileTypeSniffer
+from urllib.parse import urlparse
+from ..utils import legalizestring, useparseheaderscookies, resp2json, FileTypeSniffer
 
 
-'''HaokanVideoClient'''
-class HaokanVideoClient(BaseVideoClient):
-    source = 'HaokanVideoClient'
+'''PipigaoxiaoVideoClient'''
+class PipigaoxiaoVideoClient(BaseVideoClient):
+    source = 'PipigaoxiaoVideoClient'
     def __init__(self, **kwargs):
-        super(HaokanVideoClient, self).__init__(**kwargs)
+        super(PipigaoxiaoVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
+            'Host': 'share.ippzone.com',
+            'Origin': 'http://share.ippzone.com',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-            'Accept-Encoding': 'gzip, deflate, br, zstd',
-            'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-            'Cache-Control': 'max-age=0',
-            'Cookie': 'BAIDUID=299CB9BD602F22B0730A5281C20D9EC4:FG=1; PC_TAB_LOG=haokan_website_page; Hm_lvt_4aadd610dfd2f5972f1efee2653a2bc5=1591580053; Hm_lpvt_4aadd610dfd2f5972f1efee2653a2bc5=1591580666;',
         }
         self.default_download_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
@@ -43,22 +42,27 @@ class HaokanVideoClient(BaseVideoClient):
         if not self.belongto(url=url): return [video_info]
         # try parse
         try:
-            parsed_url = urlparse(url)
-            vid = parse_qs(parsed_url.query, keep_blank_values=True)['vid'][0]
-            resp = self.get(f"https://haokan.baidu.com/v?_format=json&vid={vid}", **request_overrides)
+            pattern = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', re.S)
+            url = re.findall(pattern, url)[0]
+            headers = self.default_headers.copy()
+            headers['Referer'] = url
+            try:
+                mid, pid = re.findall('mid=(\d+)', url, re.S)[0], re.findall('pid=(\d+)', url, re.S)[0]
+            except:
+                mid, pid = '', urlparse(url).path.replace("/pp/post/", "")
+            data = {'mid': int(mid) if mid else 'null', 'pid': int(pid), 'type': 'post'}
+            resp = self.post('https://h5.ippzone.com/ppapi/share/fetch_content', data=json.dumps(data), headers=headers, **request_overrides)
             resp.raise_for_status()
-            raw_data = resp.json()
+            raw_data = resp2json(resp)
             video_info.update(dict(raw_data=raw_data))
-            for rate in sorted(raw_data["data"]["apiData"]["curVideoMeta"]['clarityUrl'], key=lambda x: float(x['videoSize']), reverse=True):
-                download_url = rate.get('url', '')
+            for candidate_key in ['url', 'urlwm', 'h5url']:
+                download_url = raw_data['data']['post']['videos'][str(raw_data['data']['post']['imgs'][0]['id'])].get(candidate_key, '')
                 if download_url: break
-            if not download_url: download_url = raw_data["data"]["apiData"]["curVideoMeta"]['playurl']
             video_info.update(dict(download_url=download_url))
             dt = datetime.fromtimestamp(time.time())
             date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
             video_title = legalizestring(
-                raw_data["data"]["apiData"]["curVideoMeta"].get('title', f'{self.source}_null_{date_str}'),
-                replace_null_string=f'{self.source}_null_{date_str}',
+                raw_data['data']['post'].get('content', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
             ).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, request_overrides=request_overrides)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
@@ -75,5 +79,5 @@ class HaokanVideoClient(BaseVideoClient):
     @staticmethod
     def belongto(url: str, valid_domains: list = None):
         if valid_domains is None:
-            valid_domains = ["haokan.baidu.com"]
+            valid_domains = ['h5.ippzone.com', 'share.ippzone.com']
         return BaseVideoClient.belongto(url=url, valid_domains=valid_domains)

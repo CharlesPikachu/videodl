@@ -12,7 +12,7 @@ import time
 import json_repair
 from datetime import datetime
 from .base import BaseVideoClient
-from ..utils import legalizestring
+from ..utils import legalizestring, useparseheaderscookies
 
 
 '''AcFunVideoClient'''
@@ -29,6 +29,7 @@ class AcFunVideoClient(BaseVideoClient):
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
+    @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = {}):
         # prepare
         video_info = {
@@ -48,11 +49,11 @@ class AcFunVideoClient(BaseVideoClient):
                 download_url = json_repair.loads(raw_data['currentVideoInfo']['ksPlayJson'])['adaptationSet'][0]['representation'][0]['url']
             video_info.update(dict(download_url=download_url))
             dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H:%M:%S")
+            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
             video_title = legalizestring(
                 raw_data.get('title', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
             ).removesuffix('.')
-            video_info.update(dict(video_title=video_title, file_path=os.path.join(self.work_dir, video_title + f'.{video_info["ext"]}')))
+            video_info.update(dict(video_title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title + f'.{video_info["ext"]}')))
         except Exception as err:
             self.logger_handle.error(f'{self.source}.parsefromurl >>> {url} (Error: {err})', disable_print=self.disable_print)
         # construct video infos
