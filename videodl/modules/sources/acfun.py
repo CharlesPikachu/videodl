@@ -9,6 +9,7 @@ WeChat Official Account (微信公众号):
 import re
 import os
 import time
+import copy
 import subprocess
 import json_repair
 from datetime import datetime
@@ -35,21 +36,17 @@ class AcFunVideoClient(BaseVideoClient):
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
         # prepare
         touchdir(os.path.dirname(video_info['file_path']))
+        video_info = copy.deepcopy(video_info)
+        video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
         headers = []
         for k, v in self.default_download_headers.items():
             headers.append(f"{k}: {v}\r\n")
         headers_str = "".join(headers)
-        file_path, same_name_file_idx = video_info['file_path'], 1
-        while os.path.exists(file_path):
-            directory, file_name = os.path.split(video_info['file_path'])
-            file_name_without_ext = os.path.splitext(file_name)[0]
-            file_path = os.path.join(directory, f"{file_name_without_ext}_{same_name_file_idx}.{video_info['ext']}")
-            same_name_file_idx += 1
         # start to download
         cmd = ["ffmpeg", "-y", "-headers", headers_str, "-i", video_info["download_url"], "-c", "copy", "-bsf:a", "aac_adtstoasc"]
         for _, proxy_url in request_overrides.get('proxies', {}).items():
             cmd.extend(["-http_proxy", proxy_url])
-        cmd.append(file_path)
+        cmd.append(video_info['file_path'])
         capture_output = True if self.disable_print else False
         ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
         if ret.returncode == 0:
@@ -77,7 +74,7 @@ class AcFunVideoClient(BaseVideoClient):
             video_info.update(dict(download_url=download_url))
             dt = datetime.fromtimestamp(time.time())
             date_str = dt.strftime("%Y-%m-%d-%H:%M:%S")
-            video_title = legalizestring(raw_data.get('title', f'{self.source}_null_{date_str}'))
+            video_title = legalizestring(raw_data.get('title', f'{self.source}_null_{date_str}')).removesuffix('.')
             video_info.update(dict(video_title=video_title, file_path=os.path.join(self.work_dir, video_title + f'.{video_info["ext"]}')))
         except Exception as err:
             self.logger_handle.error(f'{self.source}.parsefromurl >>> {url} (Error: {err})', disable_print=self.disable_print)
@@ -89,5 +86,5 @@ class AcFunVideoClient(BaseVideoClient):
     @staticmethod
     def belongto(url: str, valid_domains: list = None):
         if valid_domains is None:
-            valid_domains = ["acfun.cn"]
+            valid_domains = ["www.acfun.cn"]
         return BaseVideoClient.belongto(url=url, valid_domains=valid_domains)

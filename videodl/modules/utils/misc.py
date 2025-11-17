@@ -6,12 +6,17 @@ Author:
 WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
+import os
 import re
 import html
 import emoji
 import bleach
+import requests
+import mimetypes
+import json_repair
 import unicodedata
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 from pathvalidate import sanitize_filename
 
 
@@ -58,3 +63,45 @@ def byte2mb(size: int):
     except:
         size = 'NULL'
     return size
+
+
+'''resp2json'''
+def resp2json(resp: requests.Response):
+    if not isinstance(resp, requests.Response): return {}
+    try:
+        result = resp.json()
+    except:
+        result = json_repair.loads(resp.text)
+    if not result: result = dict()
+    return result
+
+
+'''FileTypeSniffer'''
+class FileTypeSniffer:
+    '''getfileextensionfromurl'''
+    @staticmethod
+    def getfileextensionfromurl(url: str, request_overrides: dict = {}):
+        outputs = {'ext': 'NULL', 'sniffer': 'NULL', 'ok': False}
+        # urllib.parse
+        ext = os.path.splitext(urlparse(url).path)[1].removeprefix('.')
+        if ext:
+            outputs.update(dict(ext=ext, sniffer='urllib.parse', ok=True))
+            return outputs
+        # requests.head
+        resp = requests.head(url, allow_redirects=True, **request_overrides)
+        content_type = resp.headers.get('Content-Type', '').split(';')[0]
+        if content_type:
+            ext = mimetypes.guess_extension(content_type).removeprefix('.')
+            if ext:
+                outputs.update(dict(ext=ext, sniffer='requests.head', ok=True))
+                return outputs
+        # requests.get.stream
+        resp = requests.get(url, allow_redirects=True, stream=True, **request_overrides)
+        content_type = resp.headers.get('Content-Type', '').split(';')[0]
+        if content_type:
+            ext = mimetypes.guess_extension(content_type).removeprefix('.')
+            if ext:
+                outputs.update(dict(ext=ext, sniffer='requests.get.stream', ok=True))
+                return outputs
+        # return
+        return outputs
