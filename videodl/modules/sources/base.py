@@ -27,7 +27,8 @@ tqdm.__del__ = lambda self: None # some versions have bugs for tqdm.__del__
 class BaseVideoClient():
     source = 'BaseVideoClient'
     def __init__(self, auto_set_proxies: bool = False, random_update_ua: bool = False, max_retries: int = 5, maintain_session: bool = False, 
-                 logger_handle: LoggerHandle = None, disable_print: bool = False, work_dir: str = 'videodl_outputs', proxy_sources: list = None):
+                 logger_handle: LoggerHandle = None, disable_print: bool = False, work_dir: str = 'videodl_outputs', proxy_sources: list = None,
+                 default_search_cookies: dict = {}, default_download_cookies: dict = {}):
         # set up work dir
         touchdir(work_dir)
         # set attributes
@@ -38,6 +39,9 @@ class BaseVideoClient():
         self.random_update_ua = random_update_ua
         self.maintain_session = maintain_session
         self.auto_set_proxies = auto_set_proxies
+        self.default_search_cookies = default_search_cookies if default_search_cookies else {}
+        self.default_download_cookies = default_download_cookies if default_download_cookies else {}
+        self.default_cookies = default_search_cookies
         # init requests.Session
         self.default_parse_headers = {'User-Agent': UserAgent().random}
         self.default_download_headers = {'User-Agent': UserAgent().random}
@@ -174,6 +178,7 @@ class BaseVideoClient():
         return domain in valid_domains
     '''get'''
     def get(self, url, **kwargs):
+        if 'cookies' not in kwargs: kwargs['cookies'] = self.default_cookies
         resp = None
         for _ in range(self.max_retries):
             if not self.maintain_session:
@@ -197,6 +202,7 @@ class BaseVideoClient():
         return resp
     '''post'''
     def post(self, url, **kwargs):
+        if 'cookies' not in kwargs: kwargs['cookies'] = self.default_cookies
         resp = None
         for _ in range(self.max_retries):
             if not self.maintain_session:

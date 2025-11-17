@@ -53,7 +53,11 @@ class AcFunVideoClient(BaseVideoClient):
             video_title = legalizestring(
                 raw_data.get('title', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
             ).removesuffix('.')
-            video_info.update(dict(video_title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title + f'.{video_info["ext"]}')))
+            ext = video_info["ext"]
+            if ext in ['m3u8']:
+                ext = 'mp4'
+                video_info.update(dict(download_with_ffmpeg=True, ext=ext))
+            video_info.update(dict(video_title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title + f'.{ext}')))
         except Exception as err:
             self.logger_handle.error(f'{self.source}.parsefromurl >>> {url} (Error: {err})', disable_print=self.disable_print)
         # construct video infos

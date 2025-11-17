@@ -60,6 +60,9 @@ class TedVideoClient(BaseVideoClient):
             video_title = legalizestring(video_title, replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, request_overrides=request_overrides)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            if ext in ['m3u8']:
+                ext = 'mp4'
+                video_info.update(dict(download_with_ffmpeg=True, ext=ext))
             video_info.update(dict(
                 video_title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title + f'.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
             ))

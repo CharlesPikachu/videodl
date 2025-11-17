@@ -1,0 +1,111 @@
+'''
+Function:
+    Implementation of KuaishouVideoClient
+Author:
+    Zhenchao Jin
+WeChat Official Account (微信公众号):
+    Charles的皮卡丘
+'''
+import os
+import re
+import time
+import json_repair
+from datetime import datetime
+from bs4 import BeautifulSoup
+from .base import BaseVideoClient
+from ..utils import legalizestring, useparseheaderscookies, FileTypeSniffer
+
+
+'''KuaishouVideoClient'''
+class KuaishouVideoClient(BaseVideoClient):
+    source = 'KuaishouVideoClient'
+    def __init__(self, **kwargs):
+        super(KuaishouVideoClient, self).__init__(**kwargs)
+        self.default_parse_headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+            'Referer': 'https://v.kuaishou.com/',
+        }
+        self.default_download_headers = {}
+        self.default_headers = self.default_parse_headers
+        self._initsession()
+    '''parsefromurl'''
+    @useparseheaderscookies
+    def parsefromurl(self, url: str, request_overrides: dict = {}):
+        # prepare
+        video_info = {
+            'source': self.source, 'raw_data': 'NULL', 'download_url': 'NULL', 'video_title': 'NULL', 'file_path': 'NULL', 
+            'ext': 'mp4', 'download_with_ffmpeg': False,
+        }
+        if not self.belongto(url=url): return [video_info]
+        # try parse
+        try:
+            resp = self.get(url, **request_overrides)
+            resp.raise_for_status()
+            resp.encoding = 'utf-8'
+            soup = BeautifulSoup(resp.text, 'lxml')
+            pattern = r'window\.__APOLLO_STATE__\s*=\s*(\{.*?\});'
+            raw_data = json_repair.loads(re.search(pattern, str(soup), re.S).group(1))
+            video_info.update(dict(raw_data=raw_data))
+            client: dict = raw_data["defaultClient"]
+            photo_key = ""
+            for k, v in client.items():
+                if isinstance(v, dict) and v.get("__typename") == "VisionVideoDetailPhoto":
+                    photo_key = k
+                    break
+            photo = client[photo_key]
+            candidates = []
+            if photo.get("photoH265Url"):
+                candidates.append({
+                    "codec": "hevc_single", "maxBitrate": 1, "resolution": 1, "url": photo["photoH265Url"], "qualityLabel": "single_hevc",
+                })
+            if photo.get("photoUrl"):
+                candidates.append({
+                    "codec": "h264_single", "maxBitrate": 1, "resolution": 1, "url": photo["photoUrl"], "qualityLabel": "single_h264",
+                })
+            vr = photo.get("videoResource")
+            if isinstance(vr, dict):
+                vr_json = vr.get("json", {})
+                for codec_name in ["hevc", "h264"]:
+                    codec = vr_json.get(codec_name)
+                    if not codec: continue
+                    for aset in codec.get("adaptationSet", []):
+                        for rep in aset.get("representation", []):
+                            url = rep.get("url")
+                            if not url: continue
+                            width, height, max_br = rep.get("width", 0), rep.get("height", 0), rep.get("maxBitrate", 0)
+                            candidates.append({
+                                "codec": codec_name, "maxBitrate": max_br, "resolution": width * height, "url": url, "qualityLabel": rep.get("qualityLabel"),
+                            })
+            codec_priority = {"hevc": 2, "hevc_single": 2, "h264": 1, "h264_single": 1}
+            def _sortkey(c):
+                return (
+                    codec_priority.get(c["codec"], 0), c["maxBitrate"], c["resolution"],
+                )
+            candidates.sort(key=_sortkey, reverse=True)
+            download_url = [c["url"] for c in candidates][0]
+            video_info.update(dict(download_url=download_url))
+            dt = datetime.fromtimestamp(time.time())
+            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
+            video_title = legalizestring(
+                photo.get('caption', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
+            ).removesuffix('.')
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, request_overrides=request_overrides)
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            if ext in ['m3u8']:
+                ext = 'mp4'
+                video_info.update(dict(download_with_ffmpeg=True, ext=ext))
+            video_info.update(dict(
+                video_title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title + f'.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
+            ))
+        except Exception as err:
+            self.logger_handle.error(f'{self.source}.parsefromurl >>> {url} (Error: {err})', disable_print=self.disable_print)
+        # construct video infos
+        video_infos = [video_info]
+        # return
+        return video_infos
+    '''belongto'''
+    @staticmethod
+    def belongto(url: str, valid_domains: list = None):
+        if valid_domains is None:
+            valid_domains = ["www.kuaishou.com"]
+        return BaseVideoClient.belongto(url=url, valid_domains=valid_domains)

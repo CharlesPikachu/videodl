@@ -59,6 +59,8 @@ If any content in this repository causes concerns or infringes on copyright, ple
 | HaokanVideoClient                     |  好看视频             | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw)  | ❌       |  ✔️        |  ✔️        | [haokan.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/haokan.py)                   |
 | TedVideoClient                        |  TED视频 (演讲视频)   | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ)  | ❌       |  ✔️        |  ✔️        | [ted.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/ted.py)                         |
 | Ku6VideoClient                        |  酷6网                | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ)  | ❌       |  ✔️        |  ✔️        | [ku6.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/ku6.py)                         |
+| BilibiliVideoClient                   |  哔哩哔哩 (B站)       | [click](https://mp.weixin.qq.com/s/yNUhMlRs5N4iUfpmo2LXMA)  | ❌       |  ✔️        |  ✔️        | [bilibili.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/bilibili.py)               |
+| KuaishouVideoClient                   |  快手                 | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ)  | ❌       |  ✔️        |  ✔️        | [kuaishou.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/kuaishou.py)               |
 
 
 # 📦 Install
