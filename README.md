@@ -49,7 +49,7 @@ If you wish to download paid videos, please ensure you have a paid membership on
 If any content in this repository causes concerns or infringes on copyright, please reach out to me, and I’ll promptly remove it.
 
 
-# Supported Video Client
+# 🎥 Supported Video Client
 
 | VideoClient (EN)                      |  VideoClient (CN)     | WeChat Article                                              | Search   |  ParseURL  |  Download  | Core Code                                                                                                              |
 | :----:                                |  :----:               | :----:                                                      | :----:   |  :----:    |  :----:    | :----:                                                                                                                 |
@@ -61,7 +61,7 @@ If any content in this repository causes concerns or infringes on copyright, ple
 | Ku6VideoClient                        |  酷6网                | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ)  | ❌       |  ✔️        |  ✔️        | [ku6.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/ku6.py)                         |
 
 
-# Install
+# 📦 Install
 
 You have three installation methods to choose from,
 
@@ -79,7 +79,7 @@ python setup.py install
 Also, some video downloaders depend on [Ffmpeg](https://ffmpeg.org/) and [Node.js](https://nodejs.org/en/), so please make sure to install them before using videodl.
 
 
-# Quick Start
+# ⚡ Quick Start
 
 After a successful installation, you can run the snippet below,
 
