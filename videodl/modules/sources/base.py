@@ -87,8 +87,11 @@ class BaseVideoClient():
         touchdir(os.path.dirname(video_info['file_path']))
         video_info = copy.deepcopy(video_info)
         video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
+        default_headers = request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
+        default_cookies = request_overrides.get('cookies', {}) or self.default_cookies or {}
+        if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
         headers = []
-        for k, v in self.default_headers.items():
+        for k, v in default_headers.items():
             headers.append(f"{k}: {v}\r\n")
         headers_str = "".join(headers)
         # start to download
