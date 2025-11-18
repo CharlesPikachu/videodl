@@ -65,6 +65,7 @@ The video platforms currently supported for parsing are,
 | KuaishouVideoClient                   |  快手                      | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ)  | ❌       |  ✔️        |  ✔️        | [kuaishou.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/kuaishou.py)               |
 | YinyuetaiVideoClient                  |  音悦台 (官网倒闭ing😭)    | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ)  | ❌       |  ✔️        |  ✔️        | [yinyuetai.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/yinyuetai.py)             |
 | BaiduTiebaVideoClient                 |  百度贴吧                  | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ)  | ❌       |  ✔️        |  ✔️        | [baidutieba.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/baidutieba.py)           |
+| MGTVkanVideoClient                    |  芒果TV                    | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw)  | ❌       |  ✔️        |  ✔️        | [mgtv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/mgtv.py)                       |
 
 The links used during testing are listed below,
 
@@ -109,6 +110,11 @@ VIDEO_SAMPLES = {
     'BaiduTiebaVideoClient': [
         'https://tieba.baidu.com/p/6098286801', 
         'https://tieba.baidu.com/p/7280373361'
+    ],
+    'MGTVkanVideoClient': [
+        'https://www.mgtv.com/l/100026064/19868457.html?fpa=1684&fpos=&lastp=ch_home&cpid=5',
+        'https://www.mgtv.com/b/788366/23780111.html?fpa=1756&fpos=&lastp=ch_home', # requires pass VIP login-in cookies by default_parse_cookies and default_download_cookies to download full video
+        'https://www.mgtv.com/b/805972/23756299.html?fpa=1261&fpos=&lastp=ch_home&cpid=5', # requires pass login-in cookies by default_download_cookies to download full video
     ],
 }
 ```

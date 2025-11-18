@@ -28,7 +28,7 @@ class BaseVideoClient():
     source = 'BaseVideoClient'
     def __init__(self, auto_set_proxies: bool = False, random_update_ua: bool = False, max_retries: int = 5, maintain_session: bool = False, 
                  logger_handle: LoggerHandle = None, disable_print: bool = False, work_dir: str = 'videodl_outputs', proxy_sources: list = None,
-                 default_search_cookies: dict = {}, default_download_cookies: dict = {}):
+                 default_search_cookies: dict = {}, default_download_cookies: dict = {}, default_parse_cookies: dict = {}):
         # set up work dir
         touchdir(work_dir)
         # set attributes
@@ -41,7 +41,8 @@ class BaseVideoClient():
         self.auto_set_proxies = auto_set_proxies
         self.default_search_cookies = default_search_cookies if default_search_cookies else {}
         self.default_download_cookies = default_download_cookies if default_download_cookies else {}
-        self.default_cookies = default_search_cookies
+        self.default_parse_cookies = default_parse_cookies if default_parse_cookies else {}
+        self.default_cookies = default_parse_cookies
         # init requests.Session
         self.default_parse_headers = {'User-Agent': UserAgent().random}
         self.default_download_headers = {'User-Agent': UserAgent().random}

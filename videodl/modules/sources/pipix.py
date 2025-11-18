@@ -46,8 +46,9 @@ class PipixVideoClient(BaseVideoClient):
             data = raw_data["data"]["cell_comments"][0]["comment_info"]["item"]
             author_id, download_url = data["author"]["id"], ""
             for comment in data.get("comments", []):
-                if comment["item"]["author"]["id"] == author_id  and comment["item"]["video"]["video_high"]["url_list"][0]["url"]:
+                if comment["item"]["author"]["id"] == author_id and comment["item"]["video"]["video_high"]["url_list"][0]["url"]:
                     download_url = comment["item"]["video"]["video_high"]["url_list"][0]["url"]
+                    if download_url: break
             if not download_url: download_url = data["video"]["video_high"]["url_list"][0]["url"]
             video_info.update(dict(download_url=download_url))
             dt = datetime.fromtimestamp(time.time())

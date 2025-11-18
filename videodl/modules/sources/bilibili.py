@@ -59,6 +59,8 @@ class BilibiliVideoClient(BaseVideoClient):
                 page_raw_data['web-interface'] = copy.deepcopy(raw_data)
                 video_page_info = copy.deepcopy(video_info)
                 video_page_info.update(dict(raw_data=page_raw_data))
+                durl = page_raw_data['data']['durl']
+                durl = [x for x in durl if x.get('url')]
                 download_url = max(page_raw_data['data']['durl'], key=lambda x: x['size'])['url']
                 video_page_info.update(dict(download_url=download_url))
                 video_title = legalizestring(

@@ -46,6 +46,7 @@ class YinyuetaiVideoClient(BaseVideoClient):
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             candidate_urls = raw_data["data"]["fullClip"]["urls"]
+            candidate_urls = [u for u in candidate_urls if u.get('url')]
             def _sortkey(s: dict):
                 disp = s.get("display", "")
                 is_mp3 = "MP3" in disp or s.get("streamType") == 5

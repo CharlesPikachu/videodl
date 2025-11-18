@@ -6,7 +6,6 @@ Author:
 WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
-import re
 import os
 import copy
 import time

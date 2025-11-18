@@ -81,6 +81,7 @@ class KuaishouVideoClient(BaseVideoClient):
                 return (
                     codec_priority.get(c["codec"], 0), c["maxBitrate"], c["resolution"],
                 )
+            candidates = [c for c in candidates if c.get('url')]
             candidates.sort(key=_sortkey, reverse=True)
             download_url = [c["url"] for c in candidates][0]
             video_info.update(dict(download_url=download_url))
