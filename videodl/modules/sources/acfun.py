@@ -12,7 +12,7 @@ import time
 import json_repair
 from datetime import datetime
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies
+from ..utils import legalizestring, useparseheaderscookies, VideoInfo
 
 
 '''AcFunVideoClient'''
@@ -32,10 +32,7 @@ class AcFunVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = {}):
         # prepare
-        video_info = {
-            'source': self.source, 'raw_data': 'NULL', 'download_url': 'NULL', 'video_title': 'NULL', 'file_path': 'NULL', 
-            'ext': 'mp4', 'download_with_ffmpeg': True,
-        }
+        video_info = VideoInfo(download_with_ffmpeg=True, source=self.source)
         if not self.belongto(url=url): return [video_info]
         # try parse
         try:
@@ -53,13 +50,11 @@ class AcFunVideoClient(BaseVideoClient):
             video_title = legalizestring(
                 raw_data.get('title', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
             ).removesuffix('.')
-            ext = video_info["ext"]
-            if ext in ['m3u8']:
-                ext = 'mp4'
-                video_info.update(dict(download_with_ffmpeg=True, ext=ext))
-            video_info.update(dict(video_title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title + f'.{ext}')))
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info["ext"]}')))
         except Exception as err:
-            self.logger_handle.error(f'{self.source}.parsefromurl >>> {url} (Error: {err})', disable_print=self.disable_print)
+            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
+            video_info.update(dict(err_msg=err_msg))
+            self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # construct video infos
         video_infos = [video_info]
         # return

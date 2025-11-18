@@ -1,5 +1,6 @@
 '''initialize'''
 from .io import touchdir
+from .data import VideoInfo
 from .modulebuilder import BaseModuleBuilder
 from .chromium import ensureplaywrightchromium
 from .logger import printtable, colorize, LoggerHandle

@@ -11,8 +11,8 @@ import copy
 import time
 from datetime import datetime
 from .base import BaseVideoClient
-from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, resp2json, useparseheaderscookies, FileTypeSniffer
+from urllib.parse import urlparse
+from ..utils import legalizestring, resp2json, useparseheaderscookies, FileTypeSniffer, VideoInfo
 
 
 '''BilibiliVideoClient'''
@@ -33,25 +33,25 @@ class BilibiliVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = {}):
         # prepare
-        video_info = {
-            'source': self.source, 'raw_data': 'NULL', 'download_url': 'NULL', 'video_title': 'NULL', 'file_path': 'NULL', 
-            'ext': 'mp4', 'download_with_ffmpeg': False,
-        }
+        video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
         # try parse
         video_infos = []
         try:
+            # --redirect
             parsed_url = urlparse(url)
             if "b23.tv" in parsed_url.netloc:
                 resp = self.get(url, allow_redirects=True, **request_overrides)
                 parsed_url = urlparse(resp.url)
+            # --basic info from vid
             vid = parsed_url.path.strip("/").split("/")[1]
             resp = self.get(f"https://api.bilibili.com/x/web-interface/view?bvid={vid}", **request_overrides)
             resp.raise_for_status()
             raw_data = resp2json(resp=resp)
             dt = datetime.fromtimestamp(time.time())
             date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            for page_idx, page in enumerate(raw_data['data']["pages"]):
+            # --iter to parse
+            for _, page in enumerate(raw_data['data']["pages"]):
                 cid = page['cid']
                 resp = self.get(f"https://api.bilibili.com/x/player/playurl?otype=json&fnver=0&fnval=0&qn=80&bvid={vid}&cid={cid}&platform=html5", **request_overrides)
                 resp.raise_for_status()
@@ -66,18 +66,19 @@ class BilibiliVideoClient(BaseVideoClient):
                 video_title = legalizestring(
                     raw_data["data"].get('title', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
                 ).removesuffix('.')
-                video_title = f"{video_title}_split{page_idx}" if len(raw_data['data']["pages"]) > 1 else video_title
-                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, request_overrides=request_overrides)
+                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
+                    url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
+                )
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_page_info['ext']
-                if ext in ['m3u8']:
-                    ext = 'mp4'
-                    video_page_info.update(dict(download_with_ffmpeg=True, ext=ext))
                 video_page_info.update(dict(
-                    video_title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title + f'.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
+                    title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
                 ))
                 video_infos.append(video_page_info)
         except Exception as err:
-            self.logger_handle.error(f'{self.source}.parsefromurl >>> {url} (Error: {err})', disable_print=self.disable_print)
+            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
+            video_info.update(dict(err_msg=err_msg))
+            video_infos.append(video_info)
+            self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return video_infos
     '''belongto'''

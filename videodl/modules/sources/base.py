@@ -19,7 +19,7 @@ from fake_useragent import UserAgent
 from alive_progress import alive_bar
 from pathvalidate import sanitize_filepath
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from ..utils import touchdir, LoggerHandle, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies
+from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, LoggerHandle, VideoInfo
 tqdm.__del__ = lambda self: None # some versions have bugs for tqdm.__del__
 
 
@@ -80,7 +80,7 @@ class BaseVideoClient():
         raise NotImplementedError()
     '''_downloadwithffmpeg'''
     @usedownloadheaderscookies
-    def _downloadwithffmpeg(self, video_info: dict, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = {}):
+    def _downloadwithffmpeg(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = {}):
         # not deal with video info with errors
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
         # prepare
@@ -110,10 +110,12 @@ class BaseVideoClient():
         return downloaded_video_infos
     '''_download'''
     @usedownloadheaderscookies
-    def _download(self, video_info, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = {}):
+    def _download(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = {}):
         # not deal with video info with errors
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
         # use ffmpeg to deal with m3u8 like files
+        if video_info.get('ext') in ['m3u8']:
+            video_info.update(dict(ext='mp4', download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
         if video_info.get('download_with_ffmpeg', False): return self._downloadwithffmpeg(
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
         )

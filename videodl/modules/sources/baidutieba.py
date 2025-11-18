@@ -13,7 +13,7 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from .base import BaseVideoClient
 from playwright.sync_api import sync_playwright
-from ..utils import legalizestring, useparseheaderscookies, ensureplaywrightchromium, FileTypeSniffer
+from ..utils import legalizestring, useparseheaderscookies, ensureplaywrightchromium, FileTypeSniffer, VideoInfo
 
 
 '''BaiduTiebaVideoClient'''
@@ -46,18 +46,15 @@ class BaiduTiebaVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = {}):
         # prepare
-        video_info = {
-            'source': self.source, 'raw_data': 'NULL', 'download_url': 'NULL', 'video_title': 'NULL', 'file_path': 'NULL', 
-            'ext': 'mp4', 'download_with_ffmpeg': False,
-        }
+        video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
-        self.default_headers['Cookie'] = self._getcookies()
+        self.default_headers['Cookie'], video_infos = self._getcookies(), []
         # try parse
-        video_infos = []
         try:
             resp = self.get(url, **request_overrides)
             resp.raise_for_status()
             soup = BeautifulSoup(resp.text, "lxml")
+            # --video title
             dt = datetime.fromtimestamp(time.time())
             date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
             title_tag = soup.select_one("h3.core_title_txt")
@@ -68,6 +65,7 @@ class BaiduTiebaVideoClient(BaseVideoClient):
             else:
                 video_title = f'{self.source}_null_{date_str}'
             video_title = legalizestring(video_title, replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
+            # --download urls
             for tag in soup.find_all(attrs={"data-video": True}):
                 download_url = tag.get("data-video")
                 if not download_url: continue
@@ -76,17 +74,19 @@ class BaiduTiebaVideoClient(BaseVideoClient):
                 video_page_info = copy.deepcopy(video_info)
                 video_page_info.update(dict(raw_data=tag))
                 video_page_info.update(dict(download_url=download_url))
-                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, request_overrides=request_overrides)
+                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
+                    url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
+                )
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-                if ext in ['m3u8']:
-                    ext = 'mp4'
-                    video_page_info.update(dict(download_with_ffmpeg=True, ext=ext))
                 video_page_info.update(dict(
-                    video_title=per_video_title, file_path=os.path.join(self.work_dir, self.source, per_video_title + f'.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
+                    title=per_video_title, file_path=os.path.join(self.work_dir, self.source, f'{per_video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
                 ))
                 video_infos.append(video_page_info)
         except Exception as err:
-            self.logger_handle.error(f'{self.source}.parsefromurl >>> {url} (Error: {err})', disable_print=self.disable_print)
+            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
+            video_info.update(dict(err_msg=err_msg))
+            video_infos.append(video_info)
+            self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return video_infos
     '''belongto'''

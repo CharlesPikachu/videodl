@@ -11,7 +11,7 @@ import re
 import time
 from datetime import datetime
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, resp2json, FileTypeSniffer
+from ..utils import legalizestring, useparseheaderscookies, resp2json, FileTypeSniffer, VideoInfo
 
 
 '''PipixVideoClient'''
@@ -31,10 +31,7 @@ class PipixVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = {}):
         # prepare
-        video_info = {
-            'source': self.source, 'raw_data': 'NULL', 'download_url': 'NULL', 'video_title': 'NULL', 'file_path': 'NULL', 
-            'ext': 'mp4', 'download_with_ffmpeg': False,
-        }
+        video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
         # try parse
         try:
@@ -56,16 +53,17 @@ class PipixVideoClient(BaseVideoClient):
             video_title = legalizestring(
                 data.get('content', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
             ).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, request_overrides=request_overrides)
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
+                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
+            )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            if ext in ['m3u8']:
-                ext = 'mp4'
-                video_info.update(dict(download_with_ffmpeg=True, ext=ext))
             video_info.update(dict(
-                video_title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title + f'.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
             ))
         except Exception as err:
-            self.logger_handle.error(f'{self.source}.parsefromurl >>> {url} (Error: {err})', disable_print=self.disable_print)
+            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
+            video_info.update(dict(err_msg=err_msg))
+            self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # construct video infos
         video_infos = [video_info]
         # return
