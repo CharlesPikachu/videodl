@@ -8,6 +8,8 @@ from .haokan import HaokanVideoClient
 from ..utils import BaseModuleBuilder
 from .kuaishou import KuaishouVideoClient
 from .bilibili import BilibiliVideoClient
+from .yinyuetai import YinyuetaiVideoClient
+from .baidutieba import BaiduTiebaVideoClient
 from .pipigaoxiao import PipigaoxiaoVideoClient
 
 
@@ -16,7 +18,8 @@ class VideoClientBuilder(BaseModuleBuilder):
     REGISTERED_MODULES = {
         'AcFunVideoClient': AcFunVideoClient, 'HaokanVideoClient': HaokanVideoClient, 'TedVideoClient': TedVideoClient,
         'PipigaoxiaoVideoClient': PipigaoxiaoVideoClient, 'PipixVideoClient': PipixVideoClient, 'Ku6VideoClient': Ku6VideoClient,
-        'KuaishouVideoClient': KuaishouVideoClient, 'BilibiliVideoClient': BilibiliVideoClient,
+        'KuaishouVideoClient': KuaishouVideoClient, 'BilibiliVideoClient': BilibiliVideoClient, 'YinyuetaiVideoClient': YinyuetaiVideoClient,
+        'BaiduTiebaVideoClient': BaiduTiebaVideoClient,
     }
 
 
