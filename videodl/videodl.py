@@ -31,7 +31,7 @@ Video Save Path:
 
 '''VideoClient'''
 class VideoClient():
-    def __init__(self, allowed_video_sources: list = None, init_video_clients_cfg: dict = {}, clients_threadings: dict = {}, request_overrides: dict = {}):
+    def __init__(self, allowed_video_sources: list = None, init_video_clients_cfg: dict = {}, clients_threadings: dict = {}, requests_overrides: dict = {}):
         # init
         self.logger_handle = LoggerHandle()
         if allowed_video_sources is None: allowed_video_sources = list(VideoClientBuilder.REGISTERED_MODULES.keys())
@@ -51,7 +51,7 @@ class VideoClient():
             self.video_clients[allowed_video_source] = BuildVideoClient(module_cfg=per_default_video_client_cfg)
         # set attributes
         self.clients_threadings = clients_threadings
-        self.request_overrides = request_overrides
+        self.requests_overrides = requests_overrides
         self.allowed_video_sources = allowed_video_sources
     '''startparseurlcmdui'''
     def startparseurlcmdui(self):
@@ -60,12 +60,11 @@ class VideoClient():
             # process user inputs
             user_input = self.processinputs('Please enter video url for downloading: ')
             # parse and download
-            video_infos, downloaded_video_infos = [], []
             for video_client_name, video_client in self.video_clients.items():
                 if video_client.belongto(user_input):
-                    video_infos = video_client.parsefromurl(user_input, request_overrides=self.request_overrides)
-                    downloaded_video_infos = video_client.download(
-                        video_infos=video_infos, num_threadings=self.clients_threadings.get(video_client_name, 1), request_overrides=self.request_overrides
+                    video_infos = video_client.parsefromurl(user_input, request_overrides=self.requests_overrides.get(video_client_name, {}))
+                    video_client.download(
+                        video_infos=video_infos, num_threadings=self.clients_threadings.get(video_client_name, 1), request_overrides=self.requests_overrides.get(video_client_name, {})
                     )
                     break
     '''processinputs'''
