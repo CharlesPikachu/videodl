@@ -70,18 +70,46 @@ The links used during testing are listed below,
 
 ```python
 VIDEO_SAMPLES = {
-    'AcFunVideoClient': ['https://www.acfun.cn/v/ac29566205', 'https://www.acfun.cn/v/ac47998293', 'https://www.acfun.cn/v/ac36491489'],
-    'HaokanVideoClient': ['https://haokan.baidu.com/v?vid=7295039339702288421', 'https://haokan.baidu.com/v?vid=7224830823778858146'],
-    'TedVideoClient': ['https://www.ted.com/talks/alanna_shaikh_why_covid_19_is_hitting_us_now_and_how_to_prepare_for_the_next_outbreak', 'https://www.ted.com/talks/adam_kucharski_how_can_we_control_the_coronavirus_pandemic'],
-    'PipigaoxiaoVideoClient': ['https://h5.ippzone.com/pp/post/350259149175?zy_to=copy_link&share_count=1&m=0cd13da8548a1bc85813d8c60d331e22&app=&type=post&did=d2bddf23159ae495&mid=1270840711117&pid=350259149175',
-                               'https://h5.ippzone.com/pp/post/870235406308?app=&did=d2bddf23159ae495&m=0cd13da8548a1bc85813d8c60d331e22&mid=1270840711117&pid=870235406308&share_count=1&type=post&zy_to=copy_link'],
-    'PipixVideoClient': ['https://h5.pipix.com/item/6740623460659108107?app_id=1319&app=super&timestamp=1574241444&user_id=1085910221863021&carrier_region=cn&region=cn&language=zh&utm_source=weixin',
-                         'https://h5.pipix.com/item/6863294377570081027?app_id=1319&app=super&timestamp=1598011674&user_id=62108092335&carrier_region=cn&region=cn&language=zh&utm_source=weixin'],
-    'Ku6VideoClient': ['https://www.ku6.com/video/detail?id=McZoSe_hgG_jwzy7pQLqvMJ3IoI.', 'https://www.ku6.com/video/detail?id=HE3lfhcp13Gd0qND4zfzXYQONMY.'],
-    'KuaishouVideoClient': ['https://www.kuaishou.com/short-video/3xwzr5dveyqc5fa?authorId=3xv7d3j7hqqpksi', 'https://www.kuaishou.com/short-video/3xjpwzyparcgnck?authorId=3xbbsmxr7cdmhqs'],
-    'BilibiliVideoClient': ['https://www.bilibili.com/video/BV16Z4y1X784/?spm_id_from=333.851.b_7265636f6d6d656e64.2', 'https://www.bilibili.com/video/BV1KZgHzJEs6/?spm_id_from=333.337.search-card.all.click'],
-    'YinyuetaiVideoClient': ['https://www.yinyuetai.com/watch/7200480383631265792?listType=swiper&listId=6998475633361805312'],
-    'BaiduTiebaVideoClient': ['https://tieba.baidu.com/p/6098286801', 'https://tieba.baidu.com/p/7280373361'],
+    'AcFunVideoClient': [
+        'https://www.acfun.cn/v/ac29566205', 
+        'https://www.acfun.cn/v/ac47998293', 
+        'https://www.acfun.cn/v/ac36491489'
+    ],
+    'HaokanVideoClient': [
+        'https://haokan.baidu.com/v?vid=7295039339702288421', 
+        'https://haokan.baidu.com/v?vid=7224830823778858146'
+    ],
+    'TedVideoClient': [
+        'https://www.ted.com/talks/alanna_shaikh_why_covid_19_is_hitting_us_now_and_how_to_prepare_for_the_next_outbreak', 
+        'https://www.ted.com/talks/adam_kucharski_how_can_we_control_the_coronavirus_pandemic'
+    ],
+    'PipigaoxiaoVideoClient': [
+        'https://h5.ippzone.com/pp/post/350259149175?zy_to=copy_link&share_count=1&m=0cd13da8548a1bc85813d8c60d331e22&app=&type=post&did=d2bddf23159ae495&mid=1270840711117&pid=350259149175',
+        'https://h5.ippzone.com/pp/post/870235406308?app=&did=d2bddf23159ae495&m=0cd13da8548a1bc85813d8c60d331e22&mid=1270840711117&pid=870235406308&share_count=1&type=post&zy_to=copy_link'
+    ],
+    'PipixVideoClient': [
+        'https://h5.pipix.com/item/6740623460659108107?app_id=1319&app=super&timestamp=1574241444&user_id=1085910221863021&carrier_region=cn&region=cn&language=zh&utm_source=weixin',
+        'https://h5.pipix.com/item/6863294377570081027?app_id=1319&app=super&timestamp=1598011674&user_id=62108092335&carrier_region=cn&region=cn&language=zh&utm_source=weixin'
+    ],
+    'Ku6VideoClient': [
+        'https://www.ku6.com/video/detail?id=McZoSe_hgG_jwzy7pQLqvMJ3IoI.', 
+        'https://www.ku6.com/video/detail?id=HE3lfhcp13Gd0qND4zfzXYQONMY.'
+    ],
+    'KuaishouVideoClient': [
+        'https://www.kuaishou.com/short-video/3xwzr5dveyqc5fa?authorId=3xv7d3j7hqqpksi', 
+        'https://www.kuaishou.com/short-video/3xjpwzyparcgnck?authorId=3xbbsmxr7cdmhqs'
+    ],
+    'BilibiliVideoClient': [
+        'https://www.bilibili.com/video/BV16Z4y1X784/?spm_id_from=333.851.b_7265636f6d6d656e64.2', 
+        'https://www.bilibili.com/video/BV1KZgHzJEs6/?spm_id_from=333.337.search-card.all.click'
+    ],
+    'YinyuetaiVideoClient': [
+        'https://www.yinyuetai.com/watch/7200480383631265792?listType=swiper&listId=6998475633361805312'
+    ],
+    'BaiduTiebaVideoClient': [
+        'https://tieba.baidu.com/p/6098286801', 
+        'https://tieba.baidu.com/p/7280373361'
+    ],
 }
 ```
 
