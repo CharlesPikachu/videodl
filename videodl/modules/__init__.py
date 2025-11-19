@@ -4,5 +4,5 @@ from .sources import (
 )
 from .utils import (
     touchdir, legalizestring, printtable, colorize, byte2mb, resp2json, usedownloadheaderscookies, useparseheaderscookies, usesearchheaderscookies,
-    ensureplaywrightchromium, LoggerHandle, BaseModuleBuilder, FileTypeSniffer, VideoInfo
+    ensureplaywrightchromium, searchdictbykey, LoggerHandle, BaseModuleBuilder, FileTypeSniffer, VideoInfo
 )

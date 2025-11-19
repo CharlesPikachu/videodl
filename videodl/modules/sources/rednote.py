@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of XiguaVideoClient
+    Implementation of RednoteVideoClient
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):
@@ -12,15 +12,14 @@ import time
 import json_repair
 from datetime import datetime
 from .base import BaseVideoClient
-from urllib.parse import urlparse
-from ..utils import legalizestring, useparseheaderscookies, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, searchdictbykey, FileTypeSniffer, VideoInfo
 
 
-'''XiguaVideoClient'''
-class XiguaVideoClient(BaseVideoClient):
-    source = 'XiguaVideoClient'
+'''RednoteVideoClient'''
+class RednoteVideoClient(BaseVideoClient):
+    source = 'RednoteVideoClient'
     def __init__(self, **kwargs):
-        super(XiguaVideoClient, self).__init__(**kwargs)
+        super(RednoteVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
         }
@@ -38,21 +37,21 @@ class XiguaVideoClient(BaseVideoClient):
         if not self.belongto(url=url): return [video_info]
         # try parse
         try:
-            parsed_url = urlparse(url)
-            vid = parsed_url.path.strip('/').split('/')[-1]
-            resp = self.get(f"https://m.ixigua.com/douyin/share/video/{vid}?aweme_type=107&schema_type=1&utm_source=copy&utm_campaign=client_share&utm_medium=android&app=aweme", **request_overrides)
+            if url.startswith('http://xhslink.com'):
+                url = self.get(url, allow_redirects=True, **request_overrides).url
+            resp = self.get(url, **request_overrides)
             resp.raise_for_status()
-            raw_data = re.findall(r"window\._ROUTER_DATA\s*=\s*(.*?)</script>", resp.text)[0]
-            raw_data = json_repair.loads(raw_data)
+            raw_data = json_repair.loads(re.findall(r"window\.__INITIAL_STATE__\s*=\s*(.*?)</script></body></html>", resp.text)[0])
             video_info.update(dict(raw_data=raw_data))
-            download_url = raw_data["loaderData"]["video_(id)/page"]['videoInfoRes']["item_list"][0]["video"]["play_addr"]["url_list"][0]
+            download_url = searchdictbykey(raw_data, "masterUrl")
+            if not download_url: download_url = searchdictbykey(raw_data, "backupUrls")
+            while isinstance(download_url, list): download_url = download_url[0]
             video_info.update(dict(download_url=download_url))
             dt = datetime.fromtimestamp(time.time())
             date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = legalizestring(
-                raw_data["loaderData"]["video_(id)/page"]['videoInfoRes']["item_list"][0].get('desc', f'{self.source}_null_{date_str}'),
-                replace_null_string=f'{self.source}_null_{date_str}',
-            ).removesuffix('.')
+            video_title = searchdictbykey(raw_data, 'title')
+            video_title = video_title[-1] if video_title else f'{self.source}_null_{date_str}'
+            video_title = legalizestring(video_title, replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
@@ -72,5 +71,5 @@ class XiguaVideoClient(BaseVideoClient):
     @staticmethod
     def belongto(url: str, valid_domains: list = None):
         if valid_domains is None:
-            valid_domains = ["www.ixigua.com", "v.ixigua.com", 'm.ixigua.com']
+            valid_domains = ["www.xiaohongshu.com", "xhslink.com"]
         return BaseVideoClient.belongto(url=url, valid_domains=valid_domains)

@@ -77,6 +77,7 @@ The video platforms currently supported for parsing are,
 | XinpianchangVideoClient               |  新片场                    | -                                                           | ❌       |  ✔️        |  ✔️        | [xinpianchang.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/xinpianchang.py)       |
 | WeSingVideoClient                     |  全民K歌                   | -                                                           | ❌       |  ✔️        |  ✔️        | [wesing.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/wesing.py)                   |
 | XiguaVideoClient                      |  西瓜视频                  | -                                                           | ❌       |  ✔️        |  ✔️        | [xigua.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/xigua.py)                     |
+| RednoteVideoClient                    |  小红书                    | -                                                           | ❌       |  ✔️        |  ✔️        | [rednote.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/rednote.py)                 |
 
 The links used during testing are listed below,
 
