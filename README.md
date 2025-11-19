@@ -68,6 +68,7 @@ The video platforms currently supported for parsing are,
 | MGTVkanVideoClient                    |  芒果TV                    | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw)  | ❌       |  ✔️        |  ✔️        | [mgtv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/mgtv.py)                       |
 | OasisVideoClient                      |  新浪绿洲                  | -                                                           | ❌       |  ✔️        |  ✔️        | [oasis.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/oasis.py)                     |
 | PearVideoClient                       |  梨视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [pear.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/pear.py)                       |
+| HuyaVideoClient                       |  虎牙视频                  | -                                                           | ❌       |  ✔️        |  ✔️        | [huya.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/huya.py)                       |
 
 The links used during testing are listed below,
 
