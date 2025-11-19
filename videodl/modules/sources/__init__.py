@@ -20,6 +20,7 @@ from .yinyuetai import YinyuetaiVideoClient
 from .duxiaoshi import DuxiaoshiVideoClient
 from .baidutieba import BaiduTiebaVideoClient
 from .pipigaoxiao import PipigaoxiaoVideoClient
+from .xinpianchang import XinpianchangVideoClient
 
 
 '''VideoClientBuilder'''
@@ -31,7 +32,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'BaiduTiebaVideoClient': BaiduTiebaVideoClient, 'MGTVkanVideoClient': MGTVkanVideoClient, 'OasisVideoClient': OasisVideoClient,
         'PearVideoClient': PearVideoClient, 'HuyaVideoClient': HuyaVideoClient, 'MeipaiVideoClient': MeipaiVideoClient,
         'WeishiVideoClient': WeishiVideoClient, 'SixRoomVideoClient': SixRoomVideoClient, 'DuxiaoshiVideoClient': DuxiaoshiVideoClient,
-        'ZuiyouVideoClient': ZuiyouVideoClient,
+        'ZuiyouVideoClient': ZuiyouVideoClient, 'XinpianchangVideoClient': XinpianchangVideoClient,
     }
 
 

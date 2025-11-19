@@ -74,6 +74,7 @@ The video platforms currently supported for parsing are,
 | SixRoomVideoClient                    |  六间房视频                | -                                                           | ❌       |  ✔️        |  ✔️        | [sixroom.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/sixroom.py)                 |
 | WeishiVideoClient                     |  微视                      | -                                                           | ❌       |  ✔️        |  ✔️        | [weishi.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/weishi.py)                   |
 | ZuiyouVideoClient                     |  最右                      | -                                                           | ❌       |  ✔️        |  ✔️        | [zuiyou.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/zuiyou.py)                   |
+| XinpianchangVideoClient               |  新片场                    | -                                                           | ❌       |  ✔️        |  ✔️        | [xinpianchang.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/xinpianchang.py)       |
 
 The links used during testing are listed below,
 
