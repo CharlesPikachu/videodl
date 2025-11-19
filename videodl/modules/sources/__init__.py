@@ -5,6 +5,7 @@ from .pear import PearVideoClient
 from .huya import HuyaVideoClient
 from .base import BaseVideoClient
 from .acfun import AcFunVideoClient
+from .xigua import XiguaVideoClient
 from .pipix import PipixVideoClient
 from .oasis import OasisVideoClient
 from .mgtv import MGTVkanVideoClient
@@ -34,6 +35,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'PearVideoClient': PearVideoClient, 'HuyaVideoClient': HuyaVideoClient, 'MeipaiVideoClient': MeipaiVideoClient,
         'WeishiVideoClient': WeishiVideoClient, 'SixRoomVideoClient': SixRoomVideoClient, 'DuxiaoshiVideoClient': DuxiaoshiVideoClient,
         'ZuiyouVideoClient': ZuiyouVideoClient, 'XinpianchangVideoClient': XinpianchangVideoClient, 'WeSingVideoClient': WeSingVideoClient,
+        'XiguaVideoClient': XiguaVideoClient,
     }
 
 
