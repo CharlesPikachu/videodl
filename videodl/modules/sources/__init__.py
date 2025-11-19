@@ -13,6 +13,7 @@ from .haokan import HaokanVideoClient
 from .zuiyou import ZuiyouVideoClient
 from .meipai import MeipaiVideoClient
 from ..utils import BaseModuleBuilder
+from .wesing import WeSingVideoClient
 from .sixroom import SixRoomVideoClient
 from .kuaishou import KuaishouVideoClient
 from .bilibili import BilibiliVideoClient
@@ -32,7 +33,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'BaiduTiebaVideoClient': BaiduTiebaVideoClient, 'MGTVkanVideoClient': MGTVkanVideoClient, 'OasisVideoClient': OasisVideoClient,
         'PearVideoClient': PearVideoClient, 'HuyaVideoClient': HuyaVideoClient, 'MeipaiVideoClient': MeipaiVideoClient,
         'WeishiVideoClient': WeishiVideoClient, 'SixRoomVideoClient': SixRoomVideoClient, 'DuxiaoshiVideoClient': DuxiaoshiVideoClient,
-        'ZuiyouVideoClient': ZuiyouVideoClient, 'XinpianchangVideoClient': XinpianchangVideoClient,
+        'ZuiyouVideoClient': ZuiyouVideoClient, 'XinpianchangVideoClient': XinpianchangVideoClient, 'WeSingVideoClient': WeSingVideoClient,
     }
 
 
