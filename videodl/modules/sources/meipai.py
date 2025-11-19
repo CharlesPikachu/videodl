@@ -1,33 +1,57 @@
 '''
 Function:
-    Implementation of HuyaVideoClient
+    Implementation of MeipaiVideoClient
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
-import re
 import time
+import base64
+import urllib.parse
+from parsel import Selector
 from datetime import datetime
 from .base import BaseVideoClient
-from ..utils import legalizestring, resp2json, useparseheaderscookies, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, FileTypeSniffer, VideoInfo
 
 
-'''HuyaVideoClient'''
-class HuyaVideoClient(BaseVideoClient):
-    source = 'HuyaVideoClient'
+'''MeipaiVideoClient'''
+class MeipaiVideoClient(BaseVideoClient):
+    source = 'MeipaiVideoClient'
     def __init__(self, **kwargs):
-        super(HuyaVideoClient, self).__init__(**kwargs)
+        super(MeipaiVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-            'Referer': 'https://v.huya.com/',
         }
         self.default_download_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
         }
         self.default_headers = self.default_parse_headers
         self._initsession()
+    '''_decodedownloadurl'''
+    def _decodedownloadurl(self, download_url_bs64: str):
+        hex_val, str_val = download_url_bs64[:4], download_url_bs64[4:]
+        hex_1 = hex_val[::-1]
+        str_n = str(int(hex_1, 16))
+        length = len(str_n)
+        pre = [int(str_n[i]) for i in range(length) if i < length - 2]
+        tail = [int(str_n[i]) for i in range(length) if i >= length - 2]
+        index_1, index_2 = pre[0], pre[0] + pre[1]
+        c, d = str_val[:index_1], str_val[index_1:index_2]
+        temp = str_val[index_2:].replace(d, "")
+        d_val = c + temp
+        tail[0] = len(d_val) - tail[0] - tail[1]
+        p_val = tail
+        index_1 = p_val[0]
+        index_2 = p_val[0] + p_val[1]
+        c2 = d_val[:index_1]
+        d2 = d_val[index_1:index_2]
+        temp2 = d_val[index_2:].replace(d2, "")
+        kk_val = c2 + temp2
+        decode_bs64 = base64.b64decode(kk_val)
+        download_url = "https:" + decode_bs64.decode("utf-8")
+        return download_url
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
@@ -37,26 +61,18 @@ class HuyaVideoClient(BaseVideoClient):
         if not self.belongto(url=url): return [video_info]
         # try parse
         try:
-            vid = re.search(r"\/(\d+).html", url).group(1)
-            resp = self.get(f"https://liveapi.huya.com/moment/getMomentContent?videoId={vid}", **request_overrides)
+            resp = self.get(url, **request_overrides)
             resp.raise_for_status()
-            raw_data = resp2json(resp=resp)
+            raw_data = resp.text
             video_info.update(dict(raw_data=raw_data))
-            def _qualitykey(d):
-                w, h = int(d.get("width", 0)), int(d.get("height", 0))
-                res = w * h
-                definition = int(d.get("definition", 0))
-                size = int(d.get("size", 0))
-                return (res, definition, size)
-            candidate_urls = raw_data["data"]["moment"]["videoInfo"]['definitions']
-            candidate_urls = [u for u in candidate_urls if u.get('url') or u.get('m3u8')]
-            candidate_urls = sorted(candidate_urls, key=_qualitykey, reverse=True)
-            download_url = candidate_urls[0].get('url') or candidate_urls[0].get('m3u8')
+            resp_selector = Selector(raw_data)
+            download_url_bs64 = resp_selector.css("#shareMediaBtn::attr(data-video)").get(default="")
+            download_url = self._decodedownloadurl(download_url_bs64=download_url_bs64)
             video_info.update(dict(download_url=download_url))
             dt = datetime.fromtimestamp(time.time())
             date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
             video_title = legalizestring(
-                raw_data["data"]["moment"]["videoInfo"].get('videoTitle', f'{self.source}_null_{date_str}'),
+                urllib.parse.unquote(resp_selector.css("#shareMediaBtn::attr(data-title)").get(default="").strip(), encoding="utf-8"), 
                 replace_null_string=f'{self.source}_null_{date_str}',
             ).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
@@ -78,5 +94,5 @@ class HuyaVideoClient(BaseVideoClient):
     @staticmethod
     def belongto(url: str, valid_domains: list = None):
         if valid_domains is None:
-            valid_domains = ["www.huya.com"]
+            valid_domains = ["www.meipai.com"]
         return BaseVideoClient.belongto(url=url, valid_domains=valid_domains)

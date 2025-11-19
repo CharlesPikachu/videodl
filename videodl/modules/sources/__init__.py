@@ -8,11 +8,16 @@ from .acfun import AcFunVideoClient
 from .pipix import PipixVideoClient
 from .oasis import OasisVideoClient
 from .mgtv import MGTVkanVideoClient
+from .weishi import WeishiVideoClient
 from .haokan import HaokanVideoClient
+from .zuiyou import ZuiyouVideoClient
+from .meipai import MeipaiVideoClient
 from ..utils import BaseModuleBuilder
+from .sixroom import SixRoomVideoClient
 from .kuaishou import KuaishouVideoClient
 from .bilibili import BilibiliVideoClient
 from .yinyuetai import YinyuetaiVideoClient
+from .duxiaoshi import DuxiaoshiVideoClient
 from .baidutieba import BaiduTiebaVideoClient
 from .pipigaoxiao import PipigaoxiaoVideoClient
 
@@ -24,7 +29,9 @@ class VideoClientBuilder(BaseModuleBuilder):
         'PipigaoxiaoVideoClient': PipigaoxiaoVideoClient, 'PipixVideoClient': PipixVideoClient, 'Ku6VideoClient': Ku6VideoClient,
         'KuaishouVideoClient': KuaishouVideoClient, 'BilibiliVideoClient': BilibiliVideoClient, 'YinyuetaiVideoClient': YinyuetaiVideoClient,
         'BaiduTiebaVideoClient': BaiduTiebaVideoClient, 'MGTVkanVideoClient': MGTVkanVideoClient, 'OasisVideoClient': OasisVideoClient,
-        'PearVideoClient': PearVideoClient, 'HuyaVideoClient': HuyaVideoClient,
+        'PearVideoClient': PearVideoClient, 'HuyaVideoClient': HuyaVideoClient, 'MeipaiVideoClient': MeipaiVideoClient,
+        'WeishiVideoClient': WeishiVideoClient, 'SixRoomVideoClient': SixRoomVideoClient, 'DuxiaoshiVideoClient': DuxiaoshiVideoClient,
+        'ZuiyouVideoClient': ZuiyouVideoClient,
     }
 
 
