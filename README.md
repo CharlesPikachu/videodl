@@ -66,6 +66,8 @@ The video platforms currently supported for parsing are,
 | YinyuetaiVideoClient                  |  音悦台 (官网倒闭ing😭)    | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ)  | ❌       |  ✔️        |  ✔️        | [yinyuetai.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/yinyuetai.py)             |
 | BaiduTiebaVideoClient                 |  百度贴吧                  | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ)  | ❌       |  ✔️        |  ✔️        | [baidutieba.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/baidutieba.py)           |
 | MGTVkanVideoClient                    |  芒果TV                    | [click](https://mp.weixin.qq.com/s/H4w-wjMqi44uNTynGfkKvw)  | ❌       |  ✔️        |  ✔️        | [mgtv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/mgtv.py)                       |
+| OasisVideoClient                      |  新浪绿洲                  | -                                                           | ❌       |  ✔️        |  ✔️        | [oasis.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/oasis.py)                     |
+| PearVideoClient                       |  梨视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [pear.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/pear.py)                       |
 
 The links used during testing are listed below,
 

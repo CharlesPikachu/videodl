@@ -81,8 +81,9 @@ def resp2json(resp: requests.Response):
 class FileTypeSniffer:
     '''getfileextensionfromurl'''
     @staticmethod
-    def getfileextensionfromurl(url: str, headers: dict = {}, cookies: dict = {}, request_overrides: dict = {}):
+    def getfileextensionfromurl(url: str, headers: dict = None, cookies: dict = None, request_overrides: dict = None):
         # prepare
+        headers, cookies, request_overrides = headers or {}, cookies or {}, request_overrides or {}
         if 'cookies' not in request_overrides: request_overrides['cookies'] = cookies
         if 'headers' not in request_overrides: request_overrides['headers'] = headers
         outputs = {'ext': 'NULL', 'sniffer': 'NULL', 'ok': False}

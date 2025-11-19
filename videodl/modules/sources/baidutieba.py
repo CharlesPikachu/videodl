@@ -44,8 +44,9 @@ class BaiduTiebaVideoClient(BaseVideoClient):
             return cookies_str
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = {}):
+    def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
+        request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
         self.default_headers['Cookie'], video_infos = self._getcookies(), []

@@ -28,7 +28,7 @@ class BaseVideoClient():
     source = 'BaseVideoClient'
     def __init__(self, auto_set_proxies: bool = False, random_update_ua: bool = False, max_retries: int = 5, maintain_session: bool = False, 
                  logger_handle: LoggerHandle = None, disable_print: bool = False, work_dir: str = 'videodl_outputs', proxy_sources: list = None,
-                 default_search_cookies: dict = {}, default_download_cookies: dict = {}, default_parse_cookies: dict = {}):
+                 default_search_cookies: dict = None, default_download_cookies: dict = None, default_parse_cookies: dict = None):
         # set up work dir
         touchdir(work_dir)
         # set attributes
@@ -39,9 +39,9 @@ class BaseVideoClient():
         self.random_update_ua = random_update_ua
         self.maintain_session = maintain_session
         self.auto_set_proxies = auto_set_proxies
-        self.default_search_cookies = default_search_cookies if default_search_cookies else {}
-        self.default_download_cookies = default_download_cookies if default_download_cookies else {}
-        self.default_parse_cookies = default_parse_cookies if default_parse_cookies else {}
+        self.default_search_cookies = default_search_cookies or {}
+        self.default_download_cookies = default_download_cookies or {}
+        self.default_parse_cookies = default_parse_cookies or {}
         self.default_cookies = default_parse_cookies
         # init requests.Session
         self.default_parse_headers = {'User-Agent': UserAgent().random}
@@ -68,7 +68,7 @@ class BaseVideoClient():
         return file_path
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = {}):
+    def parsefromurl(self, url: str, request_overrides: dict = None):
         raise NotImplementedError('not be implemented')
     '''_search'''
     @usesearchheaderscookies
@@ -80,7 +80,9 @@ class BaseVideoClient():
         raise NotImplementedError()
     '''_downloadwithffmpeg'''
     @usedownloadheaderscookies
-    def _downloadwithffmpeg(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = {}):
+    def _downloadwithffmpeg(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
+        # init
+        request_overrides = request_overrides or {}
         # not deal with video info with errors
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
         # prepare
@@ -110,7 +112,9 @@ class BaseVideoClient():
         return downloaded_video_infos
     '''_download'''
     @usedownloadheaderscookies
-    def _download(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = {}):
+    def _download(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
+        # init
+        request_overrides = request_overrides or {}
         # not deal with video info with errors
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
         # use ffmpeg to deal with m3u8 like files
@@ -151,7 +155,10 @@ class BaseVideoClient():
         return downloaded_video_infos
     '''download'''
     @usedownloadheaderscookies
-    def download(self, video_infos: list, num_threadings: int = 5, request_overrides: dict = {}):
+    def download(self, video_infos: list, num_threadings: int = 5, request_overrides: dict = None):
+        # init
+        request_overrides = request_overrides or {}
+        # filter
         video_infos = [video_info for video_info in video_infos if video_info['download_url'] and video_info['download_url'] != 'NULL']
         if not video_infos: return []
         # logging
