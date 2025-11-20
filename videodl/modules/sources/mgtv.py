@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of MGTVkanVideoClient
+    Implementation of MGTVVideoClient
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):
@@ -17,11 +17,11 @@ from playwright.sync_api import sync_playwright
 from ..utils import legalizestring, resp2json, useparseheaderscookies, ensureplaywrightchromium, FileTypeSniffer, VideoInfo
 
 
-'''MGTVkanVideoClient'''
-class MGTVkanVideoClient(BaseVideoClient):
-    source = 'MGTVkanVideoClient'
+'''MGTVVideoClient'''
+class MGTVVideoClient(BaseVideoClient):
+    source = 'MGTVVideoClient'
     def __init__(self, **kwargs):
-        super(MGTVkanVideoClient, self).__init__(**kwargs)
+        super(MGTVVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
         }
