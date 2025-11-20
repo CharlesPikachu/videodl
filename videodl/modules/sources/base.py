@@ -7,12 +7,16 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
+import re
 import copy
+import time
 import math
 import pickle
+import shutil
 import requests
 import subprocess
 from tqdm import tqdm
+from pathlib import Path
 from freeproxy import freeproxy
 from urllib.parse import urlparse
 from fake_useragent import UserAgent
@@ -78,6 +82,79 @@ class BaseVideoClient():
     @usesearchheaderscookies
     def search(self):
         raise NotImplementedError()
+    '''_downloadwithffmpegcctv'''
+    @usedownloadheaderscookies
+    def _downloadwithffmpegcctv(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
+        # init
+        request_overrides = request_overrides or {}
+        # not deal with video info with errors
+        if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
+        # prepare
+        work_dir = os.path.dirname(video_info['file_path'])
+        video_info = copy.deepcopy(video_info)
+        video_info['ext'] = 'mp4'
+        video_info['file_path'] = os.path.join(work_dir, f'{video_info["title"]}.{video_info["ext"]}')
+        video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
+        # download m3u8 files with N_m3u8DL-CLI
+        cli = shutil.which("N_m3u8DL-CLI.exe")
+        pid = video_info['pid']
+        video_info['download_url'] = f'https://dhls2.cntv.qcloudcdn.com/asp/enc2/hls/main/0303000a/3/default/{pid}/main.m3u8' # match to cbox's version
+        tmp_dir = Path(os.path.join(work_dir, str(pid))).expanduser().resolve()
+        default_headers = request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
+        default_cookies = request_overrides.get('cookies', {}) or self.default_cookies or {}
+        if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
+        headers = []
+        for k, v in default_headers.items():
+            headers.append(f"{k}:{v}")
+        headers_str = "|".join(headers)
+        cmd = [cli, video_info["download_url"], "--headers", headers_str, "--workDir", str(tmp_dir.parent), "--saveName", pid, "--noMerge"]
+        for _, proxy_url in request_overrides.get('proxies', {}).items():
+            cmd.extend(["-proxyAddress", proxy_url])
+        capture_output = True if self.disable_print else False
+        ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
+        if ret.returncode not in [0]:
+            err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
+            self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
+            shutil.rmtree(tmp_dir, ignore_errors=True)
+            return downloaded_video_infos
+        # decrypt
+        def _naturalkey(p: Path):
+            s = p.stem
+            return [int(t) if t.isdigit() else t for t in re.findall(r"\d+|\D+", s)]
+        cbox = shutil.which("cbox.exe")
+        tmp_part_dir = tmp_dir / "Part_0"
+        ts_files = sorted([p for p in tmp_part_dir.glob("*.ts") if not p.name.endswith("_output.ts")], key=_naturalkey)
+        output_ts_files: list[Path] = []
+        for _, ts_file in enumerate(ts_files, 1):
+            out_ts_file = ts_file.with_name(ts_file.stem + "_output.ts")
+            cmd = [cbox, str(ts_file), str(out_ts_file)]
+            ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
+            if ret.returncode == 0 and out_ts_file.exists():
+                output_ts_files.append(out_ts_file)
+            else:
+                err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
+                self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
+                shutil.rmtree(tmp_dir, ignore_errors=True)
+                return downloaded_video_infos
+        # merge with ffmpeg
+        ffmpeg = shutil.which("ffmpeg")
+        output_ts_files_txt_path = tmp_dir / f'{pid}_{int(time.time())}.txt'
+        with open(output_ts_files_txt_path, "w", encoding="utf-8") as fp:
+            for p in output_ts_files: fp.write(f"file '{p.as_posix()}'\n")
+        cmd = [ffmpeg, "-hide_banner", "-f", "concat", "-safe", "0", "-i", str(output_ts_files_txt_path), "-c", "copy", "-movflags", "+faststart", Path(video_info['file_path']).resolve()]
+        ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
+        if ret.returncode == 0 and Path(video_info['file_path']).resolve().exists():
+            downloaded_video_infos.append(video_info)
+        else:
+            err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
+            self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
+        # del useless files auto
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+        if os.path.exists('output.txt') and not open('output.txt', 'r').read().strip():
+            os.remove('output.txt')
+            os.remove('UDRM_LICENSE.v1.0')
+        # return
+        return downloaded_video_infos
     '''_downloadwithffmpeg'''
     @usedownloadheaderscookies
     def _downloadwithffmpeg(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
@@ -118,6 +195,9 @@ class BaseVideoClient():
         # not deal with video info with errors
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
         # use ffmpeg to deal with m3u8 like files
+        if video_info.get('download_with_ffmpeg_cctv', False): return self._downloadwithffmpegcctv(
+            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
+        )
         if video_info.get('ext') in ['m3u8']:
             video_info.update(dict(ext='mp4', download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
         if video_info.get('download_with_ffmpeg', False): return self._downloadwithffmpeg(
