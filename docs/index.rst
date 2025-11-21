@@ -3,16 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Videodl中文文档
+Welcome to Videodl's documentation!
 ========================================
 
 .. toctree::
 	:maxdepth: 2
 	
-	State.md
-	Support.md
-	Noninstallusage.md
-	Installusage.md
+	Disclaimer.md
+	Install.md
+	Quickstart.md
 	Changelog.md
 	Recommend.md
-	Aboutme.md
+	Author.md

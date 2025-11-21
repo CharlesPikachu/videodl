@@ -1,51 +1,23 @@
-# 开发日志
+# Development Log
 
-**2021-12-22**
+- 2025-11-21: Released videofetch v0.2.0 - code refactored and extensive support added for downloading videos from many additional platforms.
 
-- 版本号: v0.1.0,
-- 更新内容: 支持央视频, 芒果TV, 咪咕视频, AcFun视频, 抖音和好看视频的视频下载器。
+- 2022-07-19: Released videofetch v0.1.9 — fixed download sources for TED and Douyin videos.
 
-**2021-12-26**
+- 2022-03-23: Released videofetch v0.1.8 — optimized the downloader progress bar and added support for YinYueTai, Weibo, Baidu Tieba, Kuaishou Video, Ku6, and Sohu TV.
 
-- 版本号: v0.1.1,
-- 更新内容: 支持知乎视频和B站视频。
+- 2022-03-08: Released videofetch v0.1.7 — added support for using the `-i` option with the `videodl` command to specify video URLs directly in the terminal.
 
-**2021-12-27**
+- 2022-03-02: Released videofetch v0.1.6 — enabled running the tool directly via the `videodl` terminal command.
 
-- 版本号: v0.1.2,
-- 更新内容: 支持爱奇艺视频和西瓜视频。
+- 2022-02-17: Released videofetch v0.1.5 — added support for PiPiXia, PiPiGaoXiao, and TED videos.
 
-**2022-01-04**
+- 2022-01-05: Released videofetch v0.1.4 — fixed an issue where long videos from iQIYI and Mango TV could not be downloaded.
 
-- 版本号: v0.1.3,
-- 更新内容: 修复央视频部分视频下载不全的问题。
+- 2022-01-04: Released videofetch v0.1.3 — fixed an issue where some videos from CCTV Video were not fully downloaded.
 
-**2022-01-05**
+- 2021-12-27: Released videofetch v0.1.2 — added support for iQIYI and Xigua videos.
 
-- 版本号: v0.1.4,
-- 更新内容: 修复爱奇艺和芒果长视频无法下载的问题。
+- 2021-12-26: Released videofetch v0.1.1 — added support for Zhihu and Bilibili videos.
 
-**2022-02-17**
-
-- 版本号: v0.1.5,
-- 更新内容: 支持皮皮虾、皮皮搞笑和TED视频。
-
-**2022-03-02**
-
-- 版本号: v0.1.6,
-- 更新内容: 支持在终端直接输入命令"videodl"运行。
-
-**2022-03-08**
-
-- 版本号: v0.1.7,
-- 更新内容: 支持在终端直接输入命令"videodl"运行时使用-i选项, 用于在终端直接指定视频链接进行下载。
-
-**2022-03-23**
-
-- 版本号: v0.1.8,
-- 更新内容: 优化下载器进度条, 添加对音悦网, 微博, 百度贴吧, 快手视频, 酷6网和搜狐TV的支持。
-
-**2022-07-19**
-
-- 版本号: v0.1.9,
-- 更新内容: 修复TED和抖音视频下载源。
+- 2021-12-22: Released videofetch v0.1.0 — added video downloaders for CCTV Video, Mango TV, Migu Video, AcFun, Douyin, and Haokan Video.

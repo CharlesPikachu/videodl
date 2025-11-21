@@ -18,9 +18,9 @@
 # -- Project information -----------------------------------------------------
 
 project = 'videodl'
-copyright = '2021, Charles'
-author = 'Charles'
-release = '0.1.0'
+copyright = '2021-2030, Zhenchao Jin'
+author = 'Zhenchao Jin'
+release = '0.2.0'
 
 # -- General configuration ---------------------------------------------------
 
