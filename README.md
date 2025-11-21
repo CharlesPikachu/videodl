@@ -37,7 +37,7 @@
 
 # 🆕 What's New
 
-- 2025-11-21: Released videodl v0.2.0 - code refactored and extensive support added for downloading videos from many additional platforms.
+- 2025-11-21: Released videofetch v0.2.0 - code refactored and extensive support added for downloading videos from many additional platforms.
 
 
 # 🚀 Introduction

@@ -2,3 +2,11 @@ requests
 alive-progress
 prettytable
 click
+json_repair
+pathvalidate
+platformdirs
+emoji
+bleach
+beautifulsoup4
+playwright
+parsel
