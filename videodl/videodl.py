@@ -34,7 +34,7 @@ class VideoClient():
     def __init__(self, allowed_video_sources: list = None, init_video_clients_cfg: dict = None, clients_threadings: dict = None, requests_overrides: dict = None):
         # init
         self.logger_handle = LoggerHandle()
-        if allowed_video_sources is None: allowed_video_sources = list(VideoClientBuilder.REGISTERED_MODULES.keys())
+        if not allowed_video_sources: allowed_video_sources = list(VideoClientBuilder.REGISTERED_MODULES.keys())
         init_video_clients_cfg, clients_threadings, requests_overrides = init_video_clients_cfg or {}, clients_threadings or {}, requests_overrides or {}
         # instance video_clients
         default_video_client_cfg = dict(
@@ -74,6 +74,7 @@ class VideoClient():
             if video_client.belongto(url):
                 video_infos = video_client.parsefromurl(url, request_overrides=self.requests_overrides.get(video_client_name, {}))
                 return video_infos
+        return []
     '''download'''
     def download(self, video_infos):
         classified_video_infos = {}
