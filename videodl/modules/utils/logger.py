@@ -103,3 +103,10 @@ def colorize(string, color):
     string = str(string)
     if color not in COLORS: return string
     return COLORS[color] + string + '\033[0m'
+
+
+'''printfullline'''
+def printfullline(ch: str = "*", end: str = '\n', terminal_right_space_len: int = 1):
+    cols = shutil.get_terminal_size().columns - terminal_right_space_len
+    assert cols > 0, f'"terminal_right_space_len" should smaller than {shutil.get_terminal_size()}'
+    print(ch * cols, end=end)
