@@ -105,7 +105,7 @@ class VideoClient():
         return 'Welcome to use videodl!\nYou can visit https://github.com/CharlesPikachu/videodl for more details.'
 
 
-'''VideodlClientCMD'''
+'''VideoClientCMD'''
 @click.command()
 @click.version_option(version=__version__)
 @click.option(
@@ -123,7 +123,7 @@ class VideoClient():
 @click.option(
     '-t', '--clients-threadings', '--clients_threadings', default=None, help='Number of threads used for each video client as a JSON string.', type=str, show_default=True,
 )
-def VideodlClientCMD(index_url: str, allowed_video_sources: str, init_video_clients_cfg: str, requests_overrides: str, clients_threadings: str):
+def VideoClientCMD(index_url: str, allowed_video_sources: str, init_video_clients_cfg: str, requests_overrides: str, clients_threadings: str):
     # load settings
     def _safe_load(string):
         if string is not None:
