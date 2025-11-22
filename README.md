@@ -85,7 +85,7 @@ The video platforms currently supported for parsing are,
 | RednoteVideoClient                    |  小红书                    | -                                                           | ❌       |  ✔️        |  ✔️        | [rednote.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/rednote.py)                 |
 | WeiboVideoClient                      |  微博视频                  | -                                                           | ❌       |  ✔️        |  ✔️        | [weibo.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/weibo.py)                     |
 | CCTVVideoClient                       |  央视网                    | -                                                           | ❌       |  ✔️        |  ✔️        | [cctv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/cctv.py)                       |
-| SohuVideoClient                       |  搜狐视频                  | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ)  | ❌       |  ✔️        |  ✔️        | [cctv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/cctv.py)                       |
+| SohuVideoClient                       |  搜狐视频                  | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ)  | ❌       |  ✔️        |  ✔️        | [sohu.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/sohu.py)                       |
 
 
 # 📦 Install
