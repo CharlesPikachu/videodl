@@ -6,6 +6,7 @@ from .huya import HuyaVideoClient
 from .base import BaseVideoClient
 from .mgtv import MGTVVideoClient
 from .cctv import CCTVVideoClient
+from .sohu import SohuVideoClient
 from .acfun import AcFunVideoClient
 from .xigua import XiguaVideoClient
 from .pipix import PipixVideoClient
@@ -39,7 +40,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'WeishiVideoClient': WeishiVideoClient, 'SixRoomVideoClient': SixRoomVideoClient, 'DuxiaoshiVideoClient': DuxiaoshiVideoClient,
         'ZuiyouVideoClient': ZuiyouVideoClient, 'XinpianchangVideoClient': XinpianchangVideoClient, 'WeSingVideoClient': WeSingVideoClient,
         'XiguaVideoClient': XiguaVideoClient, 'RednoteVideoClient': RednoteVideoClient, 'WeiboVideoClient': WeiboVideoClient,
-        'CCTVVideoClient': CCTVVideoClient,
+        'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient,
     }
 
 

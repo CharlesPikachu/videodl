@@ -82,6 +82,54 @@ class BaseVideoClient():
     @usesearchheaderscookies
     def search(self):
         raise NotImplementedError()
+    '''_downloadwithffmpegfromlocalfile'''
+    @usedownloadheaderscookies
+    def _downloadwithffmpegfromlocalfile(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
+        # init
+        request_overrides = request_overrides or {}
+        # not deal with video info with errors
+        if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
+        # prepare
+        touchdir(os.path.dirname(video_info['file_path']))
+        video_info = copy.deepcopy(video_info)
+        video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
+        default_headers = request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
+        default_cookies = request_overrides.get('cookies', {}) or self.default_cookies or {}
+        if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
+        headers = []
+        for k, v in default_headers.items():
+            headers.append(f"{k}: {v}")
+        header_str = r"\r\n".join(headers) + r"\r\n"
+        header_str = header_str.replace("\\", "\\\\").replace("'", "\\'")
+        header_str = f"headers={header_str}"
+        # append headers to text file
+        download_urls = []
+        with open(video_info["download_url"], 'r', encoding='utf-8') as fp:
+            for line in fp.readlines():
+                line = line.strip()
+                if not line: continue
+                download_url = f"{line}|{header_str}"
+                download_url = download_url.replace("\\", "\\\\").replace("'", "\\'")
+                download_urls.append(download_url)
+        video_info["download_url"] = video_info["download_url"][:-4] + '_ffmpeg.txt'
+        with open(video_info["download_url"], 'w', encoding='utf-8') as fp:
+            for download_url in download_urls:
+                fp.write(f"file '{download_url}'\n")
+        # start to download
+        cmd = ["ffmpeg", "-y", "-protocol_whitelist", 'file,http,https,tcp,tls']
+        for _, proxy_url in request_overrides.get('proxies', {}).items():
+            cmd.extend(["-http_proxy", proxy_url])
+            break
+        cmd.extend(["-f", "concat", "-safe", "0", "-i", video_info["download_url"], "-c", "copy", video_info["file_path"]])
+        capture_output = True if self.disable_print else False
+        ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
+        if ret.returncode == 0:
+            downloaded_video_infos.append(video_info)
+        else:
+            err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
+            self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
+        # return
+        return downloaded_video_infos
     '''_downloadwithffmpegcctv'''
     @usedownloadheaderscookies
     def _downloadwithffmpegcctv(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
@@ -110,6 +158,7 @@ class BaseVideoClient():
         cmd = [cli, video_info["download_url"], "--headers", headers_str, "--workDir", str(tmp_dir.parent), "--saveName", pid, "--noMerge"]
         for _, proxy_url in request_overrides.get('proxies', {}).items():
             cmd.extend(["-proxyAddress", proxy_url])
+            break
         capture_output = True if self.disable_print else False
         ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
         if ret.returncode not in [0]:
@@ -174,9 +223,11 @@ class BaseVideoClient():
             headers.append(f"{k}: {v}\r\n")
         headers_str = "".join(headers)
         # start to download
-        cmd = ["ffmpeg", "-y", "-headers", headers_str, "-i", video_info["download_url"], "-c", "copy", "-bsf:a", "aac_adtstoasc"]
+        cmd = ["ffmpeg", "-y", "-headers", headers_str]
         for _, proxy_url in request_overrides.get('proxies', {}).items():
             cmd.extend(["-http_proxy", proxy_url])
+            break
+        cmd.extend(["-i", video_info["download_url"], "-c", "copy", "-bsf:a", "aac_adtstoasc"])
         cmd.append(video_info['file_path'])
         capture_output = True if self.disable_print else False
         ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
@@ -201,6 +252,9 @@ class BaseVideoClient():
         if video_info.get('ext') in ['m3u8']:
             video_info.update(dict(ext='mp4', download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
         if video_info.get('download_with_ffmpeg', False): return self._downloadwithffmpeg(
+            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
+        )
+        if video_info.get('download_url').endswith('.txt'): return self._downloadwithffmpegfromlocalfile(
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
         )
         # prepare
