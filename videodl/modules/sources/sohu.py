@@ -28,6 +28,81 @@ class SohuVideoClient(BaseVideoClient):
         }
         self.default_headers = self.default_parse_headers
         self._initsession()
+    '''_parsefromurlwithmytv'''
+    @useparseheaderscookies
+    def _parsefromurlwithmytv(self, url: str, request_overrides: dict = None):
+        # prepare
+        request_overrides = request_overrides or {}
+        video_info = VideoInfo(source=self.source)
+        if not self.belongto(url=url): return [video_info]
+        # try parse
+        try:
+            # --obtain vid
+            resp = self.get(url, **request_overrides)
+            resp.raise_for_status()
+            soup = BeautifulSoup(resp.text, 'html.parser')
+            script_tag, vid = soup.find("script", string=lambda t: t and "var vid" in t), None
+            if script_tag:
+                m = re.search(r'var\s+vid\s*=\s*"(\d+)"', script_tag.get_text()) or re.search(r"var\s+vid\s*=\s*'(\d+)'", script_tag.get_text())
+                vid = m.group(1) if m else None
+            if vid is None:
+                li = soup.find("li", attrs={"data-vid": True})
+                vid = li["data-vid"].strip()
+            # --request for the first time to obtain new vid
+            resp = self.get(f'http://my.tv.sohu.com/play/videonew.do?vid={vid}&referer=http://my.tv.sohu.com', **request_overrides)
+            resp.raise_for_status()
+            raw_data = resp2json(resp=resp)
+            qualities = ['norVid', 'highVid', 'superVid', 'oriVid'][::-1]
+            for quality in qualities:
+                vid = raw_data['data'].get(quality, '')
+                if vid: break
+            # --request again using new vid with higher video quality
+            resp = self.get(f'http://my.tv.sohu.com/play/videonew.do?vid={vid}&referer=http://my.tv.sohu.com', **request_overrides)
+            resp.raise_for_status()
+            raw_data[f'{vid}_videonew.do'] = resp2json(resp=resp)
+            video_info.update(dict(raw_data=raw_data))
+            mp4_palyurls, download_urls = raw_data[f'{vid}_videonew.do']["data"]["mp4PlayUrl"], []
+            for download_url in mp4_palyurls:
+                if download_url.startswith("//"): download_url = "https:" + download_url
+                download_urls.append(download_url)
+            # --some download urls need parse twice
+            parsed_download_urls = []
+            for download_url in download_urls:
+                try:
+                    resp = self.get(download_url, **request_overrides)
+                    resp.raise_for_status()
+                    download_url = resp2json(resp=resp)['servers'][0]['url']
+                    parsed_download_urls.append(download_url)
+                except:
+                    pass
+            if parsed_download_urls: download_urls = parsed_download_urls
+            # --construct other video info
+            dt = datetime.fromtimestamp(time.time())
+            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
+            video_title = legalizestring(
+                raw_data["data"].get('tvName', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
+            ).removesuffix('.')
+            ext = 'mp4'
+            video_info.update(dict(
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, vid=vid,
+            ))
+            # --if multiple video split
+            if len(download_urls) == 1:
+                video_info.update(dict(download_url=download_urls[0]))
+            else:
+                ffmpeg_target_file_path = os.path.join(self.work_dir, self.source, f'{vid}.txt')
+                with open(ffmpeg_target_file_path, "w", encoding="utf-8") as fp:
+                    for url in download_urls:
+                        fp.write(f"{url}\n")
+                video_info.update(dict(download_url=ffmpeg_target_file_path))
+        except Exception as err:
+            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
+            video_info.update(dict(err_msg=err_msg))
+            self.logger_handle.error(err_msg, disable_print=self.disable_print)
+        # construct video infos
+        video_infos = [video_info]
+        # return
+        return video_infos
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
@@ -41,12 +116,9 @@ class SohuVideoClient(BaseVideoClient):
             resp = self.get(url, **request_overrides)
             resp.raise_for_status()
             soup = BeautifulSoup(resp.text, 'html.parser')
-            script_tag = soup.find("script", string=lambda t: t and "var vid" in t)
-            try:
-                m = re.search(r'var\s+vid\s*=\s*"(\d+)"', script_tag.get_text())
-                vid = m.group(1) if m else None
-            except:
-                m = re.search(r"var\s+vid\s*=\s*'(\d+)'", script_tag.get_text())
+            script_tag, vid = soup.find("script", string=lambda t: t and "var vid" in t), None
+            if script_tag:
+                m = re.search(r'var\s+vid\s*=\s*"(\d+)"', script_tag.get_text()) or re.search(r"var\s+vid\s*=\s*'(\d+)'", script_tag.get_text())
                 vid = m.group(1) if m else None
             if vid is None:
                 li = soup.find("li", attrs={"data-vid": True})
@@ -56,6 +128,7 @@ class SohuVideoClient(BaseVideoClient):
             resp = self.get('https://hot.vrs.sohu.com/vrs_pc_play.action', params=params, **request_overrides)
             resp.raise_for_status()
             raw_data = resp2json(resp=resp)
+            if not raw_data.get('data'): return self._parsefromurlwithmytv(url=url, request_overrides=request_overrides)
             # --parse
             priority_keys = [
                 "relativeId", "norVid", "highVid", "superVid", "oriVid", "h2644kVid", "h265norVid", "h265highVid", "h265superVid", "h265oriVid", 
