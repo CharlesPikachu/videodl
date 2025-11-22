@@ -172,6 +172,13 @@ The demonstration is as follows,
 [![Star History Chart](https://api.star-history.com/svg?repos=CharlesPikachu/videodl&type=date&legend=top-left)](https://www.star-history.com/#CharlesPikachu/videodl&type=date&legend=top-left)
 
 
+# ☕ Appreciation (赞赏 / 打赏)
+
+| WeChat Appreciation QR Code (微信赞赏码)                                                                                       | Alipay Appreciation QR Code (支付宝赞赏码)                                                                                     |
+| :--------:                                                                                                                     | :----------:                                                                                                                   |
+| <img src="https://raw.githubusercontent.com/CharlesPikachu/videodl/master/.github/pictures/wechat_reward.jpg" width="260" />   | <img src="https://raw.githubusercontent.com/CharlesPikachu/videodl/master/.github/pictures/alipay_reward.png" width="260" />   |
+
+
 # 📱 WeChat Official Account (微信公众号):
 
 Charles的皮卡丘 (*Charles_pikachu*)  
