@@ -132,7 +132,11 @@ VIDEODL_TEST_SAMPLES = {
     'ZhihuVideoClient': [
         'https://www.zhihu.com/zvideo/1342930761977176064',
         'https://www.zhihu.com/zvideo/1975671354259968920',
-    ]
+    ],
+    'KakaoVideoClient': [
+        'http://tv.kakao.com/channel/2671005/cliplink/301965083',
+        'https://tv.kakao.com/channel/2671005/cliplink/375041999',
+    ],
 }
 
 
