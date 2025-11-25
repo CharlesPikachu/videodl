@@ -7,11 +7,14 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
+import re
 import time
+import json_repair
 from datetime import datetime
+from bs4 import BeautifulSoup
 from .base import BaseVideoClient
 from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, resp2json, useparseheaderscookies, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, FileTypeSniffer, VideoInfo
 
 
 '''WeishiVideoClient'''
@@ -41,28 +44,39 @@ class WeishiVideoClient(BaseVideoClient):
                 vid = parse_qs(parsed_url.query, keep_blank_values=True)['id'][0]
             else:
                 vid = parsed_url.path.strip('/').split('/')[-1]
-            resp = self.get(f"https://h5.weishi.qq.com/webapp/json/weishi/WSH5GetPlayPage?feedid={vid}", **request_overrides)
+            resp = self.get(url, **request_overrides)
             resp.raise_for_status()
-            raw_data = resp2json(resp=resp)
+            soup = BeautifulSoup(resp.text, "html.parser")
+            script_tag = soup.find("script", string=re.compile(r"window\.Vise\.initState"))
+            script_text = script_tag.string or script_tag.get_text()
+            m = re.search(r"window\.Vise\.initState\s*=\s*({.*?});", script_text, re.S)
+            raw_data = json_repair.loads(m.group(1))
             video_info.update(dict(raw_data=raw_data))
-            specs = raw_data["data"]["feeds"][0]["video_spec_urls"]
-            sorted_specs = sorted(specs.items(), key=lambda kv: kv[1].get("size", 0), reverse=True)
-            for _, ss in sorted_specs:
-                download_url = ss.get('url', "")
-                if download_url: break
-            if not download_url: download_url = raw_data["data"]["feeds"][0]["video_url"]
+            video_spec_urls: dict = raw_data["feedsList"][0]["videoSpecUrls"]
+            spec_list = list(video_spec_urls.values())
+            spec_list = [s for s in spec_list if s.get('url')]
+            def _qualityscore(spec: dict):
+                vq, w, h = spec.get("videoQuality") or 0, spec.get("width") or 0, spec.get("height") or 0
+                fps, size = spec.get("fps") or 0, int(spec.get("size") or 0)
+                return (vq, w * h, fps, size)
+            spec_list_sorted = sorted(spec_list, key=_qualityscore, reverse=True)
+            if len(spec_list_sorted) > 0:
+                download_url = spec_list_sorted[0]['url']
+            else:
+                download_url = raw_data["feedsList"][0]['videoUrl']
             video_info.update(dict(download_url=download_url))
             dt = datetime.fromtimestamp(time.time())
             date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
             video_title = legalizestring(
-                raw_data["data"]["feeds"][0].get('feed_desc_withat', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
+                raw_data["feedsList"][0].get('feedDesc', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
             ).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, 
+                guess_video_ext_result=guess_video_ext_result, identifier=vid,
             ))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
