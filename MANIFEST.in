@@ -1,0 +1,1 @@
+recursive-include videodl/modules/js/youtube *.js

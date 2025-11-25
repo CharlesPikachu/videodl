@@ -21,9 +21,8 @@ python setup.py install
 ```
 
 Also, some video downloaders depend on [Ffmpeg](https://ffmpeg.org/), 
-[CBox](https://github.com/CharlesPikachu/videodl/releases/download/software_dependency/cbox.zip) and 
-[N_m3u8DL-CLI](https://github.com/nilaoda/N_m3u8DL-CLI), 
-so please make sure both programs are installed and can be invoked directly from your system environment (*i.e.*, they are on your PATH). 
+[CBox](https://github.com/CharlesPikachu/videodl/releases/download/software_dependency/cbox.zip), [N_m3u8DL-CLI](https://github.com/nilaoda/N_m3u8DL-CLI), and [Node.js](https://nodejs.org/en),
+so please make sure both programs are installed and can be invoked directly from your system environment (*i.e.*, they are on your `PATH`). 
 A quick way to verify this is:
 
 - **For Ffmpeg**: open a terminal (or Command Prompt on Windows) and run,
@@ -42,3 +41,11 @@ A quick way to verify this is:
   ```
   in Command Prompt and get the full path without an error.
   If the N_m3u8DL-CLI version is not compatible with your system, please download the appropriate one from the [N_m3u8DL-CLI](https://github.com/nilaoda/N_m3u8DL-CLI) official website yourself.
+
+- **For Node.js**: open a terminal (or Command Prompt on Windows) and run,
+  ```bash
+  node -v
+  npm -v
+  ```
+  If Node.js is installed correctly, `node -v` will print the Node.js version (*e.g.*, `v22.11.0`), and `npm -v` will print the npm version.
+  If you see a similar `command not found` / `not recognized` error, Node.js is not installed correctly or not available on your `PATH`.
