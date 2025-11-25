@@ -288,7 +288,7 @@ class BaseVideoClient():
         if video_info.get('download_with_ffmpeg_cctv', False): return self._downloadwithffmpegcctv(
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
         )
-        if video_info.get('ext') in ['m3u8']:
+        if video_info.get('ext') in ['m3u8', 'm3u']:
             video_info.update(dict(ext='mp4', download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
         if video_info.get('download_with_ffmpeg', False): return self._downloadwithffmpeg(
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
