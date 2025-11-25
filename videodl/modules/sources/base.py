@@ -48,6 +48,7 @@ class BaseVideoClient():
         self.default_parse_cookies = default_parse_cookies or {}
         self.default_cookies = default_parse_cookies
         # init requests.Session
+        self.default_search_headers = {'User-Agent': UserAgent().random}
         self.default_parse_headers = {'User-Agent': UserAgent().random}
         self.default_download_headers = {'User-Agent': UserAgent().random}
         self.default_headers = self.default_parse_headers
@@ -82,6 +83,40 @@ class BaseVideoClient():
     @usesearchheaderscookies
     def search(self):
         raise NotImplementedError()
+    '''_downloadyoutube'''
+    @usedownloadheaderscookies
+    def _downloadyoutube(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
+        # init
+        request_overrides = request_overrides or {}
+        # not deal with video info with errors
+        if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
+        # prepare
+        touchdir(os.path.dirname(video_info['file_path']))
+        video_info = copy.deepcopy(video_info)
+        video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
+        # start to download
+        try:
+            content_length = int(float(video_info['download_url'].filesize or 0))
+            chunk_size = video_info.get('chunk_size', 1024 * 1024)
+            video_total_mb = content_length / (1024 * 1024)
+            if len(os.path.basename(video_info['file_path'])) > 10:
+                desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10] + '...'}"
+            else:
+                desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10]}"
+            with alive_bar(manual=True, title=desc_name, bar='blocks', stats='[{rate}, {eta}]') as bar:
+                downloaded_bytes = 0
+                with open(video_info['file_path'], "wb") as fp:
+                    for chunk in video_info['download_url'].iterchunks(chunk_size=chunk_size):
+                        if not chunk: continue
+                        fp.write(chunk)
+                        downloaded_bytes += len(chunk)
+                        bar((downloaded_bytes / content_length) if content_length > 0 else (downloaded_bytes / downloaded_bytes))
+                        bar.text = f"{downloaded_bytes/1024/1024:.1f}/{video_total_mb:.1f} MB" if content_length > 0 else f"{downloaded_bytes/1024/1024:.1f}/{downloaded_bytes/1024/1024:.1f} MB"
+            downloaded_video_infos.append(video_info)
+        except Exception as err:
+            self.logger_handle.error(f'{self.source}._download >>> {video_info["identifier"]} (Error: {err})', disable_print=self.disable_print)
+        # return
+        return downloaded_video_infos
     '''_downloadwithffmpegfromlocalfile'''
     @usedownloadheaderscookies
     def _downloadwithffmpegfromlocalfile(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
@@ -245,6 +280,10 @@ class BaseVideoClient():
         request_overrides = request_overrides or {}
         # not deal with video info with errors
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
+        # youtube use specific downloader
+        if video_info.get('source') in ['YouTubeVideoClient']: return self._downloadyoutube(
+            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
+        )
         # use ffmpeg to deal with m3u8 like files
         if video_info.get('download_with_ffmpeg_cctv', False): return self._downloadwithffmpegcctv(
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
@@ -266,22 +305,21 @@ class BaseVideoClient():
             resp = self.get(video_info['download_url'], stream=True, **request_overrides)
             resp.raise_for_status()
             content_length = int(float(resp.headers.get("Content-Length", 0) or 0))
-            chunk_size = 1024 * 1024
-            total_chunks = max(1, math.ceil(content_length / chunk_size))
+            chunk_size = video_info.get('chunk_size', 1024 * 1024)
             video_total_mb = content_length / (1024 * 1024)
             if len(os.path.basename(video_info['file_path'])) > 10:
                 desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10] + '...'}"
             else:
                 desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10]}"
-            with alive_bar(total_chunks, title=desc_name, bar='blocks', stats='[{rate}, {eta}]') as bar:
+            with alive_bar(manual=True, title=desc_name, bar='blocks', stats='[{rate}, {eta}]') as bar:
                 downloaded_bytes = 0
                 with open(video_info['file_path'], "wb") as fp:
                     for chunk in resp.iter_content(chunk_size=chunk_size):
                         if not chunk: continue
                         fp.write(chunk)
                         downloaded_bytes += len(chunk)
-                        bar()
-                        bar.text = f"{downloaded_bytes/1024/1024:.1f}/{video_total_mb:.1f} MB"
+                        bar((downloaded_bytes / content_length) if content_length > 0 else (downloaded_bytes / downloaded_bytes))
+                        bar.text = f"{downloaded_bytes/1024/1024:.1f}/{video_total_mb:.1f} MB" if content_length > 0 else f"{downloaded_bytes/1024/1024:.1f}/{downloaded_bytes/1024/1024:.1f} MB"
             downloaded_video_infos.append(video_info)
         except Exception as err:
             self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error: {err})', disable_print=self.disable_print)

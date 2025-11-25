@@ -1,23 +1,26 @@
 '''
 Function:
-    Implementation of quickly checking the effectiveness of videodl
+    Implementation of quickly validating the effectiveness of videodl.parsefromurl
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
+import pickle
+from tqdm import tqdm
+from videodl.modules import VideoClientBuilder, BaseVideoClient
 
 
-
-TEST_EXAMPLES = {
+'''constants'''
+VIDEODL_TEST_SAMPLES = {
     'AcFunVideoClient': [
         'https://www.acfun.cn/v/ac29566205', 
         'https://www.acfun.cn/v/ac47998293', 
-        'https://www.acfun.cn/v/ac36491489'
+        'https://www.acfun.cn/v/ac36491489',
     ],
     'HaokanVideoClient': [
         'https://haokan.baidu.com/v?vid=7295039339702288421', 
-        'https://haokan.baidu.com/v?vid=7224830823778858146'
+        'https://haokan.baidu.com/v?vid=7224830823778858146',
     ],
     'TedVideoClient': [
         'https://www.ted.com/talks/alanna_shaikh_why_covid_19_is_hitting_us_now_and_how_to_prepare_for_the_next_outbreak', 
@@ -101,7 +104,6 @@ TEST_EXAMPLES = {
     ],
     'XiguaVideoClient': [
         'https://www.ixigua.com/7382121243505328655',
-        'https://m.ixigua.com/video/7405525381257626162?logTag=93d90688ada741c34133'
     ],
     'WeiboVideoClient': [
         'https://weibo.com/tv/show/1034:5234817776943232?mid=5234851004547318',
@@ -111,7 +113,6 @@ TEST_EXAMPLES = {
     ],
     'RednoteVideoClient': [
         'http://xhslink.com/o/6B9wstL9kEM',
-        'https://www.xiaohongshu.com/explore/691b27510000000007017708?app_platform=android&ignoreEngage=true&app_version=9.8.1&share_from_user_hidden=true&xsec_source=app_share&type=video&xsec_token=CBA-xMhkMF_MswlwR4_gmUDZfWCILfe7lOh0MNcTIvzIo=&author_share=1&xhsshare=&shareRedId=Nz02QUk7OEs-OUpFPEE3TEc7TEk3Pjw_&apptime=1763572146&share_id=c4d5f5d382684815924cc6a6843486e3&share_channel=wechat'
     ],
     'CCTVVideoClient': [
         'https://v.cctv.com/2021/06/05/VIDEwn0n7VRJokIL7rBi2ink210605.shtml?spm=C90324.Pfdd0SYeqktv.Eri5TUDwaTXO.6',
@@ -124,4 +125,35 @@ TEST_EXAMPLES = {
         'https://film.sohu.com/album/9697072.html',
         'https://tv.sohu.com/v/MjAyNDA5MjIvbjYyMDAxMTUyMS5zaHRtbA==.html',
     ],
+    'YouTubeVideoClient': [
+        'https://music.youtube.com/watch?v=PgPhDyV0J2w&list=RDAMVMPgPhDyV0J2w',
+        'https://www.youtube.com/watch?v=hie-SsINu4Q&list=RDhie-SsINu4Q&start_radio=1',
+    ],
 }
+
+
+'''main'''
+def main(save_path='test_results.pkl'):
+    modules_summary = []
+    for client_name, client_module in VideoClientBuilder.REGISTERED_MODULES.items():
+        print(f"\n[Module] {client_name}")
+        client: BaseVideoClient = client_module()
+        num_valid = 0
+        for candidate_url in tqdm(VIDEODL_TEST_SAMPLES[client_name]):
+            video_info = client.parsefromurl(candidate_url)[0]
+            status = {"name": client_name, "ok": False, "error_msg": None, "test_url": candidate_url, "parse_result": video_info}
+            if video_info['download_url'] == 'NULL' or not video_info['download_url'] or video_info['err_msg'] != 'NULL':
+                status.update(dict(error_msg=video_info['err_msg'], ok=False))
+            else:
+                num_valid += 1
+                status.update(dict(ok=True))
+            modules_summary.append(status)
+        print(f"  Parsed video urls: {num_valid}/{len(VIDEODL_TEST_SAMPLES[client_name])}")
+    with open(save_path, 'wb') as fp:
+        pickle.dump(modules_summary, fp)
+    print(f"Saved test results to {save_path}")
+
+
+'''tests'''
+if __name__ == '__main__':
+    main()

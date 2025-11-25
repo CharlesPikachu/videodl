@@ -18,6 +18,7 @@ from .zuiyou import ZuiyouVideoClient
 from .meipai import MeipaiVideoClient
 from ..utils import BaseModuleBuilder
 from .wesing import WeSingVideoClient
+from .youtube import YouTubeVideoClient
 from .rednote import RednoteVideoClient
 from .sixroom import SixRoomVideoClient
 from .kuaishou import KuaishouVideoClient
@@ -40,7 +41,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'WeishiVideoClient': WeishiVideoClient, 'SixRoomVideoClient': SixRoomVideoClient, 'DuxiaoshiVideoClient': DuxiaoshiVideoClient,
         'ZuiyouVideoClient': ZuiyouVideoClient, 'XinpianchangVideoClient': XinpianchangVideoClient, 'WeSingVideoClient': WeSingVideoClient,
         'XiguaVideoClient': XiguaVideoClient, 'RednoteVideoClient': RednoteVideoClient, 'WeiboVideoClient': WeiboVideoClient,
-        'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient,
+        'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient, 'YouTubeVideoClient': YouTubeVideoClient,
     }
 
 

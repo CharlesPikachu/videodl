@@ -12,8 +12,8 @@ import functools
 '''VideoInfo'''
 class VideoInfo(dict):
     _defaults = {
-        'source': None, 'raw_data': 'NULL', 'download_url': 'NULL', 'title': 'NULL', 'file_path': 'NULL',
-        'ext': 'mp4', 'download_with_ffmpeg': False, 'err_msg': "NULL",
+        'source': None, 'raw_data': 'NULL', 'download_url': 'NULL', 'title': 'NULL', 'file_path': 'NULL', 'ext': 'mp4', 
+        'download_with_ffmpeg': False, 'err_msg': "NULL", 'identifier': 'NULL', 'guess_video_ext_result': 'NULL',
     }
     def __init__(self, *args, **kwargs):
         data = dict(self._defaults)
