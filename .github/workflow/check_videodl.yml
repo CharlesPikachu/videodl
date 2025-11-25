@@ -1,0 +1,47 @@
+name: check videodl status daily
+
+on:
+  schedule:
+    - cron: "0 20 * * *"
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -e .
+      
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Run videodl checks
+        run: |
+          python scripts/daily_check_videodl.py --output daily_test_results/videodl_status.json
+
+      - name: Commit updated videodl status & preview videos
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update videodl status & preview videos"
+          file_pattern: daily_test_results/**

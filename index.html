@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <title>VideoDL 解析监控面板 | VideoDL Parser Monitor</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        color: #f5f5ff;
+        background: transparent;
+        overflow-x: hidden;
+      }
+
+      #starfield {
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        display: block;
+      }
+
+      .page {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 32px 16px 64px;
+      }
+
+      .glass-panel {
+        background: rgba(6, 9, 30, 0.8);
+        border-radius: 24px;
+        border: 1px solid rgba(180, 200, 255, 0.2);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(18px);
+        padding: 24px 20px;
+      }
+
+      .top-header {
+        margin-bottom: 24px;
+      }
+
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .title-block {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .top-header h1 {
+        font-size: 2.2rem;
+        letter-spacing: 0.05em;
+        margin-bottom: 8px;
+        background: linear-gradient(120deg, #f6f4ff, #ffe66d, #7dd3fc);
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+
+      .subtitle {
+        font-size: 0.95rem;
+        color: #cbd5ff;
+        margin-bottom: 10px;
+      }
+
+      .author-line {
+        font-size: 0.9rem;
+        color: #a5b4ff;
+      }
+
+      .author-name {
+        font-weight: 600;
+      }
+
+      .lang-toggle {
+        display: inline-flex;
+        gap: 6px;
+        padding: 4px;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(148, 163, 255, 0.3);
+      }
+
+      .lang-btn {
+        border: none;
+        background: transparent;
+        color: #9ca3ff;
+        font-size: 0.8rem;
+        padding: 3px 8px;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease, filter 0.15s ease;
+      }
+
+      .lang-btn.active {
+        background: rgba(129, 140, 248, 0.9);
+        color: #020617;
+        font-weight: 600;
+      }
+
+      .lang-btn:hover {
+        filter: brightness(1.1);
+      }
+
+      .cute-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .cute-pill {
+        font-size: 0.8rem;
+        background: radial-gradient(circle at 0 0, #fbbf24, #ec4899);
+        padding: 6px 10px;
+        border-radius: 999px;
+        color: #111827;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        animation: floaty 4s ease-in-out infinite alternate;
+      }
+
+      .cute-pill:nth-child(2) {
+        background: radial-gradient(circle at 0 0, #7dd3fc, #a855f7);
+        animation-delay: 0.8s;
+      }
+
+      .cute-pill:nth-child(3) {
+        background: radial-gradient(circle at 0 0, #bbf7d0, #facc15);
+        animation-delay: 1.4s;
+      }
+
+      @keyframes floaty {
+        0% {
+          transform: translateY(0px) translateX(0px);
+        }
+        100% {
+          transform: translateY(-4px) translateX(3px);
+        }
+      }
+
+      h2.section-title {
+        margin: 24px 0 8px;
+        font-size: 1.2rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #e5e7ff;
+      }
+
+      .section-desc {
+        font-size: 0.85rem;
+        color: #a5b4ff;
+        margin-bottom: 12px;
+      }
+
+      /* Summary cards */
+      .summary-container {
+        margin-bottom: 16px;
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      .summary-card {
+        background: radial-gradient(circle at top left, #1f2937, #020617);
+        border-radius: 16px;
+        border: 1px solid rgba(148, 163, 255, 0.4);
+        padding: 10px 12px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .summary-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at 0 0,
+          rgba(251, 191, 36, 0.2),
+          transparent 60%
+        );
+        opacity: 0.7;
+        pointer-events: none;
+      }
+
+      .summary-label {
+        font-size: 0.75rem;
+        color: #9ca3ff;
+      }
+
+      .summary-value {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-top: 4px;
+      }
+
+      .summary-tagline {
+        font-size: 0.75rem;
+        color: #e5e7ff;
+        margin-top: 4px;
+      }
+
+      .summary-update {
+        font-size: 0.8rem;
+        color: #9ca3ff;
+      }
+
+      /* Table */
+      .table-wrapper {
+        border-radius: 16px;
+        border: 1px solid rgba(148, 163, 255, 0.4);
+        overflow: hidden;
+        background: rgba(15, 23, 42, 0.9);
+        max-height: 420px;
+        overflow-y: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+      }
+
+      thead {
+        background: linear-gradient(90deg, #0f172a, #111827);
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+
+      th,
+      td {
+        padding: 8px 10px;
+        text-align: left;
+      }
+
+      th {
+        font-weight: 600;
+        color: #9ca3ff;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      tbody tr {
+        border-top: 1px solid rgba(30, 64, 175, 0.5);
+        cursor: pointer;
+        transition: background 0.18s ease, transform 0.1s ease;
+      }
+
+      tbody tr:nth-child(even) {
+        background: rgba(15, 23, 42, 0.7);
+      }
+
+      tbody tr:hover {
+        background: rgba(55, 65, 194, 0.55);
+        transform: translateY(-1px);
+      }
+
+      .client-name {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .client-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 7px;
+        border-radius: 999px;
+        background: rgba(59, 130, 246, 0.25);
+        color: #e5e7ff;
+        font-size: 0.8rem;
+      }
+
+      .client-id {
+        font-size: 0.7rem;
+        color: #9ca3ff;
+        opacity: 0.9;
+      }
+
+      .status-pill {
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .status-ok {
+        background: rgba(22, 163, 74, 0.2);
+        color: #4ade80;
+      }
+
+      .status-partial {
+        background: rgba(234, 179, 8, 0.2);
+        color: #facc15;
+      }
+
+      .status-fail {
+        background: rgba(248, 113, 113, 0.2);
+        color: #fca5a5;
+      }
+
+      /* Details */
+      .client-details {
+        margin-top: 18px;
+      }
+
+      .client-details-body {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .detail-card {
+        border-radius: 12px;
+        border: 1px solid rgba(148, 163, 255, 0.4);
+        padding: 8px 10px;
+        font-size: 0.82rem;
+        background: radial-gradient(circle at top left, #020617, #020617);
+      }
+
+      .detail-card.detail-ok {
+        border-color: rgba(34, 197, 94, 0.6);
+      }
+
+      .detail-card.detail-fail {
+        border-color: rgba(248, 113, 113, 0.6);
+      }
+
+      .detail-header {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 4px;
+      }
+
+      .detail-index {
+        font-weight: 600;
+        color: #e5e7ff;
+      }
+
+      .detail-url a {
+        color: #93c5fd;
+        text-decoration: none;
+        word-break: break-all;
+      }
+
+      .detail-url a:hover {
+        text-decoration: underline;
+      }
+
+      .detail-title {
+        margin-bottom: 4px;
+        color: #e5e7ff;
+      }
+
+      .detail-meta {
+        color: #c4d4ff;
+      }
+
+      .detail-meta code {
+        font-size: 0.75rem;
+        background: rgba(15, 23, 42, 0.9);
+        padding: 1px 4px;
+        border-radius: 4px;
+      }
+
+      /* Samples */
+      .sample-cards {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 10px;
+      }
+
+      .sample-card {
+        border-radius: 16px;
+        border: 1px solid rgba(96, 165, 250, 0.6);
+        padding: 10px 12px;
+        font-size: 0.82rem;
+        background: radial-gradient(circle at top, #020617, #020617);
+        box-shadow: 0 14px 35px rgba(15, 23, 42, 0.8);
+      }
+
+      .sample-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+      }
+
+      .sample-index {
+        font-weight: 600;
+        color: #fbbf24;
+      }
+
+      .sample-source {
+        font-size: 0.75rem;
+        color: #9ca3ff;
+      }
+
+      .sample-title {
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: #e5e7ff;
+      }
+
+      .sample-url {
+        margin-bottom: 4px;
+      }
+
+      .sample-url a {
+        color: #93c5fd;
+        text-decoration: none;
+        word-break: break-all;
+      }
+
+      .sample-url a:hover {
+        text-decoration: underline;
+      }
+
+      .sample-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 0.75rem;
+        color: #cbd5ff;
+      }
+
+      .sample-video {
+        width: 100%;
+        border-radius: 12px;
+        margin-top: 6px;
+        max-height: 230px;
+        background: #000;
+      }
+
+      /* Footer */
+      .footer {
+        margin-top: 30px;
+        font-size: 0.8rem;
+        color: #9ca3ff;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: space-between;
+      }
+
+      .footer a {
+        color: #93c5fd;
+        text-decoration: none;
+      }
+
+      .footer a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 768px) {
+        .page {
+          padding: 20px 10px 40px;
+        }
+
+        .glass-panel {
+          padding: 16px 14px;
+        }
+
+        .top-header h1 {
+          font-size: 1.7rem;
+        }
+
+        .top-bar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+
+        th,
+        td {
+          padding: 7px 8px;
+        }
+
+        .lang-toggle {
+          align-self: flex-end;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+
+    <div class="page">
+      <div class="glass-panel">
+        <header class="top-header">
+          <div class="top-bar">
+            <div class="title-block">
+              <h1 id="title-main"></h1>
+              <p id="subtitle" class="subtitle"></p>
+              <div class="author-line">
+                <span id="author-label"></span>
+                <span class="author-name">Zhenchao Jin</span>
+                +
+                <span class="author-name">GPT 5.1</span>
+              </div>
+            </div>
+            <div class="lang-toggle">
+              <button class="lang-btn active" data-lang="zh">中文</button>
+              <button class="lang-btn" data-lang="en">EN</button>
+            </div>
+          </div>
+
+          <div class="cute-row">
+            <div class="cute-pill" id="pill-1"></div>
+            <div class="cute-pill" id="pill-2"></div>
+            <div class="cute-pill" id="pill-3"></div>
+          </div>
+        </header>
+
+        <!-- Summary -->
+        <section>
+          <h2 class="section-title" id="section-overview-title"></h2>
+          <div id="summary" class="summary-container"></div>
+        </section>
+
+        <!-- Clients table -->
+        <section class="clients-section">
+          <h2 class="section-title" id="section-clients-title"></h2>
+          <p class="section-desc" id="section-clients-desc"></p>
+
+          <div class="table-wrapper">
+            <table id="client-table">
+              <thead>
+                <tr>
+                  <th id="th-platform"></th>
+                  <th id="th-success"></th>
+                  <th id="th-rate"></th>
+                  <th id="th-status"></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div id="client-details" class="client-details">
+            <h2 class="section-title" id="section-details-title"></h2>
+            <div id="client-details-body" class="client-details-body"></div>
+          </div>
+        </section>
+
+        <!-- Samples -->
+        <section class="samples-section">
+          <h2 class="section-title" id="section-samples-title"></h2>
+          <p class="section-desc" id="section-samples-desc"></p>
+          <div id="sample-cards" class="sample-cards"></div>
+        </section>
+
+        <footer class="footer">
+          <div id="footer-line"></div>
+          <div>
+            <span id="repo-label"></span>
+            <!-- TODO: 改成你的 GitHub 仓库链接 -->
+            <a
+              href="https://github.com/your-name/your-videodl-repo"
+              target="_blank"
+              rel="noopener noreferrer"
+              >GitHub</a
+            >
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script>
+      // ============= 文案多语言 =============
+      const i18n = {
+        zh: {
+          titleMain: "VideoDL 解析监控面板",
+          subtitle:
+            "每天自动巡航各大视频站点，检查解析接口是否还在发光 ✨",
+          authorLabel: "作者：",
+          pill1: "⚡ 皮卡丘监控中",
+          pill2: "📡 多站点视频解析状态",
+          pill3: "⭐ 每日随机 Demo 展示",
+
+          sectionOverviewTitle: "今日总览",
+          sectionClientsTitle: "平台状态",
+          sectionClientsDesc:
+            "点击下方任意平台行，可查看该平台今天的解析样本与详细结果（只解析，不下载视频）。",
+          sectionDetailsTitle: "详细解析",
+          sectionSamplesTitle: "今日随机 Demo",
+          sectionSamplesDesc:
+            "每天从全部成功解析的视频里随机挑选约 3 个 Demo，方便你快速肉眼检查解析质量。",
+
+          footerLine: "Made with ❤️, ⚡ and a bit of stardust.",
+          repoLabel: "仓库：",
+
+          loading: "加载中…",
+          loadError: "❌ 无法加载最新状态，请稍后再试。",
+          noData: "暂无检测数据，请检查 workflow 是否成功运行。",
+          detailsHint: "👆 先从上方表格中选择一个平台查看详细样本。",
+          noTestsForClient:
+            "该平台暂无测试样本，请在脚本中配置 VIDEODL_TEST_SAMPLES。",
+          noSuccessSamples:
+            "今天似乎没有成功解析的样本，可以稍后再来看看～",
+
+          summaryTotalLabel: "总平台",
+          summaryTotalTagline: "注册的 VideoClient 数量",
+          summaryAllOkLabel: "全部正常",
+          summaryAllOkTagline: "解析成功率 100% 的平台",
+          summaryPartialLabel: "部分可用",
+          summaryPartialTagline: "部分测试 URL 仍然可解析",
+          summaryFailLabel: "全部失效",
+          summaryFailTagline: "需要紧急关注的解析模块",
+          summaryLastUpdate: "最后更新时间",
+
+          tableHeaderPlatform: "平台",
+          tableHeaderSuccessTotal: "成功 / 总数",
+          tableHeaderSuccessRate: "成功率",
+          tableHeaderStatus: "状态",
+
+          statusOk: "全部正常",
+          statusPartial: "部分可用",
+          statusFail: "全部失效",
+
+          sampleIndexLabel: "样本 #{n}",
+          detailNoDownload: "无有效下载链接（疑似解析失败）。",
+          detailDownloadLabel: "下载链接（解析结果）：",
+          detailErrorLabel: "错误信息：",
+          detailErrorNone: "无",
+
+          sampleDurationLabel: "时长",
+          sampleDurationUnknown: "未知",
+          sampleStatusOkLabel: "解析成功",
+        },
+        en: {
+          titleMain: "VideoDL Parser Monitor",
+          subtitle:
+            "Automatically checks each supported video site every day to see if parsing still works ✨",
+          authorLabel: "Author:",
+          pill1: "⚡ Pikachu is watching",
+          pill2: "📡 Multi-site parsing status",
+          pill3: "⭐ 3 random demos every day",
+
+          sectionOverviewTitle: "Overview",
+          sectionClientsTitle: "Platform Status",
+          sectionClientsDesc:
+            "Click any row in the table below to see today's parsing samples and details (parsing only, no downloading).",
+          sectionDetailsTitle: "Details",
+          sectionSamplesTitle: "Random Demos",
+          sectionSamplesDesc:
+            "Each day, about three successfully parsed videos are sampled at random for quick manual inspection.",
+
+          footerLine:
+            "Made with ❤️, ⚡ and a little cosmic dust, by humans and models.",
+          repoLabel: "Repository:",
+
+          loading: "Loading…",
+          loadError: "❌ Failed to load latest status. Please try again later.",
+          noData:
+            "No status data found. Please check whether the workflow finished successfully.",
+          detailsHint:
+            "👆 Pick a platform from the table above to see detailed samples.",
+          noTestsForClient:
+            "No test samples configured for this platform. Please edit VIDEODL_TEST_SAMPLES in the script.",
+          noSuccessSamples:
+            "There are no successful samples today. Maybe check back after the next run.",
+
+          summaryTotalLabel: "Total Platforms",
+          summaryTotalTagline: "Number of registered VideoClients",
+          summaryAllOkLabel: "All Good",
+          summaryAllOkTagline: "Platforms with 100% success rate",
+          summaryPartialLabel: "Partially OK",
+          summaryPartialTagline: "At least one sample still works",
+          summaryFailLabel: "All Failed",
+          summaryFailTagline: "Clients that need urgent attention",
+          summaryLastUpdate: "Last updated at",
+
+          tableHeaderPlatform: "Platform",
+          tableHeaderSuccessTotal: "Success / Total",
+          tableHeaderSuccessRate: "Success Rate",
+          tableHeaderStatus: "Status",
+
+          statusOk: "All OK",
+          statusPartial: "Partial",
+          statusFail: "Failed",
+
+          sampleIndexLabel: "Sample #{n}",
+          detailNoDownload:
+            "No valid download URL (parsing likely failed for this sample).",
+          detailDownloadLabel: "Download URL (parse result):",
+          detailErrorLabel: "Error:",
+          detailErrorNone: "none",
+
+          sampleDurationLabel: "Duration",
+          sampleDurationUnknown: "unknown",
+          sampleStatusOkLabel: "Parsed OK",
+        },
+      };
+
+      let currentLang = "zh";
+      let statusData = null;
+      let selectedClient = null;
+
+      function setLanguage(lang) {
+        if (!i18n[lang]) return;
+        currentLang = lang;
+        const t = i18n[lang];
+
+        document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+
+        const titleEl = document.getElementById("title-main");
+        const subtitleEl = document.getElementById("subtitle");
+        const authorLabelEl = document.getElementById("author-label");
+        const pill1 = document.getElementById("pill-1");
+        const pill2 = document.getElementById("pill-2");
+        const pill3 = document.getElementById("pill-3");
+        const sectionOverview = document.getElementById(
+          "section-overview-title"
+        );
+        const sectionClients = document.getElementById("section-clients-title");
+        const sectionClientsDesc = document.getElementById(
+          "section-clients-desc"
+        );
+        const sectionDetails = document.getElementById(
+          "section-details-title"
+        );
+        const sectionSamples = document.getElementById(
+          "section-samples-title"
+        );
+        const sectionSamplesDesc = document.getElementById(
+          "section-samples-desc"
+        );
+        const footerLine = document.getElementById("footer-line");
+        const repoLabel = document.getElementById("repo-label");
+        const thPlatform = document.getElementById("th-platform");
+        const thSuccess = document.getElementById("th-success");
+        const thRate = document.getElementById("th-rate");
+        const thStatus = document.getElementById("th-status");
+        const detailsBody = document.getElementById("client-details-body");
+        const summaryEl = document.getElementById("summary");
+
+        if (titleEl) titleEl.textContent = t.titleMain;
+        if (subtitleEl) subtitleEl.textContent = t.subtitle;
+        if (authorLabelEl) authorLabelEl.textContent = t.authorLabel + " ";
+        if (pill1) pill1.textContent = t.pill1;
+        if (pill2) pill2.textContent = t.pill2;
+        if (pill3) pill3.textContent = t.pill3;
+
+        if (sectionOverview) sectionOverview.textContent = t.sectionOverviewTitle;
+        if (sectionClients) sectionClients.textContent = t.sectionClientsTitle;
+        if (sectionClientsDesc)
+          sectionClientsDesc.textContent = t.sectionClientsDesc;
+        if (sectionDetails)
+          sectionDetails.textContent = t.sectionDetailsTitle;
+        if (sectionSamples)
+          sectionSamples.textContent = t.sectionSamplesTitle;
+        if (sectionSamplesDesc)
+          sectionSamplesDesc.textContent = t.sectionSamplesDesc;
+
+        if (footerLine) footerLine.textContent = t.footerLine;
+        if (repoLabel) repoLabel.textContent = t.repoLabel + " ";
+
+        if (thPlatform) thPlatform.textContent = t.tableHeaderPlatform;
+        if (thSuccess) thSuccess.textContent = t.tableHeaderSuccessTotal;
+        if (thRate) thRate.textContent = t.tableHeaderSuccessRate;
+        if (thStatus) thStatus.textContent = t.tableHeaderStatus;
+
+        document.querySelectorAll(".lang-btn").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.lang === lang);
+        });
+
+        if (statusData) {
+          renderSummary(statusData);
+          renderTable(statusData.clients || []);
+          if (selectedClient) {
+            showClientDetails(selectedClient);
+          } else if (detailsBody) {
+            detailsBody.textContent = t.detailsHint;
+          }
+          renderSamples(statusData);
+        } else if (summaryEl) {
+          summaryEl.textContent = t.loading;
+        }
+      }
+
+      function setupLanguageToggle() {
+        document.querySelectorAll(".lang-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const lang = btn.dataset.lang;
+            setLanguage(lang);
+          });
+        });
+      }
+
+      // ============= 星空背景 =============
+      function initStarfield() {
+        const canvas = document.getElementById("starfield");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+
+        let width = 0;
+        let height = 0;
+        let stars = [];
+
+        function resize() {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+
+          const count = Math.floor((width * height) / 8000);
+          stars = [];
+          for (let i = 0; i < count; i++) {
+            stars.push({
+              x: Math.random() * width,
+              y: Math.random() * height,
+              radius: Math.random() * 1.4 + 0.2,
+              speed: Math.random() * 0.15 + 0.02,
+              alpha: Math.random() * 0.6 + 0.4,
+              twinkle: Math.random() * Math.PI * 2,
+            });
+          }
+        }
+
+        function draw(timestamp) {
+          if (!width || !height) return;
+
+          ctx.clearRect(0, 0, width, height);
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = "#020617";
+          ctx.fillRect(0, 0, width, height);
+
+          for (const star of stars) {
+            star.y += star.speed;
+            if (star.y > height) {
+              star.y = 0;
+              star.x = Math.random() * width;
+            }
+            const tw = 0.5 + 0.5 * Math.sin(timestamp * 0.001 + star.twinkle);
+
+            ctx.beginPath();
+            ctx.globalAlpha = star.alpha * tw;
+            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+            ctx.fillStyle = "#ffffff";
+            ctx.fill();
+          }
+
+          const cx = width * 0.6;
+          const cy = height * 0.3;
+          const maxR = Math.min(width, height) * 0.7;
+
+          const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR);
+          gradient.addColorStop(0, "rgba(129, 140, 248, 0.65)");
+          gradient.addColorStop(0.3, "rgba(129, 140, 248, 0.3)");
+          gradient.addColorStop(0.6, "rgba(59, 130, 246, 0.1)");
+          gradient.addColorStop(1, "rgba(2, 6, 23, 0)");
+
+          ctx.globalAlpha = 0.48;
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.ellipse(
+            cx,
+            cy,
+            width * 0.45,
+            height * 0.35,
+            timestamp * 0.00009,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+
+          requestAnimationFrame(draw);
+        }
+
+        resize();
+        window.addEventListener("resize", resize);
+        requestAnimationFrame(draw);
+      }
+
+      // ============= 数据加载 & 渲染 =============
+      function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      async function loadStatus() {
+        const summaryEl = document.getElementById("summary");
+        const tbody = document.querySelector("#client-table tbody");
+        const sampleContainer = document.getElementById("sample-cards");
+        const detailsBody = document.getElementById("client-details-body");
+        const t = i18n[currentLang];
+
+        if (summaryEl) summaryEl.textContent = t.loading;
+        if (detailsBody) detailsBody.textContent = t.detailsHint;
+
+        try {
+          const res = await fetch(
+            "daily_test_results/videodl_status.json?ts=" + Date.now()
+          );
+          if (!res.ok) {
+            throw new Error("HTTP " + res.status);
+          }
+          const data = await res.json();
+          statusData = data;
+          selectedClient = null;
+
+          const clients = data.clients || [];
+
+          renderSummary(data);
+          renderTable(clients);
+          renderSamples(data);
+
+          if (!clients.length && summaryEl) {
+            summaryEl.textContent = t.noData;
+          }
+        } catch (err) {
+          console.error(err);
+          if (summaryEl) summaryEl.textContent = t.loadError;
+          if (tbody) tbody.innerHTML = "";
+          if (sampleContainer) sampleContainer.innerHTML = "";
+        }
+      }
+
+      function renderSummary(data) {
+        const box = document.getElementById("summary");
+        if (!box) return;
+
+        const t = i18n[currentLang];
+
+        const clients = data.clients || [];
+        const total = clients.length;
+        let ok = 0;
+        let partial = 0;
+        let fail = 0;
+
+        for (const c of clients) {
+          const tag = c.status || "fail";
+          if (tag === "ok") ok++;
+          else if (tag === "partial") partial++;
+          else fail++;
+        }
+
+        const ts = data.generated_at
+          ? new Date(data.generated_at).toLocaleString()
+          : "—";
+
+        box.innerHTML = `
+          <div class="summary-grid">
+            <div class="summary-card">
+              <div class="summary-label">${t.summaryTotalLabel}</div>
+              <div class="summary-value">${total}</div>
+              <div class="summary-tagline">${t.summaryTotalTagline}</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">${t.summaryAllOkLabel}</div>
+              <div class="summary-value">${ok}</div>
+              <div class="summary-tagline">${t.summaryAllOkTagline}</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">${t.summaryPartialLabel}</div>
+              <div class="summary-value">${partial}</div>
+              <div class="summary-tagline">${t.summaryPartialTagline}</div>
+            </div>
+            <div class="summary-card">
+              <div class="summary-label">${t.summaryFailLabel}</div>
+              <div class="summary-value">${fail}</div>
+              <div class="summary-tagline">${t.summaryFailTagline}</div>
+            </div>
+          </div>
+          <p class="summary-update">${t.summaryLastUpdate}：${ts}</p>
+        `;
+      }
+
+      function renderTable(clients) {
+        const tbody = document.querySelector("#client-table tbody");
+        if (!tbody) return;
+        const t = i18n[currentLang];
+        tbody.innerHTML = "";
+
+        clients.forEach((c) => {
+          const tr = document.createElement("tr");
+
+          const rate =
+            c.success_rate != null
+              ? Math.round(c.success_rate * 100) + "%"
+              : "-";
+          const tag = c.status || "fail";
+          let text;
+          if (tag === "ok") text = t.statusOk;
+          else if (tag === "partial") text = t.statusPartial;
+          else text = t.statusFail;
+
+          tr.innerHTML = `
+            <td>
+              <div class="client-name">
+                <span class="client-chip">${c.display_name || c.name}</span>
+                <span class="client-id">${c.name}</span>
+              </div>
+            </td>
+            <td>${c.success_count ?? "-"} / ${c.total_count ?? "-"}</td>
+            <td>${rate}</td>
+            <td><span class="status-pill status-${tag}">${text}</span></td>
+          `;
+
+          tr.addEventListener("click", () => {
+            selectedClient = c;
+            showClientDetails(c);
+          });
+          tbody.appendChild(tr);
+        });
+      }
+
+      function showClientDetails(client) {
+        const body = document.getElementById("client-details-body");
+        if (!body) return;
+
+        const t = i18n[currentLang];
+        const tests = client.tests || [];
+        if (!tests.length) {
+          body.textContent = t.noTestsForClient;
+          return;
+        }
+
+        let html = "";
+        tests.forEach((test, idx) => {
+          const ok = !!test.ok;
+          const icon = ok ? "✅" : "⚠️";
+          const cls = ok ? "detail-ok" : "detail-fail";
+
+          const parse = test.parse_result || {};
+          const title =
+            parse.title && parse.title !== "NULL" ? parse.title : "(no title)";
+          const downloadUrl =
+            parse.download_url && parse.download_url !== "NULL"
+              ? parse.download_url
+              : null;
+          const err =
+            test.err_msg && test.err_msg !== "NULL" ? test.err_msg : null;
+
+          let sampleIndexText = t.sampleIndexLabel.replace(
+            "{n}",
+            String(idx + 1)
+          );
+
+          html += `
+            <div class="detail-card ${cls}">
+              <div class="detail-header">
+                <span class="detail-index">${icon} ${sampleIndexText}</span>
+                <span class="detail-url">
+                  <a href="${test.test_url}" target="_blank" rel="noopener noreferrer">
+                    ${test.test_url}
+                  </a>
+                </span>
+              </div>
+              <div class="detail-title">${title}</div>
+              <div class="detail-meta">
+                ${
+                  downloadUrl
+                    ? `<div>${t.detailDownloadLabel}<code>${downloadUrl}</code></div>`
+                    : `<div>${t.detailNoDownload}</div>`
+                }
+                ${
+                  err
+                    ? `<div>${t.detailErrorLabel} <code>${err}</code></div>`
+                    : `<div>${t.detailErrorLabel} <code>${t.detailErrorNone}</code></div>`
+                }
+              </div>
+            </div>
+          `;
+        });
+
+        body.innerHTML = html;
+      }
+
+      function renderSamples(data) {
+        const container = document.getElementById("sample-cards");
+        if (!container) return;
+        const t = i18n[currentLang];
+
+        let samples = data.random_samples;
+        const clients = data.clients || [];
+
+        if (!samples || !samples.length) {
+          const all = [];
+          for (const c of clients) {
+            for (const test of c.tests || []) {
+              if (test.ok) {
+                all.push({
+                  ...test,
+                  client_display: c.display_name || c.name,
+                });
+              }
+            }
+          }
+          if (!all.length) {
+            container.innerHTML = `<p>${t.noSuccessSamples}</p>`;
+            return;
+          }
+          shuffle(all);
+          samples = all.slice(0, 3);
+        }
+
+        container.innerHTML = "";
+        samples.forEach((s, idx) => {
+          const card = document.createElement("div");
+          card.className = "sample-card";
+
+          const parse = s.parse_result || {};
+          const title =
+            parse.title && parse.title !== "NULL" ? parse.title : "(no title)";
+          const duration = parse.duration;
+          const source =
+            s.client_display || s.display_name || s.name || parse.source || "";
+          const localVideo = s.local_video;
+          const indexText = t.sampleIndexLabel.replace(
+            "{n}",
+            String(idx + 1)
+          );
+
+          card.innerHTML = `
+            <div class="sample-header">
+              <span class="sample-index">🌟 ${indexText}</span>
+              <span class="sample-source">${source}</span>
+            </div>
+            <div class="sample-title">${title}</div>
+            <div class="sample-url">
+              <a href="${s.test_url}" target="_blank" rel="noopener noreferrer">
+                ${s.test_url}
+              </a>
+            </div>
+            <div class="sample-meta">
+              <span>${t.sampleDurationLabel}：${
+            duration ? duration : t.sampleDurationUnknown
+          }</span>
+              <span>状态：<span class="status-pill status-ok">${
+                t.sampleStatusOkLabel
+              }</span></span>
+            </div>
+          `;
+
+          if (localVideo) {
+            const videoEl = document.createElement("video");
+            videoEl.className = "sample-video";
+            videoEl.src = localVideo;
+            videoEl.controls = true;
+            videoEl.muted = true;
+            videoEl.playsInline = true;
+            videoEl.preload = "metadata";
+            card.appendChild(videoEl);
+          }
+
+          container.appendChild(card);
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        initStarfield();
+        setupLanguageToggle();
+        setLanguage("zh");
+        loadStatus();
+      });
+    </script>
+  </body>
+</html>

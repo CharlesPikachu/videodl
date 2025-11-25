@@ -1,0 +1,230 @@
+{
+  "generated_at": "2025-11-25T21:35:06.712305+00:00",
+  "clients": [
+    {
+      "name": "AcFunVideoClient",
+      "display_name": "AcFunVideoClient",
+      "success_count": 3,
+      "total_count": 3,
+      "success_rate": 1.0,
+      "status": "ok",
+      "tests": [
+        {
+          "name": "AcFunVideoClient",
+          "test_url": "https://www.acfun.cn/v/ac29566205",
+          "ok": true,
+          "err_msg": "NULL",
+          "parse_result": {
+            "source": "AcFunVideoClient",
+            "download_url": "https://ali-safety-video.acfun.cn/mediacloud/acfun/acfun_video/hls/7f63d4e1499757f9-389f86b1b3416cbd2c98a43738b7c787-hls_1080p_h264_6m_1.m3u8?pkey=ABCjVJrmcJrOk0NjzT-Sg5s5n41uM9iSx4_SLTE8Qb5AgEjxNa_dZYeA2YHsuQTrvSkG-3PM85LZIGbMFO8tYHy1FFhy56XkYpDLtYE36JBV_MEt-Et3kqo3MubUx_8hQhHM98EEPUtk9JnmhMpD2T7Y6mNGrqNqBflBDSHj_Y-Ke7zwkNq0W6LUavg_Qwwpv_HpG0rmIEWUnPPphJE89KlUGh-SzuOkC7Tp3xjJGN_DoA&safety_id=AAISUAIegFlxPWWrM0VEn1EV",
+            "title": "来喵一个哈哈",
+            "file_path": "videodl_tmp_outputs\\AcFunVideoClient\\来喵一个哈哈.mp4",
+            "ext": "mp4",
+            "download_with_ffmpeg": true,
+            "err_msg": "NULL",
+            "identifier": "NULL",
+            "guess_video_ext_result": "NULL"
+          }
+        },
+        {
+          "name": "AcFunVideoClient",
+          "test_url": "https://www.acfun.cn/v/ac47998293",
+          "ok": true,
+          "err_msg": "NULL",
+          "parse_result": {
+            "source": "AcFunVideoClient",
+            "download_url": "https://tx-safety-video.acfun.cn/mediacloud/acfun/acfun_video/5baefbdddd6d40a2-45727ca6e777958ca0777b8cb1ece225-hls_720p_hevc_1.m3u8?pkey=ABAadUdgCZFHFRsEUECYdyqdNAY2WKU7ga_J-9vm77T_xoDkxdN0fqWF7rBu8gwTFFAj812c8AAv5FXARlWSnzWVwSMy9i99RsappCMdd6BoeSonkmRorgUE4JUhtnMAIPldfQEH-66HEXw_i1TMoPIh0mG0-ZkkggFLwHz0GX0LwPePzvBUgzEXbLUZFVFmDrxppo-UDyW8Kd86Qf_nU159DUaeIbZ2_CnPNY4V5y_6QQ&safety_id=AAIqkU62OSzd0P95kMCHbYXX",
+            "title": "《Something》修女之舞",
+            "file_path": "videodl_tmp_outputs\\AcFunVideoClient\\《Something》修女之舞.mp4",
+            "ext": "mp4",
+            "download_with_ffmpeg": true,
+            "err_msg": "NULL",
+            "identifier": "NULL",
+            "guess_video_ext_result": "NULL"
+          }
+        },
+        {
+          "name": "AcFunVideoClient",
+          "test_url": "https://www.acfun.cn/v/ac36491489",
+          "ok": true,
+          "err_msg": "NULL",
+          "parse_result": {
+            "source": "AcFunVideoClient",
+            "download_url": "https://tx-safety-video.acfun.cn/mediacloud/acfun/acfun_video/fe5e1723b0e3d721-2df0e0ed599c4fa243ec53e4edef5740-hls_4k_h264_1.m3u8?pkey=ABBzEzH5aFqqmmnww5ZUBIiHZ4mdMr98GvvUE-SPqBbeLpmRh27XB9CJybuVy09qFd8LD5md-ZpaaQuVvOFBkZELJHOpuh-OJ3oWxYSzr4ANERxsukgTLkh414X2vabv-iSGFDuwtiA82JBbMZWl_P_n7XyDrhQjOSdNK2OjZxF9phGrjHhwVxLITLcrrCXOhEMwOa32Jo7G4yXXENkY7tlwA_7VlkOmgTIX8Fj7Y5GoNQ&safety_id=AAK_jxjc8t-NEnBD_XW3aDNp",
+            "title": "是个麻烦鬼什么的。。真是对不起啦",
+            "file_path": "videodl_tmp_outputs\\AcFunVideoClient\\是个麻烦鬼什么的。。真是对不起啦.mp4",
+            "ext": "mp4",
+            "download_with_ffmpeg": true,
+            "err_msg": "NULL",
+            "identifier": "NULL",
+            "guess_video_ext_result": "NULL"
+          }
+        }
+      ]
+    },
+    {
+      "name": "HaokanVideoClient",
+      "display_name": "HaokanVideoClient",
+      "success_count": 2,
+      "total_count": 2,
+      "success_rate": 1.0,
+      "status": "ok",
+      "tests": [
+        {
+          "name": "HaokanVideoClient",
+          "test_url": "https://haokan.baidu.com/v?vid=7295039339702288421",
+          "ok": true,
+          "err_msg": "NULL",
+          "parse_result": {
+            "source": "HaokanVideoClient",
+            "download_url": "https://vdept3.bdstatic.com/mda-pd3d1r5bxk91z03u/sc/cae_h264/1680621619873274962/mda-pd3d1r5bxk91z03u.mp4?v_from_s=hkapp-haokan-nanjing&auth_key=1764117308-0-0-77570a9f1730193ab87148b4fccb0dae&bcevod_channel=searchbox_feed&cr=2&cd=0&pd=1&pt=3&logid=2108760607&vid=7295039339702288421&abtest=",
+            "title": "盘点跳舞美女，这样的女孩无法让人拒绝，我喜欢最左边的，你呢",
+            "file_path": "videodl_tmp_outputs\\HaokanVideoClient\\盘点跳舞美女，这样的女孩无法让人拒绝，我喜欢最左边的，你呢.mp4",
+            "ext": "mp4",
+            "download_with_ffmpeg": false,
+            "err_msg": "NULL",
+            "identifier": "NULL",
+            "guess_video_ext_result": {
+              "ext": "mp4",
+              "sniffer": "urllib.parse",
+              "ok": true
+            }
+          }
+        },
+        {
+          "name": "HaokanVideoClient",
+          "test_url": "https://haokan.baidu.com/v?vid=7224830823778858146",
+          "ok": true,
+          "err_msg": "NULL",
+          "parse_result": {
+            "source": "HaokanVideoClient",
+            "download_url": "https://vdept3.bdstatic.com/mda-rj4f11hidhzwfv6e/1080p/cae_h264/1759660796745857394/mda-rj4f11hidhzwfv6e.mp4?v_from_s=hkapp-haokan-nanjing&auth_key=1764117309-0-0-1bc202280e6d5fab64338a940a1d0bee&bcevod_channel=searchbox_feed&cr=3&cd=0&pd=1&pt=3&logid=2109025838&vid=7224830823778858146&abtest=",
+            "title": "男人被妻子嫌弃只能忍气吞声",
+            "file_path": "videodl_tmp_outputs\\HaokanVideoClient\\男人被妻子嫌弃只能忍气吞声.mp4",
+            "ext": "mp4",
+            "download_with_ffmpeg": false,
+            "err_msg": "NULL",
+            "identifier": "NULL",
+            "guess_video_ext_result": {
+              "ext": "mp4",
+              "sniffer": "urllib.parse",
+              "ok": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "TedVideoClient",
+      "display_name": "TedVideoClient",
+      "success_count": 2,
+      "total_count": 2,
+      "success_rate": 1.0,
+      "status": "ok",
+      "tests": [
+        {
+          "name": "TedVideoClient",
+          "test_url": "https://www.ted.com/talks/alanna_shaikh_why_covid_19_is_hitting_us_now_and_how_to_prepare_for_the_next_outbreak",
+          "ok": true,
+          "err_msg": "NULL",
+          "parse_result": {
+            "source": "TedVideoClient",
+            "download_url": "https://py.tedcdn.com/consus/projects/00/24/07/003/products/2020x-alanna-shaikh-003-fallback-b0737da3ab1a00185c211a5c1e275f1f-1200k.mp4",
+            "title": "Why COVID-19 is hitting us now -- and how to prepare for the next outbreak",
+            "file_path": "videodl_tmp_outputs\\TedVideoClient\\Why COVID-19 is hitting us now -- and how to prepare for the next outbreak.mp4",
+            "ext": "mp4",
+            "download_with_ffmpeg": false,
+            "err_msg": "NULL",
+            "identifier": "NULL",
+            "guess_video_ext_result": {
+              "ext": "mp4",
+              "sniffer": "urllib.parse",
+              "ok": true
+            }
+          }
+        },
+        {
+          "name": "TedVideoClient",
+          "test_url": "https://www.ted.com/talks/adam_kucharski_how_can_we_control_the_coronavirus_pandemic",
+          "ok": true,
+          "err_msg": "NULL",
+          "parse_result": {
+            "source": "TedVideoClient",
+            "download_url": "https://py.tedcdn.com/consus/projects/00/46/36/002/products/2020s-adam-kucharski-002-fallback-ec9b695b10d8cb3c96849ad8d0acd30b-1200k.mp4",
+            "title": "How can we control the coronavirus pandemic",
+            "file_path": "videodl_tmp_outputs\\TedVideoClient\\How can we control the coronavirus pandemic.mp4",
+            "ext": "mp4",
+            "download_with_ffmpeg": false,
+            "err_msg": "NULL",
+            "identifier": "NULL",
+            "guess_video_ext_result": {
+              "ext": "mp4",
+              "sniffer": "urllib.parse",
+              "ok": true
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "random_samples": [
+    {
+      "name": "AcFunVideoClient",
+      "test_url": "https://www.acfun.cn/v/ac36491489",
+      "ok": true,
+      "err_msg": "NULL",
+      "parse_result": {
+        "source": "AcFunVideoClient",
+        "download_url": "https://tx-safety-video.acfun.cn/mediacloud/acfun/acfun_video/fe5e1723b0e3d721-2df0e0ed599c4fa243ec53e4edef5740-hls_4k_h264_1.m3u8?pkey=ABBzEzH5aFqqmmnww5ZUBIiHZ4mdMr98GvvUE-SPqBbeLpmRh27XB9CJybuVy09qFd8LD5md-ZpaaQuVvOFBkZELJHOpuh-OJ3oWxYSzr4ANERxsukgTLkh414X2vabv-iSGFDuwtiA82JBbMZWl_P_n7XyDrhQjOSdNK2OjZxF9phGrjHhwVxLITLcrrCXOhEMwOa32Jo7G4yXXENkY7tlwA_7VlkOmgTIX8Fj7Y5GoNQ&safety_id=AAK_jxjc8t-NEnBD_XW3aDNp",
+        "title": "是个麻烦鬼什么的。。真是对不起啦",
+        "file_path": "videodl_tmp_outputs\\AcFunVideoClient\\是个麻烦鬼什么的。。真是对不起啦.mp4",
+        "ext": "mp4",
+        "download_with_ffmpeg": true,
+        "err_msg": "NULL",
+        "identifier": "NULL",
+        "guess_video_ext_result": "NULL"
+      },
+      "local_video": "daily_test_results/videos/sample_0.mp4"
+    },
+    {
+      "name": "AcFunVideoClient",
+      "test_url": "https://www.acfun.cn/v/ac47998293",
+      "ok": true,
+      "err_msg": "NULL",
+      "parse_result": {
+        "source": "AcFunVideoClient",
+        "download_url": "https://tx-safety-video.acfun.cn/mediacloud/acfun/acfun_video/5baefbdddd6d40a2-45727ca6e777958ca0777b8cb1ece225-hls_720p_hevc_1.m3u8?pkey=ABAadUdgCZFHFRsEUECYdyqdNAY2WKU7ga_J-9vm77T_xoDkxdN0fqWF7rBu8gwTFFAj812c8AAv5FXARlWSnzWVwSMy9i99RsappCMdd6BoeSonkmRorgUE4JUhtnMAIPldfQEH-66HEXw_i1TMoPIh0mG0-ZkkggFLwHz0GX0LwPePzvBUgzEXbLUZFVFmDrxppo-UDyW8Kd86Qf_nU159DUaeIbZ2_CnPNY4V5y_6QQ&safety_id=AAIqkU62OSzd0P95kMCHbYXX",
+        "title": "《Something》修女之舞",
+        "file_path": "videodl_tmp_outputs\\AcFunVideoClient\\《Something》修女之舞.mp4",
+        "ext": "mp4",
+        "download_with_ffmpeg": true,
+        "err_msg": "NULL",
+        "identifier": "NULL",
+        "guess_video_ext_result": "NULL"
+      },
+      "local_video": "daily_test_results/videos/sample_1.mp4"
+    },
+    {
+      "name": "HaokanVideoClient",
+      "test_url": "https://haokan.baidu.com/v?vid=7224830823778858146",
+      "ok": true,
+      "err_msg": "NULL",
+      "parse_result": {
+        "source": "HaokanVideoClient",
+        "download_url": "https://vdept3.bdstatic.com/mda-rj4f11hidhzwfv6e/1080p/cae_h264/1759660796745857394/mda-rj4f11hidhzwfv6e.mp4?v_from_s=hkapp-haokan-nanjing&auth_key=1764117309-0-0-1bc202280e6d5fab64338a940a1d0bee&bcevod_channel=searchbox_feed&cr=3&cd=0&pd=1&pt=3&logid=2109025838&vid=7224830823778858146&abtest=",
+        "title": "男人被妻子嫌弃只能忍气吞声",
+        "file_path": "videodl_tmp_outputs\\HaokanVideoClient\\男人被妻子嫌弃只能忍气吞声.mp4",
+        "ext": "mp4",
+        "download_with_ffmpeg": false,
+        "err_msg": "NULL",
+        "identifier": "NULL",
+        "guess_video_ext_result": {
+          "ext": "mp4",
+          "sniffer": "urllib.parse",
+          "ok": true
+        }
+      },
+      "local_video": "daily_test_results/videos/sample_2.mp4"
+    }
+  ]
+}
