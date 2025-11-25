@@ -12,6 +12,7 @@ from .xigua import XiguaVideoClient
 from .pipix import PipixVideoClient
 from .oasis import OasisVideoClient
 from .weibo import WeiboVideoClient
+from .zhihu import ZhihuVideoClient
 from .weishi import WeishiVideoClient
 from .haokan import HaokanVideoClient
 from .zuiyou import ZuiyouVideoClient
@@ -42,6 +43,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'ZuiyouVideoClient': ZuiyouVideoClient, 'XinpianchangVideoClient': XinpianchangVideoClient, 'WeSingVideoClient': WeSingVideoClient,
         'XiguaVideoClient': XiguaVideoClient, 'RednoteVideoClient': RednoteVideoClient, 'WeiboVideoClient': WeiboVideoClient,
         'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient, 'YouTubeVideoClient': YouTubeVideoClient,
+        'ZhihuVideoClient': ZhihuVideoClient,
     }
 
 

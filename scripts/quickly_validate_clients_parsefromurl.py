@@ -129,6 +129,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://music.youtube.com/watch?v=PgPhDyV0J2w&list=RDAMVMPgPhDyV0J2w',
         'https://www.youtube.com/watch?v=hie-SsINu4Q&list=RDhie-SsINu4Q&start_radio=1',
     ],
+    'ZhihuVideoClient': [
+        'https://www.zhihu.com/zvideo/1342930761977176064',
+        'https://www.zhihu.com/zvideo/1975671354259968920',
+    ]
 }
 
 

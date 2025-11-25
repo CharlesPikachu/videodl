@@ -87,6 +87,7 @@ The video platforms currently supported for parsing are,
 | CCTVVideoClient                       |  央视网                    | -                                                           | ❌       |  ✔️        |  ✔️        | [cctv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/cctv.py)                       |
 | SohuVideoClient                       |  搜狐视频                  | [click](https://mp.weixin.qq.com/s/_lbS4t1uSTRAV2Or-oCDpQ)  | ❌       |  ✔️        |  ✔️        | [sohu.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/sohu.py)                       |
 | YouTubeVideoClient                    |  油管视频                  | -                                                           | ❌       |  ✔️        |  ✔️        | [youtube.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/youtube.py)                 |
+| ZhihuVideoClient                      |  知乎视频                  | -                                                           | ❌       |  ✔️        |  ✔️        | [zhihu.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/zhihu.py)                     |
 
 
 # 📦 Install
