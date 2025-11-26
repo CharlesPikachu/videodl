@@ -15,13 +15,13 @@ The `VideoClient` class is a high-level manager for multiple site-specific video
 `VideoClient()` accept the following arguments,
 
 - **allowed_video_sources**: `list[str] | None`  
-  List of video source names to enable (e.g. `["YouTubeVideoClient"`, `"ZhihuVideoClient"]`).  
+  List of video source names to enable (*e.g.* `["YouTubeVideoClient"`, `"ZhihuVideoClient"]`).  
   - If `None` or empty, it defaults to **all** sources registered in `VideoClientBuilder.REGISTERED_MODULES`.
   - Each entry must correspond to a valid backend module.
 
 - **init_video_clients_cfg**: `dict[str, dict] | None`  
   Per-source configuration overrides for initializing each underlying video client.  
-  - Key: source name (e.g. `"YouTubeVideoClient"`).  
+  - Key: source name (*e.g.* `"YouTubeVideoClient"`).  
   - Value: a `dict` of configuration options that will update the default config.  
   - Default base config for every client:
 
@@ -102,7 +102,7 @@ Arguments:
 
 Return Values:
 
-- A `list` of video information dicts. The exact structure depends on the underlying client implementation, but **each dict must at least contain a `source` field** matching one of the source names (e.g. `"YouTubeVideoClient"`, `"ZhihuVideoClient"`), which is used later by `download`.
+- A `list` of video information dicts. The exact structure depends on the underlying client implementation, but **each dict must at least contain a `source` field** matching one of the source names (*e.g.* `"YouTubeVideoClient"`, `"ZhihuVideoClient"`), which is used later by `download`.
 
   Typical fields may include (depending on implementation):
 
