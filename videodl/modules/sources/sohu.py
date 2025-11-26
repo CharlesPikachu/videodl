@@ -12,7 +12,7 @@ import time
 from bs4 import BeautifulSoup
 from datetime import datetime
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, resp2json, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, touchdir, VideoInfo
 
 
 '''SohuVideoClient'''
@@ -91,6 +91,7 @@ class SohuVideoClient(BaseVideoClient):
                 video_info.update(dict(download_url=download_urls[0]))
             else:
                 ffmpeg_target_file_path = os.path.join(self.work_dir, self.source, f'{vid}.txt')
+                touchdir(os.path.dirname(ffmpeg_target_file_path))
                 with open(ffmpeg_target_file_path, "w", encoding="utf-8") as fp:
                     for url in download_urls:
                         fp.write(f"{url}\n")
@@ -179,6 +180,7 @@ class SohuVideoClient(BaseVideoClient):
                 video_info.update(dict(download_url=download_urls[0]))
             else:
                 ffmpeg_target_file_path = os.path.join(self.work_dir, self.source, f'{vid}.txt')
+                touchdir(os.path.dirname(ffmpeg_target_file_path))
                 with open(ffmpeg_target_file_path, "w", encoding="utf-8") as fp:
                     for url in download_urls:
                         fp.write(f"{url}\n")

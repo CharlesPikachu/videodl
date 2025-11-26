@@ -8,6 +8,7 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import json
+import time
 import random
 import shutil
 import argparse
@@ -231,6 +232,7 @@ def runcheck(output_path: str):
                 if client_name not in ['YinyuetaiVideoClient']:
                     all_success_samples.append({"name": client_name, "test_url": status["test_url"], "ok": True, "err_msg": status["err_msg"], "parse_result": status["parse_result"]})
             tests.append(status)
+            time.sleep(10 + random.randint(1, 5))
         if total_count == 0: continue
         if success_count == total_count: status_tag = "ok"
         elif success_count > 0: status_tag = "partial"
