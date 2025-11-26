@@ -34,6 +34,11 @@
   📄 <strong><a href="https://videofetch.readthedocs.io/" target="_blank">Documents: videofetch.readthedocs.io</a></strong>
 </p>
 
+<p align="center">
+  🌌 <strong><a href="https://charlespikachu.github.io/videodl/" target="_blank">VideoDL Live Status Dashboard (VideoDL有效性实时监测)</a></strong><br/>
+  <sub>Auto-updated every day via GitHub Actions, with ~3 randomly sampled preview clips.</sub>
+</p>
+
 
 # 🆕 What's New
 
