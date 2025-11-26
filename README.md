@@ -36,14 +36,14 @@
   </a></strong>
 </p>
 
-<p align="center">
+<p align="center" style="line-height: 1.5;">
   🌌 <strong><a href="https://charlespikachu.github.io/videodl/" target="_blank">
     VideoDL Live Status Dashboard (VideoDL有效性实时监测)
-  </a></strong>
-  <span style="display: block; margin-top: 4px; font-size: 0.85em; opacity: 0.8;">
+  </a></strong><br/>
+  <span style="display:inline-block; margin-top:4px; font-size:0.85em; opacity:0.8;">
     Auto-updated every day via GitHub Actions, with ~3 randomly sampled preview clips.
-  </span>
-  <span style="display: block; margin-top: 10px;">
+  </span><br/><br/>
+  <span style="display:inline-block; margin-top:2px;">
     <a href="https://charlespikachu.github.io/videodl/">
       <img
         alt="demo"
