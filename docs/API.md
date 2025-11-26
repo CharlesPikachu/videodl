@@ -219,7 +219,7 @@ Basic initialization example (for a subclass):
 from videodl.modules.source import BilibiliVideoClient
 
 client = BilibiliVideoClient(
-	work_dir="videodl_outputs", auto_set_proxies=True, random_update_ua=True, max_retries=5, maintain_session=False,
+    work_dir="videodl_outputs", auto_set_proxies=True, random_update_ua=True, max_retries=5, maintain_session=False,
 )
 ```
 
