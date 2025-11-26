@@ -1,5 +1,7 @@
 # Development Log
 
+- 2025-11-26: Released videofetch v0.2.1 - add/fix support for more video platforms and perform some code optimizations.
+
 - 2025-11-21: Released videofetch v0.2.0 - code refactored and extensive support added for downloading videos from many additional platforms.
 
 - 2022-07-19: Released videofetch v0.1.9 — fixed download sources for TED and Douyin videos.

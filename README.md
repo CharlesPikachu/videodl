@@ -37,6 +37,7 @@
 
 # 🆕 What's New
 
+- 2025-11-26: Released videofetch v0.2.1 - add/fix support for more video platforms and perform some code optimizations.
 - 2025-11-21: Released videofetch v0.2.0 - code refactored and extensive support added for downloading videos from many additional platforms.
 
 
@@ -149,12 +150,45 @@ video_client = videodl.VideoClient()
 video_client.startparseurlcmdui()
 ```
 
+Or just run `videodl` (maybe `videodl --help` to show usage information) from the terminal.
+
+```bash
+Usage: videodl [OPTIONS]
+
+Options:
+  --version                       Show the version and exit.
+  -i, --index-url, --index_url TEXT
+                                  URL of the video to download. If not
+                                  specified, videodl will start in terminal
+                                  mode.
+  -a, --allowed-video-sources, --allowed_video_sources TEXT
+                                  Platforms to search. Separate multiple
+                                  platforms with "," (e.g.,
+                                  "AcFunVideoClient,PipixVideoClient"). If not
+                                  specified, videodl will search all supported
+                                  platforms globally and use the first one
+                                  that can download the video url.
+  -c, --init-video-clients-cfg, --init_video_clients_cfg TEXT
+                                  Config such as `work_dir` for each video
+                                  client as a JSON string.
+  -r, --requests-overrides, --requests_overrides TEXT
+                                  Requests.get kwargs such as `headers` and
+                                  `proxies` for each video client as a JSON
+                                  string.
+  -t, --clients-threadings, --clients_threadings TEXT
+                                  Number of threads used for each video client
+                                  as a JSON string.
+  --help                          Show this message and exit.
+```
+
 The demonstration is as follows,
 
 <div align="center">
   <img src="https://github.com/CharlesPikachu/videodl/raw/master/docs/screenshot.gif" width="600"/>
 </div>
 <br />
+
+
 
 
 # 💡 Recommended Projects
