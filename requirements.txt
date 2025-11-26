@@ -12,3 +12,4 @@ playwright
 parsel
 nodejs-wheel
 tqdm
+pyfreeproxy
