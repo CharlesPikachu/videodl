@@ -36,13 +36,13 @@
 
 <p align="center">
   🌌 <strong><a href="https://charlespikachu.github.io/videodl/" target="_blank">VideoDL Live Status Dashboard (VideoDL有效性实时监测)</a></strong><br/>
+  <sub>Auto-updated every day via GitHub Actions, with ~3 randomly sampled preview clips.</sub><br/>
   <a href="https://charlespikachu.github.io/videodl/">
     <img
       alt="demo"
       src="https://img.shields.io/badge/demo-online-brightgreen?style=for-the-badge"
     />
-  </a><br/>
-  <sub>Auto-updated every day via GitHub Actions, with ~3 randomly sampled preview clips.</sub>
+  </a>
 </p>
 
 
