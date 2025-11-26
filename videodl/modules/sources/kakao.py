@@ -62,6 +62,7 @@ class KakaoVideoClient(BaseVideoClient):
                     resp.raise_for_status()
                     fmt_raw_data = resp2json(resp=resp)
                     download_url = fmt_raw_data['videoLocation']['url']
+                    raw_data['readyNplay'] = fmt_raw_data
                 except:
                     continue
                 if download_url: break
