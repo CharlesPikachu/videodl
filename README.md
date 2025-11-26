@@ -31,18 +31,26 @@
 </div>
 
 <p align="center">
-  📄 <strong><a href="https://videofetch.readthedocs.io/" target="_blank">Documents: videofetch.readthedocs.io</a></strong>
+  📄 <strong><a href="https://videofetch.readthedocs.io/" target="_blank">
+    Documents: videofetch.readthedocs.io
+  </a></strong>
 </p>
 
 <p align="center">
-  🌌 <strong><a href="https://charlespikachu.github.io/videodl/" target="_blank">VideoDL Live Status Dashboard (VideoDL有效性实时监测)</a></strong><br/>
-  <sub>Auto-updated every day via GitHub Actions, with ~3 randomly sampled preview clips.</sub><br/><br/>
-  <a href="https://charlespikachu.github.io/videodl/">
-    <img
-      alt="demo"
-      src="https://img.shields.io/badge/demo-online-brightgreen?style=for-the-badge"
-    />
-  </a>
+  🌌 <strong><a href="https://charlespikachu.github.io/videodl/" target="_blank">
+    VideoDL Live Status Dashboard (VideoDL有效性实时监测)
+  </a></strong>
+  <span style="display: block; margin-top: 4px; font-size: 0.85em; opacity: 0.8;">
+    Auto-updated every day via GitHub Actions, with ~3 randomly sampled preview clips.
+  </span>
+  <span style="display: block; margin-top: 10px;">
+    <a href="https://charlespikachu.github.io/videodl/">
+      <img
+        alt="demo"
+        src="https://img.shields.io/badge/demo-online-brightgreen?style=for-the-badge"
+      />
+    </a>
+  </span>
 </p>
 
 
