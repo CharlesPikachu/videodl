@@ -12,6 +12,7 @@ Welcome to Videodl's documentation!
 	Disclaimer.md
 	Install.md
 	Quickstart.md
+	API.md
 	Changelog.md
 	Recommend.md
 	Author.md

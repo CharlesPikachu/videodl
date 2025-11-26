@@ -35,6 +35,7 @@ class VideoClient():
         # init
         self.logger_handle = LoggerHandle()
         if not allowed_video_sources: allowed_video_sources = list(VideoClientBuilder.REGISTERED_MODULES.keys())
+        allowed_video_sources = list(set(allowed_video_sources))
         init_video_clients_cfg, clients_threadings, requests_overrides = init_video_clients_cfg or {}, clients_threadings or {}, requests_overrides or {}
         # instance video_clients
         default_video_client_cfg = dict(
