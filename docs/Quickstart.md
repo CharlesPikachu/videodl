@@ -9,9 +9,86 @@ video_client = videodl.VideoClient()
 video_client.startparseurlcmdui()
 ```
 
+Or just run `videodl` (maybe `videodl --help` to show usage information) from the terminal.
+
+```bash
+Usage: videodl [OPTIONS]
+
+Options:
+  --version                       Show the version and exit.
+  -i, --index-url, --index_url TEXT
+                                  URL of the video to download. If not
+                                  specified, videodl will start in terminal
+                                  mode.
+  -a, --allowed-video-sources, --allowed_video_sources TEXT
+                                  Platforms to search. Separate multiple
+                                  platforms with "," (e.g.,
+                                  "AcFunVideoClient,PipixVideoClient"). If not
+                                  specified, videodl will search all supported
+                                  platforms globally and use the first one
+                                  that can download the video url.
+  -c, --init-video-clients-cfg, --init_video_clients_cfg TEXT
+                                  Config such as `work_dir` for each video
+                                  client as a JSON string.
+  -r, --requests-overrides, --requests_overrides TEXT
+                                  Requests.get kwargs such as `headers` and
+                                  `proxies` for each video client as a JSON
+                                  string.
+  -t, --clients-threadings, --clients_threadings TEXT
+                                  Number of threads used for each video client
+                                  as a JSON string.
+  --help                          Show this message and exit.
+```
+
 The demonstration is as follows,
 
 <div align="center">
   <img src="https://github.com/CharlesPikachu/videodl/raw/master/docs/screenshot.gif" width="600"/>
 </div>
 <br />
+
+If you just want to parse a video link and retrieve information about the video, you can do it like this,
+
+```python
+from videodl import videodl
+
+video_client = videodl.VideoClient()
+video_infos = video_client.parsefromurl("https://v.youku.com/v_show/id_XNDUxOTc1NDg4MA==.html?spm=a2hkl.14919748_WEBHOME_HOME.scg_scroll_3.d_2_play&s=faab858435f24d5bb6d3&scm=20140719.rcmd.feed.show_faab858435f24d5bb6d3&alginfo=-1reqId-249a939e8%203783%204341%2099d9%20974d2b07ad23%231764142230027-1seqId-20IX2riz0CjZG971l-1abId-2468080-1sceneId-246595&scg_id=22896555")
+print(video_infos)
+```
+
+The output of this code looks like,
+
+```python
+[
+  {
+    "source": "YoukuVideoClient",
+    "raw_data": {
+      "cost": 0.020000001,
+      ...
+    },
+    "download_url": "http://pl-ali.youku.com/playlist/m3u8?vid=XNDUxOTc1NDg4MA%3D%3D&type=mp4hd2v3&ups_client_netip=725c13f7&utid=dJytIY%2Bx4WYCAXJcE%2Few6YTM&ccode=0564&psid=2fb1945e5c8cc1b213f831c70ace818841346&duration=2205&expire=18000&drm_type=1&drm_device=0&drm_default=1&dyt=0&ups_ts=1764142708&onOff=0&encr=0&ups_key=f30ad69f9025369053e0932bfe1d2276&ckt=3&m_onoff=0&pn=&drm_type_value=default&v=v1&bkp=0",
+    "title": "史家绝唱",
+    "file_path": "videodl_outputs\\YoukuVideoClient\\史家绝唱.m3u",
+    "ext": "m3u",
+    "download_with_ffmpeg": true,
+    "err_msg": "NULL",
+    "identifier": "XNDUxOTc1NDg4MA==",
+    "guess_video_ext_result": {
+      "ext": "m3u",
+      "sniffer": "requests.head",
+      "ok": true
+    }
+  }
+]
+```
+
+Then you can also call the video downloading function to download the video parsed by videodl. The code is as follows:
+
+```python
+from videodl import videodl
+
+video_client = videodl.VideoClient()
+video_infos = video_client.parsefromurl("https://v.youku.com/v_show/id_XNDUxOTc1NDg4MA==.html?spm=a2hkl.14919748_WEBHOME_HOME.scg_scroll_3.d_2_play&s=faab858435f24d5bb6d3&scm=20140719.rcmd.feed.show_faab858435f24d5bb6d3&alginfo=-1reqId-249a939e8%203783%204341%2099d9%20974d2b07ad23%231764142230027-1seqId-20IX2riz0CjZG971l-1abId-2468080-1sceneId-246595&scg_id=22896555")
+video_client.download(video_infos=video_infos)
+```
