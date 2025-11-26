@@ -10,7 +10,6 @@ import os
 import re
 import copy
 import time
-import math
 import pickle
 import shutil
 import requests
@@ -46,7 +45,7 @@ class BaseVideoClient():
         self.default_search_cookies = default_search_cookies or {}
         self.default_download_cookies = default_download_cookies or {}
         self.default_parse_cookies = default_parse_cookies or {}
-        self.default_cookies = default_parse_cookies
+        self.default_cookies = self.default_parse_cookies
         # init requests.Session
         self.default_search_headers = {'User-Agent': UserAgent().random}
         self.default_parse_headers = {'User-Agent': UserAgent().random}
