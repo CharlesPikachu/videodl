@@ -11,3 +11,4 @@ beautifulsoup4
 playwright
 parsel
 nodejs-wheel
+tqdm
