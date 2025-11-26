@@ -41,8 +41,8 @@
       alt="demo"
       src="https://img.shields.io/badge/demo-online-brightgreen?style=for-the-badge"
     />
-  </a>
-  <sub>Auto-updated every day via GitHub Actions, with ~3 randomly sampled preview clips.</sub><br/>
+  </a><br/>
+  <sub>Auto-updated every day via GitHub Actions, with ~3 randomly sampled preview clips.</sub>
 </p>
 
 
