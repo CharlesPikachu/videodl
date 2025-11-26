@@ -225,7 +225,7 @@ client = BilibiliVideoClient(
 
 #### `BaseVideoClient.parsefromurl`
 
-> **Abstract method.** Subclasses must implement this to parse video metadata and download information from a given URL.
+**Abstract method.** Subclasses must implement this to parse video metadata and download information from a given URL.
 
 Arguments:
 
