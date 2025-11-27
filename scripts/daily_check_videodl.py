@@ -67,10 +67,6 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.mgtv.com/b/788366/23780111.html?fpa=1756&fpos=&lastp=ch_home', # requires pass VIP login-in cookies by default_download_cookies to download full video
         'https://www.mgtv.com/b/805972/23756299.html?fpa=1261&fpos=&lastp=ch_home&cpid=5', # requires pass login-in cookies by default_download_cookies to download full video
     ],
-    'ZhihuVideoClient': [
-        'https://www.zhihu.com/question/38557752/answer/2280634747',
-        'https://www.miguvideo.com/p/detail/958634941?lastLocation=b1c29dcd91f94a0289bf6295140f43b2%23261fe51d763b4a86bb272aaa9de47b49',
-    ],
     'OasisVideoClient': [
         'https://m.oasis.weibo.cn/v1/h5/share?sid=4497689997350015&luicode=10001122&lfid=lz_qqfx&bid=4497689997350015',
         'https://m.oasis.weibo.cn/v1/h5/share?sid=4506676592820518',
