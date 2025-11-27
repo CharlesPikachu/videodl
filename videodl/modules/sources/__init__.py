@@ -15,6 +15,7 @@ from .weibo import WeiboVideoClient
 from .zhihu import ZhihuVideoClient
 from .kakao import KakaoVideoClient
 from .youku import YoukuVideoClient
+from .genius import GeniusVideoClient
 from .weishi import WeishiVideoClient
 from .haokan import HaokanVideoClient
 from .zuiyou import ZuiyouVideoClient
@@ -47,7 +48,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'XiguaVideoClient': XiguaVideoClient, 'RednoteVideoClient': RednoteVideoClient, 'WeiboVideoClient': WeiboVideoClient,
         'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient, 'YouTubeVideoClient': YouTubeVideoClient,
         'ZhihuVideoClient': ZhihuVideoClient, 'KakaoVideoClient': KakaoVideoClient, 'YoukuVideoClient': YoukuVideoClient,
-        'TencentVideoClient': TencentVideoClient,
+        'TencentVideoClient': TencentVideoClient, 'GeniusVideoClient': GeniusVideoClient,
     }
 
 

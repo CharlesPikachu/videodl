@@ -147,6 +147,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.iflix.com/en/play/0s682hc45t0ohll/a00340c66f8-EP1%3A_Miss_Gu_Who_Is_Silent',
         # 'https://wetv.vip/en/play/air11ooo2rdsdi3-Cute-Programmer/v0040pr89t9-EP1-Cute-Programmer'
     ],
+    'GeniusVideoClient': [
+        'https://genius.com/videos/Halle-breaks-down-the-meaning-of-bite-your-lip',
+        'https://genius.com/videos/Ashnikko-breaks-down-the-meaning-of-sticky-fingers',
+    ],
 }
 
 
