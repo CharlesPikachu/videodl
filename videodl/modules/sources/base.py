@@ -388,7 +388,7 @@ class BaseVideoClient():
         with Progress(TextColumn("[progress.description]{task.description}"), BarColumn(), DownloadColumn(), TransferSpeedColumn(), TimeElapsedColumn(), TimeRemainingColumn()) as progress:
             overall_task_id = progress.add_task("[bold cyan]Overall videos", total=len(video_infos))
             with ThreadPoolExecutor(max_workers=num_threadings) as executor:
-                futures = [executor.submit(self._download, video_info, vid, downloaded_video_infos, request_overrides, progress, overall_task_id) for vid, video_info in enumerate(video_infos)]
+                futures = [executor.submit(self._download, video_info, vid, downloaded_video_infos, request_overrides, progress) for vid, video_info in enumerate(video_infos)]
                 for feat in as_completed(futures):
                     progress.update(overall_task_id, advance=1)
         # logging
