@@ -14,16 +14,14 @@ import pickle
 import shutil
 import requests
 import subprocess
-from tqdm import tqdm
 from pathlib import Path
 from freeproxy import freeproxy
 from urllib.parse import urlparse
 from fake_useragent import UserAgent
-from alive_progress import alive_bar
 from pathvalidate import sanitize_filepath
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, LoggerHandle, VideoInfo
-tqdm.__del__ = lambda self: None # some versions have bugs for tqdm.__del__
+from rich.progress import Progress, TextColumn, BarColumn, DownloadColumn, TransferSpeedColumn, TimeRemainingColumn, TimeElapsedColumn
 
 
 '''BaseVideoClient'''
@@ -84,7 +82,7 @@ class BaseVideoClient():
         raise NotImplementedError()
     '''_downloadyoutube'''
     @usedownloadheaderscookies
-    def _downloadyoutube(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
+    def _downloadyoutube(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
         # init
         request_overrides = request_overrides or {}
         # not deal with video info with errors
@@ -97,20 +95,19 @@ class BaseVideoClient():
         try:
             content_length = int(float(video_info['download_url'].filesize or 0))
             chunk_size = video_info.get('chunk_size', 1024 * 1024)
-            video_total_mb = content_length / (1024 * 1024)
             if len(os.path.basename(video_info['file_path'])) > 10:
                 desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10] + '...'}"
             else:
                 desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10]}"
-            with alive_bar(manual=True, title=desc_name, bar='blocks', stats='[{rate}, {eta}]') as bar:
-                downloaded_bytes = 0
-                with open(video_info['file_path'], "wb") as fp:
-                    for chunk in video_info['download_url'].iterchunks(chunk_size=chunk_size):
-                        if not chunk: continue
-                        fp.write(chunk)
-                        downloaded_bytes += len(chunk)
-                        bar((downloaded_bytes / content_length) if content_length > 0 else (downloaded_bytes / downloaded_bytes))
-                        bar.text = f"{downloaded_bytes/1024/1024:.1f}/{video_total_mb:.1f} MB" if content_length > 0 else f"{downloaded_bytes/1024/1024:.1f}/{downloaded_bytes/1024/1024:.1f} MB"
+            total_bytes = content_length if content_length > 0 else None
+            video_task_id, downloaded_bytes = progress.add_task(desc_name, total=total_bytes), 0
+            with open(video_info['file_path'], "wb") as fp:
+                for chunk in video_info['download_url'].iterchunks(chunk_size=chunk_size):
+                    if not chunk: continue
+                    fp.write(chunk)
+                    downloaded_bytes += len(chunk)
+                    if total_bytes is None: progress.update(video_task_id, total=downloaded_bytes)
+                    progress.update(video_task_id, advance=len(chunk))
             downloaded_video_infos.append(video_info)
         except Exception as err:
             self.logger_handle.error(f'{self.source}._download >>> {video_info["identifier"]} (Error: {err})', disable_print=self.disable_print)
@@ -118,7 +115,7 @@ class BaseVideoClient():
         return downloaded_video_infos
     '''_downloadwithffmpegfromlocalfile'''
     @usedownloadheaderscookies
-    def _downloadwithffmpegfromlocalfile(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
+    def _downloadwithffmpegfromlocalfile(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
         # init
         request_overrides = request_overrides or {}
         # not deal with video info with errors
@@ -166,7 +163,7 @@ class BaseVideoClient():
         return downloaded_video_infos
     '''_downloadwithffmpegcctv'''
     @usedownloadheaderscookies
-    def _downloadwithffmpegcctv(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
+    def _downloadwithffmpegcctv(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
         # init
         request_overrides = request_overrides or {}
         # not deal with video info with errors
@@ -240,7 +237,7 @@ class BaseVideoClient():
         return downloaded_video_infos
     '''_downloadwithffmpeg'''
     @usedownloadheaderscookies
-    def _downloadwithffmpeg(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
+    def _downloadwithffmpeg(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
         # init
         request_overrides = request_overrides or {}
         # not deal with video info with errors
@@ -274,7 +271,7 @@ class BaseVideoClient():
         return downloaded_video_infos
     '''_downloadwitharia2c'''
     @usedownloadheaderscookies
-    def _downloadwitharia2c(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
+    def _downloadwitharia2c(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
         # init
         request_overrides = request_overrides or {}
         # not deal with video info with errors
@@ -319,30 +316,30 @@ class BaseVideoClient():
         return downloaded_video_infos
     '''_download'''
     @usedownloadheaderscookies
-    def _download(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
+    def _download(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
         # init
         request_overrides = request_overrides or {}
         # not deal with video info with errors
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
         # YouTubeVideoClient use specific downloader (highest-priority)
         if video_info.get('source') in ['YouTubeVideoClient']: return self._downloadyoutube(
-            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
+            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
         )
         # CCTVVideoClient use specific downloader for high-quality video files (highest-priority)
         if video_info.get('source') in ['CCTVVideoClient'] and video_info.get('download_with_ffmpeg_cctv', False): return self._downloadwithffmpegcctv(
-            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
+            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
         )
         # use ffmpeg to deal with m3u8 likes, auto set according to video_info cues, a naive judgement is applied (high-priority)
         if video_info.get('ext') in ['m3u8', 'm3u'] or video_info['download_url'].split('?')[0].endswith('.m3u8') or video_info['download_url'].split('?')[0].endswith('m3u'):
             video_info.update(dict(ext='mp4', download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
         if video_info.get('download_with_ffmpeg', False): return self._downloadwithffmpeg(
-            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
+            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
         )
         # use ffmpeg to deal with .txt files which contain video links (high-priority)
         if (video_info.get('ext') in ['txt'] or video_info.get('download_url').endswith('.txt')) and video_info.get('download_with_ffmpeg', False): 
             video_info.update(dict(ext='mp4', download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
             return self._downloadwithffmpegfromlocalfile(
-                video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
+                video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
             )
         # use aria2c to speed up downloading video files, requires manually set in video_info (medium-priority)
         if video_info.get('download_with_aria2c', False): return self._downloadwitharia2c(
@@ -358,20 +355,19 @@ class BaseVideoClient():
             resp.raise_for_status()
             content_length = int(float(resp.headers.get("Content-Length", 0) or 0))
             chunk_size = video_info.get('chunk_size', 1024 * 1024)
-            video_total_mb = content_length / (1024 * 1024)
             if len(os.path.basename(video_info['file_path'])) > 10:
                 desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10] + '...'}"
             else:
                 desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10]}"
-            with alive_bar(manual=True, title=desc_name, bar='blocks', stats='[{rate}, {eta}]') as bar:
-                downloaded_bytes = 0
-                with open(video_info['file_path'], "wb") as fp:
-                    for chunk in resp.iter_content(chunk_size=chunk_size):
-                        if not chunk: continue
-                        fp.write(chunk)
-                        downloaded_bytes += len(chunk)
-                        bar((downloaded_bytes / content_length) if content_length > 0 else (downloaded_bytes / downloaded_bytes))
-                        bar.text = f"{downloaded_bytes/1024/1024:.1f}/{video_total_mb:.1f} MB" if content_length > 0 else f"{downloaded_bytes/1024/1024:.1f}/{downloaded_bytes/1024/1024:.1f} MB"
+            total_bytes = content_length if content_length > 0 else None
+            video_task_id, downloaded_bytes = progress.add_task(desc_name, total=total_bytes), 0
+            with open(video_info['file_path'], "wb") as fp:
+                for chunk in resp.iter_content(chunk_size=chunk_size):
+                    if not chunk: continue
+                    fp.write(chunk)
+                    downloaded_bytes += len(chunk)
+                    if total_bytes is None: progress.update(video_task_id, total=downloaded_bytes)
+                    progress.update(video_task_id, advance=len(chunk))
             downloaded_video_infos.append(video_info)
         except Exception as err:
             self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error: {err})', disable_print=self.disable_print)
@@ -389,14 +385,12 @@ class BaseVideoClient():
         self.logger_handle.info(f'Start to download videos using {self.source}.', disable_print=self.disable_print)
         # multi threadings for downloading videos
         downloaded_video_infos = []
-        with tqdm(
-            total=len(video_infos), desc="Overall videos", position=0, dynamic_ncols=True, unit="video", 
-            bar_format="{l_bar}{bar}| {n}/{total} {unit}s",
-        ) as overall_pbar:
+        with Progress(TextColumn("[progress.description]{task.description}"), BarColumn(), DownloadColumn(), TransferSpeedColumn(), TimeElapsedColumn(), TimeRemainingColumn()) as progress:
+            overall_task_id = progress.add_task("[bold cyan]Overall videos", total=len(video_infos))
             with ThreadPoolExecutor(max_workers=num_threadings) as executor:
-                futures = [executor.submit(self._download, video_info, vid, downloaded_video_infos, request_overrides) for vid, video_info in enumerate(video_infos)]
+                futures = [executor.submit(self._download, video_info, vid, downloaded_video_infos, request_overrides, progress, overall_task_id) for vid, video_info in enumerate(video_infos)]
                 for feat in as_completed(futures):
-                    overall_pbar.update(1)
+                    progress.update(overall_task_id, advance=1)
         # logging
         self.logger_handle.info(f'Finished downloading videos using {self.source}. Valid downloads: {len(downloaded_video_infos)}.', disable_print=self.disable_print)
         # return

@@ -104,6 +104,7 @@ The video platforms currently supported for parsing are,
 | YoukuVideoClient                      |  优酷视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [youku.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/youku.py)                     |
 | TencentVideoClient                    |  腾讯视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [tencent.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/tencent.py)                 |
 | GeniusVideoClient                     |  Rap Genius (嘻哈百科)       | -                                                           | ❌       |  ✔️        |  ✔️        | [genius.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/genius.py)                   |
+| UnityVideoClient                      |  Unity                       | -                                                           | ❌       |  ✔️        |  ✔️        | [unity.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/unity.py)                     |
 
 
 # 📦 Install

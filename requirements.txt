@@ -1,5 +1,5 @@
 requests
-alive-progress
+rich
 prettytable
 click
 json_repair
@@ -13,3 +13,4 @@ parsel
 nodejs-wheel
 tqdm
 pyfreeproxy
+pycryptodomex

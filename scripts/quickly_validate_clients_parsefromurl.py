@@ -151,6 +151,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://genius.com/videos/Halle-breaks-down-the-meaning-of-bite-your-lip',
         'https://genius.com/videos/Ashnikko-breaks-down-the-meaning-of-sticky-fingers',
     ],
+    'UnityVideoClient': [
+        'https://learn.unity.com/course/2d-beginner-game-sprite-flight/tutorial/set-up-your-2d-game-world?version=6.0',
+        'https://learn.unity.com/course/creative-core-prototyping/tutorial/get-started-with-prototyping-3?version=6.0',
+    ],
 }
 
 
