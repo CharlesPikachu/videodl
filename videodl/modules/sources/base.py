@@ -272,6 +272,51 @@ class BaseVideoClient():
             self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
         # return
         return downloaded_video_infos
+    '''_downloadwitharia2c'''
+    @usedownloadheaderscookies
+    def _downloadwitharia2c(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
+        # init
+        request_overrides = request_overrides or {}
+        # not deal with video info with errors
+        if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
+        # prepare
+        touchdir(os.path.dirname(video_info['file_path']))
+        video_info = copy.deepcopy(video_info)
+        video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
+        default_headers = request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
+        default_cookies = request_overrides.get('cookies', {}) or self.default_cookies or {}
+        if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
+        default_aria2c_settings = {
+            'max_connection_per_server': 16, 'split': 16, 'piece_size': '1M', 'max_tries': 5, 'file_allocation': 'none', 'max_concurrent_downloads': 1, 'extra_options': []
+        }
+        aria2c_settings = video_info.get('aria2c_settings', {}) or {}
+        default_aria2c_settings.update(aria2c_settings)
+        # construct cmd
+        cmd = [
+            "aria2c", "-c", "-x", str(default_aria2c_settings['max_connection_per_server']), "-s", str(default_aria2c_settings['split']),
+            "-k", str(default_aria2c_settings['piece_size']), f"--file-allocation={default_aria2c_settings['file_allocation']}",
+            f"--max-tries={default_aria2c_settings['max_tries']}", f"--max-concurrent-downloads={default_aria2c_settings['max_concurrent_downloads']}",
+            "-o", os.path.basename(video_info["file_path"]), "-d", os.path.dirname(video_info["file_path"]),
+        ]
+        for k, v in default_headers.items():
+            cmd.extend(["--header", f"{k}: {v}"])
+        proxies = request_overrides.get("proxies", {}) or {}
+        for _, proxy_url in proxies.items():
+            cmd.extend(["--all-proxy", proxy_url])
+            break
+        extra_aria2c_opts = default_aria2c_settings.get('extra_options', []) or []
+        if isinstance(extra_aria2c_opts, (list, tuple)): cmd.extend(list(extra_aria2c_opts))
+        cmd.append(video_info["download_url"])
+        # conduct
+        capture_output = True if self.disable_print else False
+        ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
+        if ret.returncode == 0:
+            downloaded_video_infos.append(video_info)
+        else:
+            err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
+            self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
+        # return
+        return downloaded_video_infos
     '''_download'''
     @usedownloadheaderscookies
     def _download(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None):
@@ -279,20 +324,28 @@ class BaseVideoClient():
         request_overrides = request_overrides or {}
         # not deal with video info with errors
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
-        # youtube use specific downloader
+        # YouTubeVideoClient use specific downloader (highest-priority)
         if video_info.get('source') in ['YouTubeVideoClient']: return self._downloadyoutube(
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
         )
-        # use ffmpeg to deal with m3u8 like files
-        if video_info.get('download_with_ffmpeg_cctv', False): return self._downloadwithffmpegcctv(
+        # CCTVVideoClient use specific downloader for high-quality video files (highest-priority)
+        if video_info.get('source') in ['CCTVVideoClient'] and video_info.get('download_with_ffmpeg_cctv', False): return self._downloadwithffmpegcctv(
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
         )
-        if video_info.get('ext') in ['m3u8', 'm3u']:
+        # use ffmpeg to deal with m3u8 likes, auto set according to video_info cues, a naive judgement is applied (high-priority)
+        if video_info.get('ext') in ['m3u8', 'm3u'] or video_info['download_url'].split('?')[0].endswith('.m3u8') or video_info['download_url'].split('?')[0].endswith('m3u'):
             video_info.update(dict(ext='mp4', download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
         if video_info.get('download_with_ffmpeg', False): return self._downloadwithffmpeg(
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
         )
-        if video_info.get('download_url').endswith('.txt'): return self._downloadwithffmpegfromlocalfile(
+        # use ffmpeg to deal with .txt files which contain video links (high-priority)
+        if (video_info.get('ext') in ['txt'] or video_info.get('download_url').endswith('.txt')) and video_info.get('download_with_ffmpeg', False): 
+            video_info.update(dict(ext='mp4', download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
+            return self._downloadwithffmpegfromlocalfile(
+                video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
+            )
+        # use aria2c to speed up downloading video files, requires manually set in video_info (medium-priority)
+        if video_info.get('download_with_aria2c', False): return self._downloadwitharia2c(
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
         )
         # prepare

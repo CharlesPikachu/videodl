@@ -49,3 +49,9 @@ A quick way to verify this is:
   ```
   If Node.js is installed correctly, `node -v` will print the Node.js version (*e.g.*, `v22.11.0`), and `npm -v` will print the npm version.
   If you see a similar `command not found` / `not recognized` error, Node.js is not installed correctly or not available on your `PATH`.
+
+`videodl` now also supports manually integrating `aria2c` ([Official Website](https://aria2.github.io/)) to accelerate downloads (for example, MP4 files) and to enable resuming interrupted video downloads, *etc*. 
+Before using this feature, you must ensure that `aria2c` is available on the system `PATH` in your runtime environment. 
+You can verify this by opening a terminal and running `aria2c --version` (or `aria2c -v`); if the command returns version information instead of a `“command not found”` error, 
+then `aria2c` is correctly installed and detectable. On Linux/macOS you can also run `which aria2c`, and on Windows `where aria2c`, to confirm that the executable can be found.
+To enable aria2c, please refer to the [Quick Start](https://videofetch.readthedocs.io/zh/latest/Quickstart.html) section.

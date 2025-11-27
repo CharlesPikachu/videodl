@@ -150,6 +150,12 @@ A quick way to verify this is:
   If Node.js is installed correctly, `node -v` will print the Node.js version (*e.g.*, `v22.11.0`), and `npm -v` will print the npm version.
   If you see a similar `command not found` / `not recognized` error, Node.js is not installed correctly or not available on your `PATH`.
 
+`videodl` now also supports manually integrating `aria2c` ([Official Website](https://aria2.github.io/)) to accelerate downloads (for example, MP4 files) and to enable resuming interrupted video downloads, *etc*. 
+Before using this feature, you must ensure that `aria2c` is available on the system `PATH` in your runtime environment. 
+You can verify this by opening a terminal and running `aria2c --version` (or `aria2c -v`); if the command returns version information instead of a `“command not found”` error, 
+then `aria2c` is correctly installed and detectable. On Linux/macOS you can also run `which aria2c`, and on Windows `where aria2c`, to confirm that the executable can be found.
+To enable aria2c, please refer to the [Quick Start](https://github.com/CharlesPikachu/videodl?tab=readme-ov-file#-quick-start) section.
+
 
 # ⚡ Quick Start
 
@@ -243,6 +249,17 @@ from videodl import videodl
 
 video_client = videodl.VideoClient()
 video_infos = video_client.parsefromurl("https://v.youku.com/v_show/id_XNDUxOTc1NDg4MA==.html?spm=a2hkl.14919748_WEBHOME_HOME.scg_scroll_3.d_2_play&s=faab858435f24d5bb6d3&scm=20140719.rcmd.feed.show_faab858435f24d5bb6d3&alginfo=-1reqId-249a939e8%203783%204341%2099d9%20974d2b07ad23%231764142230027-1seqId-20IX2riz0CjZG971l-1abId-2468080-1sceneId-246595&scg_id=22896555")
+video_client.download(video_infos=video_infos)
+```
+
+If you want to use `aria2c` to accelerate downloads, you can do the following:
+
+```python
+from videodl import videodl
+
+video_client = videodl.VideoClient()
+video_infos = video_client.parsefromurl("https://v.youku.com/v_show/id_XNDUxOTc1NDg4MA==.html?spm=a2hkl.14919748_WEBHOME_HOME.scg_scroll_3.d_2_play&s=faab858435f24d5bb6d3&scm=20140719.rcmd.feed.show_faab858435f24d5bb6d3&alginfo=-1reqId-249a939e8%203783%204341%2099d9%20974d2b07ad23%231764142230027-1seqId-20IX2riz0CjZG971l-1abId-2468080-1sceneId-246595&scg_id=22896555")
+for v in video_infos: v['download_with_aria2c'] = True
 video_client.download(video_infos=video_infos)
 ```
 

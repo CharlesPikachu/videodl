@@ -84,7 +84,7 @@ class SohuVideoClient(BaseVideoClient):
             ).removesuffix('.')
             ext = 'mp4'
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, vid=vid,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, vid=vid, identifier=vid,
             ))
             # --if multiple video split
             if len(download_urls) == 1:
@@ -95,7 +95,7 @@ class SohuVideoClient(BaseVideoClient):
                 with open(ffmpeg_target_file_path, "w", encoding="utf-8") as fp:
                     for url in download_urls:
                         fp.write(f"{url}\n")
-                video_info.update(dict(download_url=ffmpeg_target_file_path))
+                video_info.update(dict(download_url=ffmpeg_target_file_path, download_with_ffmpeg=True))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
@@ -173,7 +173,7 @@ class SohuVideoClient(BaseVideoClient):
             ).removesuffix('.')
             ext = 'mp4'
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, vid=vid,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, vid=vid, identifier=vid,
             ))
             # --if multiple video split
             if len(download_urls) == 1:
@@ -184,7 +184,7 @@ class SohuVideoClient(BaseVideoClient):
                 with open(ffmpeg_target_file_path, "w", encoding="utf-8") as fp:
                     for url in download_urls:
                         fp.write(f"{url}\n")
-                video_info.update(dict(download_url=ffmpeg_target_file_path))
+                video_info.update(dict(download_url=ffmpeg_target_file_path, download_with_ffmpeg=True))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
