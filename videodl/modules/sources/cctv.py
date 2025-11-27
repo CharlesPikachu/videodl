@@ -13,7 +13,7 @@ import shutil
 import hashlib
 from datetime import datetime
 from .base import BaseVideoClient
-from urllib.parse import urlparse
+from urllib.parse import urlsplit
 from ..utils import legalizestring, useparseheaderscookies, resp2json, FileTypeSniffer, VideoInfo
 
 
@@ -99,7 +99,7 @@ class CCTVVideoClient(BaseVideoClient):
         if valid_domains is None:
             valid_domains = []
         # extract domain
-        parsed_url = urlparse(url)
+        parsed_url = urlsplit(url)
         domain = parsed_url.netloc
         # judge and return according to domain
         is_valid = (domain in valid_domains) or domain.endswith('cctv.com') or domain.endswith('cctv.cn')

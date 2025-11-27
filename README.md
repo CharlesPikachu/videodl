@@ -48,6 +48,7 @@
 
 # 🆕 What's New
 
+- 2025-11-28: Released videofetch v0.2.2 - added video parsing support for multiple platforms, and fixed a multithreading bug in the download progress bar along with several minor issues.
 - 2025-11-26: Released videofetch v0.2.1 - add/fix support for more video platforms and perform some code optimizations.
 - 2025-11-21: Released videofetch v0.2.0 - code refactored and extensive support added for downloading videos from many additional platforms.
 

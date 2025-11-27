@@ -15,13 +15,31 @@ import shutil
 import requests
 import subprocess
 from pathlib import Path
+from rich.text import Text
+from rich.progress import Task
 from freeproxy import freeproxy
-from urllib.parse import urlparse
+from urllib.parse import urlsplit
 from fake_useragent import UserAgent
 from pathvalidate import sanitize_filepath
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, LoggerHandle, VideoInfo
-from rich.progress import Progress, TextColumn, BarColumn, DownloadColumn, TransferSpeedColumn, TimeRemainingColumn, TimeElapsedColumn
+from rich.progress import Progress, TextColumn, BarColumn, DownloadColumn, TransferSpeedColumn, TimeRemainingColumn, TimeElapsedColumn, ProgressColumn
+
+
+'''VideoAwareColumn'''
+class VideoAwareColumn(ProgressColumn):
+    def __init__(self):
+        super(VideoAwareColumn, self).__init__()
+        self._download_col = DownloadColumn()
+    '''render'''
+    def render(self, task: Task):
+        kind = task.fields.get("kind", "download")
+        if kind == "overall":
+            completed = int(task.completed)
+            total = int(task.total) if task.total is not None else 0
+            return Text(f"{completed}/{total} videos")
+        else:
+            return self._download_col.render(task)
 
 
 '''BaseVideoClient'''
@@ -100,7 +118,7 @@ class BaseVideoClient():
             else:
                 desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10]}"
             total_bytes = content_length if content_length > 0 else None
-            video_task_id, downloaded_bytes = progress.add_task(desc_name, total=total_bytes), 0
+            video_task_id, downloaded_bytes = progress.add_task(desc_name, total=total_bytes, kind="download"), 0
             with open(video_info['file_path'], "wb") as fp:
                 for chunk in video_info['download_url'].iterchunks(chunk_size=chunk_size):
                     if not chunk: continue
@@ -360,7 +378,7 @@ class BaseVideoClient():
             else:
                 desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10]}"
             total_bytes = content_length if content_length > 0 else None
-            video_task_id, downloaded_bytes = progress.add_task(desc_name, total=total_bytes), 0
+            video_task_id, downloaded_bytes = progress.add_task(desc_name, total=total_bytes, kind="download"), 0
             with open(video_info['file_path'], "wb") as fp:
                 for chunk in resp.iter_content(chunk_size=chunk_size):
                     if not chunk: continue
@@ -385,8 +403,8 @@ class BaseVideoClient():
         self.logger_handle.info(f'Start to download videos using {self.source}.', disable_print=self.disable_print)
         # multi threadings for downloading videos
         downloaded_video_infos = []
-        with Progress(TextColumn("[progress.description]{task.description}"), BarColumn(), DownloadColumn(), TransferSpeedColumn(), TimeElapsedColumn(), TimeRemainingColumn()) as progress:
-            overall_task_id = progress.add_task("[bold cyan]Overall videos", total=len(video_infos))
+        with Progress(TextColumn("[progress.description]{task.description}"), BarColumn(), VideoAwareColumn(), TransferSpeedColumn(), TimeElapsedColumn(), TimeRemainingColumn()) as progress:
+            overall_task_id = progress.add_task("[bold cyan]Overall videos", total=len(video_infos), kind="overall")
             with ThreadPoolExecutor(max_workers=num_threadings) as executor:
                 futures = [executor.submit(self._download, video_info, vid, downloaded_video_infos, request_overrides, progress) for vid, video_info in enumerate(video_infos)]
                 for feat in as_completed(futures):
@@ -402,7 +420,7 @@ class BaseVideoClient():
         if valid_domains is None:
             valid_domains = []
         # extract domain
-        parsed_url = urlparse(url)
+        parsed_url = urlsplit(url)
         domain = parsed_url.netloc
         # judge and return according to domain
         if not domain: return False
