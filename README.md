@@ -102,6 +102,7 @@ The video platforms currently supported for parsing are,
 | ZhihuVideoClient                      |  知乎视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [zhihu.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/zhihu.py)                     |
 | KakaoVideoClient                      |  KakaoTV                     | -                                                           | ❌       |  ✔️        |  ✔️        | [kakao.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/kakao.py)                     |
 | YoukuVideoClient                      |  优酷视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [youku.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/youku.py)                     |
+| TencentVideoClient                    |  腾讯视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [tencent.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/tencent.py)                 |
 
 
 # 📦 Install

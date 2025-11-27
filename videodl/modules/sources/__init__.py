@@ -24,6 +24,7 @@ from .wesing import WeSingVideoClient
 from .youtube import YouTubeVideoClient
 from .rednote import RednoteVideoClient
 from .sixroom import SixRoomVideoClient
+from .tencent import TencentVideoClient
 from .kuaishou import KuaishouVideoClient
 from .bilibili import BilibiliVideoClient
 from .yinyuetai import YinyuetaiVideoClient
@@ -46,6 +47,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'XiguaVideoClient': XiguaVideoClient, 'RednoteVideoClient': RednoteVideoClient, 'WeiboVideoClient': WeiboVideoClient,
         'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient, 'YouTubeVideoClient': YouTubeVideoClient,
         'ZhihuVideoClient': ZhihuVideoClient, 'KakaoVideoClient': KakaoVideoClient, 'YoukuVideoClient': YoukuVideoClient,
+        'TencentVideoClient': TencentVideoClient,
     }
 
 
