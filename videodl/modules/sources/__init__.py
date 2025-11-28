@@ -23,6 +23,7 @@ from .zuiyou import ZuiyouVideoClient
 from .meipai import MeipaiVideoClient
 from ..utils import BaseModuleBuilder
 from .wesing import WeSingVideoClient
+from .foxnews import FoxNewsVideoClient
 from .youtube import YouTubeVideoClient
 from .rednote import RednoteVideoClient
 from .sixroom import SixRoomVideoClient
@@ -50,6 +51,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient, 'YouTubeVideoClient': YouTubeVideoClient,
         'ZhihuVideoClient': ZhihuVideoClient, 'KakaoVideoClient': KakaoVideoClient, 'YoukuVideoClient': YoukuVideoClient,
         'TencentVideoClient': TencentVideoClient, 'GeniusVideoClient': GeniusVideoClient, 'UnityVideoClient': UnityVideoClient,
+        'FoxNewsVideoClient': FoxNewsVideoClient,
     }
 
 

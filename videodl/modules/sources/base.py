@@ -287,6 +287,46 @@ class BaseVideoClient():
             self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
         # return
         return downloaded_video_infos
+    '''_downloadwithnm3u8dlre'''
+    @usedownloadheaderscookies
+    def _downloadwithnm3u8dlre(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
+        # init
+        request_overrides = request_overrides or {}
+        # not deal with video info with errors
+        if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
+        # prepare
+        touchdir(os.path.dirname(video_info['file_path']))
+        video_info = copy.deepcopy(video_info)
+        video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
+        default_headers = request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
+        default_cookies = request_overrides.get('cookies', {}) or self.default_cookies or {}
+        if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
+        header_args: list[str] = []
+        for k, v in default_headers.items(): header_args.extend(["-H", f"{k}: {v}"])
+        proxy_url = None
+        for _, p in request_overrides.get("proxies", {}).items():
+            proxy_url = p
+            break
+        # start to download
+        default_nm3u8dlre_settings = {'thread_count': '8', 'download_retry_count': '3'}
+        nm3u8dlre_settings = video_info.get('nm3u8dlre_settings', {}) or {}
+        default_nm3u8dlre_settings.update(nm3u8dlre_settings)
+        cmd = [
+            'N_m3u8DL-RE', video_info["download_url"], "--auto-select", "--save-dir", os.path.dirname(video_info["file_path"]), "--save-name", os.path.basename(video_info["file_path"]),
+            "--thread-count", default_nm3u8dlre_settings['thread_count'], "--download-retry-count", default_nm3u8dlre_settings['download_retry_count'], "--check-segments-count",
+            "--del-after-done", "-M", f"format={video_info['ext']}",
+        ]
+        cmd.extend(header_args)
+        if proxy_url: cmd.extend(["--custom-proxy", proxy_url])
+        capture_output = True if self.disable_print else False
+        ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
+        if ret.returncode == 0:
+            downloaded_video_infos.append(video_info)
+        else:
+            err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
+            self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
+        # return
+        return downloaded_video_infos
     '''_downloadwitharia2c'''
     @usedownloadheaderscookies
     def _downloadwitharia2c(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
@@ -350,9 +390,15 @@ class BaseVideoClient():
         # use ffmpeg to deal with m3u8 likes, auto set according to video_info cues, a naive judgement is applied (high-priority)
         if video_info.get('ext') in ['m3u8', 'm3u'] or video_info['download_url'].split('?')[0].endswith('.m3u8') or video_info['download_url'].split('?')[0].endswith('m3u'):
             video_info.update(dict(ext='mp4', download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
-        if video_info.get('download_with_ffmpeg', False): return self._downloadwithffmpeg(
-            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
-        )
+        if video_info.get('download_with_ffmpeg', False):
+            if video_info.get('enable_nm3u8dlre', False):
+                return self._downloadwithnm3u8dlre(
+                    video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
+                )
+            else:
+                return self._downloadwithffmpeg(
+                    video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
+                )
         # use ffmpeg to deal with .txt files which contain video links (high-priority)
         if (video_info.get('ext') in ['txt'] or video_info.get('download_url').endswith('.txt')) and video_info.get('download_with_ffmpeg', False): 
             video_info.update(dict(ext='mp4', download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))

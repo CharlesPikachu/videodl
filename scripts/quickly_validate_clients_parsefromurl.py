@@ -151,6 +151,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://learn.unity.com/course/2d-beginner-game-sprite-flight/tutorial/set-up-your-2d-game-world?version=6.0',
         'https://learn.unity.com/course/creative-core-prototyping/tutorial/get-started-with-prototyping-3?version=6.0',
     ],
+    'FoxNewsVideoClient': [
+        'https://www.foxnews.com/video/6385658327112',
+        'https://video.foxnews.com/v/6320653836112',
+        'http://video.insider.foxnews.com/v/video-embed.html?video_id=5099377331001&autoplay=true&share_url=http://insider.foxnews.com/2016/08/25/univ-wisconsin-student-group-pushing-silence-certain-words&share_title=Student%20Group:%20Saying%20%27Politically%20Correct,%27%20%27Trash%27%20and%20%27Lame%27%20Is%20Offensive&share=true',
+    ],
 }
 
 

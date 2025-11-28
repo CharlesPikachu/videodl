@@ -106,6 +106,7 @@ The video platforms currently supported for parsing are,
 | TencentVideoClient                    |  腾讯视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [tencent.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/tencent.py)                 |
 | GeniusVideoClient                     |  Rap Genius (嘻哈百科)       | -                                                           | ❌       |  ✔️        |  ✔️        | [genius.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/genius.py)                   |
 | UnityVideoClient                      |  Unity                       | -                                                           | ❌       |  ✔️        |  ✔️        | [unity.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/unity.py)                     |
+| FoxNewsVideoClient                    |  福克斯新闻                  | -                                                           | ❌       |  ✔️        |  ✔️        | [foxnews.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/foxnews.py)                 |
 
 
 # 📦 Install
@@ -123,21 +124,23 @@ cd videodl
 python setup.py install
 ```
 
-Also, some video downloaders depend on [Ffmpeg](https://ffmpeg.org/), 
-[CBox](https://github.com/CharlesPikachu/videodl/releases/download/software_dependency/cbox.zip), [N_m3u8DL-CLI](https://github.com/nilaoda/N_m3u8DL-CLI), and [Node.js](https://nodejs.org/en),
-so please make sure both programs are installed and can be invoked directly from your system environment (*i.e.*, they are on your `PATH`). 
-A quick way to verify this is:
+Some of the video downloaders supported by `videodl` rely on additional CLI tools to enable video decryption, stream parsing and downloading, accelerated stream downloading, and other extended features such as resuming interrupted downloads. 
+Specifically, these CLI tools include,
 
-- **For Ffmpeg**: open a terminal (or Command Prompt on Windows) and run,
+- **[FFmpeg](https://ffmpeg.org/)**: All video downloaders that need to handle HLS (HTTP Live Streaming) streams depend on FFmpeg. Therefore, we recommend that all `videodl` users install FFmpeg.
+  Specifically, you need to ensure that, after installation, FFmpeg can be invoked directly from your system environment (*i.e.*, it is on your `PATH`).
+  A quick way to verify this is to open a terminal (or Command Prompt on Windows) and run,
   ```bash
   ffmpeg -version
   ```
   If the installation is correct, you should see detailed version information instead of a "command not found" or "'ffmpeg' is not recognized" error.
-
-- **For CBox and N_m3u8DL-CLI (Windows only for CCTVVideoClient)**:
+  
+- **[CBox](https://github.com/CharlesPikachu/videodl/releases/download/software_dependency/cbox.zip) and [N_m3u8DL-CLI](https://github.com/nilaoda/N_m3u8DL-CLI)**: 
+  These two CLI tools are only used to fix the issue of corrupted (garbled) video when downloading HD videos with `CCTVVideoClient` due to encrypted m3u8 links. 
   You only need to download [CBox](https://github.com/CharlesPikachu/videodl/releases/download/software_dependency/cbox.zip) from the GitHub releases and add the path to cbox to your environment variables.
-  If you don’t need to download the highest-quality videos from CCTV, you don’t need to install this library.
-  If your downloader calls it from the command line, you should also be able to run
+  If you don’t need to use `CCTVVideoClient` to download HD videos, you don’t need to configure these two CLI tools.
+  As with FFmpeg, after installation you should make sure these tools can be run directly from the command line, *i.e.*, their location is included in your system `PATH`.
+  A quick way to verify this is that you should be able to run
   ```bash
   python -c "import shutil; print(shutil.which('cbox'))"
   python -c "import shutil; print(shutil.which('N_m3u8DL-CLI'))"
@@ -145,19 +148,34 @@ A quick way to verify this is:
   in Command Prompt and get the full path without an error.
   If the N_m3u8DL-CLI version is not compatible with your system, please download the appropriate one from the [N_m3u8DL-CLI](https://github.com/nilaoda/N_m3u8DL-CLI) official website yourself.
 
-- **For Node.js**: open a terminal (or Command Prompt on Windows) and run,
+- **[Node.js](https://nodejs.org/en)**: Currently, Node.js is only used in `YouTubeVideoClient` to execute certain JavaScript code for video parsing. 
+  Therefore, if you don’t need to use `YouTubeVideoClient`, you can safely skip installing this CLI tool.
+  A quick way to check whether Node.js has been installed successfully is to open a terminal (or Command Prompt on Windows) and run:
   ```bash
-  node -v
-  npm -v
+  node -v (npm -v)
   ```
   If Node.js is installed correctly, `node -v` will print the Node.js version (*e.g.*, `v22.11.0`), and `npm -v` will print the npm version.
   If you see a similar `command not found` / `not recognized` error, Node.js is not installed correctly or not available on your `PATH`.
 
-`videodl` now also supports manually integrating `aria2c` ([Official Website](https://aria2.github.io/)) to accelerate downloads (for example, MP4 files) and to enable resuming interrupted video downloads, *etc*. 
-Before using this feature, you must ensure that `aria2c` is available on the system `PATH` in your runtime environment. 
-You can verify this by opening a terminal and running `aria2c --version` (or `aria2c -v`); if the command returns version information instead of a `“command not found”` error, 
-then `aria2c` is correctly installed and detectable. On Linux/macOS you can also run `which aria2c`, and on Windows `where aria2c`, to confirm that the executable can be found.
-To enable aria2c, please refer to the [Quick Start](https://github.com/CharlesPikachu/videodl?tab=readme-ov-file#-quick-start) section.
+- **[N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE)**: 
+  FFmpeg is a general-purpose media tool that can download standard HLS/m3u8 streams, but it assumes that the playlist and segment URLs strictly follow the protocol. 
+  N_m3u8DL-RE is a specialized m3u8 downloader that adds extensive logic for handling encryption, anti-leech headers, redirects, and malformed playlists, so it can capture many ‘protected’ or non-standard videos that FFmpeg fails on. 
+  Therefore, for some sites where downloading m3u8 streams with FFmpeg is throttled or fails, we recommend installing and using N_m3u8DL-RE instead.
+  Currently, the video downloaders that use N_m3u8DL-RE by default include `FoxNewsVideoClient` and `TencentVideoClient`. 
+  Therefore, if you don’t need to download videos from these two platforms, you can choose not to install this CLI tool.
+  As with FFmpeg, after installation you should make sure this tool can be run directly from the command line, *i.e.*, its location is included in your system `PATH`.
+  A quick way to check whether N_m3u8DL-RE has been installed successfully is to open a terminal (or Command Prompt on Windows) and run:
+  ```bash
+  N_m3u8DL-RE --version
+  ```
+  If N_m3u8DL-RE is installed correctly, `N_m3u8DL-RE --version` will print the N_m3u8DL-RE version (*e.g.*, `0.5.1+c1f6db5639397dde362c31b31eebd88c796c90da`).
+  If you see a similar `command not found` / `not recognized` error, N_m3u8DL-RE is not installed correctly or not available on your `PATH`.
+
+- **[aria2c](https://aria2.github.io/)**: `videodl` now also supports manually integrating aria2c to accelerate downloads (for example, MP4 files) and to enable resuming interrupted video downloads, *etc*. 
+  Before using this feature, you must ensure that aria2c is available on the system `PATH` in your runtime environment. 
+  You can verify this by opening a terminal and running `aria2c --version` (or `aria2c -v`); if the command returns version information instead of a `“command not found”` error, 
+  then aria2c is correctly installed and detectable. On Linux/macOS you can also run `which aria2c`, and on Windows `where aria2c`, to confirm that the executable can be found.
+  To enable aria2c during video downloading, please refer to the [Quick Start](https://github.com/CharlesPikachu/videodl?tab=readme-ov-file#-quick-start) section.
 
 
 # ⚡ Quick Start
@@ -255,14 +273,25 @@ video_infos = video_client.parsefromurl("https://v.youku.com/v_show/id_XNDUxOTc1
 video_client.download(video_infos=video_infos)
 ```
 
-If you want to use `aria2c` to accelerate downloads, you can do the following:
+If you want to use aria2c to accelerate the download of non-HLS/m3u8 streams, such as mp4 files, you can do the following:
 
 ```python
 from videodl import videodl
 
 video_client = videodl.VideoClient()
-video_infos = video_client.parsefromurl("https://v.youku.com/v_show/id_XNDUxOTc1NDg4MA==.html?spm=a2hkl.14919748_WEBHOME_HOME.scg_scroll_3.d_2_play&s=faab858435f24d5bb6d3&scm=20140719.rcmd.feed.show_faab858435f24d5bb6d3&alginfo=-1reqId-249a939e8%203783%204341%2099d9%20974d2b07ad23%231764142230027-1seqId-20IX2riz0CjZG971l-1abId-2468080-1sceneId-246595&scg_id=22896555")
+video_infos = video_client.parsefromurl("https://www.bilibili.com/video/BV1KZgHzJEs6/?spm_id_from=333.337.search-card.all.click")
 for v in video_infos: v['download_with_aria2c'] = True
+video_client.download(video_infos=video_infos)
+```
+
+If you want to use N_m3u8DL-RE to speed up the download of HLS/m3u8 streams, you can do the following:
+
+```python
+from videodl import videodl
+
+video_client = videodl.VideoClient()
+video_infos = video_client.parsefromurl("https://www.acfun.cn/v/ac36491489")
+for v in video_infos: v['enable_nm3u8dlre'] = True
 video_client.download(video_infos=video_infos)
 ```
 
