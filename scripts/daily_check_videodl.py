@@ -59,8 +59,8 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.yinyuetai.com/watch/7200480383631265792?listType=swiper&listId=6998475633361805312'
     ],
     'BaiduTiebaVideoClient': [
-        'https://tieba.baidu.com/p/6098286801', 
-        'https://tieba.baidu.com/p/7280373361'
+        'https://tieba.baidu.com/p/7280373361',
+        'https://tieba.baidu.com/p/10253039554'
     ],
     'MGTVVideoClient': [
         'https://www.mgtv.com/l/100026064/19868457.html?fpa=1684&fpos=&lastp=ch_home&cpid=5',
@@ -76,7 +76,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.pearvideo.com/video_1803574',
     ],
     'HuyaVideoClient': [
-        'https://www.huya.com/video/play/1084317636.html',
+        'https://www.huya.com/video/play/1084162990.html',
         'https://www.huya.com/video/play/1081888422.html',
     ],
     'MeipaiVideoClient': [
