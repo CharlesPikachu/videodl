@@ -48,6 +48,7 @@
 
 # 🆕 What's New
 
+- 2025-11-29: Released videofetch v0.2.3 - add support for `FoxNewsVideoClient` and `SinaVideoClient`, and introduce N_m3u8DL-RE to improve the download speed of HLS/m3u8 streams.
 - 2025-11-28: Released videofetch v0.2.2 - added video parsing support for multiple platforms, and fixed a multithreading bug in the download progress bar along with several minor issues.
 - 2025-11-26: Released videofetch v0.2.1 - add/fix support for more video platforms and perform some code optimizations.
 - 2025-11-21: Released videofetch v0.2.0 - code refactored and extensive support added for downloading videos from many additional platforms.
@@ -107,6 +108,7 @@ The video platforms currently supported for parsing are,
 | GeniusVideoClient                     |  Rap Genius (嘻哈百科)       | -                                                           | ❌       |  ✔️        |  ✔️        | [genius.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/genius.py)                   |
 | UnityVideoClient                      |  Unity                       | -                                                           | ❌       |  ✔️        |  ✔️        | [unity.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/unity.py)                     |
 | FoxNewsVideoClient                    |  福克斯新闻                  | -                                                           | ❌       |  ✔️        |  ✔️        | [foxnews.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/foxnews.py)                 |
+| SinaVideoClient                       |  新浪视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [sina.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/sina.py)                       |
 
 
 # 📦 Install

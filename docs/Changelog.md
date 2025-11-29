@@ -1,5 +1,7 @@
 # Development Log
 
+- 2025-11-29: Released videofetch v0.2.3 - add support for `FoxNewsVideoClient` and `SinaVideoClient`, and introduce N_m3u8DL-RE to improve the download speed of HLS/m3u8 streams.
+
 - 2025-11-28: Released videofetch v0.2.2 - added video parsing support for multiple platforms, and fixed a multithreading bug in the download progress bar along with several minor issues.
 
 - 2025-11-26: Released videofetch v0.2.1 - add/fix support for more video platforms and perform some code optimizations.

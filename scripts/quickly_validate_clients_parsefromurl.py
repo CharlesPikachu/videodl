@@ -156,6 +156,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://video.foxnews.com/v/6320653836112',
         'http://video.insider.foxnews.com/v/video-embed.html?video_id=5099377331001&autoplay=true&share_url=http://insider.foxnews.com/2016/08/25/univ-wisconsin-student-group-pushing-silence-certain-words&share_title=Student%20Group:%20Saying%20%27Politically%20Correct,%27%20%27Trash%27%20and%20%27Lame%27%20Is%20Offensive&share=true',
     ],
+    'SinaVideoClient': [
+        'http://video.sina.com.cn/view/250587748.html',
+        'https://video.sina.com.cn/p/finance/2025-11-28/detail-infyypay7178654.d.html',
+        'http://video.sina.com.cn/news/spj/topvideoes20160504/?opsubject_id=top1#250576030',
+    ],
 }
 
 

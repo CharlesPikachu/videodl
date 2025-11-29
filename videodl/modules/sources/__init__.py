@@ -3,6 +3,7 @@ from .ted import TedVideoClient
 from .ku6 import Ku6VideoClient
 from .pear import PearVideoClient
 from .huya import HuyaVideoClient
+from .sina import SinaVideoClient
 from .base import BaseVideoClient
 from .mgtv import MGTVVideoClient
 from .cctv import CCTVVideoClient
@@ -51,7 +52,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient, 'YouTubeVideoClient': YouTubeVideoClient,
         'ZhihuVideoClient': ZhihuVideoClient, 'KakaoVideoClient': KakaoVideoClient, 'YoukuVideoClient': YoukuVideoClient,
         'TencentVideoClient': TencentVideoClient, 'GeniusVideoClient': GeniusVideoClient, 'UnityVideoClient': UnityVideoClient,
-        'FoxNewsVideoClient': FoxNewsVideoClient,
+        'FoxNewsVideoClient': FoxNewsVideoClient, 'SinaVideoClient': SinaVideoClient,
     }
 
 
