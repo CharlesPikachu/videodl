@@ -319,6 +319,22 @@ video_client.download(video_infos=video_infos)
 - [NovelDL](https://github.com/CharlesPikachu/noveldl): Search and download novels from some specific websites.
 
 
+# 📚 Citation
+
+If you use this project in your research, please cite the repository.
+
+```
+@misc{freeproxy2022,
+    author = {Zhenchao Jin},
+    title = {Videodl: A lightweight video downloader written in pure python},
+    year = {2021},
+    publisher = {GitHub},
+    journal = {GitHub repository},
+    howpublished = {\url{https://github.com/CharlesPikachu/videodl/}},
+}
+```
+
+
 # 🌟 Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=CharlesPikachu/videodl&type=date&legend=top-left)](https://www.star-history.com/#CharlesPikachu/videodl&type=date&legend=top-left)
