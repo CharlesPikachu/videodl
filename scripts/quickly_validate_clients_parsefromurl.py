@@ -165,6 +165,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.xuexi.cn/lgpage/detail/index.html?id=6898516301450608472',
         'https://www.xuexi.cn/lgpage/detail/index.html?id=16575802844879171560',
     ],
+    'Open163VideoClient': [
+        'https://open.163.com/newview/movie/free?pid=WIAL798Q9&mid=BIAL799D2',
+        'https://open.163.com/newview/movie/free?pid=MEFVFM2AC&mid=MEFVGF5RU',
+        'https://open.163.com/newview/movie/free?pid=CGJTHROS9&mid=SGJTHVGI2',
+    ],
 }
 
 
