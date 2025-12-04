@@ -113,6 +113,13 @@ The video platforms currently supported for parsing are,
 | Open163VideoClient                    |  网易公开课                  | -                                                           | ❌       |  ✔️        |  ✔️        | [open163.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/open163.py)                 |
 | CCtalkVideoClient                     |  CCtalk                      | -                                                           | ❌       |  ✔️        |  ✔️        | [cctalk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/cctalk.py)                   |
 
+To make videodl more robust and able to adaptively parse videos from more websites, even when the video URL is not in the supported list above, 
+I also plan to gradually add some general-purpose parsing interfaces. The currently supported generic parsers include:
+
+| VideoParser (EN)                                |  VideoClient (CN)                                 | ParseURL  |  Download  | Core Code                                                                                                              |
+| :----:                                          |  :----:                                           | :----:    |  :----:    | :----:                                                                                                                 |
+| [KedouVideoParser](https://www.kedou.life/)     |  [Kedou视频解析](https://www.kedou.life/)         | ✔️        |  ✔️        | [kedou.py]()                    |
+
 
 # 📦 Install
 
