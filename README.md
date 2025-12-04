@@ -111,6 +111,7 @@ The video platforms currently supported for parsing are,
 | SinaVideoClient                       |  新浪视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [sina.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/sina.py)                       |
 | XuexiCNVideoClient                    |  学习强国                    | -                                                           | ❌       |  ✔️        |  ✔️        | [xuexicn.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/xuexicn.py)                 |
 | Open163VideoClient                    |  网易公开课                  | -                                                           | ❌       |  ✔️        |  ✔️        | [open163.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/open163.py)                 |
+| CCtalkVideoClient                     |  CCtalk                      | -                                                           | ❌       |  ✔️        |  ✔️        | [cctalk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/cctalk.py)                   |
 
 
 # 📦 Install

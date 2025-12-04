@@ -170,6 +170,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://open.163.com/newview/movie/free?pid=MEFVFM2AC&mid=MEFVGF5RU',
         'https://open.163.com/newview/movie/free?pid=CGJTHROS9&mid=SGJTHVGI2',
     ],
+    'CCtalkVideoClient': [
+        'https://www.cctalk.com/v/17604950351552?sid=1760494906733025',
+        'https://www.cctalk.com/v/17576427071521?sid='
+    ],
 }
 
 
