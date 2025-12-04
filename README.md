@@ -120,6 +120,8 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | :----:                                          |  :----:                                           | :----:    |  :----:    | :----:                                                                                                                 |
 | [KedouVideoParser](https://www.kedou.life/)     |  [Kedou视频解析](https://www.kedou.life/)         | ✔️        |  ✔️        | [kedou.py]()                    |
 
+The default parsing order is to first use the parsers in the supported list. If those fail, the generic parsers are then invoked one by one until parsing succeeds.
+
 
 # 📦 Install
 
