@@ -29,6 +29,7 @@ from .youtube import YouTubeVideoClient
 from .rednote import RednoteVideoClient
 from .sixroom import SixRoomVideoClient
 from .tencent import TencentVideoClient
+from .xuexicn import XuexiCNVideoClient
 from .kuaishou import KuaishouVideoClient
 from .bilibili import BilibiliVideoClient
 from .yinyuetai import YinyuetaiVideoClient
@@ -52,7 +53,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient, 'YouTubeVideoClient': YouTubeVideoClient,
         'ZhihuVideoClient': ZhihuVideoClient, 'KakaoVideoClient': KakaoVideoClient, 'YoukuVideoClient': YoukuVideoClient,
         'TencentVideoClient': TencentVideoClient, 'GeniusVideoClient': GeniusVideoClient, 'UnityVideoClient': UnityVideoClient,
-        'FoxNewsVideoClient': FoxNewsVideoClient, 'SinaVideoClient': SinaVideoClient,
+        'FoxNewsVideoClient': FoxNewsVideoClient, 'SinaVideoClient': SinaVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,
     }
 
 

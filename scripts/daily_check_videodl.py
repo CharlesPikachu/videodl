@@ -170,6 +170,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://video.sina.com.cn/p/finance/2025-11-28/detail-infyypay7178654.d.html',
         'http://video.sina.com.cn/news/spj/topvideoes20160504/?opsubject_id=top1#250576030',
     ],
+    'XuexiCNVideoClient': [
+        'https://www.xuexi.cn/lgpage/detail/index.html?id=6898516301450608472',
+        'https://www.xuexi.cn/lgpage/detail/index.html?id=16575802844879171560',
+    ],
 }
 PARSE_SUPPLEMENT = {
     'Ku6VideoClient': {'name': 'Ku6VideoClient', 'display_name': 'Ku6VideoClient', 'success_count': 2, 'total_count': 2, 'success_rate': 1.0, 'status': 'ok', 'tests': [{'name': 'Ku6VideoClient', 'test_url': 'https://www.ku6.com/video/detail?id=McZoSe_hgG_jwzy7pQLqvMJ3IoI.', 'ok': True, 'err_msg': 'NULL', 'parse_result': {'source': 'Ku6VideoClient', 'download_url': 'https://rbv01.ku6.com/wifi/o_1f9dtdubn8l8154lddtcdtdusm', 'title': '看到泪崩！微视频百年风华', 'file_path': 'videodl_tmp_outputs\\Ku6VideoClient\\看到泪崩！微视频百年风华.mp4', 'ext': 'mp4', 'download_with_ffmpeg': False, 'err_msg': 'NULL', 'identifier': 'NULL', 'guess_video_ext_result': {'ext': 'mp4', 'sniffer': 'requests.head', 'ok': True}}}, {'name': 'Ku6VideoClient', 'test_url': 'https://www.ku6.com/video/detail?id=HE3lfhcp13Gd0qND4zfzXYQONMY.', 'ok': True, 'err_msg': 'NULL', 'parse_result': {'source': 'Ku6VideoClient', 'download_url': 'https://rbv01.ku6.com/wifi/o_1evr90gl2sdhjs4nn31bad1v3ue', 'title': '微视频｜领航新征程', 'file_path': 'videodl_tmp_outputs\\Ku6VideoClient\\微视频｜领航新征程.mp4', 'ext': 'mp4', 'download_with_ffmpeg': False, 'err_msg': 'NULL', 'identifier': 'NULL', 'guess_video_ext_result': {'ext': 'mp4', 'sniffer': 'requests.head', 'ok': True}}}]},

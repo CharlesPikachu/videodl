@@ -161,6 +161,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://video.sina.com.cn/p/finance/2025-11-28/detail-infyypay7178654.d.html',
         'http://video.sina.com.cn/news/spj/topvideoes20160504/?opsubject_id=top1#250576030',
     ],
+    'XuexiCNVideoClient': [
+        'https://www.xuexi.cn/lgpage/detail/index.html?id=6898516301450608472',
+        'https://www.xuexi.cn/lgpage/detail/index.html?id=16575802844879171560',
+    ],
 }
 
 

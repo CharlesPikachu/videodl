@@ -109,6 +109,7 @@ The video platforms currently supported for parsing are,
 | UnityVideoClient                      |  Unity                       | -                                                           | ❌       |  ✔️        |  ✔️        | [unity.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/unity.py)                     |
 | FoxNewsVideoClient                    |  福克斯新闻                  | -                                                           | ❌       |  ✔️        |  ✔️        | [foxnews.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/foxnews.py)                 |
 | SinaVideoClient                       |  新浪视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [sina.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/sina.py)                       |
+| XuexiCNVideoClient                    |  学习强国                    | -                                                           | ❌       |  ✔️        |  ✔️        | [xuexicn.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/xuexicn.py)                 |
 
 
 # 📦 Install
