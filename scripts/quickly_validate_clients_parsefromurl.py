@@ -183,6 +183,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.youtube.com/watch?v=Nf1C1fSJG_8&list=RDMMNf1C1fSJG_8&start_radio=1',
         'https://www.facebook.com/100085919341237/videos/851834657389993/?__so__=discover&__rv__=video_home_www_loe_popular_videos',
     ],
+    'SnapAnyVideoClient': [
+        'https://www.youtube.com/watch?v=uZ8rxvAoFuc&list=RDuZ8rxvAoFuc&start_radio=1',
+        'https://www.le.com/ptv/vplay/20137387.html',
+    ],
 }
 
 
