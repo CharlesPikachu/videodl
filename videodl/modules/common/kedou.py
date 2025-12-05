@@ -12,7 +12,9 @@ import json
 import time
 import copy
 import base64
+import shutil
 import requests
+import subprocess
 from datetime import datetime
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
@@ -45,10 +47,48 @@ class KedouVideoClient(BaseVideoClient):
     '''_download'''
     @usedownloadheaderscookies
     def _download(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
-        ret = super()._download(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
-        if video_info['audio_download_url'] and video_info['audio_download_url'] != 'NULL':
-            pass
-        return ret
+        video_info = copy.deepcopy(video_info)
+        # avoid calling ffmpeg to download audios
+        audio_download_url = video_info.pop('audio_download_url')
+        audio_file_path = video_info.pop('audio_file_path')
+        audio_ext = video_info.pop('audio_ext')
+        guess_audio_ext_result = video_info.pop('guess_audio_ext_result')
+        # download videos
+        super()._download(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
+        # download audios if have
+        if audio_download_url and audio_download_url != 'NULL' and audio_ext in ['m4a', 'mp3', 'aac']:
+            # --audio download
+            audio_info = VideoInfo(
+                source=self.source, download_url=audio_download_url, file_path=audio_file_path, ext=audio_ext, identifier=f'audio_{video_info["identifier"]}',
+                guess_video_ext_result=guess_audio_ext_result
+            )
+            downloaded_audio_infos = super()._download(video_info=audio_info, video_info_index=video_info_index, downloaded_video_infos=[], request_overrides=request_overrides, progress=progress)
+            assert len(downloaded_audio_infos) == 1
+            audio_file_path = downloaded_audio_infos[0]['file_path']
+            audio_ext = downloaded_audio_infos[0]['ext']
+            # --extract video path
+            tgt_dvi = [dvi for dvi in downloaded_video_infos if dvi['identifier'] == video_info["identifier"]]
+            video_file_path = tgt_dvi[0]['file_path']
+            # --merge
+            tmp_video_file_path = os.path.join(self.work_dir, self.source, f'{int(time.time())}_{tgt_dvi[0]["identifier"]}.{tgt_dvi[0]["ext"]}')
+            cmd = ['ffmpeg', '-y', '-i', video_file_path, '-i', audio_file_path, '-c', 'copy', '-map', '0:v:0', '-map', '1:a:0', tmp_video_file_path]
+            capture_output = True if self.disable_print else False
+            ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
+            if ret.returncode == 0:
+                shutil.move(tmp_video_file_path, video_file_path)
+                if os.path.exists(audio_file_path): os.remove(audio_file_path)
+            else:
+                err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
+                self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
+        # re append
+        for dvi in downloaded_video_infos:
+            if dvi['identifier'] == video_info["identifier"]:
+                dvi['audio_download_url'] = audio_download_url
+                dvi['audio_file_path'] = audio_file_path
+                dvi['audio_ext'] = audio_ext
+                dvi['guess_audio_ext_result'] = guess_audio_ext_result
+        # return
+        return downloaded_video_infos
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
