@@ -1,6 +1,6 @@
 # Development Log
 
-- 2025-11-29: Released videofetch v0.3.0 - add support for more sites and introduce features of the generic parser to help enable parsing across the entire web.
+- 2025-12-05: Released videofetch v0.3.0 - add support for more sites and introduce features of the generic parser to help enable parsing across the entire web.
 
 - 2025-11-29: Released videofetch v0.2.3 - add support for `FoxNewsVideoClient` and `SinaVideoClient`, and introduce N_m3u8DL-RE to improve the download speed of HLS/m3u8 streams.
 
