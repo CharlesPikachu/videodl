@@ -232,6 +232,8 @@ Options:
   -t, --clients-threadings, --clients_threadings TEXT
                                   Number of threads used for each video client
                                   as a JSON string.
+  -g, --apply-common-video-clients-only, --apply_common_video_clients_only
+                                  Only apply common video clients.
   --help                          Show this message and exit.
 ```
 

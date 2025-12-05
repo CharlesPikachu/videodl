@@ -9,7 +9,7 @@ video_client = videodl.VideoClient()
 video_client.startparseurlcmdui()
 ```
 
-Or just run `videodl` (maybe `videodl --help` to show usage information) from the terminal.
+Or just run `videodl -i "URL"` (maybe `videodl --help` to show usage information) from the terminal.
 
 ```bash
 Usage: videodl [OPTIONS]
@@ -37,6 +37,8 @@ Options:
   -t, --clients-threadings, --clients_threadings TEXT
                                   Number of threads used for each video client
                                   as a JSON string.
+  -g, --apply-common-video-clients-only, --apply_common_video_clients_only
+                                  Only apply common video clients.
   --help                          Show this message and exit.
 ```
 
@@ -113,4 +115,14 @@ video_client = videodl.VideoClient()
 video_infos = video_client.parsefromurl("https://www.acfun.cn/v/ac36491489")
 for v in video_infos: v['enable_nm3u8dlre'] = True
 video_client.download(video_infos=video_infos)
+```
+
+If you know that the video you want to parse is definitely not in the supported list and you want to use the generic parser directly, you can set `apply_common_video_clients_only` to `True`, *e.g.*,
+just run `videodl -i "URL" -g` from the terminal, or coding as following,
+
+```python
+from videodl import videodl
+
+video_client = videodl.VideoClient(apply_common_video_clients_only=True)
+video_client.startparseurlcmdui()
 ```
