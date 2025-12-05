@@ -72,6 +72,12 @@ The `VideoClient` class is a high-level manager for multiple site-specific video
             }
         }
 
+- **apply_common_video_clients_only**: `bool`  
+  Starting from videofetch 0.3.0, we introduced a generic parser interface. 
+  The default parsing order is to first use the parsers in the supported list; 
+  if all of them fail, the generic parsers are then invoked one by one until parsing succeeds. 
+  If you know your video is not in the supported list, you can set `apply_common_video_clients_only` to `True` to reduce parsing time.
+
 #### `VideoClient.startparseurlcmdui`
 
 Start an **interactive command-line UI** for parsing and downloading videos from URLs, the behavior can be described as
