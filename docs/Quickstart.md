@@ -126,3 +126,21 @@ from videodl import videodl
 video_client = videodl.VideoClient(apply_common_video_clients_only=True)
 video_client.startparseurlcmdui()
 ```
+
+If you’re a VIP member of a video platform, such as Tencent Video, you can try the following code to improve the quality of the videos you download:
+
+```python
+from videodl import videodl
+
+your_vip_cookies_with_str_or_dict_format = ""
+init_video_clients_cfg = dict()
+init_video_clients_cfg['TencentVideoClient'] = {'default_parse_cookies': your_vip_cookies_with_str_or_dict_format, 'default_download_cookies': your_vip_cookies_with_str_or_dict_format}
+video_client = videodl.VideoClient(init_video_clients_cfg=init_video_clients_cfg)
+video_client.startparseurlcmdui()
+```
+
+Alternatively, you can run the following command directly in the terminal:
+
+```bash
+videodl -i "URL" -c "{'TencentVideoClient': {'default_parse_cookies': your_vip_cookies_with_str_or_dict_format, 'default_download_cookies': your_vip_cookies_with_str_or_dict_format}}"
+```

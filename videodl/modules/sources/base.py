@@ -59,8 +59,11 @@ class BaseVideoClient():
         self.maintain_session = maintain_session
         self.auto_set_proxies = auto_set_proxies
         self.default_search_cookies = default_search_cookies or {}
+        if self.default_search_cookies and isinstance(self.default_search_cookies, str): self.default_search_cookies = dict(item.split("=", 1) for item in self.default_search_cookies.split("; "))
         self.default_download_cookies = default_download_cookies or {}
+        if self.default_download_cookies and isinstance(self.default_download_cookies, str): self.default_download_cookies = dict(item.split("=", 1) for item in self.default_download_cookies.split("; "))
         self.default_parse_cookies = default_parse_cookies or {}
+        if self.default_parse_cookies and isinstance(self.default_parse_cookies, str): self.default_parse_cookies = dict(item.split("=", 1) for item in self.default_parse_cookies.split("; "))
         self.default_cookies = self.default_parse_cookies
         # init requests.Session
         self.default_search_headers = {'User-Agent': UserAgent().random}
