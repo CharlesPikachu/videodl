@@ -12,10 +12,10 @@ import click
 import json_repair
 if __name__ == '__main__':
     from __init__ import __version__
-    from modules import BuildVideoClient, LoggerHandle, VideoClientBuilder, printfullline
+    from modules import BuildVideoClient, BuildCommonVideoClient, LoggerHandle, VideoClientBuilder, CommonVideoClientBuilder, printfullline
 else:
     from .__init__ import __version__
-    from .modules import BuildVideoClient, LoggerHandle, VideoClientBuilder, printfullline
+    from .modules import BuildVideoClient, BuildCommonVideoClient, LoggerHandle, VideoClientBuilder, CommonVideoClientBuilder, printfullline
 
 
 '''BASIC_INFO'''
@@ -31,7 +31,7 @@ Video Save Path:
 
 '''VideoClient'''
 class VideoClient():
-    def __init__(self, allowed_video_sources: list = None, init_video_clients_cfg: dict = None, clients_threadings: dict = None, requests_overrides: dict = None):
+    def __init__(self, allowed_video_sources: list = None, init_video_clients_cfg: dict = None, clients_threadings: dict = None, requests_overrides: dict = None, apply_common_video_clients_only: bool = False):
         # init
         self.logger_handle = LoggerHandle()
         if not allowed_video_sources: allowed_video_sources = list(VideoClientBuilder.REGISTERED_MODULES.keys())
@@ -51,10 +51,20 @@ class VideoClient():
                 per_default_video_client_cfg.update(init_video_clients_cfg[allowed_video_source])
             self.work_dirs[allowed_video_source] = per_default_video_client_cfg['work_dir']
             self.video_clients[allowed_video_source] = BuildVideoClient(module_cfg=per_default_video_client_cfg)
+        # instance common_video_clients
+        self.common_video_clients = dict()
+        for cvc_name in list(CommonVideoClientBuilder.REGISTERED_MODULES.keys()):
+            per_default_video_client_cfg = copy.deepcopy(default_video_client_cfg)
+            per_default_video_client_cfg['type'] = cvc_name
+            if cvc_name in init_video_clients_cfg:
+                per_default_video_client_cfg.update(init_video_clients_cfg[cvc_name])
+            self.work_dirs[cvc_name] = per_default_video_client_cfg['work_dir']
+            self.common_video_clients[cvc_name] = BuildCommonVideoClient(module_cfg=per_default_video_client_cfg)
         # set attributes
         self.clients_threadings = clients_threadings
         self.requests_overrides = requests_overrides
         self.allowed_video_sources = allowed_video_sources
+        self.apply_common_video_clients_only = apply_common_video_clients_only
     '''printbasicinfo'''
     def printbasicinfo(self):
         printfullline(ch='-')
@@ -71,11 +81,22 @@ class VideoClient():
             self.download(video_infos=video_infos)
     '''parsefromurl'''
     def parsefromurl(self, url: str):
-        for video_client_name, video_client in self.video_clients.items():
-            if video_client.belongto(url):
-                video_infos = video_client.parsefromurl(url, request_overrides=self.requests_overrides.get(video_client_name, {}))
-                return video_infos
-        return []
+        video_infos = []
+        if not self.apply_common_video_clients_only:
+            for video_client_name, video_client in self.video_clients.items():
+                if video_client.belongto(url):
+                    try:
+                        video_infos = video_client.parsefromurl(url, request_overrides=self.requests_overrides.get(video_client_name, {}))
+                    except:
+                        video_infos = []
+        if (not video_infos) or (not video_infos[0]['download_url']) or video_infos[0]['download_url'] == 'NULL':
+            for cvc_name, cvc in self.common_video_clients.items():
+                try:
+                    video_infos = cvc.parsefromurl(url, request_overrides=self.requests_overrides.get(cvc_name, {}))
+                    if video_infos and video_infos[0]['download_url'] and video_infos[0]['download_url'] != 'NULL': break
+                except:
+                    video_infos = []
+        return video_infos
     '''download'''
     def download(self, video_infos):
         classified_video_infos = {}
@@ -125,7 +146,10 @@ class VideoClient():
 @click.option(
     '-t', '--clients-threadings', '--clients_threadings', default=None, help='Number of threads used for each video client as a JSON string.', type=str, show_default=True,
 )
-def VideoClientCMD(index_url: str, allowed_video_sources: str, init_video_clients_cfg: str, requests_overrides: str, clients_threadings: str):
+@click.option(
+    '-g', '--apply-common-video-clients-only', '--apply_common_video_clients_only', is_flag=True, default=False, help='Only apply common video clients.', show_default=True,
+)
+def VideoClientCMD(index_url: str, allowed_video_sources: str, init_video_clients_cfg: str, requests_overrides: str, clients_threadings: str, apply_common_video_clients_only: bool):
     # load settings
     def _safe_load(string):
         if string is not None:
@@ -140,7 +164,7 @@ def VideoClientCMD(index_url: str, allowed_video_sources: str, init_video_client
     # instance video client
     video_client = VideoClient(
         allowed_video_sources=allowed_video_sources, init_video_clients_cfg=init_video_clients_cfg, clients_threadings=clients_threadings, 
-        requests_overrides=requests_overrides,
+        requests_overrides=requests_overrides, apply_common_video_clients_only=apply_common_video_clients_only,
     )
     # switch according to keyword
     if index_url is None:

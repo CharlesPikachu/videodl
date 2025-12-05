@@ -1,6 +1,7 @@
 '''initialize'''
 from .io import touchdir
 from .data import VideoInfo
+from .ip import RandomIPGenerator
 from .aes import AESAlgorithmWrapper
 from .smuggler import BrightcoveSmuggler
 from .modulebuilder import BaseModuleBuilder

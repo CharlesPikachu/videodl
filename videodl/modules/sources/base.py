@@ -269,14 +269,24 @@ class BaseVideoClient():
         if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
         headers = []
         for k, v in default_headers.items():
-            headers.append(f"{k}: {v}\r\n")
-        headers_str = "".join(headers)
+            headers.append(f"{k}: {v}")
+        headers_str = "\r\n".join(headers)
         # start to download
-        cmd = ["ffmpeg", "-y", "-headers", headers_str]
-        for _, proxy_url in request_overrides.get('proxies', {}).items():
+        cmd = ["ffmpeg", "-y"]
+        for _, proxy_url in request_overrides.get("proxies", {}).items():
             cmd.extend(["-http_proxy", proxy_url])
             break
-        cmd.extend(["-i", video_info["download_url"], "-c", "copy", "-bsf:a", "aac_adtstoasc"])
+        # --with audio
+        if video_info.get('audio_download_url') and video_info['audio_download_url'] != 'NULL':
+            if headers_str: cmd.extend(["-headers", headers_str])
+            cmd.extend(["-i", video_info["download_url"]])
+            if headers_str: cmd.extend(["-headers", headers_str])
+            cmd.extend(["-i", video_info['audio_download_url']])
+            cmd.extend(["-c:v", "copy", "-c:a", "copy", "-map", "0:v:0", "-map", "1:a:0", "-shortest", "-bsf:a", "aac_adtstoasc"])
+        # --without audio
+        else:
+            if headers_str: cmd.extend(["-headers", headers_str])
+            cmd.extend(["-i", video_info["download_url"], "-c", "copy", "-bsf:a", "aac_adtstoasc"])
         cmd.append(video_info['file_path'])
         capture_output = True if self.disable_print else False
         ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')

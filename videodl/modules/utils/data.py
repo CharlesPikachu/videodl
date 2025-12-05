@@ -14,7 +14,8 @@ class VideoInfo(dict):
     _defaults = {
         'source': None, 'raw_data': 'NULL', 'download_url': 'NULL', 'title': 'NULL', 'file_path': 'NULL', 'ext': 'mp4', 
         'download_with_ffmpeg': False, 'download_with_aria2c': False, 'download_with_ffmpeg_cctv': False, 'err_msg': "NULL", 
-        'identifier': 'NULL', 'guess_video_ext_result': 'NULL', 'enable_nm3u8dlre': False,
+        'identifier': 'NULL', 'guess_video_ext_result': 'NULL', 'enable_nm3u8dlre': False, 'audio_download_url': 'NULL',
+        'guess_audio_ext_result': 'NULL', 'audio_ext': 'm4a', 'audio_file_path': 'NULL',
     }
     def __init__(self, *args, **kwargs):
         data = dict(self._defaults)

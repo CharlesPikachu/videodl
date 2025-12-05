@@ -60,5 +60,5 @@ class VideoClientBuilder(BaseModuleBuilder):
     }
 
 
-'''VideoClientBuilder'''
+'''BuildVideoClient'''
 BuildVideoClient = VideoClientBuilder().build

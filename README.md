@@ -116,9 +116,9 @@ The video platforms currently supported for parsing are,
 To make videodl more robust and able to adaptively parse videos from more websites, even when the video URL is not in the supported list above, 
 I also plan to gradually add some general-purpose parsing interfaces. The currently supported generic parsers include:
 
-| VideoParser (EN)                                |  VideoClient (CN)                                 | ParseURL  |  Download  | Core Code                                                                                                              |
+| CommonVideoClient (EN)                          |  CommonVideoClient (CN)                           | ParseURL  |  Download  | Core Code                                                                                                              |
 | :----:                                          |  :----:                                           | :----:    |  :----:    | :----:                                                                                                                 |
-| [KedouVideoParser](https://www.kedou.life/)     |  [Kedou视频解析](https://www.kedou.life/)         | ✔️        |  ✔️        | [kedou.py]()                    |
+| [KedouVideoClient](https://www.kedou.life/)     |  [Kedou视频解析](https://www.kedou.life/)         | ✔️        |  ✔️        | [kedou.py]()                    |
 
 The default parsing order is to first use the parsers in the supported list. If those fail, the generic parsers are then invoked one by one until parsing succeeds.
 
