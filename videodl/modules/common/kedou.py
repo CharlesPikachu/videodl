@@ -54,7 +54,7 @@ class KedouVideoClient(BaseVideoClient):
         # download videos
         super()._download(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # download audios if have
-        if audio_download_url and audio_download_url != 'NULL' and audio_ext in ['m4a', 'mp3', 'aac', 'weba']:
+        if audio_download_url and audio_download_url != 'NULL' and audio_ext in ['m4a', 'mp3', 'aac', 'weba', 'webm']:
             # --audio download
             audio_info = VideoInfo(
                 source=self.source, download_url=audio_download_url, file_path=audio_file_path, ext=audio_ext, identifier=f'audio_{video_info["identifier"]}',

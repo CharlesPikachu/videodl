@@ -177,6 +177,7 @@ class BaseVideoClient():
         ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
         if ret.returncode == 0:
             downloaded_video_infos.append(video_info)
+            if os.path.exists(video_info["download_url"]): os.remove(video_info["download_url"])
         else:
             err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
             self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
@@ -295,6 +296,7 @@ class BaseVideoClient():
         ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
         if ret.returncode == 0:
             downloaded_video_infos.append(video_info)
+            if os.path.exists(video_info["download_url"]): os.remove(video_info["download_url"])
         else:
             err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
             self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
@@ -335,6 +337,7 @@ class BaseVideoClient():
         ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
         if ret.returncode == 0:
             downloaded_video_infos.append(video_info)
+            if os.path.exists(video_info["download_url"]): os.remove(video_info["download_url"])
         else:
             err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
             self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)

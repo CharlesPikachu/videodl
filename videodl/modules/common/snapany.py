@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of IIILabVideoClient: https://roar.iiilab.com/
+    Implementation of SnapAnyVideoClient: https://snapany.com/zh
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):
@@ -19,14 +19,14 @@ from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheade
 
 
 '''constants'''
-SALT = '2HT8gjE3xL'
+SALT = '6HTugjCXxR'
 
 
-'''IIILabVideoClient'''
-class IIILabVideoClient(KedouVideoClient):
-    source = 'IIILabVideoClient'
+'''SnapAnyVideoClient'''
+class SnapAnyVideoClient(KedouVideoClient):
+    source = 'SnapAnyVideoClient'
     def __init__(self, **kwargs):
-        super(IIILabVideoClient, self).__init__(**kwargs)
+        super(SnapAnyVideoClient, self).__init__(**kwargs)
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
@@ -38,15 +38,15 @@ class IIILabVideoClient(KedouVideoClient):
         try:
             # --encrypt post data
             site = urlparse(url).netloc.split('.')[-2]
-            json_data = {'url': url, 'site': site}
-            timestamp = str(int(time.time()))
+            timestamp = str(int(time.time() * 1000))
             random_ip = RandomIPGenerator().ipv4()
             headers = copy.deepcopy(self.default_headers)
             headers["X-Forwarded-For"] = random_ip
             headers['G-Footer'] = hashlib.md5(f"{url}{site}{timestamp}{SALT}".encode('utf-8')).hexdigest()
             headers['G-Timestamp'] = timestamp
+            headers['Accept-Language'] = site
             # --post request
-            resp = self.post('https://service.iiilab.com/iiilab/extract', json=json_data, headers=headers, **request_overrides)
+            resp = self.post('https://api.snapany.com/v1/extract', json={"link": url}, headers=headers, **request_overrides)
             resp.raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))

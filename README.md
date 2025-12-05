@@ -121,6 +121,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | :----:                                             |  :----:                                           | :----:    |  :----:    | :----:                                                                                                                 |
 | [IIILabVideoClient](https://roar.iiilab.com/)      |  [兽音译者](https://roar.iiilab.com/)             | ✔️        |  ✔️        | [iiilab.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/iiilab.py)                    |
 | [KedouVideoClient](https://www.kedou.life/)        |  [Kedou视频解析](https://www.kedou.life/)         | ✔️        |  ✔️        | [kedou.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kedou.py)                      |
+| [SnapAnyVideoClient](https://snapany.com/zh)       |  [SnapAny万能解析](https://snapany.com/zh)        | ✔️        |  ✔️        | [snapany.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/snapany.py)                  |
 
 The default parsing order is to first use the parsers in the supported list. If those fail, the generic parsers are then invoked one by one until parsing succeeds.
 
