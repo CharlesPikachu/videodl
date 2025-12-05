@@ -7,7 +7,6 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
-import re
 import json
 import time
 import copy
@@ -55,7 +54,7 @@ class KedouVideoClient(BaseVideoClient):
         # download videos
         super()._download(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # download audios if have
-        if audio_download_url and audio_download_url != 'NULL' and audio_ext in ['m4a', 'mp3', 'aac']:
+        if audio_download_url and audio_download_url != 'NULL' and audio_ext in ['m4a', 'mp3', 'aac', 'weba']:
             # --audio download
             audio_info = VideoInfo(
                 source=self.source, download_url=audio_download_url, file_path=audio_file_path, ext=audio_ext, identifier=f'audio_{video_info["identifier"]}',
