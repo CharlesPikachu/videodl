@@ -106,9 +106,14 @@ class VideoClient():
             else:
                 classified_video_infos[video_info['source']] = [video_info]
         for source, source_video_infos in classified_video_infos.items():
-            self.video_clients[source].download(
-                video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}),
-            )
+            if source in self.video_clients:
+                self.video_clients[source].download(
+                    video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}),
+                )
+            else:
+                self.common_video_clients[source].download(
+                    video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}),
+                )
     '''processinputs'''
     def processinputs(self, input_tip='', prefix: str = '\n', restart_ui: str = 'startparseurlcmdui'):
         # accept user inputs
