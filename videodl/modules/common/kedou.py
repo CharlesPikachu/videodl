@@ -13,7 +13,6 @@ import time
 import copy
 import base64
 import shutil
-import requests
 import subprocess
 from datetime import datetime
 from Crypto.Cipher import AES
@@ -112,31 +111,17 @@ class KedouVideoClient(BaseVideoClient):
             headers = copy.deepcopy(self.default_headers)
             headers["X-Forwarded-For"] = random_ip
             # --post request
-            resp = requests.post('https://www.kedou.life/api/video/extract/v2', json=rsa_encrypted, headers=headers)
+            resp = self.post('https://www.kedou.life/api/video/extract/v2', json=rsa_encrypted, headers=headers, **request_overrides)
             resp.raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             # --sort by quality
             data_items = raw_data["data"]["videoItemVoList"]
-            video_items = [x for x in data_items if x.get("fileType") == "video" and "baseUrl" in x]
-            audio_items = [x for x in data_items if x.get("fileType") == "audio"]
-            fallback_audio_url = audio_items[0].get("baseUrl") if audio_items else None
-            def _parsequality(q: str):
-                q = q.lower()
-                m_res = re.search(r"(\d+)\s*p", q)
-                res = int(m_res.group(1)) if m_res else 0
-                m_fps = re.search(r"p(\d+)", q)
-                fps = int(m_fps.group(1)) if m_fps else 30
-                return res, fps
-            video_items_sorted = sorted(video_items, key=lambda item: _parsequality(item.get("quality", "")), reverse=True)
-            results = []
-            for v in video_items_sorted:
-                video_url = v.get("baseUrl")
-                audio_url = v.get("audioUrl") or fallback_audio_url
-                results.append({"quality": v.get("quality"), "qualityAlias": v.get("qualityAlias"), "video_url": video_url, "audio_url": audio_url, "size": v.get("size")})
-            download_url, audio_download_url = results[0]['video_url'], results[0]['audio_url']
+            video_items = [x for x in data_items if "baseUrl" in x and x["baseUrl"].startswith('http')]
+            video_items_sorted = sorted(video_items, key=lambda item: item.get("size", 0) or 0, reverse=True)
+            download_url, audio_download_url = video_items_sorted[0]['baseUrl'], video_items_sorted[0].get('audioUrl')
             video_info.update(dict(download_url=download_url))
-            video_info.update(dict(audio_download_url=audio_download_url))
+            if audio_download_url and audio_download_url != 'NULL': video_info.update(dict(audio_download_url=audio_download_url))
             # --video title
             dt = datetime.fromtimestamp(time.time())
             date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
