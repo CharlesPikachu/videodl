@@ -174,6 +174,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.cctalk.com/v/17604950351552?sid=1760494906733025',
         'https://www.cctalk.com/v/17576427071521?sid='
     ],
+    'KedouVideoClient': [
+        'https://www.douyin.com/jingxuan?modal_id=7578412593719577899',
+        'https://www.bilibili.com/video/BV11tCVBXEMf/?spm_id_from=333.337.search-card.all.click'
+    ],
 }
 
 

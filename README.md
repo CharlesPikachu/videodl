@@ -118,7 +118,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 
 | CommonVideoClient (EN)                          |  CommonVideoClient (CN)                           | ParseURL  |  Download  | Core Code                                                                                                              |
 | :----:                                          |  :----:                                           | :----:    |  :----:    | :----:                                                                                                                 |
-| [KedouVideoClient](https://www.kedou.life/)     |  [Kedou视频解析](https://www.kedou.life/)         | ✔️        |  ✔️        | [kedou.py]()                    |
+| [KedouVideoClient](https://www.kedou.life/)     |  [Kedou视频解析](https://www.kedou.life/)         | ✔️        |  ✔️        | [kedou.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kedou.py)                      |
 
 The default parsing order is to first use the parsers in the supported list. If those fail, the generic parsers are then invoked one by one until parsing succeeds.
 
@@ -203,7 +203,7 @@ video_client = videodl.VideoClient()
 video_client.startparseurlcmdui()
 ```
 
-Or just run `videodl` (maybe `videodl --help` to show usage information) from the terminal.
+Or just run `videodl -i "URL"` (maybe `videodl --help` to show usage information) from the terminal.
 
 ```bash
 Usage: videodl [OPTIONS]
@@ -307,6 +307,16 @@ video_client = videodl.VideoClient()
 video_infos = video_client.parsefromurl("https://www.acfun.cn/v/ac36491489")
 for v in video_infos: v['enable_nm3u8dlre'] = True
 video_client.download(video_infos=video_infos)
+```
+
+If you know that the video you want to parse is definitely not in the supported list and you want to use the generic parser directly, you can set `apply_common_video_clients_only` to `True`, *e.g.*,
+just run `videodl -i "URL" -g` from the terminal, or coding as following,
+
+```python
+from videodl import videodl
+
+video_client = videodl.VideoClient(apply_common_video_clients_only=True)
+video_client.startparseurlcmdui()
 ```
 
 
