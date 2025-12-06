@@ -1,5 +1,7 @@
 # Development Log
 
+- 2025-12-06: Released videofetch v0.3.2 - added a new generic parsing interface, support for parsing two specific websites, and special handling of Base64 encoding in parts of the generic parser.
+
 - 2025-12-06: Released videofetch v0.3.1 - added several general-purpose parsers and made some minor feature improvements.
 
 - 2025-12-05: Released videofetch v0.3.0 - add support for more sites and introduce features of the generic parser to help enable parsing across the entire web.

@@ -205,6 +205,10 @@ VIDEODL_TEST_SAMPLES = {
         'http://www.eyepetizer.net/detail.html?udid=cfcde4e18636135d6d3f383f42a7351305ea6590&vid=14243&vc=2306',
         'https://m.eyepetizer.net/u1/video-detail?resource_type=video&video_id=14245',
     ],
+    'ArteTVVideoClient': [
+        'https://www.arte.tv/en/videos/127781-000-A/arte-reportage/',
+        'https://www.arte.tv/en/videos/124453-003-A/masha-on-russia/'
+    ],
 }
 
 

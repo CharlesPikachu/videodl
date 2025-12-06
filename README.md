@@ -48,12 +48,10 @@
 
 # 🆕 What's New
 
+- 2025-12-06: Released videofetch v0.3.2 - added a new generic parsing interface, support for parsing two specific websites, and special handling of Base64 encoding in parts of the generic parser.
 - 2025-12-06: Released videofetch v0.3.1 - added several general-purpose parsers and made some minor feature improvements.
 - 2025-12-05: Released videofetch v0.3.0 - add support for more sites and introduce features of the generic parser to help enable parsing across the entire web.
 - 2025-11-29: Released videofetch v0.2.3 - add support for `FoxNewsVideoClient` and `SinaVideoClient`, and introduce N_m3u8DL-RE to improve the download speed of HLS/m3u8 streams.
-- 2025-11-28: Released videofetch v0.2.2 - added video parsing support for multiple platforms, and fixed a multithreading bug in the download progress bar along with several minor issues.
-- 2025-11-26: Released videofetch v0.2.1 - add/fix support for more video platforms and perform some code optimizations.
-- 2025-11-21: Released videofetch v0.2.0 - code refactored and extensive support added for downloading videos from many additional platforms.
 
 
 # 🚀 Introduction
@@ -115,6 +113,7 @@ The video platforms currently supported for parsing are,
 | Open163VideoClient                    |  网易公开课                  | -                                                           | ❌       |  ✔️        |  ✔️        | [open163.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/open163.py)                 |
 | CCtalkVideoClient                     |  CCtalk                      | -                                                           | ❌       |  ✔️        |  ✔️        | [cctalk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/cctalk.py)                   |
 | EyepetizerVideoClient                 |  开眼视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [eyepetizer.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/eyepetizer.py)           |
+| ArteTVVideoClient                     |  德法公共电视网              | -                                                           | ❌       |  ✔️        |  ✔️        | [artetv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/artetv.py)                   |
 
 To make videodl more robust and able to adaptively parse videos from more websites, even when the video URL is not in the supported list above, 
 I also plan to gradually add some general-purpose parsing interfaces. The currently supported generic parsers include:

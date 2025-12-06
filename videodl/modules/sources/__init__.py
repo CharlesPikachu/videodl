@@ -17,6 +17,7 @@ from .weibo import WeiboVideoClient
 from .zhihu import ZhihuVideoClient
 from .kakao import KakaoVideoClient
 from .youku import YoukuVideoClient
+from .artetv import ArteTVVideoClient
 from .genius import GeniusVideoClient
 from .weishi import WeishiVideoClient
 from .haokan import HaokanVideoClient
@@ -58,6 +59,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'TencentVideoClient': TencentVideoClient, 'GeniusVideoClient': GeniusVideoClient, 'UnityVideoClient': UnityVideoClient,
         'FoxNewsVideoClient': FoxNewsVideoClient, 'SinaVideoClient': SinaVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,
         'Open163VideoClient': Open163VideoClient, 'CCtalkVideoClient': CCtalkVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient,
+        'ArteTVVideoClient': ArteTVVideoClient,
     }
 
 
