@@ -34,8 +34,11 @@ class VideoClient():
     def __init__(self, allowed_video_sources: list = None, init_video_clients_cfg: dict = None, clients_threadings: dict = None, requests_overrides: dict = None, apply_common_video_clients_only: bool = False):
         # init
         self.logger_handle = LoggerHandle()
-        if not allowed_video_sources: allowed_video_sources = list(VideoClientBuilder.REGISTERED_MODULES.keys())
+        if not allowed_video_sources:
+            allowed_video_sources = list(VideoClientBuilder.REGISTERED_MODULES.keys()) + list(CommonVideoClientBuilder.REGISTERED_MODULES.keys())
         allowed_video_sources = list(set(allowed_video_sources))
+        if apply_common_video_clients_only:
+            allowed_video_source = [s for s in allowed_video_source if s in CommonVideoClientBuilder.REGISTERED_MODULES]
         init_video_clients_cfg, clients_threadings, requests_overrides = init_video_clients_cfg or {}, clients_threadings or {}, requests_overrides or {}
         # instance video_clients
         default_video_client_cfg = dict(
@@ -45,6 +48,7 @@ class VideoClient():
         )
         self.video_clients, self.work_dirs = dict(), dict()
         for allowed_video_source in allowed_video_sources:
+            if allowed_video_source not in VideoClientBuilder.REGISTERED_MODULES: continue
             per_default_video_client_cfg = copy.deepcopy(default_video_client_cfg)
             per_default_video_client_cfg['type'] = allowed_video_source
             if allowed_video_source in init_video_clients_cfg:
@@ -53,7 +57,8 @@ class VideoClient():
             self.video_clients[allowed_video_source] = BuildVideoClient(module_cfg=per_default_video_client_cfg)
         # instance common_video_clients
         self.common_video_clients = dict()
-        for cvc_name in list(CommonVideoClientBuilder.REGISTERED_MODULES.keys()):
+        for cvc_name in allowed_video_sources:
+            if cvc_name not in CommonVideoClientBuilder.REGISTERED_MODULES: continue
             per_default_video_client_cfg = copy.deepcopy(default_video_client_cfg)
             per_default_video_client_cfg['type'] = cvc_name
             if cvc_name in init_video_clients_cfg:
@@ -184,5 +189,5 @@ def VideoClientCMD(index_url: str, allowed_video_sources: str, init_video_client
 
 '''tests'''
 if __name__ == '__main__':
-    music_client = VideoClient()
+    music_client = VideoClient(apply_common_video_clients_only=True)
     music_client.startparseurlcmdui()
