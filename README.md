@@ -114,6 +114,7 @@ The video platforms currently supported for parsing are,
 | XuexiCNVideoClient                    |  学习强国                    | -                                                           | ❌       |  ✔️        |  ✔️        | [xuexicn.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/xuexicn.py)                 |
 | Open163VideoClient                    |  网易公开课                  | -                                                           | ❌       |  ✔️        |  ✔️        | [open163.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/open163.py)                 |
 | CCtalkVideoClient                     |  CCtalk                      | -                                                           | ❌       |  ✔️        |  ✔️        | [cctalk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/cctalk.py)                   |
+| EyepetizerVideoClient                 |  开眼视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [eyepetizer.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/eyepetizer.py)           |
 
 To make videodl more robust and able to adaptively parse videos from more websites, even when the video URL is not in the supported list above, 
 I also plan to gradually add some general-purpose parsing interfaces. The currently supported generic parsers include:

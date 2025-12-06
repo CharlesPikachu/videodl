@@ -37,6 +37,7 @@ from .bilibili import BilibiliVideoClient
 from .yinyuetai import YinyuetaiVideoClient
 from .duxiaoshi import DuxiaoshiVideoClient
 from .baidutieba import BaiduTiebaVideoClient
+from .eyepetizer import EyepetizerVideoClient
 from .pipigaoxiao import PipigaoxiaoVideoClient
 from .xinpianchang import XinpianchangVideoClient
 
@@ -56,7 +57,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'ZhihuVideoClient': ZhihuVideoClient, 'KakaoVideoClient': KakaoVideoClient, 'YoukuVideoClient': YoukuVideoClient,
         'TencentVideoClient': TencentVideoClient, 'GeniusVideoClient': GeniusVideoClient, 'UnityVideoClient': UnityVideoClient,
         'FoxNewsVideoClient': FoxNewsVideoClient, 'SinaVideoClient': SinaVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,
-        'Open163VideoClient': Open163VideoClient, 'CCtalkVideoClient': CCtalkVideoClient,
+        'Open163VideoClient': Open163VideoClient, 'CCtalkVideoClient': CCtalkVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient,
     }
 
 

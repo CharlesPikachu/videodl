@@ -199,6 +199,12 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.douyin.com/jingxuan?modal_id=7538145141593263403',
         'http://peiyinxiu.com/m/127066455',
     ],
+    'EyepetizerVideoClient': [
+        'https://home.eyepetizer.net/video/video-detail?resource_id=219143&resource_type=pgc_video',
+        'https://home.eyepetizer.net/video/video-detail?resource_id=222084&resource_type=pgc_video',
+        'http://www.eyepetizer.net/detail.html?udid=cfcde4e18636135d6d3f383f42a7351305ea6590&vid=14243&vc=2306',
+        'https://m.eyepetizer.net/u1/video-detail?resource_type=video&video_id=14245',
+    ],
 }
 
 
