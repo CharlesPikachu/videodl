@@ -38,7 +38,7 @@ class VideoClient():
             allowed_video_sources = list(VideoClientBuilder.REGISTERED_MODULES.keys()) + list(CommonVideoClientBuilder.REGISTERED_MODULES.keys())
         allowed_video_sources = list(set(allowed_video_sources))
         if apply_common_video_clients_only:
-            allowed_video_source = [s for s in allowed_video_source if s in CommonVideoClientBuilder.REGISTERED_MODULES]
+            allowed_video_sources = [s for s in allowed_video_sources if s in CommonVideoClientBuilder.REGISTERED_MODULES]
         init_video_clients_cfg, clients_threadings, requests_overrides = init_video_clients_cfg or {}, clients_threadings or {}, requests_overrides or {}
         # instance video_clients
         default_video_client_cfg = dict(
@@ -47,14 +47,14 @@ class VideoClient():
             default_parse_cookies={}
         )
         self.video_clients, self.work_dirs = dict(), dict()
-        for allowed_video_source in allowed_video_sources:
-            if allowed_video_source not in VideoClientBuilder.REGISTERED_MODULES: continue
+        for vc_name in allowed_video_sources:
+            if vc_name not in VideoClientBuilder.REGISTERED_MODULES: continue
             per_default_video_client_cfg = copy.deepcopy(default_video_client_cfg)
-            per_default_video_client_cfg['type'] = allowed_video_source
-            if allowed_video_source in init_video_clients_cfg:
-                per_default_video_client_cfg.update(init_video_clients_cfg[allowed_video_source])
-            self.work_dirs[allowed_video_source] = per_default_video_client_cfg['work_dir']
-            self.video_clients[allowed_video_source] = BuildVideoClient(module_cfg=per_default_video_client_cfg)
+            per_default_video_client_cfg['type'] = vc_name
+            if vc_name in init_video_clients_cfg:
+                per_default_video_client_cfg.update(init_video_clients_cfg[vc_name])
+            self.work_dirs[vc_name] = per_default_video_client_cfg['work_dir']
+            self.video_clients[vc_name] = BuildVideoClient(module_cfg=per_default_video_client_cfg)
         # instance common_video_clients
         self.common_video_clients = dict()
         for cvc_name in allowed_video_sources:
