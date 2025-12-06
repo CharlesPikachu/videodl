@@ -125,6 +125,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [SnapAnyVideoClient](https://snapany.com/zh)           |  [SnapAny万能解析](https://snapany.com/zh)                 | ✔️        |  ✔️        | [snapany.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/snapany.py)                  |
 | [GVVIPVideoClient](https://greenvideo.cc/video/vip)    |  [GreenVideoVIP视频解析](https://greenvideo.cc/video/vip)  | ✔️        |  ✔️        | [gvvip.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/gvvip.py)                      |
 | [VgetVideoClient](https://vget.xyz/)                   |  [Vget视频解析](https://vget.xyz/)                         | ✔️        |  ✔️        | [vget.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/vget.py)                        |
+| [ILoveAPIVideoClient](https://www.52api.cn/)           |  [我爱API](https://www.52api.cn/)                          | ✔️        |  ✔️        | [iloveapi.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/iloveapi.py)                |
 
 The default parsing order is to first use the parsers in the supported list. If those fail, the generic parsers are then invoked one by one until parsing succeeds.
 
