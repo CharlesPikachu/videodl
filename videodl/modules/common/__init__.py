@@ -1,4 +1,5 @@
 '''initialize'''
+from .vget import VgetVideoClient
 from .gvvip import GVVIPVideoClient
 from .kedou import KedouVideoClient
 from .iiilab import IIILabVideoClient
@@ -10,7 +11,7 @@ from .snapany import SnapAnyVideoClient
 class CommonVideoClientBuilder(BaseModuleBuilder):
     REGISTERED_MODULES = {
         'IIILabVideoClient': IIILabVideoClient, 'KedouVideoClient': KedouVideoClient, 'SnapAnyVideoClient': SnapAnyVideoClient,
-        'GVVIPVideoClient': GVVIPVideoClient,
+        'GVVIPVideoClient': GVVIPVideoClient, 'VgetVideoClient': VgetVideoClient,
     }
 
 

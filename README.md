@@ -48,6 +48,7 @@
 
 # 🆕 What's New
 
+- 2025-12-06: Released videofetch v0.3.1 - added several general-purpose parsers and made some minor feature improvements.
 - 2025-12-05: Released videofetch v0.3.0 - add support for more sites and introduce features of the generic parser to help enable parsing across the entire web.
 - 2025-11-29: Released videofetch v0.2.3 - add support for `FoxNewsVideoClient` and `SinaVideoClient`, and introduce N_m3u8DL-RE to improve the download speed of HLS/m3u8 streams.
 - 2025-11-28: Released videofetch v0.2.2 - added video parsing support for multiple platforms, and fixed a multithreading bug in the download progress bar along with several minor issues.
@@ -123,6 +124,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [KedouVideoClient](https://www.kedou.life/)            |  [Kedou视频解析](https://www.kedou.life/)                  | ✔️        |  ✔️        | [kedou.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kedou.py)                      |
 | [SnapAnyVideoClient](https://snapany.com/zh)           |  [SnapAny万能解析](https://snapany.com/zh)                 | ✔️        |  ✔️        | [snapany.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/snapany.py)                  |
 | [GVVIPVideoClient](https://greenvideo.cc/video/vip)    |  [GreenVideoVIP视频解析](https://greenvideo.cc/video/vip)  | ✔️        |  ✔️        | [gvvip.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/gvvip.py)                      |
+| [VgetVideoClient](https://vget.xyz/)                   |  [Vget视频解析](https://vget.xyz/)                         | ✔️        |  ✔️        | [vget.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/vget.py)                        |
 
 The default parsing order is to first use the parsers in the supported list. If those fail, the generic parsers are then invoked one by one until parsing succeeds.
 
@@ -179,7 +181,7 @@ Specifically, these CLI tools include,
   FFmpeg is a general-purpose media tool that can download standard HLS/m3u8 streams, but it assumes that the playlist and segment URLs strictly follow the protocol. 
   N_m3u8DL-RE is a specialized m3u8 downloader that adds extensive logic for handling encryption, anti-leech headers, redirects, and malformed playlists, so it can capture many ‘protected’ or non-standard videos that FFmpeg fails on. 
   Therefore, for some sites where downloading m3u8 streams with FFmpeg is throttled or fails, we recommend installing and using N_m3u8DL-RE instead.
-  Currently, the video downloaders that use N_m3u8DL-RE by default include `FoxNewsVideoClient`, `TencentVideoClient`, `GVVIPVideoClient`, `SnapAnyVideoClient` and `IIILabVideoClient`. 
+  Currently, the video downloaders that use N_m3u8DL-RE by default include `FoxNewsVideoClient`, `TencentVideoClient`, `GVVIPVideoClient`, `SnapAnyVideoClient`, `VgetVideoClient` and `IIILabVideoClient`. 
   Therefore, if you don’t need to download videos from these two platforms, you can choose not to install this CLI tool.
   As with FFmpeg, after installation you should make sure this tool can be run directly from the command line, *i.e.*, its location is included in your system `PATH`.
   A quick way to check whether N_m3u8DL-RE has been installed successfully is to open a terminal (or Command Prompt on Windows) and run:
