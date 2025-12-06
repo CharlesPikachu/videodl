@@ -195,6 +195,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.youtube.com/watch?v=qPzZLAWuAbw&list=RDqPzZLAWuAbw&start_radio=1',
         'https://x.com/iluminatibot/status/1996651394963734976',
     ],
+    'ILoveAPIVideoClient': [
+        'https://www.douyin.com/jingxuan?modal_id=7538145141593263403',
+        'http://peiyinxiu.com/m/127066455',
+    ],
 }
 
 
