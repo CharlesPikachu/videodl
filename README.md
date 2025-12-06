@@ -346,6 +346,13 @@ Alternatively, you can run the following command directly in the terminal:
 videodl -i "URL" -c "{'TencentVideoClient': {'default_parse_cookies': your_vip_cookies_with_str_or_dict_format, 'default_download_cookies': your_vip_cookies_with_str_or_dict_format}}"
 ```
 
+If you want to speed up the parsing, you can try specifying the parser used for the video you’re downloading. 
+For example, when downloading a Douyin video, you can run the command like this:
+
+```bash
+videodl -i "https://www.douyin.com/jingxuan?modal_id=7538145141593263403" -g -a "ILoveAPIVideoClient"
+```
+
 
 # 💡 Recommended Projects
 
