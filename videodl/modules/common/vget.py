@@ -10,11 +10,12 @@ import os
 import re
 import time
 import html
+import base64
 from bs4 import BeautifulSoup
 from datetime import datetime
 from ..sources import BaseVideoClient
 from urllib.parse import parse_qs, urlparse
-from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring
+from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, touchdir
 
 
 '''VgetVideoClient'''
@@ -87,17 +88,6 @@ class VgetVideoClient(BaseVideoClient):
                 w, h = self._parseresolution(format_text)
                 size_bytes = self._parsefilesize(size_text)
                 video_items.append({"format_desc": format_text, "width": w, "height": h, "area": w * h, "size_bytes": size_bytes, "ext": ext_text.lower(), "url": url})
-            # --sort
-            prefer_ext_order = ["mp4", "webm", "m3u8"]
-            sorted_video_items = sorted(video_items, key=lambda x: (x["area"], self._extpriority(x["ext"], prefer_ext_order), x["size_bytes"]), reverse=True)
-            for item in sorted_video_items:
-                download_url = item['url']
-                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                    url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies, skip_urllib_parse=True,
-                )
-                if guess_video_ext_result['ext'] in ['txt', 'NULL']: continue
-                break
-            video_info.update(dict(download_url=download_url))
             # --video title
             dt = datetime.fromtimestamp(time.time())
             date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
@@ -109,6 +99,31 @@ class VgetVideoClient(BaseVideoClient):
                 video_title = None
             video_title = video_title or f'{self.source}_null_{date_str}'
             video_title = legalizestring(video_title, replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
+            # --sort
+            prefer_ext_order = ["mp4", "webm", "m3u8"]
+            pattern = re.compile(r'data:[^;]+;base64,([A-Za-z0-9+/=]+)')
+            sorted_video_items = sorted(video_items, key=lambda x: (x["area"], self._extpriority(x["ext"], prefer_ext_order), x["size_bytes"]), reverse=True)
+            for item in sorted_video_items:
+                download_url = item['url']
+                m = pattern.match(download_url)
+                if m:
+                    download_url = base64.b64decode(m.group(1)).decode("utf-8", errors="ignore")
+                    if download_url.startswith('#EXTM3U'):
+                        touchdir(os.path.join(self.work_dir, self.source))
+                        with open(os.path.join(self.work_dir, self.source, f'{video_title}.m3u8'), 'w') as fp:
+                            fp.write(download_url)
+                        download_url = os.path.join(self.work_dir, self.source, f'{video_title}.m3u8')
+                        video_info.update(dict(enable_nm3u8dlre=True))
+                    guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
+                        url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies, 
+                    )
+                else:
+                    guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
+                        url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies, skip_urllib_parse=True,
+                    )
+                    if guess_video_ext_result['ext'] in ['txt', 'NULL']: continue
+                break
+            video_info.update(dict(download_url=download_url))
             # --other infos
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
