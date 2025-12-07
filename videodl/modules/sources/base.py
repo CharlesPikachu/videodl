@@ -73,7 +73,7 @@ class BaseVideoClient():
         self._initsession()
         # proxied_session_client
         self.proxied_session_client = freeproxy.ProxiedSessionClient(
-            proxy_sources=['KuaidailiProxiedSession', 'IP3366ProxiedSession', 'QiyunipProxiedSession', 'ProxyhubProxiedSession', 'ProxydbProxiedSession'] if proxy_sources is None else proxy_sources, 
+            proxy_sources=['KuaidailiProxiedSession', 'ProxiflyProxiedSession', 'IPLocateProxiedSession', 'QiyunipProxiedSession'] if proxy_sources is None else proxy_sources, 
             disable_print=True
         ) if auto_set_proxies else None
     '''_initsession'''

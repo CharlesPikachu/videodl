@@ -48,7 +48,7 @@ class CCtalkVideoClient(BaseVideoClient):
         # try parse
         video_infos = []
         try:
-            # --fetech video ids
+            # --fetch video ids
             parsed_url = urlparse(url)
             try: sid = parse_qs(parsed_url.query, keep_blank_values=True)['sid'][0]
             except: sid = None

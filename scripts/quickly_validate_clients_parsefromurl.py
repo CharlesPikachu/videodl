@@ -209,6 +209,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.arte.tv/en/videos/127781-000-A/arte-reportage/',
         'https://www.arte.tv/en/videos/124453-003-A/masha-on-russia/'
     ],
+    'XMFlvVideoClient': [
+        'https://www.iqiyi.com/v_16ne2x4z6zc.html',
+        'https://v.youku.com/v_show/id_XNDU3MDY3NjQ3Mg==.html?s=e2b1cec58f1546cd97dc'
+    ],
 }
 
 
