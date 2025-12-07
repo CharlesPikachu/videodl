@@ -14,3 +14,4 @@ nodejs-wheel
 tqdm
 pyfreeproxy
 pycryptodomex
+pycryptodome
