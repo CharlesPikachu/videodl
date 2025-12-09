@@ -10,6 +10,7 @@ import os
 import re
 import copy
 import time
+import uuid
 import pickle
 import shutil
 import requests
@@ -20,6 +21,7 @@ from rich.progress import Task
 from freeproxy import freeproxy
 from urllib.parse import urlsplit
 from fake_useragent import UserAgent
+from platformdirs import user_log_dir
 from pathvalidate import sanitize_filepath
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, LoggerHandle, VideoInfo
@@ -326,10 +328,13 @@ class BaseVideoClient():
         default_nm3u8dlre_settings = {'thread_count': '8', 'download_retry_count': '3'}
         nm3u8dlre_settings = video_info.get('nm3u8dlre_settings', {}) or {}
         default_nm3u8dlre_settings.update(nm3u8dlre_settings)
+        log_dir = user_log_dir(appname='videodl', appauthor='zcjin')
+        random_uuid = uuid.uuid4().hex[:8]
+        log_file_path = os.path.join(log_dir, f"videodl_{random_uuid}.log")
         cmd = [
             'N_m3u8DL-RE', video_info["download_url"], "--auto-select", "--save-dir", os.path.dirname(video_info["file_path"]), "--save-name", os.path.basename(video_info["file_path"]),
             "--thread-count", default_nm3u8dlre_settings['thread_count'], "--download-retry-count", default_nm3u8dlre_settings['download_retry_count'], "--check-segments-count",
-            "--del-after-done", "-M", f"format={video_info['ext']}",
+            "--del-after-done", "-M", f"format={video_info['ext']}", '--log-file-path', log_file_path,
         ]
         cmd.extend(header_args)
         if proxy_url: cmd.extend(["--custom-proxy", proxy_url])
