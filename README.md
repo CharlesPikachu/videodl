@@ -116,6 +116,7 @@ The video platforms currently supported for parsing are,
 | CCtalkVideoClient                     |  CCtalk                      | -                                                           | ❌       |  ✔️        |  ✔️        | [cctalk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/cctalk.py)                   |
 | EyepetizerVideoClient                 |  开眼视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [eyepetizer.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/eyepetizer.py)           |
 | ArteTVVideoClient                     |  德法公共电视网              | -                                                           | ❌       |  ✔️        |  ✔️        | [artetv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/artetv.py)                   |
+| C56VideoClient                        |  56视频网                    | -                                                           | ❌       |  ✔️        |  ✔️        | [c56.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/c56.py)                         |
 
 To make videodl more robust and able to adaptively parse videos from more websites, even when the video URL is not in the supported list above, 
 I also plan to gradually add some general-purpose parsing interfaces. The currently supported generic parsers include:

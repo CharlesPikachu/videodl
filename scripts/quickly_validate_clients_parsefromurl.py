@@ -213,6 +213,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.iqiyi.com/v_16ne2x4z6zc.html',
         'https://v.youku.com/v_show/id_XNDU3MDY3NjQ3Mg==.html?s=e2b1cec58f1546cd97dc'
     ],
+    'C56VideoClient': [
+        'https://www.56.com/u11/v_MTk5NjI0OTIw.html',
+        'https://www.56.com/w45/play_album-aid-14385994_vid-MTYxMTUwMzky.html',
+    ],
 }
 
 

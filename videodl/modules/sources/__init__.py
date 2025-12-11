@@ -1,6 +1,7 @@
 '''initialize'''
 from .ted import TedVideoClient
 from .ku6 import Ku6VideoClient
+from .c56 import C56VideoClient
 from .pear import PearVideoClient
 from .huya import HuyaVideoClient
 from .sina import SinaVideoClient
@@ -59,7 +60,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'TencentVideoClient': TencentVideoClient, 'GeniusVideoClient': GeniusVideoClient, 'UnityVideoClient': UnityVideoClient,
         'FoxNewsVideoClient': FoxNewsVideoClient, 'SinaVideoClient': SinaVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,
         'Open163VideoClient': Open163VideoClient, 'CCtalkVideoClient': CCtalkVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient,
-        'ArteTVVideoClient': ArteTVVideoClient,
+        'ArteTVVideoClient': ArteTVVideoClient, 'C56VideoClient': C56VideoClient,
     }
 
 
