@@ -1,5 +1,7 @@
 # Development Log
 
+- 2025-12-11: Released videofetch v0.3.4 - fix the problems with downloading CCTV videos.
+
 - 2025-12-08: Released videofetch v0.3.3 - some simple code fixes, and a generic xiami parsing interface has been added.
 
 - 2025-12-06: Released videofetch v0.3.2 - added a new generic parsing interface, support for parsing two specific websites, and special handling of Base64 encoding in parts of the generic parser.
