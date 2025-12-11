@@ -221,6 +221,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.bilibili.com/video/BV1uymuBcE6D/?spm_id_from=333.1007.tianma.1-2-2.click',
         'https://www.douyin.com/user/MS4wLjABAAAAswuDtKmG0QULFeYM6qX_sqEKVOUDvEgwAVj3jGpoM6s?modal_id=6679709231748287757',
     ],
+    'RedditVideoClient': [
+        'https://www.reddit.com/r/videos/comments/6rrwyj/that_small_heart_attack/',
+        'https://old.reddit.com/r/ketamine/comments/degtjo/when_the_k_hits/',
+        'https://www.reddit.com/r/KamenRider/comments/wzqkxp/finale_kamen_rider_revice_episode_50_family_to/'
+    ],
 }
 
 

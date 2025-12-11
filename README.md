@@ -117,6 +117,7 @@ The video platforms currently supported for parsing are,
 | EyepetizerVideoClient                 |  开眼视频                    | -                                                           | ❌       |  ✔️        |  ✔️        | [eyepetizer.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/eyepetizer.py)           |
 | ArteTVVideoClient                     |  德法公共电视网              | -                                                           | ❌       |  ✔️        |  ✔️        | [artetv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/artetv.py)                   |
 | C56VideoClient                        |  56视频网                    | -                                                           | ❌       |  ✔️        |  ✔️        | [c56.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/c56.py)                         |
+| RedditVideoClient                     |  红迪网                      | -                                                           | ❌       |  ✔️        |  ✔️        | [reddit.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/reddit.py)                   |
 
 To make videodl more robust and able to adaptively parse videos from more websites, even when the video URL is not in the supported list above, 
 I also plan to gradually add some general-purpose parsing interfaces. The currently supported generic parsers include:
@@ -187,7 +188,7 @@ Specifically, these CLI tools include,
   FFmpeg is a general-purpose media tool that can download standard HLS/m3u8 streams, but it assumes that the playlist and segment URLs strictly follow the protocol. 
   N_m3u8DL-RE is a specialized m3u8 downloader that adds extensive logic for handling encryption, anti-leech headers, redirects, and malformed playlists, so it can capture many ‘protected’ or non-standard videos that FFmpeg fails on. 
   Therefore, for some sites where downloading m3u8 streams with FFmpeg is throttled or fails, we recommend installing and using N_m3u8DL-RE instead.
-  Currently, the video downloaders that use N_m3u8DL-RE by default include `FoxNewsVideoClient`, `TencentVideoClient`, `GVVIPVideoClient`, `SnapAnyVideoClient`, `VgetVideoClient`, `ArteTVVideoClient`, `XMFlvVideoClient` and `IIILabVideoClient`. 
+  Currently, the video downloaders that use N_m3u8DL-RE by default include `FoxNewsVideoClient`, `TencentVideoClient`, `GVVIPVideoClient`, `SnapAnyVideoClient`, `VgetVideoClient`, `ArteTVVideoClient`, `XMFlvVideoClient`, `RedditVideoClient` and `IIILabVideoClient`. 
   Therefore, if you don’t need to download videos from these two platforms, you can choose not to install this CLI tool.
   As with FFmpeg, after installation you should make sure this tool can be run directly from the command line, *i.e.*, its location is included in your system `PATH`.
   A quick way to check whether N_m3u8DL-RE has been installed successfully is to open a terminal (or Command Prompt on Windows) and run:
