@@ -217,6 +217,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.56.com/u11/v_MTk5NjI0OTIw.html',
         'https://www.56.com/w45/play_album-aid-14385994_vid-MTYxMTUwMzky.html',
     ],
+    'QZXDPToolsVideoClient': [
+        'https://www.bilibili.com/video/BV1uymuBcE6D/?spm_id_from=333.1007.tianma.1-2-2.click',
+        'https://www.douyin.com/user/MS4wLjABAAAAswuDtKmG0QULFeYM6qX_sqEKVOUDvEgwAVj3jGpoM6s?modal_id=6679709231748287757',
+    ],
 }
 
 
