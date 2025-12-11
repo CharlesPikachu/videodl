@@ -133,6 +133,8 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [ILoveAPIVideoClient](https://www.52api.cn/)                    |  [我爱API](https://www.52api.cn/)                          | ✔️        |  ✔️        | [iloveapi.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/iloveapi.py)                |
 | [XMFlvVideoClient](https://jx.xmflv.com/)                       |  [虾米解析](https://jx.xmflv.com/)                         | ✔️        |  ✔️        | [xmflv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/xmflv.py)                      |
 | [QZXDPToolsVideoClient](https://tools.qzxdp.cn/video_spider)    |  [全栈工具视频解析](https://tools.qzxdp.cn/video_spider)   | ✔️        |  ✔️        | [qzxdptools.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/qzxdptools.py)            |
+| [KuKuToolsVideoClient](https://dy.kukutool.com/)                |  [KuKuTool视频解析](https://dy.kukutool.com/)              | ✔️        |  ✔️        | [kukutool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kukutool.py)                |
+| [YouChuangVideoClient](https://apis.uctb.cn/apidata?id=15)      |  [优创数据视频解析](https://apis.uctb.cn/apidata?id=15)    | ✔️        |  ✔️        | [youchuang.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/youchuang.py)              |
 
 The default parsing order is to first use the parsers in the supported list. If those fail, the generic parsers are then invoked one by one until parsing succeeds.
 

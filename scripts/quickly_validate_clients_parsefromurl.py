@@ -226,6 +226,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://old.reddit.com/r/ketamine/comments/degtjo/when_the_k_hits/',
         'https://www.reddit.com/r/KamenRider/comments/wzqkxp/finale_kamen_rider_revice_episode_50_family_to/'
     ],
+    'KuKuToolsVideoClient': [
+        'https://www.bilibili.com/video/BV1epspzAERJ/?spm_id_from=333.1007.tianma.5-2-16.click',
+        'https://www.xiaohongshu.com/explore/6898415f000000000403dc3b?xsec_token=ABozZxFfnIo4Jum5RDrI97yLjwD0ng6sc5_55zhZGU4gQ=&xsec_source=pc_user',
+    ],
 }
 
 
