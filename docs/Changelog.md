@@ -1,5 +1,7 @@
 # Development Log
 
+- 2025-12-12: Released videofetch v0.3.6 - add two general-purpose video parsing clients.
+
 - 2025-12-12: Released videofetch v0.3.5 - added support for parsing on two specific platforms and introduced a generic parsing interface.
 
 - 2025-12-11: Released videofetch v0.3.4 - fix the problems with downloading CCTV videos.
