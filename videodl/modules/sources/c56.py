@@ -56,7 +56,7 @@ class C56VideoClient(BaseVideoClient):
             date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
             video_title = legalizestring(raw_data.get('Subject', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
             video_info.update(dict(
-                identifier=vid, raw_data=raw_data, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info["ext"]}'),
+                identifier=vid, raw_data=raw_data, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info["ext"]}'), source=self.source
             ))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
