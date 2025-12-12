@@ -5,6 +5,7 @@ from .gvvip import GVVIPVideoClient
 from .kedou import KedouVideoClient
 from .iiilab import IIILabVideoClient
 from ..utils import BaseModuleBuilder
+from .longzhu import LongZhuVideoClient
 from .snapany import SnapAnyVideoClient
 from .iloveapi import ILoveAPIVideoClient
 from .kukutool import KuKuToolsVideoClient
@@ -18,7 +19,7 @@ class CommonVideoClientBuilder(BaseModuleBuilder):
         'IIILabVideoClient': IIILabVideoClient, 'KedouVideoClient': KedouVideoClient, 'SnapAnyVideoClient': SnapAnyVideoClient,
         'GVVIPVideoClient': GVVIPVideoClient, 'VgetVideoClient': VgetVideoClient, 'ILoveAPIVideoClient': ILoveAPIVideoClient,
         'XMFlvVideoClient': XMFlvVideoClient, 'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'YouChuangVideoClient': YouChuangVideoClient,
-        'KuKuToolsVideoClient': KuKuToolsVideoClient,
+        'KuKuToolsVideoClient': KuKuToolsVideoClient, 'LongZhuVideoClient': LongZhuVideoClient,
     }
 
 

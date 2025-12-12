@@ -234,6 +234,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.bilibili.com/video/BV1DxCQBBE24/?spm_id_from=333.1007.tianma.2-2-5.click',
         'https://m.immomo.com/s/moment/new-share-v2/ar8198227777.html?time=1580294283&name=LpBAX+1lhEzqgkLc/ICG1w==&avatar=036495A9-5988-B90B-0CFA-C2415EAC1A3E20190912&isdaren=0&isuploader=1&from=weibo',
     ],
+    'LongZhuVideoClient': [
+        'https://www.bilibili.com/video/BV1DxCQBBE24/?spm_id_from=333.1007.tianma.2-2-5.click',
+        'https://www.toutiao.com/video/7358202402865938953/?log_from=24fdd11d4e4e68_1765499453711'
+    ],
 }
 
 
