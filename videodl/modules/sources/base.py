@@ -436,7 +436,10 @@ class BaseVideoClient():
         video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
         # start to download
         try:
-            resp = self.get(video_info['download_url'], stream=True, **request_overrides)
+            try:
+                resp = self.get(video_info['download_url'], stream=True, **request_overrides)
+            except:
+                resp = self.get(video_info['download_url'], stream=True, verify=False, **request_overrides)
             resp.raise_for_status()
             content_length = int(float(resp.headers.get("Content-Length", 0) or 0))
             chunk_size = video_info.get('chunk_size', 1024 * 1024)
