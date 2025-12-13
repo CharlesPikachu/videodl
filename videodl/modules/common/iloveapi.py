@@ -15,7 +15,7 @@ from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheade
 
 
 '''constants'''
-COLLECTED_KEYS = ['0HMROVL1JG9XirCRFyobixsh9P', 'IpDon7webrayXkAS0GEIhh0zhP']
+COLLECTED_KEYS = ['0HMROVL1JG9XirCRFyobixsh9P', 'IpDon7webrayXkAS0GEIhh0zhP', 'Gqvtv4Ajtg38ybrMk82h34HpRe']
 
 
 '''ILoveAPIVideoClient'''

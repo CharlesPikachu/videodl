@@ -362,7 +362,7 @@ If you want to speed up the parsing, you can try specifying the parser used for 
 For example, when downloading a Douyin video, you can run the command like this:
 
 ```bash
-videodl -i "https://www.douyin.com/jingxuan?modal_id=7538145141593263403" -g -a "ILoveAPIVideoClient"
+videodl -i "https://www.douyin.com/jingxuan?modal_id=7578412593719577899" -g -a "KedouVideoClient"
 ```
 
 
