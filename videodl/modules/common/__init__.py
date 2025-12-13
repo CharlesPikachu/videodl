@@ -9,7 +9,6 @@ from .longzhu import LongZhuVideoClient
 from .snapany import SnapAnyVideoClient
 from .iloveapi import ILoveAPIVideoClient
 from .kukutool import KuKuToolsVideoClient
-from .youchuang import YouChuangVideoClient
 from .qzxdptools import QZXDPToolsVideoClient
 
 
@@ -18,8 +17,8 @@ class CommonVideoClientBuilder(BaseModuleBuilder):
     REGISTERED_MODULES = {
         'IIILabVideoClient': IIILabVideoClient, 'KedouVideoClient': KedouVideoClient, 'SnapAnyVideoClient': SnapAnyVideoClient,
         'GVVIPVideoClient': GVVIPVideoClient, 'VgetVideoClient': VgetVideoClient, 'ILoveAPIVideoClient': ILoveAPIVideoClient,
-        'XMFlvVideoClient': XMFlvVideoClient, 'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'YouChuangVideoClient': YouChuangVideoClient,
-        'KuKuToolsVideoClient': KuKuToolsVideoClient, 'LongZhuVideoClient': LongZhuVideoClient,
+        'XMFlvVideoClient': XMFlvVideoClient, 'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'LongZhuVideoClient': LongZhuVideoClient,
+        'KuKuToolsVideoClient': KuKuToolsVideoClient, 
     }
 
 

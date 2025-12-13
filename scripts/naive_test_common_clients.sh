@@ -16,7 +16,5 @@ videodl -i "https://v.qq.com/x/cover/mzc00200tpgbo78/y4101ca2mcp.html" -g -a XMF
 videodl -i "https://www.bilibili.com/video/BV1uymuBcE6D/?spm_id_from=333.1007.tianma.1-2-2.click" -g -a QZXDPToolsVideoClient
 # KuKuToolsVideoClient
 videodl -i "https://www.xiaohongshu.com/explore/6898415f000000000403dc3b?xsec_token=ABozZxFfnIo4Jum5RDrI97yLjwD0ng6sc5_55zhZGU4gQ=&xsec_source=pc_user" -g -a KuKuToolsVideoClient
-# YouChuangVideoClient
-videodl -i "https://m.immomo.com/s/moment/new-share-v2/ar8198227777.html?time=1580294283&name=LpBAX+1lhEzqgkLc/ICG1w==&avatar=036495A9-5988-B90B-0CFA-a2415EAC1A3E20190912&isdaren=0&isuploader=1&from=weibo" -g -a YouChuangVideoClient
 # LongZhuVideoClient
 videodl -i "https://www.toutiao.com/video/7358202402865938953/?log_from=24fdd11d4e4e68_1765499453711" -g -a LongZhuVideoClient
