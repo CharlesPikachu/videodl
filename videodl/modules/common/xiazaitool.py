@@ -85,7 +85,7 @@ class XiazaitoolVideoClient(BaseVideoClient):
             # --post request
             payload = self._confidential({"url": url, "platform": self._detectplatform(url)})
             headers = copy.deepcopy(self.default_headers)
-            RandomIPGenerator.addrandomipv4toheaders(headers)
+            RandomIPGenerator().addrandomipv4toheaders(headers)
             resp = self.post("https://www.xiazaitool.com/video/parseVideoUrl", json=payload, headers=headers, **request_overrides)
             resp.raise_for_status()
             raw_data = resp2json(resp=resp)
