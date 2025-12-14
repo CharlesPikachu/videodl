@@ -20,18 +20,6 @@ class GVVIPVideoClient(BaseVideoClient):
     def __init__(self, **kwargs):
         super(GVVIPVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
-            "accept": "*/*",
-            "accept-encoding": "gzip, deflate, br, zstd",
-            "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-            "cookie": "_ga=GA1.1.998888184.1764958095; language=cn; _ga_RDEPQPJKET=GS2.1.s1765733322$o5$g1$t1765733381$j1$l0$h0; i18n_redirected=cn",
-            "kdsystem": "GreenVideo",
-            "priority": "u=1, i",
-            "sec-ch-ua": "\"Google Chrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": "\"Windows\"",
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
         }
         self.default_download_headers = {
