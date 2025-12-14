@@ -137,6 +137,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [QZXDPToolsVideoClient](https://tools.qzxdp.cn/video_spider)    |  [全栈工具视频解析](https://tools.qzxdp.cn/video_spider)        | ✔️        |  ✔️        | [qzxdptools.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/qzxdptools.py)            |
 | [KuKuToolsVideoClient](https://dy.kukutool.com/)                |  [KuKuTool视频解析](https://dy.kukutool.com/)                   | ✔️        |  ✔️        | [kukutool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kukutool.py)                |
 | [LongZhuVideoClient](https://www.hhlqilongzhu.cn/H5_home.php)   |  [龙珠API视频解析](https://www.hhlqilongzhu.cn/H5_home.php)     | ✔️        |  ✔️        | [longzhu.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/longzhu.py)                  |
+| [XiazaitoolVideoClient](https://www.xiazaitool.com/dy)          |  [下载狗](https://www.xiazaitool.com/dy)                        | ✔️        |  ✔️        | [xiazaitool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/xiazaitool.py)            |
 
 The default parsing order is to first use the parsers in the supported list. If those fail, the generic parsers are then invoked one by one until parsing succeeds.
 

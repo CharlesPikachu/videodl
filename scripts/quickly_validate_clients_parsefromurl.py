@@ -234,6 +234,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.bilibili.com/video/BV1DxCQBBE24/?spm_id_from=333.1007.tianma.2-2-5.click',
         'https://www.toutiao.com/video/7358202402865938953/?log_from=24fdd11d4e4e68_1765499453711'
     ],
+    'XiazaitoolVideoClient': [
+        'https://www.bilibili.com/video/BV1KxsqztE3i/?spm_id_from=333.1007.tianma.1-1-1.click',
+        'https://www.instagram.com/reel/DSO-KpuEqud/',
+    ],
 }
 
 

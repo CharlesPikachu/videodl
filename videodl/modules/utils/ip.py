@@ -7,7 +7,9 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import random
+import requests
 import ipaddress
+from bisect import bisect
 from typing import List, Optional, Sequence
 
 
@@ -33,6 +35,41 @@ class RandomIPGenerator:
             return self._randomipv6inprefix(prefix)
         else:
             return self._randomglobalipv6()
+    '''randomipv4scn'''
+    def randomipv4scn(self, num_samples: int = 1) -> List[str]:
+        def _buildsampler(blocks):
+            cum, s = [], 0
+            for _, c in blocks: s += c; cum.append(s)
+            total = s
+            def sample(n=10):
+                out = []
+                for _ in range(n):
+                    r = random.randrange(total)
+                    idx = bisect(cum, r)
+                    base, count = blocks[idx]
+                    ip = ipaddress.IPv4Address(base + random.randrange(count))
+                    out.append(str(ip))
+                return out
+            return sample
+        blocks = self._loadcnipv4blocks()
+        sampler = _buildsampler(blocks)
+        return sampler(num_samples)
+    '''_loadcnipv4blocks'''
+    def _loadcnipv4blocks(self):
+        text = requests.get("https://ftp.apnic.net/stats/apnic/delegated-apnic-extended-latest", timeout=30).text.splitlines()
+        blocks = []
+        for line in text:
+            if not line or line.startswith("#"): continue
+            parts = line.strip().split("|")
+            if len(parts) < 7: continue
+            _, cc, rtype, start, value, _, status = parts[:7]
+            if cc != "CN" or rtype != "ipv4": continue
+            if status not in ("allocated", "assigned"): continue
+            base = int(ipaddress.IPv4Address(start))
+            count = int(value)
+            if count > 0: blocks.append((base, count))
+        if not blocks: raise RuntimeError("No CN IPv4 blocks found. Check APNIC file format/URL.")
+        return blocks
     '''_randomipv4inprefix'''
     def _randomipv4inprefix(self, prefix: str) -> str:
         net = ipaddress.IPv4Network(prefix, strict=False)

@@ -18,3 +18,5 @@ videodl -i "https://www.bilibili.com/video/BV1uymuBcE6D/?spm_id_from=333.1007.ti
 videodl -i "https://www.xiaohongshu.com/explore/6898415f000000000403dc3b?xsec_token=ABozZxFfnIo4Jum5RDrI97yLjwD0ng6sc5_55zhZGU4gQ=&xsec_source=pc_user" -g -a KuKuToolsVideoClient
 # LongZhuVideoClient
 videodl -i "https://www.toutiao.com/video/7358202402865938953/?log_from=24fdd11d4e4e68_1765499453711" -g -a LongZhuVideoClient
+# XiazaitoolVideoClient
+videodl -i "https://www.instagram.com/reel/DSO-KpuEqud/" -g -a XiazaitoolVideoClient
