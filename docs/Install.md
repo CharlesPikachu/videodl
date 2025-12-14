@@ -31,18 +31,17 @@ Specifically, these CLI tools include,
   ```
   If the installation is correct, you should see detailed version information instead of a "command not found" or "'ffmpeg' is not recognized" error.
   
-- **[CBox](https://github.com/CharlesPikachu/videodl/releases/download/software_dependency/cbox.zip) and [N_m3u8DL-CLI](https://github.com/nilaoda/N_m3u8DL-CLI)**: 
-  These two CLI tools are only used to fix the issue of corrupted (garbled) video when downloading HD videos with `CCTVVideoClient` due to encrypted m3u8 links. 
-  You only need to download [CBox](https://github.com/CharlesPikachu/videodl/releases/download/software_dependency/cbox.zip) from the GitHub releases and add the path to cbox to your environment variables.
-  If you don’t need to use `CCTVVideoClient` to download HD videos, you don’t need to configure these two CLI tools.
-  As with FFmpeg, after installation you should make sure these tools can be run directly from the command line, *i.e.*, their location is included in your system `PATH`.
-  A quick way to verify this is that you should be able to run
+- **[CBox](https://github.com/CharlesPikachu/videodl/releases/tag/clitools)**:
+  CBox is an optional dependency for `CCTVVideoClient`. It helps prevent garbled output when downloading HD streams, which can happen when the m3u8 playlist is encrypted.
+  To enable it, download CBox from the GitHub release above and add the CBox folder to your system `PATH`.
+  If you intend to use `CCTVVideoClient`, you should also install [FFmpeg](https://ffmpeg.org/) and [N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE) and ensure they are available on your `PATH` as well.
+  If you’re not using `CCTVVideoClient` for HD downloads, you can skip the CBox setup entirely.
+  To verify your setup, these commands should print the full executable paths (instead of returning nothing):
   ```bash
   python -c "import shutil; print(shutil.which('cbox'))"
-  python -c "import shutil; print(shutil.which('N_m3u8DL-CLI'))"
+  python -c "import shutil; print(shutil.which('N_m3u8DL-RE'))"
+  python -c "import shutil; print(shutil.which('ffmpeg'))"
   ```
-  in Command Prompt and get the full path without an error.
-  If the N_m3u8DL-CLI version is not compatible with your system, please download the appropriate one from the [N_m3u8DL-CLI](https://github.com/nilaoda/N_m3u8DL-CLI) official website yourself.
 
 - **[Node.js](https://nodejs.org/en)**: Currently, Node.js is only used in `YouTubeVideoClient` to execute certain JavaScript code for video parsing. 
   Therefore, if you don’t need to use `YouTubeVideoClient`, you can safely skip installing this CLI tool.
@@ -57,7 +56,7 @@ Specifically, these CLI tools include,
   FFmpeg is a general-purpose media tool that can download standard HLS/m3u8 streams, but it assumes that the playlist and segment URLs strictly follow the protocol. 
   N_m3u8DL-RE is a specialized m3u8 downloader that adds extensive logic for handling encryption, anti-leech headers, redirects, and malformed playlists, so it can capture many ‘protected’ or non-standard videos that FFmpeg fails on. 
   Therefore, for some sites where downloading m3u8 streams with FFmpeg is throttled or fails, we recommend installing and using N_m3u8DL-RE instead.
-  Currently, the video downloaders that use N_m3u8DL-RE by default include `FoxNewsVideoClient`, `TencentVideoClient`, `GVVIPVideoClient`, `SnapAnyVideoClient`, `VgetVideoClient`, `ArteTVVideoClient`, `XMFlvVideoClient`, `RedditVideoClient` and `IIILabVideoClient`. 
+  Currently, the video downloaders that use N_m3u8DL-RE by default include `CCTVVideoClient`, `FoxNewsVideoClient`, `TencentVideoClient`, `GVVIPVideoClient`, `SnapAnyVideoClient`, `VgetVideoClient`, `ArteTVVideoClient`, `XMFlvVideoClient`, `RedditVideoClient` and `IIILabVideoClient`. 
   Therefore, if you don’t need to download videos from these two platforms, you can choose not to install this CLI tool.
   As with FFmpeg, after installation you should make sure this tool can be run directly from the command line, *i.e.*, its location is included in your system `PATH`.
   A quick way to check whether N_m3u8DL-RE has been installed successfully is to open a terminal (or Command Prompt on Windows) and run:

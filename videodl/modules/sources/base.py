@@ -198,21 +198,22 @@ class BaseVideoClient():
         video_info['ext'] = 'mp4'
         video_info['file_path'] = os.path.join(work_dir, f'{video_info["title"]}.{video_info["ext"]}')
         video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
-        # download m3u8 files with N_m3u8DL-CLI
-        cli = shutil.which("N_m3u8DL-CLI.exe")
-        pid = video_info['pid']
+        # download m3u8 files with N_m3u8DL-RE
+        cli = shutil.which("N_m3u8DL-RE.exe")
+        pid = str(video_info['pid'])
         video_info['download_url'] = f'https://dhls2.cntv.qcloudcdn.com/asp/enc2/hls/main/0303000a/3/default/{pid}/main.m3u8' # match to cbox's version
         tmp_dir = Path(os.path.join(work_dir, str(pid))).expanduser().resolve()
         default_headers = request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
         default_cookies = request_overrides.get('cookies', {}) or self.default_cookies or {}
         if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
-        headers = []
-        for k, v in default_headers.items():
-            headers.append(f"{k}:{v}")
-        headers_str = "|".join(headers)
-        cmd = [cli, video_info["download_url"], "--headers", headers_str, "--workDir", str(tmp_dir.parent), "--saveName", pid, "--noMerge"]
-        for _, proxy_url in request_overrides.get('proxies', {}).items():
-            cmd.extend(["-proxyAddress", proxy_url])
+        header_args = []
+        for k, v in default_headers.items(): header_args.extend(["-H", f"{k}: {v}"])
+        cmd = [
+            cli, video_info["download_url"], "--auto-select", "--tmp-dir", str(tmp_dir), "--save-dir", str(tmp_dir.parent), "--save-name", pid, "--skip-merge",
+            "--del-after-done", "false", *header_args,
+        ]
+        for _, proxy_url in (request_overrides.get('proxies', {}) or {}).items():
+            cmd.extend(["--use-system-proxy", "false", "--custom-proxy", proxy_url])
             break
         capture_output = True if self.disable_print else False
         ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
@@ -226,7 +227,12 @@ class BaseVideoClient():
             s = p.stem
             return [int(t) if t.isdigit() else t for t in re.findall(r"\d+|\D+", s)]
         cbox = shutil.which("cbox.exe")
-        tmp_part_dir = tmp_dir / "Part_0"
+        tmp_part_dir = tmp_dir / pid
+        for d in tmp_part_dir.iterdir():
+            if not d.is_dir(): continue
+            if any(p.is_file() and p.suffix == ".ts" for p in d.iterdir()):
+                ts_dir = d; break
+        tmp_part_dir = tmp_part_dir / ts_dir
         ts_files = sorted([p for p in tmp_part_dir.glob("*.ts") if not p.name.endswith("_output.ts")], key=_naturalkey)
         output_ts_files: list[Path] = []
         for _, ts_file in enumerate(ts_files, 1):
