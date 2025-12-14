@@ -106,9 +106,8 @@ class KedouVideoClient(BaseVideoClient):
             rsa_public_key = RSA.import_key(base64.b64decode(RSA_PUBLIC_KEY_BASE64))
             rsa_cipher = PKCS1_v1_5.new(rsa_public_key)
             rsa_encrypted = base64.b64encode(rsa_cipher.encrypt(aes_encrypted.encode("utf-8"))).decode("utf-8")
-            random_ip = RandomIPGenerator().ipv4()
             headers = copy.deepcopy(self.default_headers)
-            headers["X-Forwarded-For"] = random_ip
+            RandomIPGenerator().addrandomipv4toheaders(headers)
             # --post request
             resp = self.post('https://www.kedou.life/api/video/extract/v2', json=rsa_encrypted, headers=headers, **request_overrides)
             resp.raise_for_status()

@@ -42,9 +42,8 @@ class ILoveAPIVideoClient(BaseVideoClient):
         try:
             # --get request
             headers = copy.deepcopy(self.default_headers)
+            RandomIPGenerator().addrandomipv4toheaders(headers)
             for key in COLLECTED_KEYS:
-                random_ip = RandomIPGenerator().ipv4()
-                headers["X-Forwarded-For"] = random_ip
                 try:
                     resp = self.get('https://www.52api.cn/api/video_parse?', headers=headers, params={'key': key, 'url': url}, **request_overrides)
                     resp.raise_for_status()
@@ -68,7 +67,7 @@ class ILoveAPIVideoClient(BaseVideoClient):
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
                 title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, 
-                guess_video_ext_result=guess_video_ext_result, identifier=video_title,
+                guess_video_ext_result=guess_video_ext_result, identifier=download_url,
             ))
             video_infos.append(video_info)
         except Exception as err:

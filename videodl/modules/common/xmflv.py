@@ -108,10 +108,9 @@ class XMFlvVideoClient(BaseVideoClient):
         try:
             # --fetch time and area
             headers = copy.deepcopy(self.default_headers)
+            RandomIPGenerator().addrandomipv4toheaders(headers)
             headers["accept"] = "*/*"
             headers["origin"] = "https://jx.xmflv.com"
-            random_ip = RandomIPGenerator().ipv4()
-            headers["X-Forwarded-For"] = random_ip
             pre_resp = self.get(f"https://data.video.iqiyi.com/v.f4v?src=iqiyi.com", headers=headers, **request_overrides)
             pre_resp.raise_for_status()
             raw_data = resp2json(resp=pre_resp)
@@ -121,8 +120,6 @@ class XMFlvVideoClient(BaseVideoClient):
             key = self._generatekey(server_time, url)
             token = self._generatetoken(key)
             # --post to parse API
-            headers = copy.deepcopy(headers)
-            headers["X-Forwarded-For"] = random_ip
             data_json = {"ua": "0", "url": urllib.parse.quote(url, safe=""), "time": server_time, "key": key, "token": token, "area": server_area}
             resp = self.post('https://202.189.8.170/Api.js', data=data_json, headers=headers, **request_overrides)
             resp.raise_for_status()
@@ -144,7 +141,7 @@ class XMFlvVideoClient(BaseVideoClient):
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
                 title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, enable_nm3u8dlre=True,
-                guess_video_ext_result=guess_video_ext_result, identifier=video_title,
+                guess_video_ext_result=guess_video_ext_result, identifier=download_url,
             ))
             video_infos.append(video_info)
         except Exception as err:

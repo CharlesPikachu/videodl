@@ -39,9 +39,8 @@ class SnapAnyVideoClient(KedouVideoClient):
             # --encrypt post data
             site = urlparse(url).netloc.split('.')[-2]
             timestamp = str(int(time.time() * 1000))
-            random_ip = RandomIPGenerator().ipv4()
             headers = copy.deepcopy(self.default_headers)
-            headers["X-Forwarded-For"] = random_ip
+            RandomIPGenerator().addrandomipv4toheaders(headers)
             headers['G-Footer'] = hashlib.md5(f"{url}{site}{timestamp}{SALT}".encode('utf-8')).hexdigest()
             headers['G-Timestamp'] = timestamp
             headers['Accept-Language'] = site
@@ -85,7 +84,7 @@ class SnapAnyVideoClient(KedouVideoClient):
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
                 title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, 
-                guess_video_ext_result=guess_video_ext_result, identifier=video_title,
+                guess_video_ext_result=guess_video_ext_result, identifier=download_url,
             ))
             if audio_download_url and audio_download_url != 'NULL':
                 guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(

@@ -1,27 +1,27 @@
 '''
 Function:
-    Implementation of LongZhuVideoClient: https://www.hhlqilongzhu.cn/H5_home.php
+    Implementation of NoLogoVideoClient: https://nologo.code24.top/
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
-import copy
 import time
+import copy
+from bs4 import BeautifulSoup
 from datetime import datetime
 from ..sources import BaseVideoClient
-from ..utils import RandomIPGenerator
-from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json
+from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json
 
 
-'''LongZhuVideoClient'''
-class LongZhuVideoClient(BaseVideoClient):
-    source = 'LongZhuVideoClient'
+'''NoLogoVideoClient'''
+class NoLogoVideoClient(BaseVideoClient):
+    source = 'NoLogoVideoClient'
     def __init__(self, **kwargs):
-        super(LongZhuVideoClient, self).__init__(**kwargs)
+        super(NoLogoVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
         }
         self.default_download_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
@@ -40,14 +40,18 @@ class LongZhuVideoClient(BaseVideoClient):
             # --get request
             headers = copy.deepcopy(self.default_headers)
             RandomIPGenerator().addrandomipv4toheaders(headers)
-            resp = self.get(f'http://www.hhlqilongzhu.cn/api/sp_jx/sp.php?url={url}', verify=False, headers=headers, **request_overrides)
+            resp = self.get(f'https://nologo.code24.top/api/download/verify?url={url}', headers=headers, **request_overrides)
             resp.raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             # --video title
             dt = datetime.fromtimestamp(time.time())
             date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = raw_data['data'].get('title') or f'{self.source}_null_{date_str}'
+            resp = self.get(url, verify=False, allow_redirects=True, **request_overrides)
+            resp.encoding = resp.apparent_encoding
+            soup = BeautifulSoup(resp.text, "html.parser")
+            video_title = soup.title.get_text(strip=True) if soup.title else None
+            video_title = video_title or f'{self.source}_null_{date_str}'
             video_title = legalizestring(video_title, replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
             # --download url
             download_url = raw_data['data']['url']

@@ -14,7 +14,7 @@ from datetime import datetime
 from typing import Mapping, Any
 from urllib.parse import urlparse
 from ..sources import BaseVideoClient
-from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json
+from ..utils import VideoInfo, FileTypeSniffer, RandomIPGenerator, useparseheaderscookies, legalizestring, resp2json
 
 
 '''XiazaitoolVideoClient'''
@@ -84,7 +84,9 @@ class XiazaitoolVideoClient(BaseVideoClient):
         try:
             # --post request
             payload = self._confidential({"url": url, "platform": self._detectplatform(url)})
-            resp = self.post("https://www.xiazaitool.com/video/parseVideoUrl", json=payload, **request_overrides)
+            headers = copy.deepcopy(self.default_headers)
+            RandomIPGenerator.addrandomipv4toheaders(headers)
+            resp = self.post("https://www.xiazaitool.com/video/parseVideoUrl", json=payload, headers=headers, **request_overrides)
             resp.raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))

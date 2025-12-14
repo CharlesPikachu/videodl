@@ -48,15 +48,12 @@
 
 # 🆕 What's New
 
+- 2025-12-15: Released videofetch v0.3.8 - remove the general parsing endpoints that have switched to paid access, and add two free general parsing endpoints and make some improvements.
 - 2025-12-12: Released videofetch v0.3.7 - add one general-purpose video parsing client.
 - 2025-12-12: Released videofetch v0.3.6 - add two general-purpose video parsing clients.
 - 2025-12-12: Released videofetch v0.3.5 - added support for parsing on two specific platforms and introduced a generic parsing interface.
 - 2025-12-11: Released videofetch v0.3.4 - fix the problems with downloading CCTV videos.
 - 2025-12-08: Released videofetch v0.3.3 - some simple code fixes, and a generic xiami parsing interface has been added.
-- 2025-12-06: Released videofetch v0.3.2 - added a new generic parsing interface, support for parsing two specific websites, and special handling of Base64 encoding in parts of the generic parser.
-- 2025-12-06: Released videofetch v0.3.1 - added several general-purpose parsers and made some minor feature improvements.
-- 2025-12-05: Released videofetch v0.3.0 - add support for more sites and introduce features of the generic parser to help enable parsing across the entire web.
-- 2025-11-29: Released videofetch v0.2.3 - add support for `FoxNewsVideoClient` and `SinaVideoClient`, and introduce N_m3u8DL-RE to improve the download speed of HLS/m3u8 streams.
 
 
 # 🚀 Introduction
@@ -138,6 +135,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [KuKuToolsVideoClient](https://dy.kukutool.com/)                |  [KuKuTool视频解析](https://dy.kukutool.com/)                   | ✔️        |  ✔️        | [kukutool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kukutool.py)                |
 | [LongZhuVideoClient](https://www.hhlqilongzhu.cn/H5_home.php)   |  [龙珠API视频解析](https://www.hhlqilongzhu.cn/H5_home.php)     | ✔️        |  ✔️        | [longzhu.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/longzhu.py)                  |
 | [XiazaitoolVideoClient](https://www.xiazaitool.com/dy)          |  [下载狗](https://www.xiazaitool.com/dy)                        | ✔️        |  ✔️        | [xiazaitool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/xiazaitool.py)            |
+| [NoLogoVideoClient](https://nologo.code24.top/)                 |  [去水印下载鸭](https://nologo.code24.top/)                     | ✔️        |  ✔️        | [nologo.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/nologo.py)                    |
 
 The default parsing order is to first use the parsers in the supported list. If those fail, the generic parsers are then invoked one by one until parsing succeeds.
 

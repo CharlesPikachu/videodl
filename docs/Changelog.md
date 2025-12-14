@@ -1,5 +1,7 @@
 # Development Log
 
+- 2025-12-15: Released videofetch v0.3.8 - remove the general parsing endpoints that have switched to paid access, and add two free general parsing endpoints and make some improvements.
+
 - 2025-12-12: Released videofetch v0.3.7 - add one general-purpose video parsing client.
 
 - 2025-12-12: Released videofetch v0.3.6 - add two general-purpose video parsing clients.

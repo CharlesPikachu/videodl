@@ -54,6 +54,18 @@ class RandomIPGenerator:
         blocks = self._loadcnipv4blocks()
         sampler = _buildsampler(blocks)
         return sampler(num_samples)
+    '''addrandomipv4toheaders'''
+    def addrandomipv4toheaders(self, headers: dict = None, prefix: Optional[str] = None) -> dict:
+        assert isinstance(headers, dict), f'input "headers" should be "dict", but get {type(headers)}'
+        random_ip = self.ipv4(prefix=prefix)
+        headers.update({
+            "X-Forwarded-For": random_ip, "X-Real-IP": random_ip, "Forwarded": f"for={random_ip};proto=https",
+            "True-Client-IP": random_ip, "CF-Connecting-IP": random_ip, "X-Client-IP": random_ip,
+            "Client-IP": random_ip, "X-Cluster-Client-IP": random_ip, "X-Forwarded-For": random_ip,
+            "X-Forwarded-Proto": "https", "X-Forwarded-Host": random.choice(["zhihu.com", "douyin.com", "huya.com", "douyu.com", "github.com"]), 
+            "Forwarded": f"for={random_ip};proto=https",
+        })
+        return headers
     '''_loadcnipv4blocks'''
     def _loadcnipv4blocks(self):
         text = requests.get("https://ftp.apnic.net/stats/apnic/delegated-apnic-extended-latest", timeout=30).text.splitlines()

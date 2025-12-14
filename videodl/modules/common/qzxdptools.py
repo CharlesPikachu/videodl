@@ -48,9 +48,8 @@ class QZXDPToolsVideoClient(BaseVideoClient):
         video_infos = []
         try:
             # --post request
-            random_ip = RandomIPGenerator().ipv4()
             headers = copy.deepcopy(self.default_headers)
-            headers["X-Forwarded-For"] = random_ip
+            RandomIPGenerator().addrandomipv4toheaders(headers)
             resp = self.post(f'https://tools.qzxdp.cn/api/video_spider/query', data={'video_url': url}, headers=headers, **request_overrides)
             resp.raise_for_status()
             raw_data = resp2json(resp=resp)
