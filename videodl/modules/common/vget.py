@@ -128,7 +128,7 @@ class VgetVideoClient(BaseVideoClient):
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
                 title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, enable_nm3u8dlre=True,
-                guess_video_ext_result=guess_video_ext_result, identifier=download_url,
+                guess_video_ext_result=guess_video_ext_result, identifier=video_title,
             ))
             video_infos.append(video_info)
         except Exception as err:
