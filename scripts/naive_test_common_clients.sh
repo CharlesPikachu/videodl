@@ -20,3 +20,5 @@ videodl -i "https://www.xiaohongshu.com/explore/6898415f000000000403dc3b?xsec_to
 videodl -i "https://www.toutiao.com/video/7358202402865938953/?log_from=24fdd11d4e4e68_1765499453711" -g -a LongZhuVideoClient
 # XiazaitoolVideoClient
 videodl -i "https://www.instagram.com/reel/DSO-KpuEqud/" -g -a XiazaitoolVideoClient
+# NoLogoVideoClient
+videodl -i "https://www.douyin.com/jingxuan?modal_id=7561075993822416185" -g -a NoLogoVideoClient

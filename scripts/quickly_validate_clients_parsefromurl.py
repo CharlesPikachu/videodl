@@ -238,6 +238,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.bilibili.com/video/BV1KxsqztE3i/?spm_id_from=333.1007.tianma.1-1-1.click',
         'https://www.instagram.com/reel/DSO-KpuEqud/',
     ],
+    'NoLogoVideoClient': [
+        'https://www.bilibili.com/video/BV1CFy5BREqQ/?spm_id_from=333.1007.tianma.8-2-28.click',
+        'https://www.douyin.com/jingxuan?modal_id=7561075993822416185',
+    ],
 }
 
 
