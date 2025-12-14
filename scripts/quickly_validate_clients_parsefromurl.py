@@ -242,6 +242,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.bilibili.com/video/BV1CFy5BREqQ/?spm_id_from=333.1007.tianma.8-2-28.click',
         'https://www.douyin.com/jingxuan?modal_id=7561075993822416185',
     ],
+    'SnapWCVideoClient': [
+        'https://www.youtube.com/watch?v=cSrciR6QuKg', 
+        'https://www.le.com/ptv/vplay/25790784.html',
+        'https://www.douyin.com/jingxuan?modal_id=7580605435187596559',
+    ],
 }
 
 

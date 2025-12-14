@@ -48,6 +48,7 @@
 
 # 🆕 What's New
 
+- 2025-12-15: Released videofetch v0.3.9 - supports the SnapWC universal parsing API, and updated the CCTV M3U8 downloader to use N_m3u8DL-RE instead of the previous solution.
 - 2025-12-15: Released videofetch v0.3.8 - remove the general parsing endpoints that have switched to paid access, and add two free general parsing endpoints and make some improvements.
 - 2025-12-12: Released videofetch v0.3.7 - add one general-purpose video parsing client.
 - 2025-12-12: Released videofetch v0.3.6 - add two general-purpose video parsing clients.
@@ -136,6 +137,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [LongZhuVideoClient](https://www.hhlqilongzhu.cn/H5_home.php)   |  [龙珠API视频解析](https://www.hhlqilongzhu.cn/H5_home.php)     | ✔️        |  ✔️        | [longzhu.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/longzhu.py)                  |
 | [XiazaitoolVideoClient](https://www.xiazaitool.com/dy)          |  [下载狗](https://www.xiazaitool.com/dy)                        | ✔️        |  ✔️        | [xiazaitool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/xiazaitool.py)            |
 | [NoLogoVideoClient](https://nologo.code24.top/)                 |  [去水印下载鸭](https://nologo.code24.top/)                     | ✔️        |  ✔️        | [nologo.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/nologo.py)                    |
+| [SnapWCVideoClient](https://snapwc.com/zh)                      |  [SnapWC视频解析](https://snapwc.com/zh)                        | ✔️        |  ✔️        | [snapwc.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/snapwc.py)                    |
 
 The default parsing order is to first use the parsers in the supported list. If those fail, the generic parsers are then invoked one by one until parsing succeeds.
 

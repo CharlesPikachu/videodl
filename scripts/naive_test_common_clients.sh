@@ -22,3 +22,5 @@ videodl -i "https://www.toutiao.com/video/7358202402865938953/?log_from=24fdd11d
 videodl -i "https://www.instagram.com/reel/DSO-KpuEqud/" -g -a XiazaitoolVideoClient
 # NoLogoVideoClient
 videodl -i "https://www.douyin.com/jingxuan?modal_id=7561075993822416185" -g -a NoLogoVideoClient
+# SnapWCVideoClient
+videodl -i "https://www.douyin.com/jingxuan?modal_id=7580605435187596559" -g -a SnapWCVideoClient

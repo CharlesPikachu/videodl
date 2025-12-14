@@ -3,6 +3,7 @@ from .vget import VgetVideoClient
 from .xmflv import XMFlvVideoClient
 from .gvvip import GVVIPVideoClient
 from .kedou import KedouVideoClient
+from .snapwc import SnapWCVideoClient
 from .nologo import NoLogoVideoClient
 from .iiilab import IIILabVideoClient
 from ..utils import BaseModuleBuilder
@@ -17,10 +18,11 @@ from .xiazaitool import XiazaitoolVideoClient
 '''CommonVideoClientBuilder'''
 class CommonVideoClientBuilder(BaseModuleBuilder):
     REGISTERED_MODULES = {
-        'IIILabVideoClient': IIILabVideoClient, 'KedouVideoClient': KedouVideoClient, 'SnapAnyVideoClient': SnapAnyVideoClient,
-        'GVVIPVideoClient': GVVIPVideoClient, 'VgetVideoClient': VgetVideoClient, 'ILoveAPIVideoClient': ILoveAPIVideoClient,
-        'XMFlvVideoClient': XMFlvVideoClient, 'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'LongZhuVideoClient': LongZhuVideoClient,
+        'SnapWCVideoClient': SnapWCVideoClient, 'IIILabVideoClient': IIILabVideoClient, 'KedouVideoClient': KedouVideoClient, 
+        'SnapAnyVideoClient': SnapAnyVideoClient, 'XMFlvVideoClient': XMFlvVideoClient, 'VgetVideoClient': VgetVideoClient, 
+        'GVVIPVideoClient': GVVIPVideoClient, 'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'LongZhuVideoClient': LongZhuVideoClient,
         'KuKuToolsVideoClient': KuKuToolsVideoClient, 'XiazaitoolVideoClient': XiazaitoolVideoClient, 'NoLogoVideoClient': NoLogoVideoClient,
+        'ILoveAPIVideoClient': ILoveAPIVideoClient,
     }
 
 
