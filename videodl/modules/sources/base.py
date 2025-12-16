@@ -417,6 +417,7 @@ class BaseVideoClient():
         if video_info.get('ext') in ['m3u8', 'm3u'] or video_info['download_url'].split('?')[0].endswith('.m3u8') or video_info['download_url'].split('?')[0].endswith('m3u'):
             video_info.update(dict(ext='mp4', download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
         if video_info.get('download_with_ffmpeg', False):
+            if shutil.which('N_m3u8DL-RE'): video_info['enable_nm3u8dlre'] = True 
             if video_info.get('enable_nm3u8dlre', False):
                 return self._downloadwithnm3u8dlre(
                     video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
@@ -482,7 +483,7 @@ class BaseVideoClient():
             overall_task_id = progress.add_task("[bold cyan]Overall videos", total=len(video_infos), kind="overall")
             with ThreadPoolExecutor(max_workers=num_threadings) as executor:
                 futures = [executor.submit(self._download, video_info, vid, downloaded_video_infos, request_overrides, progress) for vid, video_info in enumerate(video_infos)]
-                for feat in as_completed(futures):
+                for _ in as_completed(futures):
                     progress.update(overall_task_id, advance=1)
         # logging
         self.logger_handle.info(f'Finished downloading videos using {self.source}. Valid downloads: {len(downloaded_video_infos)}.', disable_print=self.disable_print)

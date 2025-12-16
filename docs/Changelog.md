@@ -1,5 +1,7 @@
 # Development Log
 
+- 2025-12-17: Released videofetch v0.4.0 - support parsing for more platforms; automatically enable N_m3u8DL-RE acceleration for all m3u8/HLS streams; and fix some bugs.
+
 - 2025-12-15: Released videofetch v0.3.9 - supports the SnapWC universal parsing API, and updated the CCTV M3U8 downloader to use N_m3u8DL-RE instead of the previous solution.
 
 - 2025-12-15: Released videofetch v0.3.8 - remove the general parsing endpoints that have switched to paid access, and add two free general parsing endpoints and make some improvements.

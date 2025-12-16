@@ -106,7 +106,8 @@ for v in video_infos: v['download_with_aria2c'] = True
 video_client.download(video_infos=video_infos)
 ```
 
-If you want to use N_m3u8DL-RE to speed up the download of HLS/m3u8 streams, you can do the following:
+If you want to use N_m3u8DL-RE to speed up the download of HLS/m3u8 streams, you can do the following 
+(*starting from videofetch 0.4.0, as long as the environment variables include N_m3u8DL-RE, the program will automatically invoke N_m3u8DL-RE to accelerate video downloads.*):
 
 ```python
 from videodl import videodl

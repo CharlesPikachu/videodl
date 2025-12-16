@@ -1,4 +1,5 @@
 '''initialize'''
+from .wwe import WWEVideoClient
 from .ted import TedVideoClient
 from .ku6 import Ku6VideoClient
 from .c56 import C56VideoClient
@@ -62,6 +63,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'FoxNewsVideoClient': FoxNewsVideoClient, 'SinaVideoClient': SinaVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,
         'Open163VideoClient': Open163VideoClient, 'CCtalkVideoClient': CCtalkVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient,
         'ArteTVVideoClient': ArteTVVideoClient, 'C56VideoClient': C56VideoClient, 'RedditVideoClient': RedditVideoClient,
+        'WWEVideoClient': WWEVideoClient,
     }
 
 
