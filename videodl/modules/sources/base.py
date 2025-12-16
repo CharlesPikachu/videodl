@@ -201,7 +201,6 @@ class BaseVideoClient():
         # download m3u8 files with N_m3u8DL-RE
         cli = shutil.which("N_m3u8DL-RE.exe")
         pid = str(video_info['pid'])
-        video_info['download_url'] = f'https://dhls2.cntv.qcloudcdn.com/asp/enc2/hls/main/0303000a/3/default/{pid}/main.m3u8' # match to cbox's version
         tmp_dir = Path(os.path.join(work_dir, str(pid))).expanduser().resolve()
         default_headers = request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
         default_cookies = request_overrides.get('cookies', {}) or self.default_cookies or {}

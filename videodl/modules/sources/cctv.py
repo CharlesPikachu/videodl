@@ -62,11 +62,12 @@ class CCTVVideoClient(BaseVideoClient):
             video_info.update(dict(raw_data=raw_data))
             # --parse urls
             manifest, download_urls = raw_data.get('manifest'), []
-            hls_candidates = ['hls_enc_url', 'hls_h5e_url', 'hls_enc2_url', 'hls_url'] if shutil.which('cbox') else ['hls_url']
+            hls_candidates = ['hls_enc2_url', 'hls_url'] if shutil.which('cbox') else ['hls_url']
             for hls_key in hls_candidates:
                 if raw_data.get(hls_key) or manifest.get(hls_key):
                     download_urls.append([hls_key, raw_data.get(hls_key) or manifest.get(hls_key)])
             hls_key, download_url = download_urls[0]
+            if hls_key not in ['hls_url']: download_url = re.sub(r"https://[^/]+/asp/enc2/", 'https://dh5cntv.a.bdydns.com/asp/enc2/', download_url)
             video_info.update(dict(download_url=download_url, download_with_ffmpeg_cctv=True if hls_key not in ['hls_url'] else False, pid=pid))
             # --create video info's extra entries
             dt = datetime.fromtimestamp(time.time())
