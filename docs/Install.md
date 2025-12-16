@@ -23,7 +23,7 @@ python setup.py install
 Some of the video downloaders supported by videodl rely on additional CLI tools to enable video decryption, stream parsing and downloading, accelerated stream downloading, and other extended features such as resuming interrupted downloads. 
 Specifically, these CLI tools include,
 
-- **[FFmpeg](https://ffmpeg.org/)**: All video downloaders that need to handle HLS (HTTP Live Streaming) streams depend on FFmpeg. ❗ **Therefore, we recommend that all videodl users install FFmpeg.**
+- **[FFmpeg](https://ffmpeg.org/)**: All video downloaders that need to handle HLS (HTTP Live Streaming) streams depend on FFmpeg. ❗ **Therefore, we recommend that all videodl users install FFmpeg.** ❗
   Specifically, you need to ensure that, after installation, FFmpeg can be invoked directly from your system environment (*i.e.*, it is on your `PATH`).
   A quick way to verify this is to open a terminal (or Command Prompt on Windows) and run,
   ```bash
@@ -35,7 +35,7 @@ Specifically, these CLI tools include,
   FFmpeg is a general-purpose media tool that can download standard HLS/m3u8 streams, but it assumes that the playlist and segment URLs strictly follow the protocol. 
   N_m3u8DL-RE is a specialized m3u8 downloader that adds extensive logic for handling encryption, anti-leech headers, redirects, and malformed playlists, so it can capture many ‘protected’ or non-standard videos that FFmpeg fails on. 
   In many cases it’s also faster, because N_m3u8DL-RE can download HLS segments in parallel with optimized retries/merging, while FFmpeg typically pulls segments sequentially by default.
-  ❗ **Therefore, we recommend that all videodl users install N_m3u8DL-RE to ensure videodl delivers the best possible performance.**
+  ❗ **Therefore, we recommend that all videodl users install N_m3u8DL-RE to ensure videodl delivers the best possible performance.** ❗
   Of course, you can choose not to install it, but in that case you may not be able to use videodl to parse the following platforms,
   ```
   CCTVVideoClient, FoxNewsVideoClient, TencentVideoClient, GVVIPVideoClient, 
