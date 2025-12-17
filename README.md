@@ -144,6 +144,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [XiazaitoolVideoClient](https://www.xiazaitool.com/dy)          |  [下载狗](https://www.xiazaitool.com/dy)                        | ✔️        |  ✔️        | [xiazaitool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/xiazaitool.py)            |
 | [NoLogoVideoClient](https://nologo.code24.top/)                 |  [去水印下载鸭](https://nologo.code24.top/)                     | ✔️        |  ✔️        | [nologo.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/nologo.py)                    |
 | [SnapWCVideoClient](https://snapwc.com/zh)                      |  [SnapWC视频解析](https://snapwc.com/zh)                        | ✔️        |  ✔️        | [snapwc.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/snapwc.py)                    |
+| [BugPkVideoClient](https://sv.bugpk.com/)                       |  [短视频解析工具](https://sv.bugpk.com/)                        | ✔️        |  ✔️        | [bugpk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/bugpk.py)                      |
 
 The default parsing order is to first use the parsers in the supported list. If those fail, the generic parsers are then invoked one by one until parsing succeeds.
 

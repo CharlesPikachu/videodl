@@ -3,6 +3,7 @@ from .vget import VgetVideoClient
 from .xmflv import XMFlvVideoClient
 from .gvvip import GVVIPVideoClient
 from .kedou import KedouVideoClient
+from .bugpk import BugPkVideoClient
 from .snapwc import SnapWCVideoClient
 from .nologo import NoLogoVideoClient
 from .iiilab import IIILabVideoClient
@@ -22,7 +23,7 @@ class CommonVideoClientBuilder(BaseModuleBuilder):
         'SnapAnyVideoClient': SnapAnyVideoClient, 'XMFlvVideoClient': XMFlvVideoClient, 'VgetVideoClient': VgetVideoClient, 
         'GVVIPVideoClient': GVVIPVideoClient, 'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'LongZhuVideoClient': LongZhuVideoClient,
         'KuKuToolsVideoClient': KuKuToolsVideoClient, 'XiazaitoolVideoClient': XiazaitoolVideoClient, 'NoLogoVideoClient': NoLogoVideoClient,
-        'ILoveAPIVideoClient': ILoveAPIVideoClient,
+        'ILoveAPIVideoClient': ILoveAPIVideoClient, 'BugPkVideoClient': BugPkVideoClient,
     }
 
 

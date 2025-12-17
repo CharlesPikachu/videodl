@@ -14,7 +14,7 @@ The `VideoClient` class is a high-level manager for multiple site-specific video
 
 - **allowed_video_sources**: `list[str] | None`  
   List of video source names to enable (*e.g.* `["YouTubeVideoClient"`, `"ZhihuVideoClient"]`).  
-  - If `None` or empty, it defaults to **all** sources registered in `VideoClientBuilder.REGISTERED_MODULES`.
+  - If `None` or empty, it defaults to **all** sources registered in `VideoClientBuilder.REGISTERED_MODULES` and `CommonVideoClientBuilder.REGISTERED_MODULES`.
   - Each entry must correspond to a valid backend module.
 
 - **init_video_clients_cfg**: `dict[str, dict] | None`  
@@ -141,7 +141,7 @@ All concrete video clients (such as `YouTubeVideoClient`, `BilibiliVideoClient`,
 - Parsing video information from URLs
 - Multi-threaded downloading with progress bars
 
-You usually do **not** instantiate `BaseVideoClient` directly. Instead, you work with a subclass defined in `REGISTERED_MODULES`, for example:
+You usually do **not** instantiate `BaseVideoClient` directly. Instead, you work with a subclass defined in `VideoClientBuilder.REGISTERED_MODULES` and `CommonVideoClientBuilder.REGISTERED_MODULES`, for example:
 
 - `videodl.modules.sources.AcFunVideoClient`
 - `videodl.modules.sources.BilibiliVideoClient`
@@ -161,6 +161,12 @@ You usually do **not** instantiate `BaseVideoClient` directly. Instead, you work
 - `videodl.modules.sources.RednoteVideoClient`
 - `videodl.modules.sources.MGTVVideoClient`
 - `videodl.modules.sources.HuyaVideoClient`
+- ...
+- `videodl.modules.common.BugPkVideoClient`
+- `videodl.modules.common.SnapAnyVideoClient`
+- `videodl.modules.common.XMFlvVideoClient`
+- `videodl.modules.common.KedouVideoClient`
+- `videodl.modules.common.QZXDPToolsVideoClient`
 - ...
 
 These subclasses share the same initialization pattern and public APIs (`parsefromurl`, `download`) defined by `BaseVideoClient`.
