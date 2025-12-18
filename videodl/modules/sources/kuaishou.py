@@ -71,14 +71,10 @@ class KuaishouVideoClient(BaseVideoClient):
                             url = rep.get("url")
                             if not url: continue
                             width, height, max_br = rep.get("width", 0), rep.get("height", 0), rep.get("maxBitrate", 0)
-                            candidates.append({
-                                "codec": codec_name, "maxBitrate": max_br, "resolution": width * height, "url": url, "qualityLabel": rep.get("qualityLabel"),
-                            })
+                            candidates.append({"codec": codec_name, "maxBitrate": max_br, "resolution": width * height, "url": url, "qualityLabel": rep.get("qualityLabel")})
             codec_priority = {"hevc": 2, "hevc_single": 2, "h264": 1, "h264_single": 1}
             def _sortkey(c):
-                return (
-                    codec_priority.get(c["codec"], 0), c["maxBitrate"], c["resolution"],
-                )
+                return (codec_priority.get(c["codec"], 0), c["maxBitrate"], c["resolution"])
             candidates = [c for c in candidates if c.get('url')]
             candidates.sort(key=_sortkey, reverse=True)
             download_url = [c["url"] for c in candidates][0]
