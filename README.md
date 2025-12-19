@@ -411,7 +411,7 @@ videodl -i "https://www.douyin.com/jingxuan?modal_id=7578412593719577899" -g -a 
 If you use this project in your research, please cite the repository.
 
 ```
-@misc{freeproxy2022,
+@misc{videodl2021,
     author = {Zhenchao Jin},
     title = {Videodl: A lightweight video downloader written in pure python},
     year = {2021},
