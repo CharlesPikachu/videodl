@@ -52,14 +52,10 @@
 
 # 🆕 What's New
 
+- 2025-12-19: Released videofetch v0.4.1 - added support for two general-purpose video parsing and downloading platforms, as well as one specific platform’s video parsing and downloading, and optimized the parsing and downloading for Xigua videos.
 - 2025-12-17: Released videofetch v0.4.0 - support parsing for more platforms; automatically enable N_m3u8DL-RE acceleration for all m3u8/HLS streams; and fix some bugs.
 - 2025-12-15: Released videofetch v0.3.9 - supports the SnapWC universal parsing API, and updated the CCTV M3U8 downloader to use N_m3u8DL-RE instead of the previous solution.
 - 2025-12-15: Released videofetch v0.3.8 - remove the general parsing endpoints that have switched to paid access, and add two free general parsing endpoints and make some improvements.
-- 2025-12-12: Released videofetch v0.3.7 - add one general-purpose video parsing client.
-- 2025-12-12: Released videofetch v0.3.6 - add two general-purpose video parsing clients.
-- 2025-12-12: Released videofetch v0.3.5 - added support for parsing on two specific platforms and introduced a generic parsing interface.
-- 2025-12-11: Released videofetch v0.3.4 - fix the problems with downloading CCTV videos.
-- 2025-12-08: Released videofetch v0.3.3 - some simple code fixes, and a generic xiami parsing interface has been added.
 
 
 # 🚀 Introduction
@@ -275,6 +271,26 @@ The demonstration is as follows,
 </div>
 <br />
 
+Recommended parsing and downloading commands for some widely used video platforms are as follows:
+
+```python
+# IQIYI / YOUKU / TENCENT
+videodl -i "IQIYI/YOUKU/TENCENT VIDEO URL" -g -a XMFlvVideoClient
+# Douyin / TikTok
+videodl -i "Douyin VIDEO URL" -g -a SnapWCVideoClient
+videodl -i "TikTok VIDEO URL" -g -a SnapWCVideoClient
+# CCTV
+videodl -i "CCTV VIDEO URL" -a CCTVVideoClient
+# Youtube
+videodl -i "Youtube VIDEO URL" -a YouTubeVideoClient
+# Bilibili
+videodl -i "Bilibili VIDEO URL" -a BilibiliVideoClient
+```
+
+In fact, the general-purpose video parsers in the support list can be used to parse and download videos from most widely used platforms. 
+The main difference is usually the resolution/quality of the downloaded video. 
+If you care about video quality, you can try different general-purpose parsers, compare the results yourself, and you’re also welcome to share your findings in the repo’s Discussions section.
+
 If you just want to parse a video link and retrieve information about the video, you can do it like this,
 
 ```python
@@ -379,10 +395,12 @@ videodl -i "IQIYI/YOUKU/TENCENT VIDEO URL" -g -a XMFlvVideoClient
 ```
 
 If you want to speed up the parsing, you can try specifying the parser used for the video you’re downloading. 
-For example, when downloading a Douyin video, you can run the command like this:
+For example, when downloading a Douyin / TikTok video, you can run the command like this:
 
 ```bash
 videodl -i "https://www.douyin.com/jingxuan?modal_id=7578412593719577899" -g -a "KedouVideoClient"
+videodl -i "https://www.douyin.com/jingxuan?modal_id=7580605435187596559" -g -a "SnapWCVideoClient"
+videodl -i "https://www.tiktok.com/@mustsharenews/video/7581408863128161552?lang=en" -g -a "SnapWCVideoClient"
 ```
 
 
