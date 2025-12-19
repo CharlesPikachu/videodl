@@ -52,17 +52,21 @@ The demonstration is as follows,
 Recommended parsing and downloading commands for some widely used video platforms are as follows:
 
 ```python
-# IQIYI / YOUKU / TENCENT
+# IQIYI / YOUKU / TENCENT (爱奇艺, 优酷, 腾讯视频)
 videodl -i "IQIYI/YOUKU/TENCENT VIDEO URL" -g -a XMFlvVideoClient
-# Douyin / TikTok
-videodl -i "Douyin VIDEO URL" -g -a SnapWCVideoClient
-videodl -i "TikTok VIDEO URL" -g -a SnapWCVideoClient
-# CCTV
+# DOUYIN / TIKTOK / KUAISHOU / XIAOHONGSHU (抖音, 抖音海外, 快手, 小红书等短视频)
+videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a SnapWCVideoClient
+videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a KedouVideoClient
+videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a KuKuToolsVideoClient
+videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a NoLogoVideoClient
+videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a IIILabVideoClient
+...
+# CCTV (央视网)
 videodl -i "CCTV VIDEO URL" -a CCTVVideoClient
-# Youtube
-videodl -i "Youtube VIDEO URL" -a YouTubeVideoClient
-# Bilibili
-videodl -i "Bilibili VIDEO URL" -a BilibiliVideoClient
+# YOUTUBE (油管)
+videodl -i "YOUTUBE VIDEO URL" -a YouTubeVideoClient
+# BILIBILI (B站)
+videodl -i "BILIBILI VIDEO URL" -a BilibiliVideoClient
 ```
 
 In fact, the general-purpose video parsers in the support list can be used to parse and download videos from most widely used platforms. 
