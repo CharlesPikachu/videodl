@@ -109,6 +109,8 @@ VIDEODL_TEST_SAMPLES = {
     ],
     'XiguaVideoClient': [
         'https://www.ixigua.com/7382121243505328655',
+        'https://www.ixigua.com/6898563893564703239',
+        'https://www.ixigua.com/7150802517322891779',
     ],
     'WeiboVideoClient': [
         'https://weibo.com/tv/show/1034:5234817776943232?mid=5234851004547318',

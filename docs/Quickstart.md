@@ -146,6 +146,12 @@ Alternatively, you can run the following command directly in the terminal:
 videodl -i "URL" -c "{'TencentVideoClient': {'default_parse_cookies': your_vip_cookies_with_str_or_dict_format, 'default_download_cookies': your_vip_cookies_with_str_or_dict_format}}"
 ```
 
+Of course, you can also choose a general-purpose parser that supports VIP video parsing to achieve video extraction, for example:
+
+```bash
+videodl -i "IQIYI/YOUKU/TENCENT VIDEO URL" -g -a XMFlvVideoClient
+```
+
 If you want to speed up the parsing, you can try specifying the parser used for the video you’re downloading. 
 For example, when downloading a Douyin video, you can run the command like this:
 
