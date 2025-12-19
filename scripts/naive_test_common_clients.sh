@@ -24,3 +24,7 @@ videodl -i "https://www.instagram.com/reel/DSO-KpuEqud/" -g -a XiazaitoolVideoCl
 videodl -i "https://www.douyin.com/jingxuan?modal_id=7561075993822416185" -g -a NoLogoVideoClient
 # SnapWCVideoClient
 videodl -i "https://www.douyin.com/jingxuan?modal_id=7580605435187596559" -g -a SnapWCVideoClient
+# BugPkVideoClient
+videodl -i "https://www.douyin.com/jingxuan?modal_id=7583556644202761487" -g -a BugPkVideoClient
+# ZanqianbaVideoClient
+videodl -i "https://www.toutiao.com/video/7585120439421108278/?log_from=33b1706a090018_1766131556972" -g -a ZanqianbaVideoClient

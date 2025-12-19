@@ -253,6 +253,14 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.wwe.com/videos/daniel-bryan-vs-andrade-cien-almas-smackdown-live-sept-4-2018', 
         'https://www.wwe.com/videos/full-match-damian-priest-rhea-ripley-conquer-aleister-black-zelina-vega-smackdown-highlights'
     ],
+    'BugPkVideoClient': [
+        'https://www.douyin.com/jingxuan?modal_id=7583556644202761487',
+        'https://www.kuaishou.com/short-video/3xumtfzh4aqiqc6?authorId=3xbbsmxr7cdmhqs',
+    ],
+    'ZanqianbaVideoClient': [
+        'https://www.bilibili.com/video/BV1XhSKBFE5Q/?spm_id_from=333.1007.tianma.1-2-2.click',
+        'https://www.toutiao.com/video/7585120439421108278/?log_from=33b1706a090018_1766131556972',
+    ],
 }
 
 

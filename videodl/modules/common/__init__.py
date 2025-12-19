@@ -12,6 +12,7 @@ from .longzhu import LongZhuVideoClient
 from .snapany import SnapAnyVideoClient
 from .iloveapi import ILoveAPIVideoClient
 from .kukutool import KuKuToolsVideoClient
+from .zanqianba import ZanqianbaVideoClient
 from .qzxdptools import QZXDPToolsVideoClient
 from .xiazaitool import XiazaitoolVideoClient
 
@@ -23,7 +24,7 @@ class CommonVideoClientBuilder(BaseModuleBuilder):
         'SnapAnyVideoClient': SnapAnyVideoClient, 'XMFlvVideoClient': XMFlvVideoClient, 'VgetVideoClient': VgetVideoClient, 
         'GVVIPVideoClient': GVVIPVideoClient, 'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'LongZhuVideoClient': LongZhuVideoClient,
         'KuKuToolsVideoClient': KuKuToolsVideoClient, 'XiazaitoolVideoClient': XiazaitoolVideoClient, 'NoLogoVideoClient': NoLogoVideoClient,
-        'ILoveAPIVideoClient': ILoveAPIVideoClient, 'BugPkVideoClient': BugPkVideoClient,
+        'ILoveAPIVideoClient': ILoveAPIVideoClient, 'BugPkVideoClient': BugPkVideoClient, 'ZanqianbaVideoClient': ZanqianbaVideoClient,
     }
 
 
