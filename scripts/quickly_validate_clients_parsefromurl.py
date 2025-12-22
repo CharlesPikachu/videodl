@@ -261,6 +261,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.bilibili.com/video/BV1XhSKBFE5Q/?spm_id_from=333.1007.tianma.1-2-2.click',
         'https://www.toutiao.com/video/7585120439421108278/?log_from=33b1706a090018_1766131556972',
     ],
+    'CenguiguiVideoClient': [
+        'https://www.douyin.com/jingxuan?modal_id=7577683349268608426',
+        'https://www.bilibili.com/video/BV1pKq5BKE78',
+    ],
 }
 
 
