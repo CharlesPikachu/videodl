@@ -32,3 +32,5 @@ videodl -i "https://www.toutiao.com/video/7585120439421108278/?log_from=33b1706a
 videodl -i "https://www.douyin.com/jingxuan?modal_id=7577683349268608426" -g -a CenguiguiVideoClient
 # QingtingVideoClient
 videodl -i "https://www.kuaishou.com/short-video/3x5a3tcqjss9sgw?authorId=3xna23q7fq2jn4i&streamSource=brilliant&hotChannelId=00&area=brilliantxxcarefully" -g -a QingtingVideoClient
+# BVVideoClient
+videodl -i "https://www.tiktok.com/@j4y273/video/7582553332242271510" -g -a BVVideoClient

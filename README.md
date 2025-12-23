@@ -145,6 +145,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [ZanqianbaVideoClient](https://www.zanqianba.com/)                |  [考拉解析](https://www.zanqianba.com/)                         | ✔️        |  ✔️        | [zanqianba.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/zanqianba.py)              |
 | [CenguiguiVideoClient](https://api.cenguigui.cn/api/juhesy.html)  |  [聚合去水印](https://api.cenguigui.cn/api/juhesy.html)         | ✔️        |  ✔️        | [cenguigui.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/cenguigui.py)              |
 | [QingtingVideoClient](https://33tool.com/video_parse/)            |  [蜻蜓工具](https://33tool.com/video_parse/)                    | ✔️        |  ✔️        | [qingting.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/qingting.py)                |
+| [BVVideoClient](https://www.bestvideow.com/xhs)                   |  [BestVideo下载器](https://www.bestvideow.com/xhs)              | ✔️        |  ✔️        | [bv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/bv.py)                            |
 
 The default parsing order is to first use the parsers in the supported list. If those fail, the generic parsers are then invoked one by one until parsing succeeds.
 

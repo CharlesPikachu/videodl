@@ -270,6 +270,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.douyin.com/jingxuan/theater?modal_id=7580778868509933947',
         'https://www.kuaishou.com/short-video/3x5a3tcqjss9sgw?authorId=3xna23q7fq2jn4i&streamSource=brilliant&hotChannelId=00&area=brilliantxxcarefully',
     ],
+    'BVVideoClient': [
+        'https://www.tiktok.com/@j4y273/video/7582553332242271510',
+        'https://www.toutiao.com/video/7457844322080129575/?log_from=86191c4a8551d8_1766485443453',
+    ],
 }
 
 

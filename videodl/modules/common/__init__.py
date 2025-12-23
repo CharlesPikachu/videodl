@@ -1,4 +1,5 @@
 '''initialize'''
+from .bv import BVVideoClient
 from .vget import VgetVideoClient
 from .xmflv import XMFlvVideoClient
 from .gvvip import GVVIPVideoClient
@@ -27,7 +28,7 @@ class CommonVideoClientBuilder(BaseModuleBuilder):
         'GVVIPVideoClient': GVVIPVideoClient, 'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'LongZhuVideoClient': LongZhuVideoClient,
         'KuKuToolVideoClient': KuKuToolVideoClient, 'XiazaitoolVideoClient': XiazaitoolVideoClient, 'NoLogoVideoClient': NoLogoVideoClient,
         'ILoveAPIVideoClient': ILoveAPIVideoClient, 'BugPkVideoClient': BugPkVideoClient, 'ZanqianbaVideoClient': ZanqianbaVideoClient,
-        'CenguiguiVideoClient': CenguiguiVideoClient, 'QingtingVideoClient': QingtingVideoClient,
+        'CenguiguiVideoClient': CenguiguiVideoClient, 'QingtingVideoClient': QingtingVideoClient, 'BVVideoClient': BVVideoClient,
     }
 
 
