@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of KuKuToolsVideoClient: https://dy.kukutool.com/
+    Implementation of KuKuToolVideoClient: https://dy.kukutool.com/
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):
@@ -28,11 +28,11 @@ KEY = "12345678901234567890123456789013"
 XOR_KEY = 0x5A
 
 
-'''KuKuToolsVideoClient'''
-class KuKuToolsVideoClient(BaseVideoClient):
-    source = 'KuKuToolsVideoClient'
+'''KuKuToolVideoClient'''
+class KuKuToolVideoClient(BaseVideoClient):
+    source = 'KuKuToolVideoClient'
     def __init__(self, **kwargs):
-        super(KuKuToolsVideoClient, self).__init__(**kwargs)
+        super(KuKuToolVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "host": "dy.kukutool.com",
             "origin": "https://dy.kukutool.com",

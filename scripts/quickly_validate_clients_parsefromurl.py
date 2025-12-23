@@ -228,7 +228,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://old.reddit.com/r/ketamine/comments/degtjo/when_the_k_hits/',
         'https://www.reddit.com/r/KamenRider/comments/wzqkxp/finale_kamen_rider_revice_episode_50_family_to/'
     ],
-    'KuKuToolsVideoClient': [
+    'KuKuToolVideoClient': [
         'https://www.bilibili.com/video/BV1epspzAERJ/?spm_id_from=333.1007.tianma.5-2-16.click',
         'https://www.xiaohongshu.com/explore/6898415f000000000403dc3b?xsec_token=ABozZxFfnIo4Jum5RDrI97yLjwD0ng6sc5_55zhZGU4gQ=&xsec_source=pc_user',
     ],
@@ -264,6 +264,11 @@ VIDEODL_TEST_SAMPLES = {
     'CenguiguiVideoClient': [
         'https://www.douyin.com/jingxuan?modal_id=7577683349268608426',
         'https://www.bilibili.com/video/BV1pKq5BKE78',
+    ],
+    'QingtingVideoClient': [
+        'https://www.bilibili.com/video/BV1wRqrB7EkZ/?spm_id_from=333.1007.tianma.1-1-1.click',
+        'https://www.douyin.com/jingxuan/theater?modal_id=7580778868509933947',
+        'https://www.kuaishou.com/short-video/3x5a3tcqjss9sgw?authorId=3xna23q7fq2jn4i&streamSource=brilliant&hotChannelId=00&area=brilliantxxcarefully',
     ],
 }
 

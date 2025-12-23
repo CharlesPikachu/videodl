@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of CenguiguiVideoClient: https://api.cenguigui.cn/api/juhesy.html
+    Implementation of QingtingVideoClient: https://33tool.com/video_parse/
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):
@@ -15,11 +15,11 @@ from ..utils import RandomIPGenerator
 from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json
 
 
-'''CenguiguiVideoClient'''
-class CenguiguiVideoClient(BaseVideoClient):
-    source = 'CenguiguiVideoClient'
+'''QingtingVideoClient'''
+class QingtingVideoClient(BaseVideoClient):
+    source = 'QingtingVideoClient'
     def __init__(self, **kwargs):
-        super(CenguiguiVideoClient, self).__init__(**kwargs)
+        super(QingtingVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
         }
@@ -40,12 +40,17 @@ class CenguiguiVideoClient(BaseVideoClient):
             # --get request
             headers = copy.deepcopy(self.default_headers)
             RandomIPGenerator().addrandomipv4toheaders(headers)
-            for prefix in ['player', 'api-v1', 'api']:
-                try:
-                    resp = self.get(f'https://{prefix}.cenguigui.cn/api/juhe/video.php?url={url}', headers=headers, **request_overrides)
-                    resp.raise_for_status()
-                except:
-                    continue
+            if "douyin.com" in url:
+                resp = self.get(f'https://api.33tool.com/api/parse/douyin?url={url}', headers=headers, **request_overrides)
+            elif "bilibili.com" in url or "b23.tv" in url:
+                resp = self.get(f'https://api.33tool.com/api/parse/bilibili?url={url}', headers=headers, **request_overrides)
+            elif "xiaohongshu.com" in url or "xhslink.com" in url:
+                resp = self.get(f'https://api.33tool.com/api/parse/redbook?url={url}', headers=headers, **request_overrides)
+            elif "kuaishou.com" in url:
+                resp = self.get(f'https://api.33tool.com/api/parse/kuaishou?url={url}', headers=headers, **request_overrides)
+            else:
+                raise NotImplementedError()
+            resp.raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             # --video title
@@ -54,7 +59,7 @@ class CenguiguiVideoClient(BaseVideoClient):
             video_title = raw_data['data'].get('title') or f'{self.source}_null_{date_str}'
             video_title = legalizestring(video_title, replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
             # --download url
-            download_url = raw_data['data']['down'] or raw_data['data']['url']
+            download_url = raw_data['data']['videoUrl']
             video_info.update(dict(download_url=download_url))
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(

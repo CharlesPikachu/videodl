@@ -14,8 +14,8 @@ videodl -i "http://peiyinxiu.com/m/127066455" -g -a ILoveAPIVideoClient
 videodl -i "https://v.qq.com/x/cover/mzc00200tpgbo78/y4101ca2mcp.html" -g -a XMFlvVideoClient
 # QZXDPToolsVideoClient
 videodl -i "https://www.bilibili.com/video/BV1uymuBcE6D/?spm_id_from=333.1007.tianma.1-2-2.click" -g -a QZXDPToolsVideoClient
-# KuKuToolsVideoClient
-videodl -i "https://www.xiaohongshu.com/explore/6898415f000000000403dc3b?xsec_token=ABozZxFfnIo4Jum5RDrI97yLjwD0ng6sc5_55zhZGU4gQ=&xsec_source=pc_user" -g -a KuKuToolsVideoClient
+# KuKuToolVideoClient
+videodl -i "https://www.xiaohongshu.com/explore/6898415f000000000403dc3b?xsec_token=ABozZxFfnIo4Jum5RDrI97yLjwD0ng6sc5_55zhZGU4gQ=&xsec_source=pc_user" -g -a KuKuToolVideoClient
 # LongZhuVideoClient
 videodl -i "https://www.toutiao.com/video/7358202402865938953/?log_from=24fdd11d4e4e68_1765499453711" -g -a LongZhuVideoClient
 # XiazaitoolVideoClient
@@ -30,3 +30,5 @@ videodl -i "https://www.douyin.com/jingxuan?modal_id=7583556644202761487" -g -a 
 videodl -i "https://www.toutiao.com/video/7585120439421108278/?log_from=33b1706a090018_1766131556972" -g -a ZanqianbaVideoClient
 # CenguiguiVideoClient
 videodl -i "https://www.douyin.com/jingxuan?modal_id=7577683349268608426" -g -a CenguiguiVideoClient
+# QingtingVideoClient
+videodl -i "https://www.kuaishou.com/short-video/3x5a3tcqjss9sgw?authorId=3xna23q7fq2jn4i&streamSource=brilliant&hotChannelId=00&area=brilliantxxcarefully" -g -a QingtingVideoClient

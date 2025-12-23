@@ -11,7 +11,8 @@ from ..utils import BaseModuleBuilder
 from .longzhu import LongZhuVideoClient
 from .snapany import SnapAnyVideoClient
 from .iloveapi import ILoveAPIVideoClient
-from .kukutool import KuKuToolsVideoClient
+from .qingting import QingtingVideoClient
+from .kukutool import KuKuToolVideoClient
 from .zanqianba import ZanqianbaVideoClient
 from .cenguigui import CenguiguiVideoClient
 from .qzxdptools import QZXDPToolsVideoClient
@@ -24,9 +25,9 @@ class CommonVideoClientBuilder(BaseModuleBuilder):
         'SnapWCVideoClient': SnapWCVideoClient, 'IIILabVideoClient': IIILabVideoClient, 'KedouVideoClient': KedouVideoClient, 
         'SnapAnyVideoClient': SnapAnyVideoClient, 'XMFlvVideoClient': XMFlvVideoClient, 'VgetVideoClient': VgetVideoClient, 
         'GVVIPVideoClient': GVVIPVideoClient, 'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'LongZhuVideoClient': LongZhuVideoClient,
-        'KuKuToolsVideoClient': KuKuToolsVideoClient, 'XiazaitoolVideoClient': XiazaitoolVideoClient, 'NoLogoVideoClient': NoLogoVideoClient,
+        'KuKuToolVideoClient': KuKuToolVideoClient, 'XiazaitoolVideoClient': XiazaitoolVideoClient, 'NoLogoVideoClient': NoLogoVideoClient,
         'ILoveAPIVideoClient': ILoveAPIVideoClient, 'BugPkVideoClient': BugPkVideoClient, 'ZanqianbaVideoClient': ZanqianbaVideoClient,
-        'CenguiguiVideoClient': CenguiguiVideoClient,
+        'CenguiguiVideoClient': CenguiguiVideoClient, 'QingtingVideoClient': QingtingVideoClient,
     }
 
 

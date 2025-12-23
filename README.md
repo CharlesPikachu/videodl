@@ -52,6 +52,7 @@
 
 # 🆕 What's New
 
+- 2025-12-23: Released videofetch v0.4.2 - introduce multiple new parsing endpoints.
 - 2025-12-19: Released videofetch v0.4.1 - added support for two general-purpose video parsing and downloading platforms, as well as one specific platform’s video parsing and downloading, and optimized the parsing and downloading for Xigua videos.
 - 2025-12-17: Released videofetch v0.4.0 - support parsing for more platforms; automatically enable N_m3u8DL-RE acceleration for all m3u8/HLS streams; and fix some bugs.
 - 2025-12-15: Released videofetch v0.3.9 - supports the SnapWC universal parsing API, and updated the CCTV M3U8 downloader to use N_m3u8DL-RE instead of the previous solution.
@@ -135,7 +136,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [ILoveAPIVideoClient](https://www.52api.cn/)                      |  [我爱API](https://www.52api.cn/)                               | ✔️        |  ✔️        | [iloveapi.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/iloveapi.py)                |
 | [XMFlvVideoClient](https://jx.xmflv.com/)                         |  [虾米解析](https://jx.xmflv.com/)                              | ✔️        |  ✔️        | [xmflv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/xmflv.py)                      |
 | [QZXDPToolsVideoClient](https://tools.qzxdp.cn/video_spider)      |  [全栈工具视频解析](https://tools.qzxdp.cn/video_spider)        | ✔️        |  ✔️        | [qzxdptools.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/qzxdptools.py)            |
-| [KuKuToolsVideoClient](https://dy.kukutool.com/)                  |  [KuKuTool视频解析](https://dy.kukutool.com/)                   | ✔️        |  ✔️        | [kukutool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kukutool.py)                |
+| [KuKuToolVideoClient](https://dy.kukutool.com/)                   |  [KuKuTool视频解析](https://dy.kukutool.com/)                   | ✔️        |  ✔️        | [kukutool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kukutool.py)                |
 | [LongZhuVideoClient](https://www.hhlqilongzhu.cn/H5_home.php)     |  [龙珠API视频解析](https://www.hhlqilongzhu.cn/H5_home.php)     | ✔️        |  ✔️        | [longzhu.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/longzhu.py)                  |
 | [XiazaitoolVideoClient](https://www.xiazaitool.com/dy)            |  [下载狗](https://www.xiazaitool.com/dy)                        | ✔️        |  ✔️        | [xiazaitool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/xiazaitool.py)            |
 | [NoLogoVideoClient](https://nologo.code24.top/)                   |  [去水印下载鸭](https://nologo.code24.top/)                     | ✔️        |  ✔️        | [nologo.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/nologo.py)                    |
@@ -143,6 +144,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [BugPkVideoClient](https://sv.bugpk.com/)                         |  [短视频解析工具](https://sv.bugpk.com/)                        | ✔️        |  ✔️        | [bugpk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/bugpk.py)                      |
 | [ZanqianbaVideoClient](https://www.zanqianba.com/)                |  [考拉解析](https://www.zanqianba.com/)                         | ✔️        |  ✔️        | [zanqianba.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/zanqianba.py)              |
 | [CenguiguiVideoClient](https://api.cenguigui.cn/api/juhesy.html)  |  [聚合去水印](https://api.cenguigui.cn/api/juhesy.html)         | ✔️        |  ✔️        | [cenguigui.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/cenguigui.py)              |
+| [QingtingVideoClient](https://33tool.com/video_parse/)            |  [蜻蜓工具](https://33tool.com/video_parse/)                    | ✔️        |  ✔️        | [qingting.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/qingting.py)                |
 
 The default parsing order is to first use the parsers in the supported list. If those fail, the generic parsers are then invoked one by one until parsing succeeds.
 
@@ -278,11 +280,11 @@ Recommended parsing and downloading commands for some widely used video platform
 # IQIYI / YOUKU / TENCENT (爱奇艺, 优酷, 腾讯视频)
 videodl -i "IQIYI/YOUKU/TENCENT VIDEO URL" -g -a XMFlvVideoClient
 # MIGU (咪咕视频)
-videodl -i "MIGU VIDEO URL" -a KedouVideoClient
+videodl -i "MIGU VIDEO URL" -g -a KedouVideoClient
 # DOUYIN / TIKTOK / KUAISHOU / XIAOHONGSHU (抖音, 抖音海外, 快手, 小红书等短视频)
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a SnapWCVideoClient
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a KedouVideoClient
-videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a KuKuToolsVideoClient
+videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a KuKuToolVideoClient
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a NoLogoVideoClient
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a IIILabVideoClient
 ...
