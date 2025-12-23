@@ -277,6 +277,8 @@ Recommended parsing and downloading commands for some widely used video platform
 ```python
 # IQIYI / YOUKU / TENCENT (爱奇艺, 优酷, 腾讯视频)
 videodl -i "IQIYI/YOUKU/TENCENT VIDEO URL" -g -a XMFlvVideoClient
+# MIGU (咪咕视频)
+videodl -i "MIGU VIDEO URL" -a KedouVideoClient
 # DOUYIN / TIKTOK / KUAISHOU / XIAOHONGSHU (抖音, 抖音海外, 快手, 小红书等短视频)
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a SnapWCVideoClient
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a KedouVideoClient
