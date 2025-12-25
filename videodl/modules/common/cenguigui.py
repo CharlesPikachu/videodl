@@ -40,7 +40,7 @@ class CenguiguiVideoClient(BaseVideoClient):
             # --get request
             headers = copy.deepcopy(self.default_headers)
             RandomIPGenerator().addrandomipv4toheaders(headers)
-            for prefix in ['player', 'api-v1', 'api']:
+            for prefix in ['player', 'api-v2', 'api-v1', 'api']:
                 try:
                     resp = self.get(f'https://{prefix}.cenguigui.cn/api/juhe/video.php?url={url}', headers=headers, **request_overrides)
                     resp.raise_for_status()
