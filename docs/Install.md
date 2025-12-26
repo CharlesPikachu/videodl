@@ -44,7 +44,7 @@ Specifically, these CLI tools include,
   ```
   and downloads from many other sites that provide m3u8/HLS streams may also be significantly limited.
   As with FFmpeg, after installation you should make sure this tool can be run directly from the command line, *i.e.*, its location is included in your system `PATH`.
-  A quick way to check whether N_m3u8DL-RE has been installed successfully is to open a terminal (or Command Prompt on Windows) and run:
+  A quick way to check whether N_m3u8DL-RE has been installed successfully is to open a terminal (or Command Prompt on Windows) and run,
   ```bash
   N_m3u8DL-RE --version
   ```
@@ -56,7 +56,7 @@ Specifically, these CLI tools include,
   To enable it, download CBox from the GitHub release above and add the CBox folder to your system `PATH`.
   If you intend to use `CCTVVideoClient`, you should also install [FFmpeg](https://ffmpeg.org/) and [N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE) and ensure they are available on your `PATH` as well.
   If you’re not using `CCTVVideoClient` for HD downloads, you can skip the CBox setup entirely.
-  To verify your setup, these commands should print the full executable paths (instead of returning nothing):
+  To verify your setup, these commands should print the full executable paths (instead of returning nothing),
   ```bash
   python -c "import shutil; print(shutil.which('cbox'))"
   python -c "import shutil; print(shutil.which('N_m3u8DL-RE'))"
@@ -65,7 +65,7 @@ Specifically, these CLI tools include,
 
 - **[Node.js](https://nodejs.org/en)**: Currently, Node.js is only used in `YouTubeVideoClient` to execute certain JavaScript code for video parsing. 
   Therefore, if you don’t need to use `YouTubeVideoClient`, you can safely skip installing this CLI tool.
-  A quick way to check whether Node.js has been installed successfully is to open a terminal (or Command Prompt on Windows) and run:
+  A quick way to check whether Node.js has been installed successfully is to open a terminal (or Command Prompt on Windows) and run,
   ```bash
   node -v (npm -v)
   ```
