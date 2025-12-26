@@ -49,7 +49,7 @@ The demonstration is as follows,
 </div>
 <br />
 
-Recommended parsing and downloading commands for some widely used video platforms are as follows:
+Recommended parsing and downloading commands for some widely used video platforms are as follows,
 
 ```python
 # IQIYI / YOUKU / TENCENT (爱奇艺, 优酷, 腾讯视频)
@@ -111,7 +111,7 @@ The output of this code looks like,
 ]
 ```
 
-Then you can also call the video downloading function to download the video parsed by videodl. The code is as follows:
+Then you can also call the video downloading function to download the video parsed by videodl. The code is as follows,
 
 ```python
 from videodl import videodl
@@ -121,7 +121,7 @@ video_infos = video_client.parsefromurl("https://v.youku.com/v_show/id_XNDUxOTc1
 video_client.download(video_infos=video_infos)
 ```
 
-If you want to use aria2c to accelerate the download of non-HLS/m3u8 streams, such as mp4 files, you can do the following:
+If you want to use aria2c to accelerate the download of non-HLS/m3u8 streams, such as mp4 files, you can do the following,
 
 ```python
 from videodl import videodl
@@ -133,7 +133,7 @@ video_client.download(video_infos=video_infos)
 ```
 
 If you want to use N_m3u8DL-RE to speed up the download of HLS/m3u8 streams, you can do the following 
-(*starting from videofetch 0.4.0, as long as the environment variables include N_m3u8DL-RE, the program will automatically invoke N_m3u8DL-RE to accelerate video downloads.*):
+(*starting from videofetch 0.4.0, as long as the environment variables include N_m3u8DL-RE, the program will automatically invoke N_m3u8DL-RE to accelerate video downloads.*),
 
 ```python
 from videodl import videodl
@@ -154,7 +154,7 @@ video_client = videodl.VideoClient(apply_common_video_clients_only=True)
 video_client.startparseurlcmdui()
 ```
 
-If you’re a VIP member of a video platform, such as Tencent Video, you can try the following code to improve the quality of the videos you download:
+If you’re a VIP member of a video platform, such as Tencent Video, you can try the following code to improve the quality of the videos you download,
 
 ```python
 from videodl import videodl
@@ -166,20 +166,20 @@ video_client = videodl.VideoClient(init_video_clients_cfg=init_video_clients_cfg
 video_client.startparseurlcmdui()
 ```
 
-Alternatively, you can run the following command directly in the terminal:
+Alternatively, you can run the following command directly in the terminal,
 
 ```bash
 videodl -i "URL" -c "{'TencentVideoClient': {'default_parse_cookies': your_vip_cookies_with_str_or_dict_format, 'default_download_cookies': your_vip_cookies_with_str_or_dict_format}}"
 ```
 
-Of course, you can also choose a general-purpose parser that supports VIP video parsing to achieve video extraction, for example:
+Of course, you can also choose a general-purpose parser that supports VIP video parsing to achieve video extraction, for example,
 
 ```bash
 videodl -i "IQIYI/YOUKU/TENCENT VIDEO URL" -g -a XMFlvVideoClient
 ```
 
 If you want to speed up the parsing, you can try specifying the parser used for the video you’re downloading. 
-For example, when downloading a Douyin / TikTok video, you can run the command like this:
+For example, when downloading a Douyin / TikTok video, you can run the command like this,
 
 ```bash
 videodl -i "https://www.douyin.com/jingxuan?modal_id=7578412593719577899" -g -a "KedouVideoClient"
