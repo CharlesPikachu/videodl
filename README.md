@@ -186,7 +186,7 @@ Specifically, these CLI tools include,
   ```
   CCTVVideoClient, FoxNewsVideoClient, TencentVideoClient, GVVIPVideoClient, 
   SnapAnyVideoClient, VgetVideoClient, ArteTVVideoClient, XMFlvVideoClient, 
-  RedditVideoClient, IIILabVideoClient, WWEVideoClient
+  RedditVideoClient, IIILabVideoClient, WWEVideoClient, IQiyiVideoClient,
   ```
   and downloads from many other sites that provide m3u8/HLS streams may also be significantly limited.
   As with FFmpeg, after installation you should make sure this tool can be run directly from the command line, *i.e.*, its location is included in your system `PATH`.
