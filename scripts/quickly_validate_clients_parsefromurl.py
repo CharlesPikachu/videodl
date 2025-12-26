@@ -274,6 +274,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.tiktok.com/@j4y273/video/7582553332242271510',
         'https://www.toutiao.com/video/7457844322080129575/?log_from=86191c4a8551d8_1766485443453',
     ],
+    'IQiyiVideoClient': [
+        'https://www.iqiyi.com/v_1wc7muawbrc.html',
+        'https://www.iqiyi.com/v_1y6z93cf2qw.html', # VIP video requires passing VIP user cookies to obtain full videos
+    ],
 }
 
 

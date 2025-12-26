@@ -19,6 +19,8 @@ from .weibo import WeiboVideoClient
 from .zhihu import ZhihuVideoClient
 from .kakao import KakaoVideoClient
 from .youku import YoukuVideoClient
+from .m1905 import M1905VideoClient
+from .iqiyi import IQiyiVideoClient
 from .artetv import ArteTVVideoClient
 from .reddit import RedditVideoClient
 from .genius import GeniusVideoClient
@@ -63,7 +65,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'FoxNewsVideoClient': FoxNewsVideoClient, 'SinaVideoClient': SinaVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,
         'Open163VideoClient': Open163VideoClient, 'CCtalkVideoClient': CCtalkVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient,
         'ArteTVVideoClient': ArteTVVideoClient, 'C56VideoClient': C56VideoClient, 'RedditVideoClient': RedditVideoClient,
-        'WWEVideoClient': WWEVideoClient,
+        'WWEVideoClient': WWEVideoClient, 'M1905VideoClient': M1905VideoClient, 'IQiyiVideoClient': IQiyiVideoClient,
     }
 
 

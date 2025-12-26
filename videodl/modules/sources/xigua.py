@@ -14,7 +14,6 @@ import zlib
 import base64
 import hashlib
 import json_repair
-from bs4 import BeautifulSoup
 from datetime import datetime
 from .base import BaseVideoClient
 from urllib.parse import urlparse
