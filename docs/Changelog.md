@@ -1,5 +1,7 @@
 # Development Log
 
+- 2025-12-28: Released videofetch v0.4.3 - added native API parsing support for iQIYI and 1905.com, introduced a unified video parsing interface, and made a few minor code optimizations.
+
 - 2025-12-23: Released videofetch v0.4.2 - introduce multiple new parsing endpoints.
 
 - 2025-12-19: Released videofetch v0.4.1 - added support for two general-purpose video parsing and downloading platforms, as well as one specific platform’s video parsing and downloading, and optimized the parsing and downloading for Xigua videos.

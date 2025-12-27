@@ -9,6 +9,7 @@ from .snapwc import SnapWCVideoClient
 from .nologo import NoLogoVideoClient
 from .iiilab import IIILabVideoClient
 from ..utils import BaseModuleBuilder
+from .videofk import VideoFKVideoClient
 from .longzhu import LongZhuVideoClient
 from .snapany import SnapAnyVideoClient
 from .iloveapi import ILoveAPIVideoClient
@@ -29,6 +30,7 @@ class CommonVideoClientBuilder(BaseModuleBuilder):
         'KuKuToolVideoClient': KuKuToolVideoClient, 'XiazaitoolVideoClient': XiazaitoolVideoClient, 'NoLogoVideoClient': NoLogoVideoClient,
         'ILoveAPIVideoClient': ILoveAPIVideoClient, 'BugPkVideoClient': BugPkVideoClient, 'ZanqianbaVideoClient': ZanqianbaVideoClient,
         'CenguiguiVideoClient': CenguiguiVideoClient, 'QingtingVideoClient': QingtingVideoClient, 'BVVideoClient': BVVideoClient,
+        'VideoFKVideoClient': VideoFKVideoClient,
     }
 
 

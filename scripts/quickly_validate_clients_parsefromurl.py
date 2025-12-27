@@ -285,6 +285,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.1905.com/mdb/film/2245563',
         'https://www.1905.com/vod/play/1287886.shtml',
     ],
+    'VideoFKVideoClient': [
+        'https://www.youtube.com/watch?v=CXuFh6YsyM4&list=RDCXuFh6YsyM4&start_radio=1',
+        'https://www.douyin.com/jingxuan?modal_id=7571763604346263650',
+    ],
 }
 
 
