@@ -1,1 +1,1 @@
-recursive-include videodl/modules/js/youtube *.js
+recursive-include videodl/modules/js *.js *.json *.wasm
