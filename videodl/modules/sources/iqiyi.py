@@ -120,8 +120,10 @@ class IQiyiVideoClient(BaseVideoClient):
             vinfo_hit_tvid = [dic for dic in normal_ids if int(dic['V']) == int(tvid)][0]
             # ----parse download url from the highest resolution to lowest resolution
             qualities = {'dolby': 800, 'sfr_hdr': 800, 'hdr10': 800, 'uhd': 800, 'fhd': 600, 'shd': 500, 'hd': 300, 'sd': 200}
-            tm = int(time.time() * 1000)
+            tm, bid_tried = int(time.time() * 1000), set()
             for bid in list(qualities.values()):
+                if bid in bid_tried: continue
+                bid_tried.add(bid)
                 params = {
                     'tvid': vinfo_hit_tvid['V'], 'bid': bid, 'vid': '', 'src': '01010031010000000000', 'vt': 0, 'rs': 1, 'uid': '', 'ori': 'pcw', 'ps': 1,
                     'k_uid': device_id, 'pt': 0, 'd': 0, 's': '', 'lid': 0, 'cf': 0, 'ct': 0, 'authKey': self._authkey(tm, vinfo_hit_tvid['V']), 'k_tag': 1, 'dfp': '',
@@ -145,6 +147,7 @@ class IQiyiVideoClient(BaseVideoClient):
                     break
                 except:
                     continue
+            # --misc
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )

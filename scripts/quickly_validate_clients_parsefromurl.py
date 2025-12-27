@@ -278,6 +278,13 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.iqiyi.com/v_1wc7muawbrc.html',
         'https://www.iqiyi.com/v_1y6z93cf2qw.html', # VIP video requires passing VIP user cookies to obtain full videos
     ],
+    'M1905VideoClient': [
+        'https://www.1905.com/video/play/1751538.shtml',
+        'https://www.1905.com/vod/play/1573197.shtml?fr=vodhome_zxdp_tj',
+        'https://vip.1905.com/play/535547.shtml',
+        'https://www.1905.com/mdb/film/2245563',
+        'https://www.1905.com/vod/play/1287886.shtml',
+    ],
 }
 
 

@@ -417,7 +417,13 @@ class BaseVideoClient():
         if video_info.get('ext') in ['m3u8', 'm3u'] or video_info['download_url'].split('?')[0].endswith('.m3u8') or video_info['download_url'].split('?')[0].endswith('m3u'):
             video_info.update(dict(ext='mp4', download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
         if video_info.get('download_with_ffmpeg', False):
-            if shutil.which('N_m3u8DL-RE'): video_info['enable_nm3u8dlre'] = True 
+            if shutil.which('N_m3u8DL-RE'): video_info['enable_nm3u8dlre'] = True
+            elif video_info['enable_nm3u8dlre']:
+                warning_msg = ('"enable_nm3u8dlre" has been set to True, but N_m3u8DL-RE was not found in the environment variables.' 
+                               'Please visit https://github.com/nilaoda/N_m3u8DL-RE to download and install the version of N_m3u8DL-RE that matches your system,'
+                               'and then add it to your environment variables. Now, we will switch "enable_nm3u8dlre" to False and try downloading again.')
+                video_info['enable_nm3u8dlre'] = False
+                self.logger_handle.warning(f'{self.source}._download >>> {video_info["download_url"]} (Warning: {warning_msg})', disable_print=self.disable_print)
             if video_info.get('enable_nm3u8dlre', False):
                 return self._downloadwithnm3u8dlre(
                     video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
