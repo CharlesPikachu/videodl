@@ -66,6 +66,8 @@ videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a IIILabVideoClien
 ...
 # CCTV (央视网)
 videodl -i "CCTV VIDEO URL" -a CCTVVideoClient
+# 1905 (1905电影网)
+videodl -i "M1905 VIDEO URL" -a M1905VideoClient
 # YOUTUBE (油管)
 videodl -i "YOUTUBE VIDEO URL" -a YouTubeVideoClient
 videodl -i "YOUTUBE VIDEO URL" -g -a VideoFKVideoClient

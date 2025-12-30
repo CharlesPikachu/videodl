@@ -18,6 +18,7 @@ import subprocess
 from pathlib import Path
 from rich.text import Text
 from rich.progress import Task
+from functools import lru_cache
 from freeproxy import freeproxy
 from urllib.parse import urlsplit
 from fake_useragent import UserAgent
@@ -495,15 +496,18 @@ class BaseVideoClient():
         self.logger_handle.info(f'Finished downloading videos using {self.source}. Valid downloads: {len(downloaded_video_infos)}.', disable_print=self.disable_print)
         # return
         return downloaded_video_infos
+    '''fetchhostname'''
+    @staticmethod
+    @lru_cache(maxsize=200_000)
+    def obtainhostname(url: str):
+        return urlsplit(url).hostname
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list = None):
         # set valid domains
-        if valid_domains is None:
-            valid_domains = []
+        if valid_domains is None: valid_domains = []
         # extract domain
-        parsed_url = urlsplit(url)
-        domain = parsed_url.netloc
+        domain = BaseVideoClient.obtainhostname(url)
         # judge and return according to domain
         if not domain: return False
         return domain in valid_domains
@@ -525,10 +529,10 @@ class BaseVideoClient():
                 self.session.proxies = {}
             try:
                 resp = self.session.get(url, **kwargs)
+                resp.raise_for_status()
             except Exception as err:
                 self.logger_handle.error(f'{self.source}.get >>> {url} (Error: {err})', disable_print=self.disable_print)
                 continue
-            if resp.status_code != 200: continue
             return resp
         return resp
     '''post'''
@@ -549,10 +553,10 @@ class BaseVideoClient():
                 self.session.proxies = {}
             try:
                 resp = self.session.post(url, **kwargs)
+                resp.raise_for_status()
             except Exception as err:
                 self.logger_handle.error(f'{self.source}.post >>> {url} (Error: {err})', disable_print=self.disable_print)
                 continue
-            if resp.status_code != 200: continue
             return resp
         return resp
     '''_savetopkl'''
