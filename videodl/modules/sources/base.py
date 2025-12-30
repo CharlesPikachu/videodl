@@ -17,6 +17,7 @@ import requests
 import subprocess
 from pathlib import Path
 from rich.text import Text
+from typing import Optional
 from rich.progress import Task
 from functools import lru_cache
 from freeproxy import freeproxy
@@ -501,13 +502,59 @@ class BaseVideoClient():
     @lru_cache(maxsize=200_000)
     def obtainhostname(url: str):
         return urlsplit(url).hostname
+    '''isplausiblehostname'''
+    @staticmethod
+    def isplausiblehostname(hostname: str) -> bool:
+        if not hostname or len(hostname) > 253: return False
+        if not hostname.isascii(): return False
+        if hostname.startswith(".") or hostname.endswith("."): return False
+        allowed = set("abcdefghijklmnopqrstuvwxyz0123456789-.")
+        if any(ch not in allowed for ch in hostname): return False
+        labels = hostname.split(".")
+        if any(not label for label in labels): return False
+        for label in labels:
+            if len(label) > 63: return False
+            if label.startswith("-") or label.endswith("-"): return False
+        return True
+    '''fastextracthostname'''
+    @staticmethod
+    def fastextracthostname(url: str) -> Optional[str]:
+        if not url: return None
+        url_text = url.strip()
+        if not url_text: return None
+        if "://" not in url_text:
+            if url_text.startswith("//"): url_text = "http:" + url_text
+            else: url_text = "http://" + url_text
+        scheme_separator_index = url_text.find("://")
+        if scheme_separator_index < 0: return None
+        authority_start_index = scheme_separator_index + 3
+        authority_end_index = len(url_text)
+        for delimiter in ("/", "?", "#"):
+            delimiter_index = url_text.find(delimiter, authority_start_index)
+            if delimiter_index != -1 and delimiter_index < authority_end_index: authority_end_index = delimiter_index
+        authority = url_text[authority_start_index: authority_end_index]
+        if not authority: return None
+        at_index = authority.rfind("@")
+        if at_index != -1: authority = authority[at_index + 1 :]
+        if authority.startswith("["): return None
+        if authority.count(":") == 1:
+            colon_index = authority.rfind(":")
+            if colon_index != -1: authority = authority[:colon_index]
+        hostname = authority
+        if not hostname: return None
+        if not BaseVideoClient.isplausiblehostname(hostname): return None
+        return hostname
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list = None):
         # set valid domains
         if valid_domains is None: valid_domains = []
         # extract domain
-        domain = BaseVideoClient.obtainhostname(url)
+        try:
+            domain = BaseVideoClient.fastextracthostname(url)
+            assert domain
+        except:
+            domain = BaseVideoClient.obtainhostname(url)
         # judge and return according to domain
         if not domain: return False
         return domain in valid_domains
