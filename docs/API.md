@@ -30,7 +30,7 @@ The `VideoClient` class is a high-level manager for multiple site-specific video
     - `logger_handle`: internal `LoggerHandle` instance  
     - `disable_print`: `False`  
     - `work_dir`: `'videodl_outputs'`  
-    - `proxy_sources`: `None`  
+    - `freeproxy_settings`: `None`  
     - `default_search_cookies`: `{}`  
     - `default_download_cookies`: `{}`  
     - `default_parse_cookies`: `{}`  
@@ -175,7 +175,7 @@ These subclasses share the same initialization pattern and public APIs (`parsefr
 
 - **auto_set_proxies**: `bool`, default `False`  
   Whether to automatically obtain and set HTTP proxies via `freeproxy.ProxiedSessionClient` (refer to [freeproxy](https://github.com/CharlesPikachu/freeproxy/)) for each request.  
-  - If `True`, `self.proxied_session_client` is initialized with `proxy_sources`.  
+  - If `True`, `self.proxied_session_client` is initialized with `freeproxy_settings`.  
   - If `False`, no automatic proxy management is used (proxies are cleared in `get`/`post`).
 
 - **random_update_ua**: `bool`, default `False`  
@@ -208,10 +208,10 @@ These subclasses share the same initialization pattern and public APIs (`parsefr
   - Created automatically via `touchdir(work_dir)` if it does not exist.  
   - Subclasses often use `os.path.join(self.work_dir, self.source, ...)` to organize per-site outputs.
 
-- **proxy_sources**: `list[str] | None`, default `None`  
-  List of proxy provider class names for `freeproxy.ProxiedSessionClient`.  
-  - If `None` and `auto_set_proxies=True`, a default list is used internally:  
-    `['KuaidailiProxiedSession', 'IP3366ProxiedSession', 'QiyunipProxiedSession', 'ProxyhubProxiedSession', 'ProxydbProxiedSession']`.
+- **freeproxy_settings**: `dict | None`, default `None`  
+  The arguments passed when instantiating `freeproxy.ProxiedSessionClient`.  
+  - If `None` and `auto_set_proxies=True`, a default dict is used internally:  
+    `dict(disable_print=True, proxy_sources=['ProxiflyProxiedSession'], max_tries=20, init_proxied_session_cfg={})`.
 
 - **default_search_cookies**: `dict | None`, default `None`  
   Default cookies for **search-type** requests.  

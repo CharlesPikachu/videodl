@@ -12,7 +12,6 @@ import time
 from datetime import datetime
 from bs4 import BeautifulSoup
 from .base import BaseVideoClient
-from playwright.sync_api import sync_playwright
 from ..utils import legalizestring, useparseheaderscookies, ensureplaywrightchromium, FileTypeSniffer, VideoInfo
 
 
@@ -32,6 +31,7 @@ class BaiduTiebaVideoClient(BaseVideoClient):
         self._initsession()
     '''_getcookies'''
     def _getcookies(self):
+        from playwright.sync_api import sync_playwright
         ensureplaywrightchromium()
         with sync_playwright() as pw:
             browser = pw.chromium.launch(headless=True)

@@ -41,7 +41,7 @@ class VideoClient():
         # instance video_clients (lazy instance to speed up parsing)
         default_video_client_cfg = dict(
             auto_set_proxies=False, random_update_ua=False, max_retries=5, maintain_session=False, logger_handle=self.logger_handle,
-            disable_print=False, work_dir='videodl_outputs', proxy_sources=None, default_search_cookies={}, default_download_cookies={},
+            disable_print=False, work_dir='videodl_outputs', freeproxy_settings=None, default_search_cookies={}, default_download_cookies={},
             default_parse_cookies={}
         )
         self.video_clients, self.work_dirs = dict(), dict()

@@ -17,10 +17,8 @@ import requests
 import subprocess
 from pathlib import Path
 from rich.text import Text
-from typing import Optional
 from rich.progress import Task
 from functools import lru_cache
-from freeproxy import freeproxy
 from urllib.parse import urlsplit
 from fake_useragent import UserAgent
 from platformdirs import user_log_dir
@@ -50,7 +48,7 @@ class VideoAwareColumn(ProgressColumn):
 class BaseVideoClient():
     source = 'BaseVideoClient'
     def __init__(self, auto_set_proxies: bool = False, random_update_ua: bool = False, max_retries: int = 5, maintain_session: bool = False, 
-                 logger_handle: LoggerHandle = None, disable_print: bool = False, work_dir: str = 'videodl_outputs', proxy_sources: list = None,
+                 logger_handle: LoggerHandle = None, disable_print: bool = False, work_dir: str = 'videodl_outputs', freeproxy_settings: dict = None,
                  default_search_cookies: dict = None, default_download_cookies: dict = None, default_parse_cookies: dict = None):
         # set up work dir
         touchdir(work_dir)
@@ -62,6 +60,7 @@ class BaseVideoClient():
         self.random_update_ua = random_update_ua
         self.maintain_session = maintain_session
         self.auto_set_proxies = auto_set_proxies
+        self.freeproxy_settings = freeproxy_settings or {}
         self.default_search_cookies = default_search_cookies or {}
         if self.default_search_cookies and isinstance(self.default_search_cookies, str): self.default_search_cookies = dict(item.split("=", 1) for item in self.default_search_cookies.split("; "))
         self.default_download_cookies = default_download_cookies or {}
@@ -76,10 +75,12 @@ class BaseVideoClient():
         self.default_headers = self.default_parse_headers
         self._initsession()
         # proxied_session_client
-        self.proxied_session_client = freeproxy.ProxiedSessionClient(
-            proxy_sources=['KuaidailiProxiedSession', 'ProxiflyProxiedSession', 'IPLocateProxiedSession', 'QiyunipProxiedSession'] if proxy_sources is None else proxy_sources, 
-            disable_print=True
-        ) if auto_set_proxies else None
+        self.proxied_session_client = None
+        if auto_set_proxies:
+            from freeproxy import freeproxy
+            default_freeproxy_settings = dict(disable_print=True, proxy_sources=['ProxiflyProxiedSession'], max_tries=20, init_proxied_session_cfg={})
+            default_freeproxy_settings.update(self.freeproxy_settings)
+            self.proxied_session_client = freeproxy.ProxiedSessionClient(**default_freeproxy_settings)
     '''_initsession'''
     def _initsession(self):
         self.session = requests.Session()
@@ -502,59 +503,13 @@ class BaseVideoClient():
     @lru_cache(maxsize=200_000)
     def obtainhostname(url: str):
         return urlsplit(url).hostname
-    '''isplausiblehostname'''
-    @staticmethod
-    def isplausiblehostname(hostname: str) -> bool:
-        if not hostname or len(hostname) > 253: return False
-        if not hostname.isascii(): return False
-        if hostname.startswith(".") or hostname.endswith("."): return False
-        allowed = set("abcdefghijklmnopqrstuvwxyz0123456789-.")
-        if any(ch not in allowed for ch in hostname): return False
-        labels = hostname.split(".")
-        if any(not label for label in labels): return False
-        for label in labels:
-            if len(label) > 63: return False
-            if label.startswith("-") or label.endswith("-"): return False
-        return True
-    '''fastextracthostname'''
-    @staticmethod
-    def fastextracthostname(url: str) -> Optional[str]:
-        if not url: return None
-        url_text = url.strip()
-        if not url_text: return None
-        if "://" not in url_text:
-            if url_text.startswith("//"): url_text = "http:" + url_text
-            else: url_text = "http://" + url_text
-        scheme_separator_index = url_text.find("://")
-        if scheme_separator_index < 0: return None
-        authority_start_index = scheme_separator_index + 3
-        authority_end_index = len(url_text)
-        for delimiter in ("/", "?", "#"):
-            delimiter_index = url_text.find(delimiter, authority_start_index)
-            if delimiter_index != -1 and delimiter_index < authority_end_index: authority_end_index = delimiter_index
-        authority = url_text[authority_start_index: authority_end_index]
-        if not authority: return None
-        at_index = authority.rfind("@")
-        if at_index != -1: authority = authority[at_index + 1 :]
-        if authority.startswith("["): return None
-        if authority.count(":") == 1:
-            colon_index = authority.rfind(":")
-            if colon_index != -1: authority = authority[:colon_index]
-        hostname = authority
-        if not hostname: return None
-        if not BaseVideoClient.isplausiblehostname(hostname): return None
-        return hostname
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list = None):
         # set valid domains
         if valid_domains is None: valid_domains = []
         # extract domain
-        try:
-            domain = BaseVideoClient.fastextracthostname(url)
-            assert domain
-        except:
-            domain = BaseVideoClient.obtainhostname(url)
+        domain = BaseVideoClient.obtainhostname(url)
         # judge and return according to domain
         if not domain: return False
         return domain in valid_domains

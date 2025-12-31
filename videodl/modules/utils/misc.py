@@ -21,6 +21,22 @@ from urllib.parse import urlparse
 from pathvalidate import sanitize_filename
 
 
+'''cookies2dict'''
+def cookies2dict(cookies: str | dict = None):
+    if not cookies: cookies = {}
+    if isinstance(cookies, dict): return cookies
+    if isinstance(cookies, str): return dict(item.split("=", 1) for item in cookies.split("; "))
+    raise TypeError(f'cookies type is "{type(cookies)}", expect cookies to "str" or "dict" or "None".')
+
+
+'''cookies2string'''
+def cookies2string(cookies: str | dict = None):
+    if not cookies: cookies = ""
+    if isinstance(cookies, str): return cookies
+    if isinstance(cookies, dict): return "; ".join(f"{k}={v}" for k, v in cookies.items())
+    raise TypeError(f'cookies type is "{type(cookies)}", expect cookies to "str" or "dict" or "None".')
+
+
 '''legalizestring'''
 def legalizestring(string: str, fit_gbk: bool = True, max_len: int = 255, fit_utf8: bool = True, replace_null_string: str = 'NULL'):
     string = str(string)

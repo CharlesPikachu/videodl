@@ -13,7 +13,6 @@ import base64
 from datetime import datetime
 from .base import BaseVideoClient
 from urllib.parse import urlparse
-from playwright.sync_api import sync_playwright
 from ..utils import legalizestring, resp2json, useparseheaderscookies, ensureplaywrightchromium, FileTypeSniffer, VideoInfo
 
 
@@ -36,6 +35,7 @@ class MGTVVideoClient(BaseVideoClient):
         self._initsession()
     '''_getcookies'''
     def _getcookies(self):
+        from playwright.sync_api import sync_playwright
         ensureplaywrightchromium()
         with sync_playwright() as pw:
             browser = pw.chromium.launch(headless=True)
