@@ -1,6 +1,6 @@
 # Development Log
 
-- 2025-12-31: Released videofetch v0.4.5 - some parameter adjustments, removed the mandatory Playwright import dependency, and rolled back the hostname retrieval method.
+- 2025-12-31: Released videofetch v0.4.5 - some argument adjustments, removed the mandatory Playwright import dependency, and rolled back the hostname retrieval method.
 
 - 2025-12-31: Released videofetch v0.4.4 - optimize the iterative-matching approach for the video parser.
 
