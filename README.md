@@ -55,9 +55,6 @@
 - 2025-12-31: Released videofetch v0.4.5 - some argument adjustments, removed the mandatory Playwright import dependency, and rolled back the hostname retrieval method.
 - 2025-12-31: Released videofetch v0.4.4 - optimize the iterative-matching approach for the video parser.
 - 2025-12-28: Released videofetch v0.4.3 - added native API parsing support for iQIYI and 1905.com, introduced a unified video parsing interface, and made a few minor code optimizations.
-- 2025-12-23: Released videofetch v0.4.2 - introduce multiple new parsing endpoints.
-- 2025-12-19: Released videofetch v0.4.1 - added support for two general-purpose video parsing and downloading platforms, as well as one specific platform’s video parsing and downloading, and optimized the parsing and downloading for Xigua videos.
-- 2025-12-17: Released videofetch v0.4.0 - support parsing for more platforms; automatically enable N_m3u8DL-RE acceleration for all m3u8/HLS streams; and fix some bugs.
 
 
 # 🚀 Introduction
