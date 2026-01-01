@@ -94,13 +94,13 @@ class VideoClient():
                         video_infos = self.video_clients[vc_name].parsefromurl(url, request_overrides=self.requests_overrides.get(vc_name, {}))
                     except:
                         video_infos = []
-        if not any(((info.get("download_url") or "").strip() not in ("", "NULL")) for info in (video_infos or [])):
+        if not any(((info.get("download_url") or "") not in ("", "NULL")) for info in (video_infos or [])):
             for cvc_name in list(self.common_video_clients.keys()):
                 common_video_client = self.common_video_clients[cvc_name]
                 if isinstance(common_video_client, dict): self.common_video_clients[cvc_name] = BuildCommonVideoClient(module_cfg=common_video_client['cfg'])
                 try:
                     video_infos = self.common_video_clients[cvc_name].parsefromurl(url, request_overrides=self.requests_overrides.get(cvc_name, {}))
-                    if any(((info.get("download_url") or "").strip() not in ("", "NULL")) for info in (video_infos or [])): break
+                    if any(((info.get("download_url") or "") not in ("", "NULL")) for info in (video_infos or [])): break
                 except:
                     video_infos = []
         return video_infos
