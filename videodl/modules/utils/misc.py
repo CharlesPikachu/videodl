@@ -8,8 +8,10 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import re
+import time
 import html
 import emoji
+import random
 import bleach
 import requests
 import mimetypes
@@ -139,6 +141,31 @@ def searchdictbykey(obj, target_key: str):
     elif isinstance(obj, list):
         for item in obj: results.extend(searchdictbykey(item, target_key))
     return results
+
+
+'''safeextractfromdict'''
+def safeextractfromdict(data, progressive_keys, default_value):
+    try:
+        result = data
+        for key in progressive_keys: result = result[key]
+    except:
+        result = default_value
+    return result
+
+
+'''SpinWithBackoff'''
+class SpinWithBackoff:
+    def __init__(self, start_secs=1, backoff_factor=1.5, max_secs=60):
+        self.cur_secs = start_secs
+        self.backoff_factor = backoff_factor
+        self.max_secs = max_secs
+        self.nth = 0
+    '''sleep'''
+    def sleep(self):
+        secs = self.cur_secs + random.random() * 0.5
+        time.sleep(secs)
+        self.cur_secs = min(self.cur_secs * self.backoff_factor, self.max_secs)
+        self.nth += 1
 
 
 '''FileTypeSniffer'''
