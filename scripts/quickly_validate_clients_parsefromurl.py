@@ -143,6 +143,8 @@ VIDEODL_TEST_SAMPLES = {
         'https://v.qq.com/x/cover/mzc00349vqikdb0/b3535d8h2a1.html',
         'https://v.qq.com/x/cover/ygci7rbfq3celp8/S0010phisz5.html?cut_vid=i4101ucafw7&scene_id=3&start=93',
         'https://www.iflix.com/en/play/0s682hc45t0ohll/a00340c66f8-EP1%3A_Miss_Gu_Who_Is_Silent',
+        'https://v.qq.com/x/cover/nhtfh14i9y1egge/d00249ld45q.html',
+        'https://v.qq.com/x/cover/nhtfh14i9y1egge.html',
         # 'https://wetv.vip/en/play/air11ooo2rdsdi3-Cute-Programmer/v0040pr89t9-EP1-Cute-Programmer'
     ],
     'GeniusVideoClient': [

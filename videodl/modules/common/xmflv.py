@@ -131,6 +131,7 @@ class XMFlvVideoClient(BaseVideoClient):
             dt = datetime.fromtimestamp(time.time())
             date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
             video_title = legalizestring(decrypted_data.get('name', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
+            if "解析失败啦" == video_title: raise RuntimeError('only youku, tencent and iqiyi sites can be parsed with XMFlvVideoClient')
             # --download url
             download_url = decrypted_data['url']
             video_info.update(dict(download_url=download_url))
