@@ -21,7 +21,7 @@ from bs4 import BeautifulSoup
 from .base import BaseVideoClient
 from typing import Dict, Any, List
 from urllib.parse import urlparse, urlencode
-from ..utils import legalizestring, searchdictbykey, useparseheaderscookies, safeextractfromdict, FileTypeSniffer, VideoInfo, AESAlgorithmWrapper, SpinWithBackoff
+from ..utils import legalizestring, searchdictbykey, useparseheaderscookies, safeextractfromdict, writevodm3u8fortencent, FileTypeSniffer, VideoInfo, AESAlgorithmWrapper, SpinWithBackoff
 
 
 '''TencentVQQVideoClient: https://github.com/Jesseatgao/movie-downloader/blob/master/mdl/sites/vqq.py'''
@@ -438,9 +438,12 @@ class TencentVQQVideoClient(BaseVideoClient):
                 video_info_page = copy.deepcopy(video_info)
                 format_name, ext, urls = self._getvideourls(vinfo_hit_vid['V'], 'uhd', vinfo_hit_vid['url'], vinfo_hit_vid['referrer'])
                 raw_data['download_info'] = {'format_name': format_name, 'ext': ext, 'urls': urls}
+                download_url = os.path.join(self.work_dir, self.source, f"{raw_data['cover_id']}_{vinfo_hit_vid['V']}.m3u8")
+                writevodm3u8fortencent(segments=urls, out_path=download_url, pick="best", strategy="global_host", probe_timeout=3.0, samples_per_host=2, probe_workers=16, probe_method="head_then_range_get")
                 video_info_page.update(dict(
-                    raw_data=raw_data, download_url=urls, title=f'{video_title}_ep{idx+1}', file_path=os.path.join(self.work_dir, self.source, f'{video_title}_ep{idx+1}'), ext=ext,
-                    identifier=f"{raw_data['cover_id']}_{vinfo_hit_vid['V']}", enable_nm3u8dlre=True
+                    raw_data=raw_data, download_url=download_url, title=f'{video_title}_ep{idx+1}' if len(basic_info['normal_ids']) > 1 else video_title, 
+                    file_path=os.path.join(self.work_dir, self.source, f'{video_title}_ep{idx+1}' if len(basic_info['normal_ids']) > 1 else video_title), 
+                    ext=ext, identifier=f"{raw_data['cover_id']}_{vinfo_hit_vid['V']}", enable_nm3u8dlre=True
                 ))
                 video_infos.append(video_info_page)
         except Exception as err:
