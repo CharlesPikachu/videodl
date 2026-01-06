@@ -10,10 +10,9 @@ import os
 import time
 import uuid
 import base64
-from datetime import datetime
 from .base import BaseVideoClient
 from urllib.parse import urlparse
-from ..utils import legalizestring, resp2json, useparseheaderscookies, ensureplaywrightchromium, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, resp2json, useparseheaderscookies, ensureplaywrightchromium, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
 
 
 '''MGTVVideoClient'''
@@ -55,6 +54,7 @@ class MGTVVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
             # --basic information
@@ -66,8 +66,7 @@ class MGTVVideoClient(BaseVideoClient):
             tk2 = list(' '.join(tk2).split())
             tk2.reverse()
             params = {
-                'did': did, 'suuid': uuid.uuid4(), 'cxid': '', 'tk2': ''.join(tk2), 'type': 'pch5', 'video_id': vid,
-                '_support': '10000000', 'auth_mode': '', 'src': '', 'abroad': '',
+                'did': did, 'suuid': uuid.uuid4(), 'cxid': '', 'tk2': ''.join(tk2), 'type': 'pch5', 'video_id': vid, '_support': '10000000', 'auth_mode': '', 'src': '', 'abroad': '',
             }
             resp = self.get('https://pcweb.api.mgtv.com/player/video', params=params, **request_overrides)
             resp.raise_for_status()
@@ -75,8 +74,7 @@ class MGTVVideoClient(BaseVideoClient):
             # --sources
             pm2 = raw_data['data']['atc']['pm2']
             params = {
-                '_support': '10000000', 'tk2': ''.join(tk2), 'pm2': pm2, 'video_id': vid, 'type': 'pch5', 
-                'auth_mode': '', 'src': '', 'abroad': '',
+                '_support': '10000000', 'tk2': ''.join(tk2), 'pm2': pm2, 'video_id': vid, 'type': 'pch5', 'auth_mode': '', 'src': '', 'abroad': '',
             }
             resp = self.get('https://pcweb.api.mgtv.com/player/getSource', params=params, **request_overrides)
             resp.raise_for_status()
@@ -86,11 +84,7 @@ class MGTVVideoClient(BaseVideoClient):
             streams = [s for s in streams if s.get("url")] if self.default_cookies or 'cookies' in request_overrides else [s for s in streams if s.get("url") and str(s.get("vip", "0")) == "0"]
             download_url = raw_data['getSource']['data']['stream_domain'][0] + max(streams, key=lambda s: int(s.get("filebitrate", 0)))['url']
             video_info.update(dict(download_url=download_url))
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = legalizestring(
-                raw_data["data"]["info"].get('title', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
-            ).removesuffix('.')
+            video_title = legalizestring(raw_data["data"]["info"].get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
@@ -105,7 +99,7 @@ class MGTVVideoClient(BaseVideoClient):
                 )
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid
             ))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'

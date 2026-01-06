@@ -7,13 +7,12 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
-import time
 import base64
 import urllib.parse
 from parsel import Selector
-from datetime import datetime
+from urllib.parse import urlparse
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
 
 
 '''MeipaiVideoClient'''
@@ -59,8 +58,10 @@ class MeipaiVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
+            vid = urlparse(url).path.strip('/').split('/')[-1]
             resp = self.get(url, **request_overrides)
             resp.raise_for_status()
             raw_data = resp.text
@@ -69,18 +70,15 @@ class MeipaiVideoClient(BaseVideoClient):
             download_url_bs64 = resp_selector.css("#shareMediaBtn::attr(data-video)").get(default="")
             download_url = self._decodedownloadurl(download_url_bs64=download_url_bs64)
             video_info.update(dict(download_url=download_url))
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
             video_title = legalizestring(
-                urllib.parse.unquote(resp_selector.css("#shareMediaBtn::attr(data-title)").get(default="").strip(), encoding="utf-8"), 
-                replace_null_string=f'{self.source}_null_{date_str}',
+                urllib.parse.unquote(resp_selector.css("#shareMediaBtn::attr(data-title)").get(default="").strip(), encoding="utf-8") or null_backup_title, replace_null_string=null_backup_title,
             ).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid,
             ))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'

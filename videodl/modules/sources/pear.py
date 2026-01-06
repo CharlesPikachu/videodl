@@ -7,13 +7,11 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
-import time
 import random
-from datetime import datetime
 from bs4 import BeautifulSoup
 from .base import BaseVideoClient
 from urllib.parse import urlparse
-from ..utils import legalizestring, useparseheaderscookies, resp2json, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
 
 
 '''PearVideoClient'''
@@ -37,6 +35,7 @@ class PearVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
             parsed_url = urlparse(url)
@@ -53,21 +52,17 @@ class PearVideoClient(BaseVideoClient):
             timestamp = urlparse(download_url).path.strip('/').split('/')[-1].split('-')[0]
             download_url = download_url.replace(f'/{timestamp}-', f'/cont-{video_id}-')
             video_info.update(dict(download_url=download_url))
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
             try:
                 video_title = BeautifulSoup(self.get(url, **request_overrides).text, "html.parser").title.get_text(strip=True)
             except:
-                video_title = f'{self.source}_null_{date_str}'
-            video_title = legalizestring(
-                video_title, replace_null_string=f'{self.source}_null_{date_str}',
-            ).removesuffix('.')
+                video_title = null_backup_title
+            video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_id
             ))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'

@@ -77,7 +77,7 @@ class CCtalkVideoClient(BaseVideoClient):
                 video_title = raw_data['data'].get('videoName', null_backup_title)
                 root_video_title = safeextractfromdict(raw_data['data'], ['seriesInfo', 'seriesName'], '')
                 if root_video_title and len(video_ids) > 1: video_title = f"{root_video_title}-ep{idx+1}-{video_title}"
-                elif len(video_ids) > 1: video_title = f"ep{idx}-{video_title}"
+                elif len(video_ids) > 1: video_title = f"ep{idx+1}-{video_title}"
                 video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                     url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
