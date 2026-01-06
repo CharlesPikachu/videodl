@@ -11,10 +11,9 @@ import re
 import time
 import shutil
 import hashlib
-from datetime import datetime
 from .base import BaseVideoClient
 from urllib.parse import urlsplit
-from ..utils import legalizestring, useparseheaderscookies, resp2json, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
 
 
 '''CCTVVideoClient'''
@@ -35,6 +34,7 @@ class CCTVVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
             # --fetch raw data
@@ -52,8 +52,7 @@ class CCTVVideoClient(BaseVideoClient):
                     continue
             md5 = lambda value: hashlib.md5(value.encode('utf-8')).hexdigest()
             params = {
-                'pid': pid, 'client': 'flash', 'im': '0', 'tsp': str(int(time.time())),
-                'vn': '2049', 'vc': None, 'uid': '826D8646DEBBFD97A82D23CAE45A55BE', 'wlan': '',
+                'pid': pid, 'client': 'flash', 'im': '0', 'tsp': str(int(time.time())), 'vn': '2049', 'vc': None, 'uid': '826D8646DEBBFD97A82D23CAE45A55BE', 'wlan': '',
             }
             params['vc'] = md5((params['tsp'] + params['vn'] + "47899B86370B879139C08EA3B5E88267" + params['uid']))
             resp = self.get('https://vdn.apps.cntv.cn/api/getHttpVideoInfo.do', params=params, **request_overrides)
@@ -70,18 +69,13 @@ class CCTVVideoClient(BaseVideoClient):
             if hls_key not in ['hls_url']: download_url = re.sub(r"https://[^/]+/asp/enc2/", 'https://drm.cntv.vod.dnsv1.com/asp/enc2/', download_url)
             video_info.update(dict(download_url=download_url, download_with_ffmpeg_cctv=True if hls_key not in ['hls_url'] else False, pid=pid))
             # --create video info's extra entries
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = legalizestring(
-                raw_data.get('title', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
-            ).removesuffix('.')
+            video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, 
-                guess_video_ext_result=guess_video_ext_result, identifier=pid,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=pid,
             ))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'

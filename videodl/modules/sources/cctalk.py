@@ -9,10 +9,9 @@ WeChat Official Account (微信公众号):
 import os
 import time
 import copy
-from datetime import datetime
 from .base import BaseVideoClient
 from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, useparseheaderscookies, resp2json, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''CCtalkVideoClient'''
@@ -45,6 +44,7 @@ class CCtalkVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         video_infos = []
         try:
@@ -63,7 +63,7 @@ class CCtalkVideoClient(BaseVideoClient):
                 except:
                     video_ids = [parsed_url.path.strip('/').split('/')[-1]]
             # --iter to parse
-            for video_id in video_ids:
+            for idx, video_id in enumerate(video_ids):
                 video_info_page = copy.deepcopy(video_info)
                 try:
                     resp = self.get(f'https://www.cctalk.com/webapi/content/v1.1/video/detail?videoId={video_id}&seriesId=&_timestamp={int(time.time() * 1000)}', **request_overrides)
@@ -74,19 +74,17 @@ class CCtalkVideoClient(BaseVideoClient):
                     continue
                 video_info_page.update(dict(raw_data=raw_data))
                 video_info_page.update(dict(download_url=download_url))
-                dt = datetime.fromtimestamp(time.time())
-                date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-                video_title = raw_data['data'].get('videoName', f'{self.source}_null_{date_str}')
-                root_video_title = raw_data['data'].get('seriesInfo', {}).get('seriesName', '')
-                if root_video_title and len(video_ids) > 1: video_title = f"{root_video_title}_{video_title}"
-                video_title = legalizestring(video_title, replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
+                video_title = raw_data['data'].get('videoName', null_backup_title)
+                root_video_title = safeextractfromdict(raw_data['data'], ['seriesInfo', 'seriesName'], '')
+                if root_video_title and len(video_ids) > 1: video_title = f"{root_video_title}-ep{idx}-{video_title}"
+                elif len(video_ids) > 1: video_title = f"ep{idx}-{video_title}"
+                video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                     url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
                 )
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
                 video_info_page.update(dict(
-                    title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, 
-                    guess_video_ext_result=guess_video_ext_result, identifier=f"{sid}_{video_id}" if sid else video_id,
+                    title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f"{sid}-{video_id}" if sid else video_id,
                 ))
                 video_infos.append(video_info_page)
         except Exception as err:

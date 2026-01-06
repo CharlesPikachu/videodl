@@ -8,13 +8,11 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import re
-import time
 import json_repair
-from datetime import datetime
 from bs4 import BeautifulSoup
 from .base import BaseVideoClient
 from .sohu import SohuVideoClient
-from ..utils import legalizestring, useparseheaderscookies, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, VideoInfo
 
 
 '''C56VideoClient'''
@@ -38,6 +36,7 @@ class C56VideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
             vid = re.search(r'https?://(?:(?:www|player)\.)?56\.com/(?:.+?/)?(?:v_|(?:play_album.+-))(?P<textid>.+?)\.(?:html|swf)', url).group(1)
@@ -52,9 +51,7 @@ class C56VideoClient(BaseVideoClient):
             video_info: VideoInfo = self.sohu_parser.parsefromurl(sohu_video_url, request_overrides=request_overrides)
             assert len(video_info) == 1
             video_info = video_info[0]
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = legalizestring(raw_data.get('Subject', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
+            video_title = legalizestring(raw_data.get('Subject', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             video_info.update(dict(
                 identifier=vid, raw_data=raw_data, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info["ext"]}'), source=self.source
             ))
