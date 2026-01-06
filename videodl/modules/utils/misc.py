@@ -18,6 +18,7 @@ import mimetypes
 import functools
 import json_repair
 import unicodedata
+from datetime import datetime
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from pathvalidate import sanitize_filename
@@ -151,6 +152,13 @@ def safeextractfromdict(data, progressive_keys, default_value):
     except:
         result = default_value
     return result
+
+
+'''yieldtimerelatedtitle'''
+def yieldtimerelatedtitle(source: str):
+    dt = datetime.fromtimestamp(time.time())
+    date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
+    return f'{source}_null_{date_str}'
 
 
 '''SpinWithBackoff'''

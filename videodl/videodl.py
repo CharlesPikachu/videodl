@@ -92,6 +92,7 @@ class VideoClient():
                     if isinstance(video_client, dict): self.video_clients[vc_name] = BuildVideoClient(module_cfg=video_client['cfg'])
                     try:
                         video_infos = self.video_clients[vc_name].parsefromurl(url, request_overrides=self.requests_overrides.get(vc_name, {}))
+                        if any(((info.get("download_url") or "") not in ("", "NULL")) for info in (video_infos or [])): break
                     except:
                         video_infos = []
         if not any(((info.get("download_url") or "") not in ("", "NULL")) for info in (video_infos or [])):

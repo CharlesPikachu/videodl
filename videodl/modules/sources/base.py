@@ -10,7 +10,6 @@ import os
 import re
 import copy
 import time
-import uuid
 import pickle
 import shutil
 import requests
@@ -24,8 +23,8 @@ from fake_useragent import UserAgent
 from platformdirs import user_log_dir
 from pathvalidate import sanitize_filepath
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, LoggerHandle, VideoInfo
 from rich.progress import Progress, TextColumn, BarColumn, DownloadColumn, TransferSpeedColumn, TimeRemainingColumn, TimeElapsedColumn, ProgressColumn
+from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, cookies2dict, uniquetmppath, LoggerHandle, VideoInfo
 
 
 '''VideoAwareColumn'''
@@ -61,12 +60,9 @@ class BaseVideoClient():
         self.maintain_session = maintain_session
         self.auto_set_proxies = auto_set_proxies
         self.freeproxy_settings = freeproxy_settings or {}
-        self.default_search_cookies = default_search_cookies or {}
-        if self.default_search_cookies and isinstance(self.default_search_cookies, str): self.default_search_cookies = dict(item.split("=", 1) for item in self.default_search_cookies.split("; "))
-        self.default_download_cookies = default_download_cookies or {}
-        if self.default_download_cookies and isinstance(self.default_download_cookies, str): self.default_download_cookies = dict(item.split("=", 1) for item in self.default_download_cookies.split("; "))
-        self.default_parse_cookies = default_parse_cookies or {}
-        if self.default_parse_cookies and isinstance(self.default_parse_cookies, str): self.default_parse_cookies = dict(item.split("=", 1) for item in self.default_parse_cookies.split("; "))
+        self.default_search_cookies = cookies2dict(default_search_cookies)
+        self.default_download_cookies = cookies2dict(default_download_cookies)
+        self.default_parse_cookies = cookies2dict(default_parse_cookies)
         self.default_cookies = self.default_parse_cookies
         # init requests.Session
         self.default_search_headers = {'User-Agent': UserAgent().random}
@@ -86,14 +82,14 @@ class BaseVideoClient():
         self.session = requests.Session()
         self.session.headers = self.default_headers
     '''_ensureuniquefilepath'''
-    def _ensureuniquefilepath(self, file_path):
-        same_name_file_idx = 1
-        while os.path.exists(file_path):
+    def _ensureuniquefilepath(self, file_path: str):
+        same_name_file_idx, unique_file_path = 1, file_path
+        while os.path.exists(unique_file_path):
             directory, file_name = os.path.split(file_path)
             file_name_without_ext, ext = os.path.splitext(file_name)
-            file_path = os.path.join(directory, f"{file_name_without_ext}_{same_name_file_idx}{ext}")
+            unique_file_path = os.path.join(directory, f"{file_name_without_ext} ({same_name_file_idx}){ext}")
             same_name_file_idx += 1
-        return file_path
+        return unique_file_path
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
@@ -337,8 +333,7 @@ class BaseVideoClient():
         nm3u8dlre_settings = video_info.get('nm3u8dlre_settings', {}) or {}
         default_nm3u8dlre_settings.update(nm3u8dlre_settings)
         log_dir = user_log_dir(appname='videodl', appauthor='zcjin')
-        random_uuid = uuid.uuid4().hex[:8]
-        log_file_path = os.path.join(log_dir, f"videodl_{random_uuid}.log")
+        log_file_path = uniquetmppath(dir=log_dir, ext='log')
         cmd = [
             'N_m3u8DL-RE', video_info["download_url"], "--auto-select", "--save-dir", os.path.dirname(video_info["file_path"]), "--save-name", os.path.basename(video_info["file_path"]),
             "--thread-count", default_nm3u8dlre_settings['thread_count'], "--download-retry-count", default_nm3u8dlre_settings['download_retry_count'], "--check-segments-count",
@@ -401,6 +396,47 @@ class BaseVideoClient():
             self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
         # return
         return downloaded_video_infos
+    '''_naivedownloadvideoaudiothenmerge'''
+    @usedownloadheaderscookies
+    def _naivedownloadvideoaudiothenmerge(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
+        video_info = copy.deepcopy(video_info)
+        # avoid calling ffmpeg to download audios
+        audio_download_url = video_info.pop('audio_download_url')
+        audio_file_path = video_info.pop('audio_file_path')
+        audio_ext = video_info.pop('audio_ext')
+        guess_audio_ext_result = video_info.pop('guess_audio_ext_result')
+        # download videos
+        self._download(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
+        # download audios
+        audio_info = VideoInfo(
+            source=self.source, download_url=audio_download_url, file_path=audio_file_path, ext=audio_ext, identifier=f'audio-{video_info["identifier"]}', guess_video_ext_result=guess_audio_ext_result
+        )
+        downloaded_audio_infos = self._download(video_info=audio_info, video_info_index=video_info_index, downloaded_video_infos=[], request_overrides=request_overrides, progress=progress)
+        assert len(downloaded_audio_infos) == 1
+        # merge videos and audios
+        audio_file_path = downloaded_audio_infos[0]['file_path']
+        audio_ext = downloaded_audio_infos[0]['ext']
+        tgt_dvi = [dvi for dvi in downloaded_video_infos if dvi['identifier'] == video_info["identifier"]]
+        video_file_path = tgt_dvi[0]['file_path']
+        tmp_merged_file_path = uniquetmppath(dir=os.path.join(self.work_dir, self.source), ext=tgt_dvi[0]["ext"])
+        cmd = ['ffmpeg', '-y', '-i', video_file_path, '-i', audio_file_path, '-c', 'copy', '-map', '0:v:0', '-map', '1:a:0', tmp_merged_file_path]
+        capture_output = True if self.disable_print else False
+        ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
+        if ret.returncode == 0:
+            shutil.move(tmp_merged_file_path, video_file_path)
+            if os.path.exists(audio_file_path): os.remove(audio_file_path)
+        else:
+            err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
+            self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
+        # recover audio information 
+        for dvi in downloaded_video_infos:
+            if dvi['identifier'] != video_info["identifier"]: continue
+            dvi['audio_download_url'] = audio_download_url
+            dvi['audio_file_path'] = audio_file_path
+            dvi['audio_ext'] = audio_ext
+            dvi['guess_audio_ext_result'] = guess_audio_ext_result
+        # return
+        return downloaded_video_infos
     '''_download'''
     @usedownloadheaderscookies
     def _download(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
@@ -414,6 +450,10 @@ class BaseVideoClient():
         )
         # CCTVVideoClient use specific downloader for high-quality video files (highest-priority)
         if video_info.get('source') in ['CCTVVideoClient'] and video_info.get('download_with_ffmpeg_cctv', False): return self._downloadwithffmpegcctv(
+            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
+        )
+        # requires merging videos and audios like some third-part video clients and bilibili (highest-priority)
+        if video_info.get('audio_download_url') and video_info.get('audio_download_url') != 'NULL' and video_info.get('audio_ext') in ['m4a', 'mp3', 'aac', 'weba', 'webm']: return self._naivedownloadvideoaudiothenmerge(
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
         )
         # use ffmpeg to deal with m3u8 likes, auto set according to video_info cues, a naive judgement is applied (high-priority)
@@ -445,16 +485,16 @@ class BaseVideoClient():
         if video_info.get('download_with_aria2c', False): return self._downloadwitharia2c(
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
         )
+        # some formats maybe incorrect, auto correct
+        if video_info.get('ext') in ['m4s']: video_info.update(dict(ext='mp4', file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
         # prepare
         touchdir(os.path.dirname(video_info['file_path']))
         video_info = copy.deepcopy(video_info)
         video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
         # start to download
         try:
-            try:
-                resp = self.get(video_info['download_url'], stream=True, **request_overrides)
-            except:
-                resp = self.get(video_info['download_url'], stream=True, verify=False, **request_overrides)
+            try: resp = self.get(video_info['download_url'], stream=True, **request_overrides)
+            except: resp = self.get(video_info['download_url'], stream=True, verify=False, **request_overrides)
             resp.raise_for_status()
             content_length = int(float(resp.headers.get("Content-Length", 0) or 0))
             chunk_size = video_info.get('chunk_size', 1024 * 1024)

@@ -53,7 +53,17 @@ VIDEODL_TEST_SAMPLES = {
     ],
     'BilibiliVideoClient': [
         'https://www.bilibili.com/video/BV16Z4y1X784/?spm_id_from=333.851.b_7265636f6d6d656e64.2', 
-        'https://www.bilibili.com/video/BV1KZgHzJEs6/?spm_id_from=333.337.search-card.all.click'
+        'https://www.bilibili.com/video/BV1KZgHzJEs6/?spm_id_from=333.337.search-card.all.click',
+        'https://www.bilibili.com/video/BV13x41117TL',
+        'https://www.bilibili.com/video/BV1bK411W797?p=1',
+        'https://www.bilibili.com/video/av8903802/',
+        'https://www.bilibili.com/video/av114868162141203',
+        'https://www.bilibili.com/festival/bh3-7th?bvid=BV1tr4y1f7p2&',
+        'https://www.bilibili.com/festival/2023honkaiimpact3gala?bvid=BV1ay4y1d77f',
+        'https://www.bilibili.com/bangumi/play/ep21495',
+        'https://www.bilibili.com/bangumi/play/ep345120',
+        'https://www.bilibili.com/bangumi/play/ss26801',
+        'https://www.bilibili.com/cheese/play/ep229832',
     ],
     'YinyuetaiVideoClient': [
         'https://www.yinyuetai.com/watch/7200480383631265792?listType=swiper&listId=6998475633361805312'

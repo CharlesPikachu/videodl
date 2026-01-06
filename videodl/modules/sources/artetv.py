@@ -9,10 +9,8 @@ WeChat Official Account (微信公众号):
 import os
 import re
 import copy
-import time
-from datetime import datetime
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, resp2json, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
 
 
 '''ArteTVVideoClient'''
@@ -35,6 +33,7 @@ class ArteTVVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
             vid = re.search(r"/videos/([^/]+)/", url).group(1)
@@ -44,11 +43,7 @@ class ArteTVVideoClient(BaseVideoClient):
             resp = self.get(f'https://api.arte.tv/api/player/v2/config/{lang}/{vid}', headers=headers, **request_overrides)
             resp.raise_for_status()
             raw_data = resp2json(resp=resp)
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = legalizestring(
-                raw_data["data"]["attributes"]['metadata'].get('title', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
-            ).removesuffix('.')
+            video_title = legalizestring(raw_data["data"]["attributes"]['metadata'].get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             streams = raw_data["data"]["attributes"]['streams']
             def _qualityvalue(stream: dict):
                 label: str = stream.get("mainQuality", {}).get("label", "")

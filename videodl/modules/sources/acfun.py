@@ -8,11 +8,10 @@ WeChat Official Account (微信公众号):
 '''
 import re
 import os
-import time
 import json_repair
-from datetime import datetime
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, VideoInfo
+from urllib.parse import urlparse
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, VideoInfo
 
 
 '''AcFunVideoClient'''
@@ -35,8 +34,10 @@ class AcFunVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(download_with_ffmpeg=True, source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
+            vid = urlparse(url).path.strip('/').split('/')[-1]
             resp = self.get(url, **request_overrides)
             resp.raise_for_status()
             raw_data = json_repair.loads(re.findall('window.pageInfo =(.*?);', resp.text)[0].split('=', 1)[-1].strip())
@@ -46,12 +47,8 @@ class AcFunVideoClient(BaseVideoClient):
             except:
                 download_url = json_repair.loads(raw_data['currentVideoInfo']['ksPlayJson'])['adaptationSet'][0]['representation'][0]['url']
             video_info.update(dict(download_url=download_url))
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = legalizestring(
-                raw_data.get('title', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
-            ).removesuffix('.')
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info["ext"]}')))
+            video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info["ext"]}'), identifier=vid))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
