@@ -47,7 +47,7 @@ class BaiduTiebaVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
-        self.default_headers['Cookie'], video_infos = self._getcookies(), []
+        self.default_headers['Cookie'], video_infos = self._getcookies() if not self.default_headers.get('Cookie') else self.default_headers.get('Cookie'), []
         null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
