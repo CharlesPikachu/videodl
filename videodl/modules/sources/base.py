@@ -150,8 +150,7 @@ class BaseVideoClient():
         default_cookies = request_overrides.get('cookies', {}) or self.default_cookies or {}
         if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
         headers = []
-        for k, v in default_headers.items():
-            headers.append(f"{k}: {v}")
+        for k, v in default_headers.items(): headers.append(f"{k}: {v}")
         header_str = r"\r\n".join(headers) + r"\r\n"
         header_str = header_str.replace("\\", "\\\\").replace("'", "\\'")
         header_str = f"headers={header_str}"
@@ -166,13 +165,10 @@ class BaseVideoClient():
                 download_urls.append(download_url)
         video_info["download_url"] = video_info["download_url"][:-4] + '_ffmpeg.txt'
         with open(video_info["download_url"], 'w', encoding='utf-8') as fp:
-            for download_url in download_urls:
-                fp.write(f"file '{download_url}'\n")
+            for download_url in download_urls: fp.write(f"file '{download_url}'\n")
         # start to download
         cmd = ["ffmpeg", "-y", "-protocol_whitelist", 'file,http,https,tcp,tls']
-        for _, proxy_url in request_overrides.get('proxies', {}).items():
-            cmd.extend(["-http_proxy", proxy_url])
-            break
+        for _, proxy_url in request_overrides.get('proxies', {}).items(): cmd.extend(["-http_proxy", proxy_url]); break
         cmd.extend(["-f", "concat", "-safe", "0", "-i", video_info["download_url"], "-c", "copy", video_info["file_path"]])
         capture_output = True if self.disable_print else False
         ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
@@ -207,12 +203,9 @@ class BaseVideoClient():
         header_args = []
         for k, v in default_headers.items(): header_args.extend(["-H", f"{k}: {v}"])
         cmd = [
-            cli, video_info["download_url"], "--auto-select", "--tmp-dir", str(tmp_dir), "--save-dir", str(tmp_dir.parent), "--save-name", pid, "--skip-merge",
-            "--del-after-done", "false", *header_args,
+            cli, video_info["download_url"], "--auto-select", "--tmp-dir", str(tmp_dir), "--save-dir", str(tmp_dir.parent), "--save-name", pid, "--skip-merge", "--del-after-done", "false", *header_args,
         ]
-        for _, proxy_url in (request_overrides.get('proxies', {}) or {}).items():
-            cmd.extend(["--use-system-proxy", "false", "--custom-proxy", proxy_url])
-            break
+        for _, proxy_url in (request_overrides.get('proxies', {}) or {}).items(): cmd.extend(["--use-system-proxy", "false", "--custom-proxy", proxy_url]); break
         capture_output = True if self.disable_print else False
         ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
         if ret.returncode not in [0]:
@@ -228,8 +221,7 @@ class BaseVideoClient():
         tmp_part_dir = tmp_dir / pid
         for d in tmp_part_dir.iterdir():
             if not d.is_dir(): continue
-            if any(p.is_file() and p.suffix == ".ts" for p in d.iterdir()):
-                ts_dir = d; break
+            if any(p.is_file() and p.suffix == ".ts" for p in d.iterdir()): ts_dir = d; break
         tmp_part_dir = tmp_part_dir / ts_dir
         ts_files = sorted([p for p in tmp_part_dir.glob("*.ts") if not p.name.endswith("_output.ts")], key=_naturalkey)
         output_ts_files: list[Path] = []
@@ -278,14 +270,11 @@ class BaseVideoClient():
         default_cookies = request_overrides.get('cookies', {}) or self.default_cookies or {}
         if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
         headers = []
-        for k, v in default_headers.items():
-            headers.append(f"{k}: {v}")
+        for k, v in default_headers.items(): headers.append(f"{k}: {v}")
         headers_str = "\r\n".join(headers)
         # start to download
         cmd = ["ffmpeg", "-y"]
-        for _, proxy_url in request_overrides.get("proxies", {}).items():
-            cmd.extend(["-http_proxy", proxy_url])
-            break
+        for _, proxy_url in request_overrides.get("proxies", {}).items(): cmd.extend(["-http_proxy", proxy_url]); break
         # --with audio
         if video_info.get('audio_download_url') and video_info['audio_download_url'] != 'NULL':
             if headers_str: cmd.extend(["-headers", headers_str])
@@ -325,9 +314,7 @@ class BaseVideoClient():
         header_args: list[str] = []
         for k, v in default_headers.items(): header_args.extend(["-H", f"{k}: {v}"])
         proxy_url = None
-        for _, p in request_overrides.get("proxies", {}).items():
-            proxy_url = p
-            break
+        for _, p in request_overrides.get("proxies", {}).items(): proxy_url = p; break
         # start to download
         default_nm3u8dlre_settings = {'thread_count': '8', 'download_retry_count': '3'}
         nm3u8dlre_settings = video_info.get('nm3u8dlre_settings', {}) or {}
@@ -377,12 +364,9 @@ class BaseVideoClient():
             f"--max-tries={default_aria2c_settings['max_tries']}", f"--max-concurrent-downloads={default_aria2c_settings['max_concurrent_downloads']}",
             "-o", os.path.basename(video_info["file_path"]), "-d", os.path.dirname(video_info["file_path"]),
         ]
-        for k, v in default_headers.items():
-            cmd.extend(["--header", f"{k}: {v}"])
+        for k, v in default_headers.items(): cmd.extend(["--header", f"{k}: {v}"])
         proxies = request_overrides.get("proxies", {}) or {}
-        for _, proxy_url in proxies.items():
-            cmd.extend(["--all-proxy", proxy_url])
-            break
+        for _, proxy_url in proxies.items(): cmd.extend(["--all-proxy", proxy_url]); break
         extra_aria2c_opts = default_aria2c_settings.get('extra_options', []) or []
         if isinstance(extra_aria2c_opts, (list, tuple)): cmd.extend(list(extra_aria2c_opts))
         cmd.append(video_info["download_url"])

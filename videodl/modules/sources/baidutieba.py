@@ -66,7 +66,7 @@ class BaiduTiebaVideoClient(BaseVideoClient):
                 if not download_url: continue
                 download_url = download_url.strip()
                 per_video_title = tag.get("data-title") or tag.get("title") or video_title or null_backup_title
-                per_video_title = per_video_title if len(soup.find_all(attrs={"data-video": True})) == 1 else f'ep{tag_idx}-{per_video_title}'
+                per_video_title = per_video_title if len(soup.find_all(attrs={"data-video": True})) == 1 else f'ep{tag_idx+1}-{per_video_title}'
                 per_video_title = legalizestring(per_video_title, replace_null_string=null_backup_title).removesuffix('.')
                 video_page_info = copy.deepcopy(video_info)
                 video_page_info.update(dict(raw_data=str(tag)))
