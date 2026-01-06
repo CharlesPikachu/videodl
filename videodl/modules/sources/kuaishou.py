@@ -8,12 +8,11 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import re
-import time
 import json_repair
-from datetime import datetime
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
 
 
 '''KuaishouVideoClient'''
@@ -35,8 +34,10 @@ class KuaishouVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
+            vid = urlparse(url).path.strip('/').split('/')[-1]
             resp = self.get(url, **request_overrides)
             resp.raise_for_status()
             resp.encoding = 'utf-8'
@@ -47,25 +48,17 @@ class KuaishouVideoClient(BaseVideoClient):
             client: dict = raw_data["defaultClient"]
             photo_key = ""
             for k, v in client.items():
-                if isinstance(v, dict) and v.get("__typename") == "VisionVideoDetailPhoto":
-                    photo_key = k
-                    break
-            photo = client[photo_key]
+                if isinstance(v, dict) and v.get("__typename") == "VisionVideoDetailPhoto": photo_key = k; break
+            photo: dict = client[photo_key]
             candidates = []
-            if photo.get("photoH265Url"):
-                candidates.append({
-                    "codec": "hevc_single", "maxBitrate": 1, "resolution": 1, "url": photo["photoH265Url"], "qualityLabel": "single_hevc",
-                })
-            if photo.get("photoUrl"):
-                candidates.append({
-                    "codec": "h264_single", "maxBitrate": 1, "resolution": 1, "url": photo["photoUrl"], "qualityLabel": "single_h264",
-                })
+            if photo.get("photoH265Url"): candidates.append({"codec": "hevc_single", "maxBitrate": 1, "resolution": 1, "url": photo["photoH265Url"], "qualityLabel": "single_hevc"})
+            if photo.get("photoUrl"): candidates.append({"codec": "h264_single", "maxBitrate": 1, "resolution": 1, "url": photo["photoUrl"], "qualityLabel": "single_h264"})
             vr = photo.get("videoResource")
             if isinstance(vr, dict):
-                vr_json = vr.get("json", {})
+                vr_json: dict = vr.get("json", {})
                 for codec_name in ["hevc", "h264"]:
                     codec = vr_json.get(codec_name)
-                    if not codec: continue
+                    if not codec or not isinstance(codec, dict): continue
                     for aset in codec.get("adaptationSet", []):
                         for rep in aset.get("representation", []):
                             url = rep.get("url")
@@ -79,17 +72,13 @@ class KuaishouVideoClient(BaseVideoClient):
             candidates.sort(key=_sortkey, reverse=True)
             download_url = [c["url"] for c in candidates][0]
             video_info.update(dict(download_url=download_url))
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = legalizestring(
-                photo.get('caption', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
-            ).removesuffix('.')
+            video_title = legalizestring(photo.get('caption', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid
             ))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'

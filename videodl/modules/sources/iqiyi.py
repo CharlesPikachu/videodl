@@ -13,10 +13,9 @@ import copy
 import string
 import random
 import hashlib
-from datetime import datetime
 from .base import BaseVideoClient
 from urllib.parse import urlencode, quote
-from ..utils import legalizestring, useparseheaderscookies, resp2json, touchdir, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, touchdir, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''IQiyiVideoClient'''
@@ -71,6 +70,7 @@ class IQiyiVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source, enable_nm3u8dlre=True)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         device_id = self._generatedeviceid()
         # try parse
         try:
@@ -93,11 +93,7 @@ class IQiyiVideoClient(BaseVideoClient):
             resp.encoding = 'utf-8'
             raw_data = resp2json(resp=resp)
             # --video title
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = legalizestring(
-                raw_data['data']['base_data'].get('title', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
-            ).removesuffix('.')
+            video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'base_data', 'title'], "") or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --dash
             data_details = raw_data['data']['template']['tabs'][0]['blocks'][2]['data']['data']
             # ----movie
@@ -128,8 +124,7 @@ class IQiyiVideoClient(BaseVideoClient):
                     'k_uid': device_id, 'pt': 0, 'd': 0, 's': '', 'lid': 0, 'cf': 0, 'ct': 0, 'authKey': self._authkey(tm, vinfo_hit_tvid['V']), 'k_tag': 1, 'dfp': '',
                     'locale': 'zh_cn', 'pck': '', 'k_err_retries': 0, 'up': '', 'qd_v': 'a1', 'tm': tm, 'k_ft1': '706436220846084', 'k_ft4': '1162321298202628',
                     'k_ft5': '150994945', 'k_ft7': '4', 'fr_300': '120_120_120_120_120_120', 'fr_500': '120_120_120_120_120_120', 'fr_600': '120_120_120_120_120_120',
-                    'fr_800': '120_120_120_120_120_120', 'fr_1020': '120_120_120_120_120_120', 'bop': quote('{"version":"10.0","dfp":"","b_ft1":28}'), 'sr': 1,
-                    'ost': 0, 'ut': 0
+                    'fr_800': '120_120_120_120_120_120', 'fr_1020': '120_120_120_120_120_120', 'bop': quote('{"version":"10.0","dfp":"","b_ft1":28}'), 'sr': 1, 'ost': 0, 'ut': 0
                 }
                 params['vf'] = self._calcvf('/dash?' + urlencode(params))
                 try:
@@ -151,10 +146,7 @@ class IQiyiVideoClient(BaseVideoClient):
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, 
-                guess_video_ext_result=guess_video_ext_result, identifier=tvid,
-            ))
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=tvid))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
