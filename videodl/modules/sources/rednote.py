@@ -8,11 +8,10 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import re
-import time
 import json_repair
-from datetime import datetime
+from urllib.parse import urlparse
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, searchdictbykey, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, searchdictbykey, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
 
 
 '''RednoteVideoClient'''
@@ -35,10 +34,11 @@ class RednoteVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
-            if url.startswith('http://xhslink.com'):
-                url = self.get(url, allow_redirects=True, **request_overrides).url
+            if url.startswith('http://xhslink.com'): url = self.get(url, allow_redirects=True, **request_overrides).url
+            vid = urlparse(url).path.strip('/').split('/')[-1]
             resp = self.get(url, **request_overrides)
             resp.raise_for_status()
             raw_data = json_repair.loads(re.findall(r"window\.__INITIAL_STATE__\s*=\s*(.*?)</script></body></html>", resp.text)[0])
@@ -47,17 +47,15 @@ class RednoteVideoClient(BaseVideoClient):
             if not download_url: download_url = searchdictbykey(raw_data, "backupUrls")
             while isinstance(download_url, list): download_url = download_url[0]
             video_info.update(dict(download_url=download_url))
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
             video_title = searchdictbykey(raw_data, 'title')
-            video_title = video_title[-1] if video_title else f'{self.source}_null_{date_str}'
-            video_title = legalizestring(video_title, replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
+            video_title = video_title[-1] if video_title else null_backup_title
+            video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid
             ))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'

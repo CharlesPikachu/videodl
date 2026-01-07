@@ -8,10 +8,8 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import re
-import time
-from datetime import datetime
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, resp2json, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, VideoInfo
 
 
 '''SinaVideoClient'''
@@ -21,9 +19,11 @@ class SinaVideoClient(BaseVideoClient):
         super(SinaVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+            'Referer': 'https://video.sina.cn/',
         }
         self.default_download_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+            'Referer': 'https://video.sina.cn/',
         }
         self.default_headers = self.default_parse_headers
         self._initsession()
@@ -34,6 +34,7 @@ class SinaVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
             # --parse video id
@@ -55,10 +56,8 @@ class SinaVideoClient(BaseVideoClient):
                     resp = self.get(url, **request_overrides)
                     resp.raise_for_status()
                     for p in [r"video_id\s*:\s*'(\d+)'", r"video_id\s*:\s*(\d+),"]:
-                        try:
-                            video_id = re.search(p, resp.text, flags=re.DOTALL).group(1)
-                        except:
-                            continue
+                        try: video_id = re.search(p, resp.text, flags=re.DOTALL).group(1); break
+                        except: continue
             # --obtain raw_data
             resp = self.get('http://s.video.sina.com.cn/video/h5play', params={'video_id': video_id}, **request_overrides)
             resp.raise_for_status()
@@ -66,23 +65,21 @@ class SinaVideoClient(BaseVideoClient):
             video_info.update(dict(raw_data=raw_data))
             # --parse raw data
             video_data, formats = raw_data['data'], []
-            for quality_id, quality in video_data.get('videos', {}).get('mp4', {}).items():
-                file_api = quality.get('file_api')
-                file_id = quality.get('file_id')
+            for quality_id, quality in safeextractfromdict(video_data, ['videos', 'mp4'], {}).items():
+                if not isinstance(quality, dict): continue
+                file_api, file_id = quality.get('file_api'), quality.get('file_id')
                 if not file_api or not file_id: continue
                 download_url = f'{file_api}?foo=bar&vid={file_id}'
                 formats.append({'quality': quality_id, 'download_url': download_url})
             quality_rank = {'cif': 0, 'sd': 1, 'hd': 2, 'fhd': 3, 'ffd': 4}
             formats = sorted(formats, key=lambda x: quality_rank.get(x['quality'], -1), reverse=True)
             download_url = formats[0]['download_url']
-            self.default_download_headers.update({'Referer': url})
             resp = self.get(download_url, stream=True, **request_overrides)
             if resp.status_code > 400:
                 params = {
-                    "video_id": video_id, "appver": "V11220.210521.03", "appname": "sinaplayer_pc", "applt": "web", "tags": "sinaplayer_pc",
-                    "player": "all", "jsonp": "", "plid": "2021012801", "prid": "", "uid": "", "tid": "", "pid": "1", "ran": "0.2649524433568291",
-                    "r": "https://video.sina.com.cn/p/finance/2025-11-28/detail-infyypay7178654.d.html", "referrer": "", "ssid": "gusr_pc_1764397613438",
-                    "preload": "0", "uu": "114.92.19.247_1764392514.160162", "isAuto": "1",
+                    "video_id": video_id, "appver": "V11220.210521.03", "appname": "sinaplayer_pc", "applt": "web", "tags": "sinaplayer_pc", "player": "all", "jsonp": "", 
+                    "plid": "2021012801", "prid": "", "uid": "", "tid": "", "pid": "1", "ran": "0.2649524433568291", "r": "https://video.sina.com.cn/p/finance/2025-11-28/detail-infyypay7178654.d.html", 
+                    "referrer": "", "ssid": "gusr_pc_1764397613438", "preload": "0", "uu": "114.92.19.247_1764392514.160162", "isAuto": "1",
                 }
                 resp = self.get('https://api.ivideo.sina.com.cn/public/video/play?', params=params, **request_overrides)
                 resp.raise_for_status()
@@ -91,14 +88,9 @@ class SinaVideoClient(BaseVideoClient):
                 formats = sorted(formats, key=lambda x: quality_rank.get(x['definition'], -1), reverse=True)
                 download_url = formats[0]['dispatch_result']['url'] or formats[0]['dispatch_result']['bakurl']
             video_info.update(dict(download_url=download_url))
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = legalizestring(
-                video_data.get('title', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
-            ).removesuffix('.')
-            ext = 'mp4'
+            video_title = legalizestring(video_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, identifier=video_id,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', identifier=video_id,
             ))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'

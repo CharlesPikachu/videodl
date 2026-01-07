@@ -7,13 +7,11 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
-import time
 import copy
 import json_repair
-from datetime import datetime
 from bs4 import BeautifulSoup
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''UnityVideoClient'''
@@ -36,6 +34,7 @@ class UnityVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         video_infos = []
         try:
@@ -46,44 +45,35 @@ class UnityVideoClient(BaseVideoClient):
             script_tag = soup.find("script", id="__NEXT_DATA__", type="application/json")
             raw_data = json_repair.loads(script_tag.string)
             video_info.update(dict(raw_data=raw_data))
-            page_props = raw_data.get("props", {}).get("pageProps", {})
-            tutorial = page_props.get("tutorial", {}) or {}
-            tutorial_title = tutorial.get("title", "").strip()
-            sections, videos = tutorial.get("sections", []), []
-            for section in sections:
-                section_title = section.get("title", "").strip()
-                body = section.get("body", []) or []
+            tutorial: dict = safeextractfromdict(raw_data, ['props', 'pageProps', 'tutorial'], {})
+            tutorial_title, sections, videos, uniq = tutorial.get("title", "").strip(), tutorial.get("sections", []), [], set()
+            for section in enumerate(sections):
+                if not isinstance(section, dict): continue
+                section_title, body = section.get("title", "").strip(), section.get("body", []) or []
                 for block in body:
-                    if block.get("_type") == "learn-gcpVideoBlock":
-                        ov = block.get("overviewVideo") or {}
-                        url = ov.get("url") or ov.get("videoURL")
-                        if not url and isinstance(ov, dict):
-                            for v in ov.values():
-                                if isinstance(v, str) and v.startswith("http"):
-                                    url = v
-                                    break
-                        if not url: continue
-                        if not (".mp4" in url or ".m3u8" in url): continue
-                        if section_title and tutorial_title:
-                            title = f"{tutorial_title} - {section_title}"
-                        else:
-                            title = section_title or tutorial_title or "Unity Learn Video"
-                        videos.append({"title": title, "url": url})
-            uniq = {}
-            for v in videos: uniq[v["url"]] = v
-            videos = list(uniq.values())
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
+                    if not isinstance(block, dict): continue
+                    if block.get("_type") not in ("learn-gcpVideoBlock",): continue
+                    ov = block.get("overviewVideo") or {}
+                    url = ov.get("url") or ov.get("videoURL")
+                    if not url and isinstance(ov, dict):
+                        for v in ov.values():
+                            if isinstance(v, str) and v.startswith("http"): url = v; break
+                    if not url or (not (".mp4" in url or ".m3u8" in url)): continue
+                    if section_title and tutorial_title: title = f"{tutorial_title}-ep{len(videos)+1}-{section_title}"
+                    else: title = f'ep{len(videos)+1}-' + (section_title or tutorial_title or "Unity Learn Video")
+                    if url in uniq: continue
+                    uniq.add(url)
+                    videos.append({"title": title, "url": url})
             for v in videos:
                 video_info_page = copy.deepcopy(video_info)
                 video_info_page.update(dict(download_url=v['url']))
-                video_title = legalizestring(v['title'], replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
+                video_title = legalizestring(v['title'], replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                     url=v['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
                 )
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info_page['ext']
                 video_info_page.update(dict(
-                    title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
+                    title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title
                 ))
                 video_infos.append(video_info_page)
         except Exception as err:

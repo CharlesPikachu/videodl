@@ -16,12 +16,11 @@ import string
 import subprocess
 import json_repair
 from pathlib import Path
-from datetime import datetime
 from bs4 import BeautifulSoup
 from .base import BaseVideoClient
 from typing import Dict, Any, List
 from urllib.parse import urlparse, urlencode
-from ..utils import legalizestring, searchdictbykey, useparseheaderscookies, safeextractfromdict, writevodm3u8fortencent, FileTypeSniffer, VideoInfo, AESAlgorithmWrapper, SpinWithBackoff
+from ..utils import legalizestring, searchdictbykey, useparseheaderscookies, safeextractfromdict, writevodm3u8fortencent, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo, AESAlgorithmWrapper, SpinWithBackoff
 
 
 '''TencentVQQVideoClient: https://github.com/Jesseatgao/movie-downloader/blob/master/mdl/sites/vqq.py'''
@@ -85,6 +84,7 @@ class TencentVQQVideoClient(BaseVideoClient):
         file_format_id, vfilefs = None, safeextractfromdict(data, ['vl', 'vi', 0, 'fs'], None)
         if vfilefs:
             for fmt in safeextractfromdict(data, ['fl', 'fi'], []):
+                if not isinstance(fmt, dict): continue
                 if vfilefs == fmt.get('fs'): file_format_id = fmt.get('id'); break
         if not file_format_id: file_format_id = safeextractfromdict(data, ['fl', 'fi', 0, 'id'], None) or self.VQQ_FORMAT_IDS_DEFAULT[platform]['sd']
         return file_format_id
@@ -181,9 +181,8 @@ class TencentVQQVideoClient(BaseVideoClient):
                     ckey_resp = node_proc.stdout.readline().rstrip(r'\r\n')
                     ckey, tm, guid, flowid = ckey_resp.split()
                     vkeyparam = {
-                        'otype': 'ojson', 'vid': vid, 'format': new_format_id, 'filename': cfilename, 'platform': TencentVQQVideoClient.QQVideoPlatforms.P10201, 'appVer': self.app_ver,
-                        'sdtfrom': 'v1010', 'guid': guid, 'flowid': flowid, 'tm': tm, 'refer': referrer, 'ehost': vurl, 'logintoken': json.dumps(self._getlogintokenfromcookies(self.default_cookies), separators=(',', ':')),
-                        'encryptVer': self.encrypt_ver, 'cKey': ckey
+                        'otype': 'ojson', 'vid': vid, 'format': new_format_id, 'filename': cfilename, 'platform': TencentVQQVideoClient.QQVideoPlatforms.P10201, 'appVer': self.app_ver, 'sdtfrom': 'v1010', 'guid': guid, 
+                        'flowid': flowid, 'tm': tm, 'refer': referrer, 'ehost': vurl, 'logintoken': json.dumps(self._getlogintokenfromcookies(self.default_cookies), separators=(',', ':')), 'encryptVer': self.encrypt_ver, 'cKey': ckey
                     }
                     params = {'buid': 'onlyvkey', 'vkeyparam': urlencode(vkeyparam)}
                     try:
@@ -401,6 +400,7 @@ class TencentVQQVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source, enable_nm3u8dlre=True)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         video_infos = []
         try:
@@ -429,10 +429,8 @@ class TencentVQQVideoClient(BaseVideoClient):
                 else:
                     vi['url'] = "https://v.qq.com/x/page/%s.html" % vi['V']
                     vi['referrer'] = basic_info['referrer']
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = basic_info['title'] or f'{self.source}_null_{date_str}'
-            video_title = legalizestring(video_title, replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
+            video_title = basic_info['title'] or null_backup_title
+            video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
             for idx, vinfo_hit_vid in enumerate(basic_info['normal_ids']):
                 raw_data = copy.deepcopy(basic_info)
                 video_info_page = copy.deepcopy(video_info)
@@ -443,7 +441,7 @@ class TencentVQQVideoClient(BaseVideoClient):
                 video_info_page.update(dict(
                     raw_data=raw_data, download_url=download_url, title=f'{video_title}_ep{idx+1}' if len(basic_info['normal_ids']) > 1 else video_title, 
                     file_path=os.path.join(self.work_dir, self.source, f'{video_title}_ep{idx+1}' if len(basic_info['normal_ids']) > 1 else video_title), 
-                    ext=ext, identifier=f"{raw_data['cover_id']}_{vinfo_hit_vid['V']}", enable_nm3u8dlre=True
+                    ext=ext, identifier=f"{raw_data['cover_id']}-{vinfo_hit_vid['V']}", enable_nm3u8dlre=True
                 ))
                 video_infos.append(video_info_page)
         except Exception as err:
@@ -526,19 +524,13 @@ class TencentVideoClient(BaseVideoClient):
                 if not isinstance(video_format, dict): continue
                 base_url = video_format.get('url') or ''
                 if not base_url: continue
-                hls = video_format.get('hls')
-                if hls:
-                    pt = hls.get('pt') or ''
-                    url = base_url + pt
-                    ext = 'm3u8'
-                elif '.m3u8' in base_url:
-                    url = base_url
-                    ext = 'm3u8'
+                hls: dict = video_format.get('hls')
+                if hls: url, ext = base_url + hls.get('pt') or '', 'm3u8'
+                elif '.m3u8' in base_url: url, ext = base_url, 'm3u8'
                 else:
                     fn, vkey = video_response.get('fn') or '', video_response.get('fvkey') or ''
-                    if fn and vkey: url = f'{base_url}{fn}?vkey={vkey}'
-                    else: url = base_url
-                    ext = 'mp4'
+                    if fn and vkey: url, ext = f'{base_url}{fn}?vkey={vkey}', 'mp4'
+                    else: url, ext = base_url, 'mp4'
                 if not url: continue
                 results.append({'url': url, 'ext': ext, 'format_id': format_id, 'format_note': format_note, 'width': width, 'height': height, 'vbr': vbr, 'abr': abr, 'fps': fps})
         return results
@@ -549,6 +541,7 @@ class TencentVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source, enable_nm3u8dlre=True)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
             # --basic info extract with different netloc
@@ -556,10 +549,9 @@ class TencentVideoClient(BaseVideoClient):
             if parsed_url.netloc in ['v.qq.com']:
                 try:
                     video_infos: list[dict] = self.vqq_video_client.parsefromurl()
-                    assert any(((info.get("download_url") or "") not in ("", "NULL")) for info in (video_infos or []))
-                    return video_infos
+                    if any(((info.get("download_url") or "") not in ("", "NULL")) for info in (video_infos or [])): return video_infos
                 except:
-                    pass
+                    video_infos = []
                 api_url, app_version, platform, host, referer = 'https://h5vv6.video.qq.com/getvinfo', '3.5.57', '10901', 'v.qq.com', 'v.qq.com'
                 m = re.match(r'https?://v\.qq\.com/x/(?:page|cover/(?P<series_id>\w+))/(?P<id>\w+)', url)
                 video_id, series_id = m.group('id'), m.group('series_id')
@@ -636,16 +628,13 @@ class TencentVideoClient(BaseVideoClient):
             download_url = sorted_formatted_vinfos[0]['url']
             video_info.update(dict(download_url=download_url))
             # --misc
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = legalizestring(video_title or f'{self.source}_null_{date_str}', replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
+            video_title = legalizestring(video_title or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, 
-                guess_video_ext_result=guess_video_ext_result, identifier=f'{series_id}_{video_id}'
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f'{series_id}-{video_id}'
             ))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
