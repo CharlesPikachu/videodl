@@ -445,8 +445,8 @@ class BaseVideoClient():
             ext = video_info.get('ext') if video_info.get('ext') in ('mkv',) else 'mp4'
             video_info.update(dict(ext=ext, download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.{ext}')))
         if video_info.get('download_with_ffmpeg', False):
-            if shutil.which('N_m3u8DL-RE'): video_info['enable_nm3u8dlre'] = True
-            elif video_info['enable_nm3u8dlre']:
+            if shutil.which('N_m3u8DL-RE') and video_info.source not in ['TedVideoClient']: video_info['enable_nm3u8dlre'] = True
+            elif video_info['enable_nm3u8dlre'] and (not shutil.which('N_m3u8DL-RE')):
                 warning_msg = ('"enable_nm3u8dlre" has been set to True, but N_m3u8DL-RE was not found in the environment variables.' 
                                'Please visit https://github.com/nilaoda/N_m3u8DL-RE to download and install the version of N_m3u8DL-RE that matches your system,'
                                'and then add it to your environment variables. Now, we will switch "enable_nm3u8dlre" to False and try downloading again.')

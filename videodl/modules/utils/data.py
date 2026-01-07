@@ -6,7 +6,7 @@ Author:
 WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
-import functools
+from typing import Any
 
 
 '''VideoInfo'''
@@ -21,24 +21,17 @@ class VideoInfo(dict):
         data = dict(self._defaults)
         data.update(dict(*args, **kwargs))
         super(VideoInfo, self).__init__(data)
-    '''__getattr__'''
+    '''getattr'''
     def __getattr__(self, item):
-        try:
-            return self[item]
-        except KeyError:
-            raise AttributeError(f'"VideoInfo" object has no attribute "{item}"')
-    '''__setattr__'''
-    def __setattr__(self, key, value):
-        if key.startswith('_'):
-            object.__setattr__(self, key, value)
+        try: return self[item]
+        except KeyError: raise AttributeError(f'"VideoInfo" object has no attribute "{item}"')
+    '''setattr'''
+    def __setattr__(self, key: str, value: Any):
+        if key.startswith('_'): object.__setattr__(self, key, value)
+        else: self[key] = value
+    '''delattr'''
+    def __delattr__(self, item: str):
+        if item.startswith('_'): object.__delattr__(self, item)
         else:
-            self[key] = value
-    '''__delattr__'''
-    def __delattr__(self, item):
-        if item.startswith('_'):
-            object.__delattr__(self, item)
-        else:
-            try:
-                del self[item]
-            except KeyError:
-                raise AttributeError(f'"VideoInfo" object has no attribute "{item}"')
+            try: del self[item]
+            except KeyError: raise AttributeError(f'"VideoInfo" object has no attribute "{item}"')

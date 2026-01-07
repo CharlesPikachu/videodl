@@ -37,7 +37,7 @@ class TedVideoClient(BaseVideoClient):
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
         request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source, ext='mkv')
+        video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
         null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
@@ -58,7 +58,6 @@ class TedVideoClient(BaseVideoClient):
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            if ext in ['m3u8']: ext = 'mkv'
             video_info.update(dict(download_url=download_url))
             video_title = raw_data["props"]["pageProps"]["videoData"].get('title', null_backup_title) or null_backup_title
             video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
