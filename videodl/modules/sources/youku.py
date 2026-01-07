@@ -10,10 +10,9 @@ import os
 import time
 import random
 import string
-from datetime import datetime
 from .base import BaseVideoClient
 from urllib.parse import urlparse, parse_qs
-from ..utils import legalizestring, useparseheaderscookies, resp2json, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''YoukuVideoClient'''
@@ -43,6 +42,7 @@ class YoukuVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source, download_with_ffmpeg=True)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
             parsed_url = urlparse(url)
@@ -68,18 +68,13 @@ class YoukuVideoClient(BaseVideoClient):
             video_urls_sorted = [v for v in video_urls_sorted if v.get('url')]
             download_url = video_urls_sorted[0]['url']
             video_info.update(dict(download_url=download_url))
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = legalizestring(
-                video_data['video'].get('title', f'{self.source}_null_{date_str}'), replace_null_string=f'{self.source}_null_{date_str}',
-            ).removesuffix('.')
+            video_title = legalizestring(safeextractfromdict(video_data, ['video', 'title'], null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, 
-                guess_video_ext_result=guess_video_ext_result, identifier=vid,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid,
             ))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'

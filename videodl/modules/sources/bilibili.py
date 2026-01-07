@@ -116,7 +116,8 @@ class BilibiliVideoClient(BaseVideoClient):
                 video_page_info.update(dict(raw_data=page_raw_data))
                 for item in page_raw_data['result']['video_info']['dash']['video']:
                     formats.append({'url': item.get('baseUrl') or item.get('base_url') or item.get('url'), 'filesize': item.get('size') or 0, 'width': item.get('width') or 0, 'height': item.get('height') or 0})
-                formats = sorted(formats, key=lambda x: (x["width"]*x["height"], x["filesize"]), reverse=True)
+                formats: list[dict] = sorted(formats, key=lambda x: (x["width"]*x["height"], x["filesize"]), reverse=True)
+                formats: list[dict] = [item for item in formats if item.get('url')]
                 download_url = formats[0]['url']
                 video_page_info.update(dict(download_url=download_url))
                 video_title = page.get('share_copy') or page.get('show_title') or null_backup_title
@@ -129,7 +130,8 @@ class BilibiliVideoClient(BaseVideoClient):
                 audio_formats = []
                 for item in safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'dolby', 'audio'], []) + safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'audio'], []):
                     audio_formats.append({'url': item.get('baseUrl') or item.get('base_url') or item.get('url'), 'filesize': item.get('size') or 0})
-                audio_formats = sorted(audio_formats, key=lambda x: x["filesize"], reverse=True)
+                audio_formats: list[dict] = sorted(audio_formats, key=lambda x: x["filesize"], reverse=True)
+                audio_formats: list[dict] = [item for item in audio_formats if item.get('url')]
                 if len(audio_formats) == 0: video_infos.append(video_page_info); continue
                 guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(
                     url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
@@ -178,7 +180,8 @@ class BilibiliVideoClient(BaseVideoClient):
                 if not safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'video'], []): continue
                 for item in page_raw_data['result']['video_info']['dash']['video']:
                     formats.append({'url': item.get('baseUrl') or item.get('base_url'), 'filesize': item.get('size'), 'width': item.get('width'), 'height': item.get('height')})
-                formats = sorted(formats, key=lambda x: (x["width"]*x["height"], x["filesize"]), reverse=True)
+                formats: list[dict] = sorted(formats, key=lambda x: (x["width"]*x["height"], x["filesize"]), reverse=True)
+                formats: list[dict] = [item for item in formats if item.get('url')]
                 download_url = formats[0]['url']
                 video_page_info.update(dict(download_url=download_url))
                 video_title = page.get('long_title') or page.get('title') or null_backup_title
@@ -191,7 +194,8 @@ class BilibiliVideoClient(BaseVideoClient):
                 audio_formats = []
                 for item in safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'dolby', 'audio'], []) + safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'audio'], []):
                     audio_formats.append({'url': item.get('baseUrl') or item.get('base_url') or item.get('url'), 'filesize': item.get('size') or 0})
-                audio_formats = sorted(audio_formats, key=lambda x: x["filesize"], reverse=True)
+                audio_formats: list[dict] = sorted(audio_formats, key=lambda x: x["filesize"], reverse=True)
+                audio_formats: list[dict] = [item for item in audio_formats if item.get('url')]
                 if len(audio_formats) == 0: video_infos.append(video_page_info); continue
                 guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(
                     url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
@@ -237,7 +241,8 @@ class BilibiliVideoClient(BaseVideoClient):
                 video_page_info.update(dict(raw_data=page_raw_data))
                 for item in page_raw_data['data']['dash']['video']:
                     formats.append({'url': item.get('baseUrl') or item.get('base_url') or item.get('url'), 'filesize': item.get('size') or 0, 'width': item.get('width') or 0, 'height': item.get('height') or 0})
-                formats = sorted(formats, key=lambda x: (x["width"]*x["height"], x["filesize"]), reverse=True)
+                formats: list[dict] = sorted(formats, key=lambda x: (x["width"]*x["height"], x["filesize"]), reverse=True)
+                formats: list[dict] = [item for item in formats if item.get('url')]
                 download_url = formats[0]['url']
                 video_page_info.update(dict(download_url=download_url))
                 video_title = page.get('title') or null_backup_title
@@ -250,7 +255,8 @@ class BilibiliVideoClient(BaseVideoClient):
                 audio_formats = []
                 for item in safeextractfromdict(page_raw_data, ['data', 'dash', 'audio'], []):
                     audio_formats.append({'url': item.get('baseUrl') or item.get('base_url') or item.get('url'), 'filesize': item.get('size') or 0})
-                audio_formats = sorted(audio_formats, key=lambda x: x["filesize"], reverse=True)
+                audio_formats: list[dict] = sorted(audio_formats, key=lambda x: x["filesize"], reverse=True)
+                audio_formats: list[dict] = [item for item in audio_formats if item.get('url')]
                 if len(audio_formats) == 0: video_infos.append(video_page_info); continue
                 guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(
                     url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,

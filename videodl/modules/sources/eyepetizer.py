@@ -51,7 +51,8 @@ class EyepetizerVideoClient(BaseVideoClient):
             video_title = legalizestring(raw_data["result"]["video"].get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             download_url = raw_data["result"]["video"]["play_url"]
             play_info = raw_data["result"]["video"]["play_info"]
-            sorted_play_info = sorted(play_info, key=lambda x: (int(x["height"]), int(x["width"])), reverse=True)
+            sorted_play_info: list[dict] = sorted(play_info, key=lambda x: (int(x["height"]), int(x["width"])), reverse=True)
+            sorted_play_info: list[dict] = [item for item in sorted_play_info if item.get('url')]
             if sorted_play_info: download_url = sorted_play_info[0]['url']
             video_info.update(dict(download_url=download_url))
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(

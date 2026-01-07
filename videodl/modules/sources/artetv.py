@@ -50,7 +50,8 @@ class ArteTVVideoClient(BaseVideoClient):
                 for part in label.split("p"):
                     if part.isdigit(): return int(part)
                 return 0
-            sorted_streams = sorted(streams, key=_qualityvalue, reverse=True)
+            sorted_streams: list[dict] = sorted(streams, key=_qualityvalue, reverse=True)
+            sorted_streams: list[dict] = [item for item in sorted_streams if item.get('url')]
             download_url = sorted_streams[0]['url']
             video_info.update(dict(download_url=download_url))
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(

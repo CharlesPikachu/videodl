@@ -623,7 +623,8 @@ class TencentVideoClient(BaseVideoClient):
                 vbr = _toint(fmt.get('vbr'), 0)
                 abr = _toint(fmt.get('abr'), 0)
                 return (h, w, vbr, abr)
-            sorted_formatted_vinfos = sorted(formatted_vinfos, key=_qualitykey, reverse=True)
+            sorted_formatted_vinfos: list[dict] = sorted(formatted_vinfos, key=_qualitykey, reverse=True)
+            sorted_formatted_vinfos: list[dict] = [item for item in sorted_formatted_vinfos if item.get('url')]
             # --select the best and update video info
             download_url = sorted_formatted_vinfos[0]['url']
             video_info.update(dict(download_url=download_url))

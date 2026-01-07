@@ -53,7 +53,8 @@ class XuexiCNVideoClient(BaseVideoClient):
                 if not isinstance(sub_item, dict): continue
                 video_info_page = copy.deepcopy(video_info)
                 video_storage_info: list[dict] = sub_item["videos"][0]["video_storage_info"]
-                sorted_video_storage_info = sorted(video_storage_info, key=lambda v: (v.get("width", 0) * v.get("height", 0), v.get("bitrate", 0)), reverse=True)
+                sorted_video_storage_info: list[dict] = sorted(video_storage_info, key=lambda v: (v.get("width", 0) * v.get("height", 0), v.get("bitrate", 0)), reverse=True)
+                sorted_video_storage_info: list[dict] = [item for item in sorted_video_storage_info if item.get('normal')]
                 download_url = sorted_video_storage_info[0]['normal']
                 video_info_page.update(dict(download_url=download_url))
                 video_title = sub_item.get('title', null_backup_title)

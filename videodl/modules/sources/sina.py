@@ -72,7 +72,8 @@ class SinaVideoClient(BaseVideoClient):
                 download_url = f'{file_api}?foo=bar&vid={file_id}'
                 formats.append({'quality': quality_id, 'download_url': download_url})
             quality_rank = {'cif': 0, 'sd': 1, 'hd': 2, 'fhd': 3, 'ffd': 4}
-            formats = sorted(formats, key=lambda x: quality_rank.get(x['quality'], -1), reverse=True)
+            formats: list[dict] = sorted(formats, key=lambda x: quality_rank.get(x['quality'], -1), reverse=True)
+            formats: list[dict] = [item for item in formats if item.get('download_url')]
             download_url = formats[0]['download_url']
             resp = self.get(download_url, stream=True, **request_overrides)
             if resp.status_code > 400:
@@ -85,7 +86,8 @@ class SinaVideoClient(BaseVideoClient):
                 resp.raise_for_status()
                 raw_data['play'] = resp2json(resp=resp)
                 formats = raw_data['play']['data']['videos']
-                formats = sorted(formats, key=lambda x: quality_rank.get(x['definition'], -1), reverse=True)
+                formats: list[dict] = sorted(formats, key=lambda x: quality_rank.get(x['definition'], -1), reverse=True)
+                formats: list[dict] = [item for item in formats if item['dispatch_result']['url'] or item['dispatch_result']['bakurl']]
                 download_url = formats[0]['dispatch_result']['url'] or formats[0]['dispatch_result']['bakurl']
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(video_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')

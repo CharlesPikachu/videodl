@@ -58,7 +58,8 @@ class WeishiVideoClient(BaseVideoClient):
                 vq, w, h = spec.get("videoQuality") or 0, spec.get("width") or 0, spec.get("height") or 0
                 fps, size = spec.get("fps") or 0, int(spec.get("size") or 0)
                 return (vq, w * h, fps, size)
-            spec_list_sorted = sorted(spec_list, key=_qualityscore, reverse=True)
+            spec_list_sorted: list[dict] = sorted(spec_list, key=_qualityscore, reverse=True)
+            spec_list_sorted: list[dict] = [item for item in spec_list_sorted if item.get('url')]
             if len(spec_list_sorted) > 0: download_url = spec_list_sorted[0]['url']
             else: download_url = raw_data["feedsList"][0]['videoUrl']
             video_info.update(dict(download_url=download_url))

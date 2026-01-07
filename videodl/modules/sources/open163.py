@@ -63,7 +63,8 @@ class Open163VideoClient(BaseVideoClient):
                         size = item.get(f"{proto}{level}SizeOrign") or item.get(f"{proto}{level}Size") or 0
                         if not url or size == 0: continue
                         streams.append({"proto": proto, "level": level, "url": url, "size": size, "rank": quality_rank[level]})
-                streams_sorted = sorted(streams, key=lambda s: (s["rank"], s["size"]), reverse=True)
+                streams_sorted: list[dict] = sorted(streams, key=lambda s: (s["rank"], s["size"]), reverse=True)
+                streams_sorted: list[dict] = [item for item in streams_sorted if item.get('url')]
                 download_url = streams_sorted[0]['url']
                 video_info_page.update(dict(download_url=download_url))
                 video_title = item.get('title', null_backup_title)

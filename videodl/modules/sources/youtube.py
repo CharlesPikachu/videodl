@@ -7,12 +7,10 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
-import time
-from datetime import datetime
 from .base import BaseVideoClient
 from ..utils.youtubeutils import YouTube
 from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, useparseheaderscookies, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, VideoInfo
 
 
 '''YouTubeVideoClient'''
@@ -31,6 +29,7 @@ class YouTubeVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
             parsed_url = urlparse(url)
@@ -40,11 +39,8 @@ class YouTubeVideoClient(BaseVideoClient):
             video_info.update(dict(raw_data=raw_data))
             download_url = yt.streams.gethighestresolution()
             video_info.update(dict(download_url=download_url))
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = legalizestring(yt.title, replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
-            ext = 'mp4'
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, identifier=vid))
+            video_title = legalizestring(yt.title, replace_null_string=null_backup_title).removesuffix('.')
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', identifier=vid))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
