@@ -431,7 +431,7 @@ class TencentVQQVideoClient(BaseVideoClient):
                     vi['referrer'] = basic_info['referrer']
             video_title = basic_info['title'] or null_backup_title
             video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
-            for idx, vinfo_hit_vid in enumerate(basic_info['normal_ids']):
+            for _, vinfo_hit_vid in enumerate(basic_info['normal_ids']):
                 raw_data = copy.deepcopy(basic_info)
                 video_info_page = copy.deepcopy(video_info)
                 format_name, ext, urls = self._getvideourls(vinfo_hit_vid['V'], 'uhd', vinfo_hit_vid['url'], vinfo_hit_vid['referrer'])
@@ -439,8 +439,8 @@ class TencentVQQVideoClient(BaseVideoClient):
                 download_url = os.path.join(self.work_dir, self.source, f"{raw_data['cover_id']}_{vinfo_hit_vid['V']}.m3u8")
                 writevodm3u8fortencent(segments=urls, out_path=download_url, pick="best", strategy="global_host", probe_timeout=3.0, samples_per_host=2, probe_workers=16, probe_method="head_then_range_get")
                 video_info_page.update(dict(
-                    raw_data=raw_data, download_url=download_url, title=f'{video_title}_ep{idx+1}' if len(basic_info['normal_ids']) > 1 else video_title, 
-                    file_path=os.path.join(self.work_dir, self.source, f'{video_title}_ep{idx+1}' if len(basic_info['normal_ids']) > 1 else video_title), 
+                    raw_data=raw_data, download_url=download_url, title=f'ep{len(video_infos)+1}-{video_title}' if len(basic_info['normal_ids']) > 1 else video_title, 
+                    file_path=os.path.join(self.work_dir, self.source, f'ep{len(video_infos)+1}-{video_title}' if len(basic_info['normal_ids']) > 1 else video_title), 
                     ext=ext, identifier=f"{raw_data['cover_id']}-{vinfo_hit_vid['V']}", enable_nm3u8dlre=True
                 ))
                 video_infos.append(video_info_page)

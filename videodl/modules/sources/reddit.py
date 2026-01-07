@@ -136,12 +136,12 @@ class RedditVideoClient(BaseVideoClient):
                 final_url = data.get("url")
                 raise RuntimeError(f'The video in this post is not hosted on Reddit; it is an external link: {final_url}')
             if media.is_playlist and media.playlist_items:
-                for idx, item in enumerate(media.playlist_items, 1):
+                for _, item in enumerate(media.playlist_items, 1):
                     hls_url, dash_url, vid = item.get("hls_url"), item.get("dash_url"), item["id"]
                     if hls_url: hls_url = self._augmenthlsquery(hls_url)
                     elif dash_url: hls_url = dash_url
                     if not hls_url: continue
-                    video_title = legalizestring(f'ep{idx+1}-{media.title or null_backup_title}', replace_null_string=null_backup_title).removesuffix('.')
+                    video_title = legalizestring(f'ep{len(video_infos)+1}-{media.title or null_backup_title}', replace_null_string=null_backup_title).removesuffix('.')
                     guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                         url=hls_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
                     )

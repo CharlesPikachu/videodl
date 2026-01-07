@@ -71,7 +71,7 @@ class BilibiliVideoClient(BaseVideoClient):
                 durl = [x for x in durl if x.get('url')]
                 download_url = max(page_raw_data['data']['durl'], key=lambda x: x['size'])['url']
                 video_page_info.update(dict(download_url=download_url))
-                video_title = f"ep{page_idx+1}-{page.get('part')}" if len(raw_data['data']["pages"]) > 1 else raw_data["data"].get('title')
+                video_title = f"ep{len(video_infos)+1}-{page.get('part')}" if len(raw_data['data']["pages"]) > 1 else raw_data["data"].get('title')
                 video_title = legalizestring(video_title or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                     url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
