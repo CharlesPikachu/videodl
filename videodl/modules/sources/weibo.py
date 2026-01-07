@@ -8,12 +8,11 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import re
-import time
 import json
-from datetime import datetime
+import copy
 from .base import BaseVideoClient
 from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, resp2json, useparseheaderscookies, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, resp2json, useparseheaderscookies, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
 
 
 '''WeiboVideoClient'''
@@ -32,20 +31,24 @@ class WeiboVideoClient(BaseVideoClient):
         }
         self.default_headers = self.default_parse_headers
         self._initsession()
-    '''_parsehtml'''
+    '''_parsefromurlwithmweibo'''
     @useparseheaderscookies
-    def _parsehtml(self, vid: str, request_overrides: dict = None):
-        # prepare
+    def _parsefromurlwithmweibo(self, url: str, request_overrides: dict = None):
+        # init
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
-        self.default_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-            "Referer": f"https://m.weibo.cn/detail/{vid}",
-            "X-Requested-With": "XMLHttpRequest",
-        }
+        if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
-            resp = self.get(f"https://m.weibo.cn/statuses/show?id={vid}", **request_overrides)
+            parsed_url = urlparse(url)
+            try: vid = parse_qs(parsed_url.query, keep_blank_values=True)['fid'][0]
+            except: vid = parsed_url.path.strip('/').split('/')[-1]
+            base_headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
+                "Referer": f"https://m.weibo.cn/detail/{vid}", "X-Requested-With": "XMLHttpRequest",
+            }
+            resp = self.get(f"https://m.weibo.cn/statuses/show?id={vid}", headers=base_headers, **request_overrides)
             resp.raise_for_status()
             raw_data = resp2json(resp)
             video_info.update(dict(raw_data=raw_data))
@@ -58,18 +61,15 @@ class WeiboVideoClient(BaseVideoClient):
             sorted_download_urls = sorted(download_urls.items(), key=lambda kv: _getresolutionscore(kv[1]), reverse=True)
             download_url = sorted_download_urls[0][1] if sorted_download_urls else raw_data['data']['page_info']['media_info']['stream_url']
             video_info.update(dict(download_url=download_url))
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
             video_title = legalizestring(
-                raw_data["data"]['page_info'].get('title') or raw_data["data"]['page_info'].get('page_title') or f'{self.source}_null_{date_str}',
-                replace_null_string=f'{self.source}_null_{date_str}',
+                raw_data["data"]['page_info'].get('title') or raw_data["data"]['page_info'].get('page_title') or null_backup_title, replace_null_string=null_backup_title,
             ).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid,
             ))
         except Exception as err:
             err_msg = f'{self.source}._parsehtml >>> {vid} (Error: {err})'
@@ -79,25 +79,24 @@ class WeiboVideoClient(BaseVideoClient):
         video_infos = [video_info]
         # return
         return video_infos
-    '''parsefromurl'''
+    '''_parsefromurlwithh5videoweibo'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = None):
-        # prepare
+    def _parsefromurlwithh5videoweibo(self, url: str, request_overrides: dict = None):
+        # init
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
             parsed_url = urlparse(url)
-            try:
-                vid = parse_qs(parsed_url.query, keep_blank_values=True)['fid'][0]
-            except:
-                vid = parsed_url.path.strip('/').split('/')[-1]
-            if ':' not in vid: return self._parsehtml(vid=vid, request_overrides=request_overrides)
+            try: vid = parse_qs(parsed_url.query, keep_blank_values=True)['fid'][0]
+            except: vid = parsed_url.path.strip('/').split('/')[-1]
             params = {"page": f"/show/{vid}"}
             payload = {"Component_Play_Playinfo": {"oid": f"{vid}"}}
-            self.default_headers['Referer'] = url
-            resp = self.post(f'https://h5.video.weibo.com/api/component', params=params, data={"data": json.dumps(payload)}, **request_overrides)
+            headers = copy.deepcopy(self.default_headers)
+            headers['Referer'] = url
+            resp = self.post(f'https://h5.video.weibo.com/api/component', params=params, data={"data": json.dumps(payload)}, headers=headers, **request_overrides)
             resp.raise_for_status()
             resp.encoding = 'utf-8'
             raw_data = resp2json(resp)
@@ -109,18 +108,13 @@ class WeiboVideoClient(BaseVideoClient):
             sorted_download_urls = sorted(download_urls.items(), key=lambda kv: _qualityfromkey(kv[0]), reverse=True)
             download_url = f"https:{sorted_download_urls[0][1]}" if sorted_download_urls else raw_data["data"]["Component_Play_Playinfo"]["stream_url"]
             video_info.update(dict(download_url=download_url))
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = legalizestring(
-                raw_data["data"]["Component_Play_Playinfo"].get('title', f'{self.source}_null_{date_str}'),
-                replace_null_string=f'{self.source}_null_{date_str}',
-            ).removesuffix('.')
+            video_title = legalizestring(raw_data["data"]["Component_Play_Playinfo"].get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid
             ))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
@@ -129,6 +123,13 @@ class WeiboVideoClient(BaseVideoClient):
         # construct video infos
         video_infos = [video_info]
         # return
+        return video_infos
+    '''parsefromurl'''
+    @useparseheaderscookies
+    def parsefromurl(self, url: str, request_overrides: dict = None):
+        for parser in [self._parsefromurlwithh5videoweibo, self._parsefromurlwithmweibo]:
+            video_infos = parser(url, request_overrides)
+            if any(((info.get("download_url") or "") not in ("", "NULL")) for info in (video_infos or [])): break
         return video_infos
     '''belongto'''
     @staticmethod

@@ -7,6 +7,7 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
+import copy
 import random
 from bs4 import BeautifulSoup
 from .base import BaseVideoClient
@@ -40,8 +41,9 @@ class PearVideoClient(BaseVideoClient):
         try:
             parsed_url = urlparse(url)
             video_id = parsed_url.path.split('/')[-1].replace("video_", "")
-            self.default_headers['Referer'] = f"https://www.pearvideo.com/detail_{video_id}"
-            resp = self.get(f"https://www.pearvideo.com/videoStatus.jsp?contId={video_id}&mrd={random.random()}", **request_overrides)
+            headers = copy.deepcopy(self.default_headers)
+            headers['Referer'] = f"https://www.pearvideo.com/detail_{video_id}"
+            resp = self.get(f"https://www.pearvideo.com/videoStatus.jsp?contId={video_id}&mrd={random.random()}", headers=headers, **request_overrides)
             self.default_headers.pop('Referer')
             resp.raise_for_status()
             raw_data = resp2json(resp=resp)
@@ -53,7 +55,7 @@ class PearVideoClient(BaseVideoClient):
             download_url = download_url.replace(f'/{timestamp}-', f'/cont-{video_id}-')
             video_info.update(dict(download_url=download_url))
             try:
-                video_title = BeautifulSoup(self.get(url, **request_overrides).text, "html.parser").title.get_text(strip=True)
+                video_title = BeautifulSoup(self.get(url, headers=headers, **request_overrides).text, "html.parser").title.get_text(strip=True)
             except:
                 video_title = null_backup_title
             video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')

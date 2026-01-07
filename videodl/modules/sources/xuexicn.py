@@ -10,10 +10,9 @@ import os
 import time
 import copy
 import json_repair
-from datetime import datetime
 from .base import BaseVideoClient
 from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, useparseheaderscookies, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
 
 
 '''XuexiCNVideoClient'''
@@ -36,6 +35,7 @@ class XuexiCNVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         video_infos = []
         try:
@@ -50,23 +50,22 @@ class XuexiCNVideoClient(BaseVideoClient):
             # --iter to parse
             sub_items = raw_data['sub_items']
             for sub_item in sub_items:
+                if not isinstance(sub_item, dict): continue
                 video_info_page = copy.deepcopy(video_info)
-                video_storage_info = sub_item["videos"][0]["video_storage_info"]
+                video_storage_info: list[dict] = sub_item["videos"][0]["video_storage_info"]
                 sorted_video_storage_info = sorted(video_storage_info, key=lambda v: (v.get("width", 0) * v.get("height", 0), v.get("bitrate", 0)), reverse=True)
                 download_url = sorted_video_storage_info[0]['normal']
                 video_info_page.update(dict(download_url=download_url))
-                dt = datetime.fromtimestamp(time.time())
-                date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-                video_title = sub_item.get('title', f'{self.source}_null_{date_str}')
-                if root_video_title and len(sub_items) > 1: video_title = f"{root_video_title}_{video_title}"
-                video_title = legalizestring(video_title, replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
+                video_title = sub_item.get('title', null_backup_title)
+                if root_video_title and len(sub_items) > 1: video_title = f"ep{len(video_infos)+1}-{root_video_title}-{video_title}"
+                elif len(sub_items) > 1: video_title = f"ep{len(video_infos)+1}-{video_title}"
+                video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                     url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
                 )
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
                 video_info_page.update(dict(
-                    title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, 
-                    guess_video_ext_result=guess_video_ext_result, identifier=f"{vid}_{sub_item['sn']}",
+                    title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f"{vid}-{sub_item['sn']}",
                 ))
                 video_infos.append(video_info_page)
         except Exception as err:
