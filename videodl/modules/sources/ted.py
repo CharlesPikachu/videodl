@@ -46,7 +46,7 @@ class TedVideoClient(BaseVideoClient):
             raw_data = json_repair.loads(script_tag.string)
             video_info.update(dict(raw_data=raw_data))
             player_data = json_repair.loads(raw_data["props"]["pageProps"]["videoData"]["playerData"])
-            download_url = safeextractfromdict(player_data, ['resources', 'h264', 0, 'file'], '') or safeextractfromdict(player_data, ['resources', 'stream'], '')
+            download_url = safeextractfromdict(player_data, ['resources', 'stream'], '') or safeextractfromdict(player_data, ['resources', 'h264', 0, 'file'], '')
             video_info.update(dict(download_url=download_url))
             video_title = raw_data["props"]["pageProps"]["videoData"].get('title', null_backup_title) or null_backup_title
             video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
