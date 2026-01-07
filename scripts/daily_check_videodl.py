@@ -152,7 +152,7 @@ VIDEODL_TEST_SAMPLES = {
     ],
     'KakaoVideoClient': [
         'http://tv.kakao.com/channel/2671005/cliplink/301965083',
-        'https://tv.kakao.com/channel/2671005/cliplink/375041999',
+        'https://tv.kakao.com/channel/2671005/cliplink/302362342?playlistId=70284&metaObjectType=Playlist',
     ],
     'YoukuVideoClient': [
         'https://v.youku.com/v_show/id_XMTgzNDQxNTkzNg==.html?spm=a2hkl.14919748_WEBHOME_HOME.scg_scroll_2.d_2_play&s=cc17d2fe962411de83b1&scm=20140719.rcmd.feed.show_cc17d2fe962411de83b1&alginfo=-1reqId-2b07ec602%204b42%204177%20aeb0%204e65d2d04e8f%231764098407663-1seqId-20IU4z6f0BTnk0zFX-1abId-2468079-1sceneId-246595&scg_id=22896328',

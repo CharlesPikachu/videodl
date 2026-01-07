@@ -21,7 +21,20 @@ class KakaoVideoClient(BaseVideoClient):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
         }
         self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+            "accept": "*/*",
+            "accept-encoding": "identity;q=1, *;q=0",
+            "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+            "cookie": "_T_ANO=cNZr9QAT2YddO2sd+iJCNsGtgrea4e5nNXRNVqkD4yryMoL4sOFTVwCgslL/krmUENF9erMo+wOhM3WZTcCpcj+2Rd7VOht4kvkWDuAlefWeLe4thR28cIeMnJnRG/FbOkHTNckveq6/LpAs1+A0sA38MedLQdS1Qrw1N+AIKTLOB+RYiVnfDB/sHmI06KmDMIsgxg+0c0mw2RxfnZU00reIa9O6ZF5lDukQzC27m2hiuSHr8YHfSGP68yyRtztEnqDGVtP8NLFExa2XOVEsmAB4IYp1BtQndUdvR80iqNFb5eS5+AUxpRKrmPENMKQyI1zIOszAa1IvwxruwEq7+g==",
+            "priority": "i",
+            "range": "bytes=0-",
+            "referer": "https://tv.kakao.com/",
+            "sec-ch-ua": "\"Google Chrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "sec-fetch-dest": "video",
+            "sec-fetch-mode": "no-cors",
+            "sec-fetch-site": "same-site",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
         }
         self.default_headers = self.default_parse_headers
         self._initsession()
