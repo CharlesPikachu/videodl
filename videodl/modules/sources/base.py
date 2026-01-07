@@ -442,7 +442,8 @@ class BaseVideoClient():
         )
         # use ffmpeg to deal with m3u8 likes, auto set according to video_info cues, a naive judgement is applied (high-priority)
         if video_info.get('ext') in ['m3u8', 'm3u'] or video_info['download_url'].split('?')[0].endswith('.m3u8') or video_info['download_url'].split('?')[0].endswith('m3u'):
-            video_info.update(dict(ext='mp4', download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
+            ext = video_info.get('ext') if video_info.get('ext') in ('mkv',) else 'mp4'
+            video_info.update(dict(ext=ext, download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.{ext}')))
         if video_info.get('download_with_ffmpeg', False):
             if shutil.which('N_m3u8DL-RE'): video_info['enable_nm3u8dlre'] = True
             elif video_info['enable_nm3u8dlre']:
