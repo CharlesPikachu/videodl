@@ -102,7 +102,9 @@ class BilibiliVideoClient(BaseVideoClient):
             resp = self.get('https://api.bilibili.com/pgc/view/web/season', params={'ep_id': episode_id}, **request_overrides)
             resp.raise_for_status()
             raw_data = resp2json(resp=resp)
-            for _, page in enumerate(raw_data['result']['episodes']):
+            result_episodes = safeextractfromdict(raw_data, ['result', 'episodes'], [])
+            for item in safeextractfromdict(raw_data, ['result', 'section'], []): result_episodes += item.get('episodes', [])
+            for _, page in enumerate(result_episodes):
                 if str(page['ep_id']) != episode_id: continue
                 try:
                     resp = self.get(f"https://api.bilibili.com/pgc/player/web/v2/playurl?fnval=12240&ep_id={str(page['ep_id'])}", **request_overrides)
@@ -161,7 +163,9 @@ class BilibiliVideoClient(BaseVideoClient):
             resp = self.get('https://api.bilibili.com/pgc/web/season/section', params={'season_id': ss_id}, **request_overrides)
             resp.raise_for_status()
             raw_data = resp2json(resp=resp)
-            for _, page in enumerate(raw_data['result']['main_section']['episodes']):
+            result_episodes = safeextractfromdict(raw_data, ['result', 'main_section', 'episodes'], [])
+            for item in safeextractfromdict(raw_data, ['result', 'section'], []): result_episodes += item.get('episodes', [])
+            for _, page in enumerate(result_episodes):
                 episode_id = page['id']
                 try:
                     resp = self.get(f"https://api.bilibili.com/pgc/player/web/v2/playurl?fnval=12240&ep_id={episode_id}", **request_overrides)
@@ -178,7 +182,7 @@ class BilibiliVideoClient(BaseVideoClient):
                 formats = sorted(formats, key=lambda x: (x["width"]*x["height"], x["filesize"]), reverse=True)
                 download_url = formats[0]['url']
                 video_page_info.update(dict(download_url=download_url))
-                video_title = page.get('long_title') or null_backup_title
+                video_title = page.get('long_title') or page.get('title') or null_backup_title
                 video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                     url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
@@ -268,6 +272,10 @@ class BilibiliVideoClient(BaseVideoClient):
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
+        # init
+        request_overrides = request_overrides or {}
+        try: url = self.get(url, allow_redirects=True, **request_overrides).url
+        except: url = url
         # common url
         pattern = re.compile(r'https?://(?:www\.)?bilibili\.com/(?:video/|festival/[^/?#]+\?(?:[^#]*&)?bvid=)(?P<prefix>[aAbB][vV])(?P<id>[^/?#&]+)')
         m = pattern.match(url)
