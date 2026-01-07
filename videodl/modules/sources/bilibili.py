@@ -43,7 +43,6 @@ class BilibiliVideoClient(BaseVideoClient):
         video_infos = []
         try:
             parsed_url = urlparse(url)
-            if "b23.tv" in parsed_url.netloc: url = self.get(url, allow_redirects=True, **request_overrides).url
             part_id = parse_qs(parsed_url.query, keep_blank_values=True).get('p', None)
             if part_id and isinstance(part_id, list): part_id = int(part_id[0]) if part_id and str(part_id[0]).lstrip("+-").isdigit() else None
             else: part_id = None
@@ -269,6 +268,15 @@ class BilibiliVideoClient(BaseVideoClient):
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return video_infos
+    '''_getredirecturl'''
+    def _getredirecturl(self, url: str, aid: str, request_overrides: dict = None):
+        try:
+            resp = self.get("https://api.bilibili.com/x/web-interface/view", params={"aid": aid}, **request_overrides)
+            redirect_url = resp2json(resp=resp)['data']['redirect_url']
+            redirect_url = self.get(redirect_url, allow_redirects=True, **request_overrides).url
+            return redirect_url
+        except:
+            return url
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
@@ -278,6 +286,8 @@ class BilibiliVideoClient(BaseVideoClient):
         except: url = url
         # common url
         pattern = re.compile(r'https?://(?:www\.)?bilibili\.com/(?:video/|festival/[^/?#]+\?(?:[^#]*&)?bvid=)(?P<prefix>[aAbB][vV])(?P<id>[^/?#&]+)')
+        m = pattern.match(url)
+        if m and (m.group('prefix').upper() in ('AV')): url = self._getredirecturl(url, m.group('id'), request_overrides)
         m = pattern.match(url)
         if m: video_id, prefix = m.group('id', 'prefix')
         if m and video_id and prefix: return self._parsefromcommonurl(url, request_overrides=request_overrides)
