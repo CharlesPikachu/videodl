@@ -56,23 +56,21 @@ Recommended parsing and downloading commands for some widely used video platform
 videodl -i "IQIYI/YOUKU/TENCENT VIDEO URL" -g -a XMFlvVideoClient
 # MIGU (咪咕视频)
 videodl -i "MIGU VIDEO URL" -g -a KedouVideoClient
-# DOUYIN / TIKTOK / KUAISHOU / XIAOHONGSHU (抖音, 抖音海外, 快手, 小红书等短视频)
-videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a SnapWCVideoClient
-videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a VideoFKVideoClient
-videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a KedouVideoClient
+# DOUYIN / TIKTOK / KUAISHOU / XIAOHONGSHU / YouTubeVideoClient (抖音, 抖音海外, 快手, 小红书, 油管视频等)
+videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YouTubeVideoClient VIDEO URL" -g -a SnapWCVideoClient
+videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YouTubeVideoClient VIDEO URL" -g -a VideoFKVideoClient
+videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YouTubeVideoClient VIDEO URL" -g -a KedouVideoClient
+videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YouTubeVideoClient VIDEO URL" -g -a IIILabVideoClient
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a KuKuToolVideoClient
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a NoLogoVideoClient
-videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU VIDEO URL" -g -a IIILabVideoClient
 ...
 # CCTV (央视网)
 videodl -i "CCTV VIDEO URL" -a CCTVVideoClient
 # 1905 (1905电影网)
 videodl -i "M1905 VIDEO URL" -a M1905VideoClient
-# YOUTUBE (油管)
-videodl -i "YOUTUBE VIDEO URL" -a YouTubeVideoClient
-videodl -i "YOUTUBE VIDEO URL" -g -a VideoFKVideoClient
 # BILIBILI (B站)
 videodl -i "BILIBILI VIDEO URL" -a BilibiliVideoClient
+videodl -i "BILIBILI VIDEO URL" -g -a VideoFKVideoClient
 ```
 
 In fact, the general-purpose video parsers in the support list can be used to parse and download videos from most widely used platforms. 
