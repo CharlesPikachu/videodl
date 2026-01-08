@@ -444,7 +444,7 @@ class BaseVideoClient():
         if video_info.get('ext') in ['m3u8', 'm3u'] or video_info['download_url'].split('?')[0].endswith('.m3u8') or video_info['download_url'].split('?')[0].endswith('m3u'):
             ext = video_info.get('ext') if video_info.get('ext') in ('mkv',) else 'mp4'
             video_info.update(dict(ext=ext, download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.{ext}')))
-        if video_info.get('download_with_ffmpeg', False):
+        if (video_info.get('ext') not in ['txt']) and (not video_info.get('download_url').endswith('.txt')) and video_info.get('download_with_ffmpeg', False):
             if shutil.which('N_m3u8DL-RE') and video_info.source not in ['TedVideoClient']: video_info['enable_nm3u8dlre'] = True
             elif video_info['enable_nm3u8dlre'] and (not shutil.which('N_m3u8DL-RE')):
                 warning_msg = ('"enable_nm3u8dlre" has been set to True, but N_m3u8DL-RE was not found in the environment variables.' 
