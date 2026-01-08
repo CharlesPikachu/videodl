@@ -8,9 +8,11 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import copy
+import warnings
 from ..sources import BaseVideoClient
 from ..utils import RandomIPGenerator
 from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
+warnings.filterwarnings('ignore')
 
 
 '''LongZhuVideoClient'''

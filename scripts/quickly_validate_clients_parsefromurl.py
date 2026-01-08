@@ -260,7 +260,7 @@ VIDEODL_TEST_SAMPLES = {
     ],
     'LongZhuVideoClient': [
         'https://www.bilibili.com/video/BV1DxCQBBE24/?spm_id_from=333.1007.tianma.2-2-5.click',
-        'https://www.toutiao.com/video/7358202402865938953/?log_from=24fdd11d4e4e68_1765499453711'
+        'https://share.xiaochuankeji.cn/hybrid/share/post?pid=415655156'
     ],
     'XiazaitoolVideoClient': [
         'https://www.douyin.com/jingxuan?modal_id=7509062795342728500',
@@ -268,8 +268,9 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.toutiao.com/video/7588799178684252691/',
     ],
     'NoLogoVideoClient': [
-        'https://www.bilibili.com/video/BV1CFy5BREqQ/?spm_id_from=333.1007.tianma.8-2-28.click',
-        'https://www.douyin.com/jingxuan?modal_id=7561075993822416185',
+        'https://www.douyin.com/jingxuan?modal_id=7501640534811233594',
+        'https://www.bilibili.com/video/BV1amvZBuE7d/?spm_id_from=333.1007.tianma.1-2-2.click',
+        'https://www.kuaishou.com/short-video/3x94xdt5zvg26x9?authorId=3x6fxie2rn8ciai&streamSource=find&area=homexxbrilliant',
     ],
     'SnapWCVideoClient': [
         'https://www.youtube.com/watch?v=8EA71rLoY5s',
@@ -282,8 +283,9 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.wwe.com/videos/full-match-damian-priest-rhea-ripley-conquer-aleister-black-zelina-vega-smackdown-highlights'
     ],
     'BugPkVideoClient': [
-        'https://www.douyin.com/jingxuan?modal_id=7583556644202761487',
-        'https://www.kuaishou.com/short-video/3xumtfzh4aqiqc6?authorId=3xbbsmxr7cdmhqs',
+        'https://www.bilibili.com/video/BV1Ecm7BYECL/?spm_id_from=333.1007.tianma.1-1-1.click',
+        'https://share.xiaochuankeji.cn/hybrid/share/post?pid=415662469',
+        'https://www.kuaishou.com/short-video/3xvnepai44qi65m?authorId=3xxk837em5amm9u&streamSource=find&area=homexxbrilliant',
     ],
     'ZanqianbaVideoClient': [
         'https://www.bilibili.com/bangumi/play/ep396009',
