@@ -124,7 +124,7 @@ class SohuVideoClient(BaseVideoClient):
             resp = self.get('https://hot.vrs.sohu.com/vrs_pc_play.action', params=params, **request_overrides)
             resp.raise_for_status()
             raw_data = resp2json(resp=resp)
-            assert raw_data.get('data') and isinstance(raw_data['data'], dict)
+            if not (raw_data.get('data') and isinstance(raw_data['data'], dict)): return [video_info]
             # --parse
             priority_keys = [
                 "relativeId", "norVid", "highVid", "superVid", "oriVid", "h2644kVid", "h265norVid", "h265highVid", "h265superVid", "h265oriVid", "h2654mVid", "h2654kVid", "norVid_ns", "highVid_ns", "superVid_ns", "oriVid_ns", 
