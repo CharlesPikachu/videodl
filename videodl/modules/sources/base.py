@@ -114,9 +114,9 @@ class BaseVideoClient():
             download_url, is_converter_performed = base64.b64decode(leshi_m.group(1)).decode("utf-8", errors="ignore"), True
             if not download_url.startswith('#EXTM3U'): return download_url, is_converter_performed
             touchdir(os.path.join(self.work_dir, self.source))
-            download_url = os.path.join(self.work_dir, self.source, f'{tmp_file_name}.m3u8') if tmp_file_name else generateuniquetmppath(os.path.join(self.work_dir, self.source), ext='m3u8')
-            with open(download_url, 'w') as fp: fp.write(download_url)
-            return download_url, is_converter_performed
+            tmp_file_path = os.path.join(self.work_dir, self.source, f'{tmp_file_name}.m3u8') if tmp_file_name else generateuniquetmppath(os.path.join(self.work_dir, self.source), ext='m3u8')
+            with open(tmp_file_path, 'w') as fp: fp.write(download_url)
+            return tmp_file_path, is_converter_performed
         # no matched known specifical urls
         return download_url, is_converter_performed
     '''_downloadyoutube'''
