@@ -1,0 +1,91 @@
+name: "🐛 Bug report"
+description: "Report a reproducible bug."
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug.
+        Please fill in the information below so we can reproduce and fix it faster.
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - "S1 - Critical (crash/data loss/security)"
+        - "S2 - High (major feature broken)"
+        - "S3 - Medium (workaround exists)"
+        - "S4 - Low (minor / cosmetic)"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version / Commit
+      description: "Which version are you using? (e.g., v1.2.3, commit SHA)"
+      placeholder: "v1.2.3 / 1a2b3c4"
+    validations:
+      required: false
+
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What happened?
+      description: "Describe the bug clearly."
+      placeholder: "A clear and concise description..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      placeholder: "Expected behavior..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: "Provide minimal steps to reproduce."
+      placeholder: |
+        1. Go to ...
+        2. Run ...
+        3. See error ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Screenshots
+      description: "Paste logs or attach screenshots if applicable."
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: "OS / runtime / dependencies"
+      placeholder: |
+        - OS: Windows 11 / Ubuntu 22.04 / macOS 14
+        - Runtime: Python 3.11 / Node 20
+        - Package manager: pip/conda/npm
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: "I searched existing issues and did not find a duplicate."
+          required: true
+        - label: "I can reproduce this consistently."
+          required: false

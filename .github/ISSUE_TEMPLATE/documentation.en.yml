@@ -1,0 +1,28 @@
+name: "📚 Documentation"
+description: "Report missing/incorrect docs or propose improvements."
+title: "[Docs]: "
+labels: ["documentation"]
+body:
+  - type: textarea
+    id: issue
+    attributes:
+      label: What's wrong / missing?
+      placeholder: "The docs are unclear about..."
+    validations:
+      required: true
+
+  - type: input
+    id: page
+    attributes:
+      label: Related page / section
+      placeholder: "Link or path to the docs page"
+    validations:
+      required: false
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested change
+      placeholder: "Proposed wording / examples..."
+    validations:
+      required: false

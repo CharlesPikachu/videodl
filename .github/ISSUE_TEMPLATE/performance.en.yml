@@ -1,0 +1,39 @@
+name: "🚀 Performance"
+description: "Report a performance issue or regression."
+title: "[Perf]: "
+labels: ["performance"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      placeholder: "What is slow and where?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: baseline
+    attributes:
+      label: Baseline vs Current
+      placeholder: |
+        Baseline: 120ms
+        Current: 600ms
+        Regression since: v1.2.0
+    validations:
+      required: false
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce / benchmark
+      placeholder: "Command / script / dataset / input size..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: profiling
+    attributes:
+      label: Profiling info
+      placeholder: "Profiler output, flamegraph, timing breakdown..."
+    validations:
+      required: false

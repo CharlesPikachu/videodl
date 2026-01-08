@@ -1,0 +1,90 @@
+name: "🐛 缺陷反馈"
+description: "报告一个可复现的 Bug。"
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈！请尽量补全信息，便于我们快速复现与修复。
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 严重程度
+      options:
+        - "S1 - 致命 (崩溃/数据丢失/安全)"
+        - "S2 - 高 (核心功能不可用)"
+        - "S3 - 中 (有替代方案)"
+        - "S4 - 低 (小问题/界面问题)"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: 版本 / 提交号
+      description: "你使用的版本 (例如 v1.2.3 或 commit SHA)"
+      placeholder: "v1.2.3 / 1a2b3c4"
+    validations:
+      required: false
+
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: 实际发生了什么？
+      description: "清晰描述 Bug 现象。"
+      placeholder: "现象描述..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果是什么？
+      placeholder: "期望行为..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: "给出最小可复现步骤。"
+      placeholder: |
+        1. 打开 ...
+        2. 执行 ...
+        3. 出现 ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志 / 截图
+      description: "粘贴日志或附上截图 (如适用)。"
+      render: shell
+    validations:
+      required: false
+
+  - type: textarea
+    id: env
+    attributes:
+      label: 环境信息
+      description: "OS / 运行时 / 依赖版本等"
+      placeholder: |
+        - OS: Windows 11 / Ubuntu 22.04 / macOS 14
+        - Runtime: Python 3.11 / Node 20
+        - 包管理: pip/conda/npm
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: 检查项
+      options:
+        - label: "我已搜索现有 issues, 未发现重复。"
+          required: true
+        - label: "我可以稳定复现该问题。"
+          required: false

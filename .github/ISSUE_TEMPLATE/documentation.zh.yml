@@ -1,0 +1,28 @@
+name: "📚 文档问题"
+description: "反馈文档缺失/错误或提出改进建议。"
+title: "[Docs]: "
+labels: ["documentation"]
+body:
+  - type: textarea
+    id: issue
+    attributes:
+      label: 哪里不对 / 缺什么？
+      placeholder: "文档在...部分不清晰/错误..."
+    validations:
+      required: true
+
+  - type: input
+    id: page
+    attributes:
+      label: 相关页面 / 章节
+      placeholder: "文档链接或路径"
+    validations:
+      required: false
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: 建议修改
+      placeholder: "建议的表述 / 示例..."
+    validations:
+      required: false

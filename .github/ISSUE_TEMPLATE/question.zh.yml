@@ -1,0 +1,28 @@
+name: "❓ 问题 / 支持"
+description: "提问或寻求使用帮助。"
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: 你的问题
+      placeholder: "我想知道如何..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 背景说明
+      description: "你想达成什么目标？"
+    validations:
+      required: false
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: 你已经尝试过什么
+      placeholder: "我尝试了..."
+    validations:
+      required: false

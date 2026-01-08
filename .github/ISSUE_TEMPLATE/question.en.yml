@@ -1,0 +1,28 @@
+name: "❓ Question"
+description: "Ask a question or request support."
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      placeholder: "How do I..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: "What are you trying to achieve?"
+    validations:
+      required: false
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What you've tried
+      placeholder: "I tried..."
+    validations:
+      required: false

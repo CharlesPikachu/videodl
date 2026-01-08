@@ -1,0 +1,49 @@
+name: "✨ Feature request"
+description: "Suggest an idea or improvement."
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: "What problem are you trying to solve?"
+      placeholder: "I'm frustrated when..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: "What would you like to happen?"
+      placeholder: "It would be great if..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      placeholder: "Other approaches..."
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - "P0 - Must have"
+        - "P1 - Should have"
+        - "P2 - Nice to have"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: "Mockups, references, related issues/PRs."
+    validations:
+      required: false

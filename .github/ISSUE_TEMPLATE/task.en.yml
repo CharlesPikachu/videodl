@@ -1,0 +1,33 @@
+name: "🧹 Task"
+description: "Engineering task / refactor / maintenance."
+title: "[Task]: "
+labels: ["task"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      placeholder: "What needs to be done and why?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope / checklist
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Risk level
+      options:
+        - "Low"
+        - "Medium"
+        - "High"
+    validations:
+      required: true

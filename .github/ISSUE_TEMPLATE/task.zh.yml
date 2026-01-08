@@ -1,0 +1,33 @@
+name: "🧹 任务 / 杂项"
+description: "工程任务 / 重构 / 维护。"
+title: "[Task]: "
+labels: ["task"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: 目标
+      placeholder: "需要做什么？为什么要做？"
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: 范围 / checklist
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: risk
+    attributes:
+      label: 风险等级
+      options:
+        - "低"
+        - "中"
+        - "高"
+    validations:
+      required: true

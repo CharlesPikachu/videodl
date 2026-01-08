@@ -1,0 +1,39 @@
+name: "🚀 性能问题"
+description: "反馈性能下降或耗时过长的问题。"
+title: "[Perf]: "
+labels: ["performance"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 问题概述
+      placeholder: "哪里慢？慢到什么程度？"
+    validations:
+      required: true
+
+  - type: textarea
+    id: baseline
+    attributes:
+      label: 基线 vs 当前
+      placeholder: |
+        基线: 120ms
+        当前: 600ms
+        从哪个版本开始变慢: v1.2.0
+    validations:
+      required: false
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤 / benchmark
+      placeholder: "命令 / 脚本 / 数据集 / 输入大小..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: profiling
+    attributes:
+      label: Profiling 信息
+      placeholder: "Profiler 输出、火焰图、耗时拆分..."
+    validations:
+      required: false

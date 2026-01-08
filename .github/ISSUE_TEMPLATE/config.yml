@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussions / 讨论区
+    url: https://github.com/CharlesPikachu/videodl/discussions
+    about: Please ask and answer questions here. / 建议在讨论区提问与交流。
+  - name: 🔒 Security / 安全问题
+    url: https://github.com/CharlesPikachu/videodl/security/policy
+    about: Please report security vulnerabilities privately. / 安全漏洞请私下提交。
