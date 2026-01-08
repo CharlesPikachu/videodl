@@ -319,7 +319,20 @@ VIDEODL_TEST_SAMPLES = {
     'XCVTSVideoClient': [
         'https://v.douyin.com/irwsqD47/',
         'https://v.kuaishou.com/8CU76w',
-    ]
+    ],
+    'KIT9VideoClient': [
+        'http://v.douyin.com/JYthvL6/',
+        'https://www.bilibili.com/video/BV1EEBiBhEDq/?spm_id_from=333.1007.tianma.13-2-48.click',
+        'https://news.qq.com/rain/a/20251004V02NZ800',
+        'https://ur.alipay.com/_nv7gnPJyDqjLbrPM9Dul7',
+        'https://show.meitu.com/detail?feed_id=6873229026351926275',
+        'https://ishare.ifeng.com/c/vs/v006uROwi--XAO9zMVtJUUewd8gnoa2qfWilMSzGxeoAPn7lWjN87mNtuzWQFWWXIvGIc?spss=np&crowdid=7355482289721053225&recallChannel=&aman=fgr0432r3rMfgMeQ04UODIR0Mj8M0N6TUyrNTBdkZjWYy1x00v'
+    ],
+    'XZDXVideoClient': [
+        'https://www.bilibili.com/video/BV12oS5B5Eye/?spm_id_from=333.1007.tianma.6-4-22.click',
+        'https://www.douyin.com/jingxuan?modal_id=7585277829261151542',
+        'https://www.kuaishou.com/short-video/3xd8b4qa8vtn6ie?authorId=3xmup9yp228r3ze&streamSource=find&area=homexxbrilliant',
+    ],
 }
 
 

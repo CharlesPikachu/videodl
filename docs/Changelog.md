@@ -1,5 +1,7 @@
 # Development Log
 
+- 2026-01-09: Released videofetch v0.5.1 - add three new short-video parsing APIs.
+
 - 2026-01-09: Released videofetch v0.5.0 - refactored the code structure, improved the stability of some video clients, removed deprecated interfaces and paid platforms, and fixed some potential bugs.
 
 - 2026-01-01: Released videofetch v0.4.6 - fix a bug when dealing with special download url type.

@@ -34,3 +34,7 @@ videodl -i "https://www.tiktok.com/@j4y273/video/7582553332242271510" -g -a BVVi
 videodl -i "https://www.youtube.com/watch?v=CXuFh6YsyM4&list=RDCXuFh6YsyM4&start_radio=1" -g -a VideoFKVideoClient
 # XCVTSVideoClient
 videodl -i "https://v.kuaishou.com/8CU76w" -g -a XCVTSVideoClient
+# KIT9VideoClient
+videodl -i "https://show.meitu.com/detail?feed_id=6873229026351926275" -g -a KIT9VideoClient
+# XZDXVideoClient
+videodl -i "https://www.douyin.com/jingxuan?modal_id=7585277829261151542" -g -a XZDXVideoClient
