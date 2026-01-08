@@ -269,9 +269,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.douyin.com/jingxuan?modal_id=7561075993822416185',
     ],
     'SnapWCVideoClient': [
-        'https://www.youtube.com/watch?v=cSrciR6QuKg', 
-        'https://www.le.com/ptv/vplay/25790784.html',
-        'https://www.douyin.com/jingxuan?modal_id=7580605435187596559',
+        'https://www.youtube.com/watch?v=8EA71rLoY5s',
+        'https://www.douyin.com/jingxuan?modal_id=7579947240421084426',
+        'https://www.tiktok.com/@stars2kin.1/video/7590051214277053709?lang=en',
+        'https://www.bilibili.com/video/BV1ociCBMEbJ/',
     ],
     'WWEVideoClient': [
         'https://www.wwe.com/videos/daniel-bryan-vs-andrade-cien-almas-smackdown-live-sept-4-2018', 

@@ -7,43 +7,34 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
-import re
 import copy
-import time
 import json
 import base64
-from datetime import datetime
-from .kedou import KedouVideoClient
 from ..utils import RandomIPGenerator
+from ..sources import BaseVideoClient
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.asymmetric import rsa, padding as asympad
 from cryptography.hazmat.primitives import hashes, padding as sympad, serialization
-from ..utils import VideoInfo, FileTypeSniffer, touchdir, useparseheaderscookies, legalizestring, resp2json
-
-
-'''constants'''
-SERVER_PUBLIC_PEM = """-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvDU+dR2bSews55172x4L
-s/ja+Dxt9ViZcj/nY0YodYo7l4jEKtEiCNV28lpFj3CkP4HKRCjL/jYkQNKGPwVg
-gUCGr/jBF1FpDLsqa0kg+dtfkm5Xm9QAyMBeG/jPdl5BEPOVh33A1UkPO/Xw6kSH
-rfghOUwBMzRBtXeYuJiYs5sKrf+Wy5sv708TI6G4hAPJG/69W4NNFJi/ipBNxntG
-dAoUHpEy4iYsvBgiccE7U0MBDnSHSqBBtIdMMFRHARn/tc+jXaadS0a4YmhTygiN
-eAJU4QuqAE25CsvkzIYIVEmlRXVcC0afw76XcwDpKBMVR5bEPzd3tMEfA+R34L1D
-fQIDAQAB
------END PUBLIC KEY-----"""
+from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
 
 
 '''SnapWCVideoClient'''
-class SnapWCVideoClient(KedouVideoClient):
+class SnapWCVideoClient(BaseVideoClient):
     source = 'SnapWCVideoClient'
+    SERVER_PUBLIC_PEM = """-----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvDU+dR2bSews55172x4L
+    s/ja+Dxt9ViZcj/nY0YodYo7l4jEKtEiCNV28lpFj3CkP4HKRCjL/jYkQNKGPwVg
+    gUCGr/jBF1FpDLsqa0kg+dtfkm5Xm9QAyMBeG/jPdl5BEPOVh33A1UkPO/Xw6kSH
+    rfghOUwBMzRBtXeYuJiYs5sKrf+Wy5sv708TI6G4hAPJG/69W4NNFJi/ipBNxntG
+    dAoUHpEy4iYsvBgiccE7U0MBDnSHSqBBtIdMMFRHARn/tc+jXaadS0a4YmhTygiN
+    eAJU4QuqAE25CsvkzIYIVEmlRXVcC0afw76XcwDpKBMVR5bEPzd3tMEfA+R34L1D
+    fQIDAQAB
+    -----END PUBLIC KEY-----"""
     def __init__(self, **kwargs):
         super(SnapWCVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
-            "Content-Type": "application/json",
-            "X-Locale": "en",
-            "Origin": "https://snapwc.com",
-            "Referer": "https://snapwc.com/",
+            "Content-Type": "application/json", "X-Locale": "en", "Origin": "https://snapwc.com", "Referer": "https://snapwc.com/",
         }
         self.default_download_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
@@ -95,13 +86,13 @@ class SnapWCVideoClient(KedouVideoClient):
         # prepare
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source, enable_nm3u8dlre=True)
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         video_infos = []
         try:
             # --init
             client_priv_pem, client_pub_pem = self._genclientkeypair1024()
-            payload = {"url": url}
-            req_body = self._encryptrequest(payload, SERVER_PUBLIC_PEM, client_pub_pem)
+            req_body = self._encryptrequest({"url": url}, self.SERVER_PUBLIC_PEM, client_pub_pem)
             # --post request
             headers = copy.deepcopy(self.default_headers)
             RandomIPGenerator().addrandomipv4toheaders(headers)
@@ -111,19 +102,11 @@ class SnapWCVideoClient(KedouVideoClient):
             raw_data = self._decryptresponse(raw_data, client_priv_pem)
             video_info.update(dict(raw_data=raw_data))
             # --video title
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = raw_data.get('title') or f'{self.source}_null_{date_str}'
-            video_title = legalizestring(video_title, replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
+            video_title = legalizestring(raw_data.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --download url
-            def _sortbysizedesc(items):
-                def key(x):
-                    s = int(x.get("size") or 0)
-                    return (1 if s == 0 else 0, -s)
-                return sorted(items, key=key)
+            def _sortbysizedesc(items): return sorted(items, key=lambda x: (1 if int(x.get("size") or 0) == 0 else 0, -int(x.get("size") or 0)))
             if len(raw_data["videos"]) > 0 and len(raw_data["audios"]) > 0:
-                raw_data["videos"] = _sortbysizedesc(raw_data["videos"])
-                raw_data["audios"] = _sortbysizedesc(raw_data["audios"])
+                raw_data["videos"], raw_data["audios"] = _sortbysizedesc(raw_data["videos"]), _sortbysizedesc(raw_data["audios"])
                 download_url, audio_download_url = raw_data["videos"][0]['url'], raw_data["audios"][0]['url']
             elif len(raw_data["videos"]) > 0:
                 raw_data["videos"] = _sortbysizedesc(raw_data["videos"])
@@ -131,15 +114,9 @@ class SnapWCVideoClient(KedouVideoClient):
             else:
                 raw_data["muxed"] = _sortbysizedesc(raw_data["muxed"])
                 download_url, audio_download_url = raw_data["muxed"][0]['url'], 'NULL'
-            pattern = re.compile(r'data:[^;]+;base64,([A-Za-z0-9+/=]+)')
-            m = pattern.match(download_url)
-            if m:
-                download_url = base64.b64decode(m.group(1)).decode("utf-8", errors="ignore")
-                if download_url.startswith('#EXTM3U'):
-                    touchdir(os.path.join(self.work_dir, self.source))
-                    with open(os.path.join(self.work_dir, self.source, f'{video_title}.m3u8'), 'w') as fp:
-                        fp.write(download_url)
-                    download_url = os.path.join(self.work_dir, self.source, f'{video_title}.m3u8')
+            # --deal with special download urls
+            download_url, is_converter_performed = self._convertspecialdownloadurl(download_url)
+            if is_converter_performed: video_info.update(dict(enable_nm3u8dlre=True))
             video_info.update(dict(download_url=download_url))
             if audio_download_url and audio_download_url != 'NULL': video_info.update(dict(audio_download_url=audio_download_url))
             # --other infos
@@ -148,8 +125,7 @@ class SnapWCVideoClient(KedouVideoClient):
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, 
-                guess_video_ext_result=guess_video_ext_result, identifier=video_title,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title,
             ))
             if audio_download_url and audio_download_url != 'NULL':
                 guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(
@@ -157,7 +133,8 @@ class SnapWCVideoClient(KedouVideoClient):
                 )
                 video_info.update(dict(guess_audio_ext_result=guess_audio_ext_result))
                 audio_ext = guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info['audio_ext']
-                video_info.update(dict(audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}_audio.{audio_ext}')))
+                if audio_ext in ['m4s']: audio_ext = 'm4a'
+                video_info.update(dict(audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}')))
             video_infos.append(video_info)
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
