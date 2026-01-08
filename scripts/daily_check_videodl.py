@@ -204,8 +204,9 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.facebook.com/100028981631678/videos/2151294341944888/?__so__=discover&__rv__=video_home_www_loe_popular_videos',
     ],
     'IIILabVideoClient': [
-        'https://www.le.com/ptv/vplay/77953489.html',
-        'https://www.youtube.com/watch?v=Nf1C1fSJG_8&list=RDMMNf1C1fSJG_8&start_radio=1',
+        'https://www.youtube.com/watch?v=Oi2261-l7nY&list=RDIBT0_3QUy98&index=4',
+        'https://www.le.com/ptv/vplay/77916175.html#vid=77916175', 
+        'https://x.com/NASA/status/2008604593941336381',
         'https://www.facebook.com/100085919341237/videos/851834657389993/?__so__=discover&__rv__=video_home_www_loe_popular_videos',
     ],
     'SnapAnyVideoClient': [
