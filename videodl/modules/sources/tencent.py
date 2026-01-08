@@ -548,7 +548,7 @@ class TencentVideoClient(BaseVideoClient):
             parsed_url = urlparse(url)
             if parsed_url.netloc in ['v.qq.com']:
                 try:
-                    video_infos: list[dict] = self.vqq_video_client.parsefromurl()
+                    video_infos: list[dict] = self.vqq_video_client.parsefromurl(url, request_overrides)
                     if any(((info.get("download_url") or "") not in ("", "NULL")) for info in (video_infos or [])): return video_infos
                 except:
                     video_infos = []
