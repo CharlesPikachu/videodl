@@ -7,6 +7,7 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
+import re
 import copy
 from ..sources import BaseVideoClient
 from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
@@ -45,7 +46,12 @@ class KIT9VideoClient(BaseVideoClient):
             # --video title
             video_title = legalizestring(raw_data['data'].get('video_title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --download url
-            video_info.update(dict(download_url=raw_data['data']['video_link']))
+            video_link = raw_data['data']['video_link']
+            if isinstance(video_link, dict):
+                video_link = dict(sorted(video_link.items(), key=lambda kv: (int((re.search(r'(\d{3,4})(?=\s*p\b)', str(kv[0]).lower()) or re.search(r'(\d{3,4})', str(kv[0])) or re.search(r'(.*)', '0')).group(1)) if re.search(r'(\d{3,4})(?=\s*p\b)|(\d{3,4})', str(kv[0]).lower()) else -1, str(kv[0]))))
+                video_info.update(dict(download_url=list(video_link.values())[-1]))
+            else:
+                video_info.update(dict(download_url=video_link))
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=video_info.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
