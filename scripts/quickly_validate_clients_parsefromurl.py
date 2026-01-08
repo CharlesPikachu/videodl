@@ -255,8 +255,9 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.toutiao.com/video/7358202402865938953/?log_from=24fdd11d4e4e68_1765499453711'
     ],
     'XiazaitoolVideoClient': [
-        'https://www.bilibili.com/video/BV1KxsqztE3i/?spm_id_from=333.1007.tianma.1-1-1.click',
-        'https://www.instagram.com/reel/DSO-KpuEqud/',
+        'https://www.douyin.com/jingxuan?modal_id=7509062795342728500',
+        'https://www.tiktok.com/@disneymusic/video/7589346194372037943?lang=en',
+        'https://www.toutiao.com/video/7588799178684252691/',
     ],
     'NoLogoVideoClient': [
         'https://www.bilibili.com/video/BV1CFy5BREqQ/?spm_id_from=333.1007.tianma.8-2-28.click',
@@ -286,6 +287,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.kuaishou.com/short-video/3x5a3tcqjss9sgw?authorId=3xna23q7fq2jn4i&streamSource=brilliant&hotChannelId=00&area=brilliantxxcarefully',
     ],
     'BVVideoClient': [
+        'https://www.douyin.com/jingxuan?modal_id=7558318672603991354',
         'https://www.tiktok.com/@j4y273/video/7582553332242271510',
         'https://www.toutiao.com/video/7457844322080129575/?log_from=86191c4a8551d8_1766485443453',
     ],
