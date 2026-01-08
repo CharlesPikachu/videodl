@@ -326,6 +326,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://news.qq.com/rain/a/20251004V02NZ800',
         'https://ur.alipay.com/_nv7gnPJyDqjLbrPM9Dul7',
         'https://show.meitu.com/detail?feed_id=6873229026351926275',
+        'https://www.bilibili.com/video/BV1eQYwzwEz4',
         'https://ishare.ifeng.com/c/vs/v006uROwi--XAO9zMVtJUUewd8gnoa2qfWilMSzGxeoAPn7lWjN87mNtuzWQFWWXIvGIc?spss=np&crowdid=7355482289721053225&recallChannel=&aman=fgr0432r3rMfgMeQ04UODIR0Mj8M0N6TUyrNTBdkZjWYy1x00v'
     ],
     'XZDXVideoClient': [
