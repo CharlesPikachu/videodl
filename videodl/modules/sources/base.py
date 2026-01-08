@@ -25,7 +25,7 @@ from platformdirs import user_log_dir
 from pathvalidate import sanitize_filepath
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from rich.progress import Progress, TextColumn, BarColumn, DownloadColumn, TransferSpeedColumn, TimeRemainingColumn, TimeElapsedColumn, ProgressColumn
-from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, cookies2dict, generateuniquetmppath, LoggerHandle, VideoInfo
+from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, cookies2dict, generateuniquetmppath, shortenpathsinvideoinfos, LoggerHandle, VideoInfo
 
 
 '''VideoAwareColumn'''
@@ -518,6 +518,8 @@ class BaseVideoClient():
         # filter
         video_infos = [video_info for video_info in video_infos if video_info['download_url'] and video_info['download_url'] != 'NULL']
         if not video_infos: return []
+        video_infos = shortenpathsinvideoinfos(video_infos, key='file_path')
+        video_infos = shortenpathsinvideoinfos(video_infos, key='audio_file_path')
         # logging
         self.logger_handle.info(f'Start to download videos using {self.source}.', disable_print=self.disable_print)
         # multi threadings for downloading videos

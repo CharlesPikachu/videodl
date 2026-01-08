@@ -13,11 +13,13 @@ import html
 import emoji
 import random
 import bleach
+import hashlib
 import requests
 import mimetypes
 import functools
 import json_repair
 import unicodedata
+from pathlib import Path
 from datetime import datetime
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
@@ -72,7 +74,28 @@ def legalizestring(string: str, fit_gbk: bool = True, max_len: int = 255, fit_ut
     # return
     string = re.sub(r"\s+", " ", string).strip()
     if not string: string = replace_null_string
-    return string
+    return string.rstrip(" .")
+
+
+'''shortenpathsinvideoinfos'''
+def shortenpathsinvideoinfos(video_infos: list[dict], key: str = "file_path", max_path: int = 240, keep_ext: bool = True):
+    used_paths = set()
+    for info in video_infos:
+        raw_path = (info.get(key) or "").strip()
+        if not raw_path or raw_path.upper() == "NULL": continue
+        src_path = Path(raw_path)
+        output_dir = src_path.parent.resolve(); output_dir.mkdir(parents=True, exist_ok=True)
+        ext = src_path.suffix if keep_ext else ""
+        stem = src_path.stem
+        digest = hashlib.md5(str(src_path).encode("utf-8")).hexdigest()
+        for hash_len in (8, 10):
+            hash_suffix = f"_{digest[:hash_len]}"
+            max_stem_len = max(1, max_path - (len(str(output_dir)) + 1 + len(hash_suffix) + len(ext)))
+            safe_stem = (stem[:max_stem_len].rstrip(" .") or "NULL")
+            out_path = str(output_dir / f"{safe_stem}{hash_suffix}{ext}")
+            if out_path.lower() not in used_paths: break
+        used_paths.add(out_path.lower()); info[key] = out_path
+    return video_infos
 
 
 '''byte2mb'''

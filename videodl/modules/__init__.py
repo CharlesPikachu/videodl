@@ -6,5 +6,6 @@ from .common import BuildCommonVideoClient, CommonVideoClientBuilder
 from .utils import (
     touchdir, legalizestring, printtable, colorize, byte2mb, resp2json, usedownloadheaderscookies, useparseheaderscookies, usesearchheaderscookies,
     ensureplaywrightchromium, searchdictbykey, printfullline, cookies2string, cookies2dict, safeextractfromdict, writevodm3u8fortencent, yieldtimerelatedtitle,
-    generateuniquetmppath, LoggerHandle, BaseModuleBuilder, FileTypeSniffer, VideoInfo, AESAlgorithmWrapper, BrightcoveSmuggler, RandomIPGenerator, SpinWithBackoff,
+    generateuniquetmppath, shortenpathsinvideoinfos, LoggerHandle, BaseModuleBuilder, FileTypeSniffer, VideoInfo, AESAlgorithmWrapper, BrightcoveSmuggler, 
+    RandomIPGenerator, SpinWithBackoff,
 )
