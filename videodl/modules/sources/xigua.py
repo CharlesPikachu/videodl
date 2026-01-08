@@ -66,7 +66,7 @@ class XiguaVideoClient(BaseVideoClient):
                 title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid
             ))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
+            err_msg = f'{self.source}._parsefromurlwithsucps >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # construct video infos
@@ -101,7 +101,7 @@ class XiguaVideoClient(BaseVideoClient):
                 title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid,
             ))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
+            err_msg = f'{self.source}._parsefromurlwithmixiguadouyin >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # construct video infos

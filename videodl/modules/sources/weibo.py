@@ -72,7 +72,7 @@ class WeiboVideoClient(BaseVideoClient):
                 title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid,
             ))
         except Exception as err:
-            err_msg = f'{self.source}._parsehtml >>> {vid} (Error: {err})'
+            err_msg = f'{self.source}._parsefromurlwithmweibo >>> {vid} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # construct video infos
@@ -117,7 +117,7 @@ class WeiboVideoClient(BaseVideoClient):
                 title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid
             ))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
+            err_msg = f'{self.source}._parsefromurlwithh5videoweibo >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # construct video infos
@@ -127,10 +127,11 @@ class WeiboVideoClient(BaseVideoClient):
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
-        for parser in [self._parsefromurlwithh5videoweibo, self._parsefromurlwithmweibo]:
-            video_infos = parser(url, request_overrides)
-            if any(((info.get("download_url") or "") not in ("", "NULL")) for info in (video_infos or [])): break
-        return video_infos
+        parsed_url = urlparse(url)
+        try: vid = parse_qs(parsed_url.query, keep_blank_values=True)['fid'][0]
+        except: vid = parsed_url.path.strip('/').split('/')[-1]
+        if ':' not in vid: return self._parsefromurlwithmweibo(url, request_overrides)
+        return self._parsefromurlwithh5videoweibo(url, request_overrides)
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list = None):

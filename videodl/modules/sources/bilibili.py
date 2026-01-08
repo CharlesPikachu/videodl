@@ -80,7 +80,7 @@ class BilibiliVideoClient(BaseVideoClient):
                 video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f'{video_id}-{cid}'))
                 video_infos.append(video_page_info)
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
+            err_msg = f'{self.source}._parsefromcommonurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
             video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
@@ -143,7 +143,7 @@ class BilibiliVideoClient(BaseVideoClient):
                 ))
                 video_infos.append(video_page_info)
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
+            err_msg = f'{self.source}._parsefrombangumiepurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
             video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
@@ -207,7 +207,7 @@ class BilibiliVideoClient(BaseVideoClient):
                 ))
                 video_infos.append(video_page_info)
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
+            err_msg = f'{self.source}._parsefrombangumissurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
             video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
@@ -268,7 +268,7 @@ class BilibiliVideoClient(BaseVideoClient):
                 ))
                 video_infos.append(video_page_info)
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
+            err_msg = f'{self.source}._parsefromcheeseepurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
             video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

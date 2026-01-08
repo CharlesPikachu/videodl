@@ -91,7 +91,7 @@ class SohuVideoClient(BaseVideoClient):
                     for url in download_urls: fp.write(f"{url}\n")
                 video_info.update(dict(download_url=ffmpeg_target_file_path, download_with_ffmpeg=True))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
+            err_msg = f'{self.source}._parsefromurlwithmytv >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # construct video infos
@@ -173,7 +173,7 @@ class SohuVideoClient(BaseVideoClient):
                     for url in download_urls: fp.write(f"{url}\n")
                 video_info.update(dict(download_url=ffmpeg_target_file_path, download_with_ffmpeg=True))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
+            err_msg = f'{self.source}._parsefromurlwithhotvrs >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # construct video infos
