@@ -8,6 +8,7 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import copy
+from urllib.parse import urlparse
 from ..sources import BaseVideoClient
 from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
 
@@ -46,6 +47,7 @@ class XZDXVideoClient(BaseVideoClient):
             video_title = legalizestring(raw_data['data'].get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --download url
             video_info.update(dict(download_url=raw_data['data']['video_url']))
+            if urlparse(url).netloc.split('.')[-2] in ['bilibili']: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=video_info.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
