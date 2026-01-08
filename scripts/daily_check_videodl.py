@@ -220,8 +220,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://v.qq.com/x/cover/mzc00200ss1zz0x/r4101dsk6f5.html?cut_vid=p41012zzjzo&scene_id=3&start=1455',
     ],
     'VgetVideoClient': [
-        'https://www.youtube.com/watch?v=qPzZLAWuAbw&list=RDqPzZLAWuAbw&start_radio=1',
+        'https://www.youtube.com/watch?v=SnQQVkfRxFs',
+        'https://www.le.com/ptv/vplay/77905922.html#vid=77905922',
         'https://x.com/iluminatibot/status/1996651394963734976',
+        'https://v.youku.com/v_show/id_XNjQ0ODIxMzg1Mg==.html'
     ],
     'ILoveAPIVideoClient': [
         'https://www.douyin.com/jingxuan?modal_id=7538145141593263403',
