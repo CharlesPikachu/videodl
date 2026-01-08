@@ -16,7 +16,6 @@ from .iloveapi import ILoveAPIVideoClient
 from .qingting import QingtingVideoClient
 from .kukutool import KuKuToolVideoClient
 from .zanqianba import ZanqianbaVideoClient
-from .cenguigui import CenguiguiVideoClient
 from .qzxdptools import QZXDPToolsVideoClient
 from .xiazaitool import XiazaitoolVideoClient
 
@@ -24,13 +23,12 @@ from .xiazaitool import XiazaitoolVideoClient
 '''CommonVideoClientBuilder'''
 class CommonVideoClientBuilder(BaseModuleBuilder):
     REGISTERED_MODULES = {
-        'SnapWCVideoClient': SnapWCVideoClient, 'IIILabVideoClient': IIILabVideoClient, 'KedouVideoClient': KedouVideoClient, 
-        'SnapAnyVideoClient': SnapAnyVideoClient, 'XMFlvVideoClient': XMFlvVideoClient, 'VgetVideoClient': VgetVideoClient, 
-        'GVVIPVideoClient': GVVIPVideoClient, 'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'LongZhuVideoClient': LongZhuVideoClient,
-        'KuKuToolVideoClient': KuKuToolVideoClient, 'XiazaitoolVideoClient': XiazaitoolVideoClient, 'NoLogoVideoClient': NoLogoVideoClient,
-        'ILoveAPIVideoClient': ILoveAPIVideoClient, 'BugPkVideoClient': BugPkVideoClient, 'ZanqianbaVideoClient': ZanqianbaVideoClient,
-        'CenguiguiVideoClient': CenguiguiVideoClient, 'QingtingVideoClient': QingtingVideoClient, 'BVVideoClient': BVVideoClient,
-        'VideoFKVideoClient': VideoFKVideoClient,
+        'XMFlvVideoClient': XMFlvVideoClient, 'VideoFKVideoClient': VideoFKVideoClient, 'SnapAnyVideoClient': SnapAnyVideoClient, 'IIILabVideoClient': IIILabVideoClient,
+        'VgetVideoClient': VgetVideoClient, 'SnapWCVideoClient': SnapWCVideoClient, 'KedouVideoClient': KedouVideoClient, 'KuKuToolVideoClient': KuKuToolVideoClient, 
+        'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'BugPkVideoClient': BugPkVideoClient, 'NoLogoVideoClient': NoLogoVideoClient, 'LongZhuVideoClient': LongZhuVideoClient, 
+        'ZanqianbaVideoClient': ZanqianbaVideoClient, 'BVVideoClient': BVVideoClient, 'XiazaitoolVideoClient': XiazaitoolVideoClient, 'QingtingVideoClient': QingtingVideoClient, 
+        #   'GVVIPVideoClient': GVVIPVideoClient, 
+        # 'ILoveAPIVideoClient': ILoveAPIVideoClient, 
     }
 
 

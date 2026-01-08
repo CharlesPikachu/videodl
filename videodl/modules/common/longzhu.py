@@ -8,11 +8,9 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import copy
-import time
-from datetime import datetime
 from ..sources import BaseVideoClient
 from ..utils import RandomIPGenerator
-from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json
+from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
 
 
 '''LongZhuVideoClient'''
@@ -34,6 +32,7 @@ class LongZhuVideoClient(BaseVideoClient):
         # prepare
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
+        null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         video_infos = []
         try:
@@ -45,21 +44,16 @@ class LongZhuVideoClient(BaseVideoClient):
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             # --video title
-            dt = datetime.fromtimestamp(time.time())
-            date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
-            video_title = raw_data['data'].get('title') or f'{self.source}_null_{date_str}'
-            video_title = legalizestring(video_title, replace_null_string=f'{self.source}_null_{date_str}').removesuffix('.')
+            video_title = legalizestring(raw_data['data'].get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --download url
-            download_url = raw_data['data']['url']
-            video_info.update(dict(download_url=download_url))
+            video_info.update(dict(download_url=raw_data['data']['url']))
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
+                url=raw_data['data']['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, 
-                guess_video_ext_result=guess_video_ext_result, identifier=video_title,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title,
             ))
             video_infos.append(video_info)
         except Exception as err:
