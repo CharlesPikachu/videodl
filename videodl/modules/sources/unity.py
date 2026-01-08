@@ -47,7 +47,7 @@ class UnityVideoClient(BaseVideoClient):
             video_info.update(dict(raw_data=raw_data))
             tutorial: dict = safeextractfromdict(raw_data, ['props', 'pageProps', 'tutorial'], {})
             tutorial_title, sections, videos, uniq = tutorial.get("title", "").strip(), tutorial.get("sections", []), [], set()
-            for section in enumerate(sections):
+            for section in sections:
                 if not isinstance(section, dict): continue
                 section_title, body = section.get("title", "").strip(), section.get("body", []) or []
                 for block in body:
