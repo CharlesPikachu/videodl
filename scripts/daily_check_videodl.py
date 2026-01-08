@@ -304,8 +304,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.1905.com/vod/play/1287886.shtml',
     ],
     'VideoFKVideoClient': [
-        'https://www.youtube.com/watch?v=CXuFh6YsyM4&list=RDCXuFh6YsyM4&start_radio=1',
-        'https://www.douyin.com/jingxuan?modal_id=7571763604346263650',
+        'https://www.youtube.com/watch?v=IBT0_3QUy98',
+        'https://www.douyin.com/jingxuan?modal_id=7584054905644518690',
+        'https://www.tiktok.com/@konbini/video/7556989514065939714?lang=en',
+        'https://www.facebook.com/facebook/videos/facebook-blue-never-looked-so-good-video-by-molchanovamuamusic-by-fausto-papetti/1185846950029459/'
     ],
 }
 PARSE_SUPPLEMENT = {
