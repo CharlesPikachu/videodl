@@ -198,8 +198,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.facebook.com/100085919341237/videos/851834657389993/?__so__=discover&__rv__=video_home_www_loe_popular_videos',
     ],
     'SnapAnyVideoClient': [
-        'https://www.youtube.com/watch?v=uZ8rxvAoFuc&list=RDuZ8rxvAoFuc&start_radio=1',
-        'https://www.le.com/ptv/vplay/20137387.html',
+        'https://www.youtube.com/watch?v=kSeevdvySHg',
+        'https://www.douyin.com/jingxuan?modal_id=7573166287598243082',
+        'https://www.tiktok.com/@demi.support/video/7571066050851147028?lang=en',
+        'https://x.com/NASA/status/2008665423936397363'
     ],
     'GVVIPVideoClient': [
         'https://www.iqiyi.com/v_16ne2x4z6zc.html?bkt=9685_B,10000_B,9689_D,9687_B&rseat=image_1&r_area=most_popular&ht=2&r_source=1529@565@66&recArea=most_popular&rank=1&block=pca_recommend_hot_recommend&vfrm=pcw_home&ext=w:0.25495089432236995,score:0.7450883984565735,c_type:1&a=image&eventId=967dbf95d6315d75e5c4a50944a0d7bc&bstp=3&r_originl=351010512,4179785420284901&e=967dbf95d6315d75e5c4a50944a0d7bc&stype=2&r_ext=w:0.25495089432236995,score:0.7450883984565735,c_type:1&c1=2&vfrmrst=image_1&bucket=9685_B,10000_B,9689_D,9687_B&vfrmblk=pca_recommend_hot_recommend&r=2143888498822401&event_id=967dbf95d6315d75e5c4a50944a0d7bc&rpage=pcw_home&position=5',
