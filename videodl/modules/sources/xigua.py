@@ -47,7 +47,7 @@ class XiguaVideoClient(BaseVideoClient):
             vid = parsed_url.path.strip('/').split('/')[-1]
             SEED = 0x1F35
             def _b64utf8(s: str) -> str: return base64.b64encode(s.encode("utf-8")).decode("ascii")
-            def _gtk(raw: str) -> str: return hashlib.md5(("".join([str(SEED<<5), *map(str, (itertools.accumulate(map(ord, _b64utf8(raw)), lambda p,c: (c, (p[0]<<5)+c), initial=(SEED,))[1]) )]) + str(zlib.crc32(_b64utf8(raw).encode("utf-8")) & 0xFFFFFFFF)).encode("utf-8")).hexdigest()
+            def _gtk(raw: str) -> str: return (lambda b64: hashlib.md5(("".join([str(SEED<<5), *map(str, ((p<<5)+c for p,c in itertools.pairwise(itertools.chain([SEED], map(ord, b64)))))]) + str(zlib.crc32(b64.encode("utf-8")) & 0xFFFFFFFF)).encode("utf-8")).hexdigest())(_b64utf8(raw))
             def _computes(link: str, t_ms: int) -> str: return _b64utf8(_gtk(f"{link}{t_ms}"))
             def _buildparams(page_url: str, token: str = "bb48e54a257215548d221ecb215663d3", user_id: str = "") -> dict: t_ms=int(time.time()*1000); return {"pageUrl": page_url, "token": token, "t": t_ms, "s": _computes(page_url, t_ms), "user_id": user_id or ""}
             headers = copy.deepcopy(self.default_parse_headers)
