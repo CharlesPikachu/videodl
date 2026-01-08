@@ -198,8 +198,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.cctalk.com/v/17576427071521?sid='
     ],
     'KedouVideoClient': [
-        'https://www.douyin.com/jingxuan?modal_id=7578412593719577899',
-        'https://www.bilibili.com/video/BV11tCVBXEMf/?spm_id_from=333.337.search-card.all.click'
+        'https://www.bilibili.com/bangumi/play/ep371068',
+        'https://www.bilibili.com/video/BV16wiiBsE6u/?spm_id_from=333.1007.tianma.2-1-4.click',
+        'https://www.douyin.com/jingxuan?modal_id=7507549841271147795',
+        'https://www.facebook.com/100028981631678/videos/2151294341944888/?__so__=discover&__rv__=video_home_www_loe_popular_videos',
     ],
     'IIILabVideoClient': [
         'https://www.le.com/ptv/vplay/77953489.html',

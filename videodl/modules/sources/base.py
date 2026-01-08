@@ -163,8 +163,8 @@ class BaseVideoClient():
         touchdir(os.path.dirname(video_info['file_path']))
         video_info = copy.deepcopy(video_info)
         video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
-        default_headers = request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
-        default_cookies = request_overrides.get('cookies', {}) or self.default_cookies or {}
+        default_headers = video_info.get('default_download_headers') or request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
+        default_cookies = video_info.get('default_download_cookies') or request_overrides.get('cookies', {}) or self.default_cookies or {}
         if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
         headers = []
         for k, v in default_headers.items(): headers.append(f"{k}: {v}")
@@ -208,8 +208,8 @@ class BaseVideoClient():
         cli = shutil.which("N_m3u8DL-RE.exe")
         pid = str(video_info['pid'])
         tmp_dir = Path(os.path.join(work_dir, str(pid))).expanduser().resolve()
-        default_headers = request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
-        default_cookies = request_overrides.get('cookies', {}) or self.default_cookies or {}
+        default_headers = video_info.get('default_download_headers') or request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
+        default_cookies = video_info.get('default_download_cookies') or request_overrides.get('cookies', {}) or self.default_cookies or {}
         if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
         header_args = []
         for k, v in default_headers.items(): header_args.extend(["-H", f"{k}: {v}"])
@@ -225,14 +225,10 @@ class BaseVideoClient():
             shutil.rmtree(tmp_dir, ignore_errors=True)
             return downloaded_video_infos
         # decrypt
-        def _naturalkey(p: Path):
-            s = p.stem
-            return [int(t) if t.isdigit() else t for t in re.findall(r"\d+|\D+", s)]
-        cbox = shutil.which("cbox.exe")
-        tmp_part_dir = tmp_dir / pid
+        def _naturalkey(p: Path): return [int(t) if t.isdigit() else t for t in re.findall(r"\d+|\D+", p.stem)]
+        tmp_part_dir, cbox = tmp_dir / pid, shutil.which("cbox.exe")
         for d in tmp_part_dir.iterdir():
-            if not d.is_dir(): continue
-            if any(p.is_file() and p.suffix == ".ts" for p in d.iterdir()): ts_dir = d; break
+            if d.is_dir() and any(p.is_file() and p.suffix == ".ts" for p in d.iterdir()): ts_dir = d; break
         tmp_part_dir = tmp_part_dir / ts_dir
         ts_files = sorted([p for p in tmp_part_dir.glob("*.ts") if not p.name.endswith("_output.ts")], key=_naturalkey)
         output_ts_files: list[Path] = []
@@ -275,8 +271,8 @@ class BaseVideoClient():
         touchdir(os.path.dirname(video_info['file_path']))
         video_info = copy.deepcopy(video_info)
         video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
-        default_headers = request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
-        default_cookies = request_overrides.get('cookies', {}) or self.default_cookies or {}
+        default_headers = video_info.get('default_download_headers') or request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
+        default_cookies = video_info.get('default_download_cookies') or request_overrides.get('cookies', {}) or self.default_cookies or {}
         if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
         headers = []
         for k, v in default_headers.items(): headers.append(f"{k}: {v}")
@@ -317,8 +313,8 @@ class BaseVideoClient():
         touchdir(os.path.dirname(video_info['file_path']))
         video_info = copy.deepcopy(video_info)
         video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
-        default_headers = request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
-        default_cookies = request_overrides.get('cookies', {}) or self.default_cookies or {}
+        default_headers = video_info.get('default_download_headers') or request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
+        default_cookies = video_info.get('default_download_cookies') or request_overrides.get('cookies', {}) or self.default_cookies or {}
         if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
         header_args: list[str] = []
         for k, v in default_headers.items(): header_args.extend(["-H", f"{k}: {v}"])
@@ -358,8 +354,8 @@ class BaseVideoClient():
         touchdir(os.path.dirname(video_info['file_path']))
         video_info = copy.deepcopy(video_info)
         video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
-        default_headers = request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
-        default_cookies = request_overrides.get('cookies', {}) or self.default_cookies or {}
+        default_headers = video_info.get('default_download_headers') or request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
+        default_cookies = video_info.get('default_download_cookies') or request_overrides.get('cookies', {}) or self.default_cookies or {}
         if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
         default_aria2c_settings = {
             'max_connection_per_server': 16, 'split': 16, 'piece_size': '1M', 'max_tries': 5, 'file_allocation': 'none', 'max_concurrent_downloads': 1, 'extra_options': []
@@ -402,7 +398,8 @@ class BaseVideoClient():
         self._download(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # download audios
         audio_info = VideoInfo(
-            source=self.source, download_url=audio_download_url, file_path=audio_file_path, ext=audio_ext, identifier=f'audio-{video_info["identifier"]}', guess_video_ext_result=guess_audio_ext_result
+            source=self.source, download_url=audio_download_url, file_path=audio_file_path, ext=audio_ext, identifier=f'audio-{video_info["identifier"]}', guess_video_ext_result=guess_audio_ext_result,
+            default_download_headers=video_info.get('default_download_headers'), default_download_cookies=video_info.get('default_download_cookies')
         )
         downloaded_audio_infos = self._download(video_info=audio_info, video_info_index=video_info_index, downloaded_video_infos=[], request_overrides=request_overrides, progress=progress)
         assert len(downloaded_audio_infos) == 1
@@ -485,6 +482,8 @@ class BaseVideoClient():
         touchdir(os.path.dirname(video_info['file_path']))
         video_info = copy.deepcopy(video_info)
         video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
+        if video_info.get('default_download_headers'): request_overrides['headers'] = video_info.get('default_download_headers')
+        if video_info.get('default_download_cookies'): request_overrides['cookies'] = video_info.get('default_download_cookies')
         # start to download
         try:
             try: resp = self.get(video_info['download_url'], stream=True, **request_overrides)
