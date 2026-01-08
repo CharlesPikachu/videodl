@@ -52,10 +52,8 @@
 
 # 🆕 What's New
 
+- 2026-01-09: Released videofetch v0.5.0 - refactored the code structure, improved the stability of some video clients, removed deprecated interfaces and paid platforms, and fixed some potential bugs.
 - 2026-01-01: Released videofetch v0.4.6 - fix a bug when dealing with special download url type.
-- 2026-01-01: Released videofetch v0.4.5 - some argument adjustments, removed the mandatory Playwright import dependency, and rolled back the hostname retrieval method.
-- 2025-12-31: Released videofetch v0.4.4 - optimize the iterative-matching approach for the video parser.
-- 2025-12-28: Released videofetch v0.4.3 - added native API parsing support for iQIYI and 1905.com, introduced a unified video parsing interface, and made a few minor code optimizations.
 
 
 # 🚀 Introduction
@@ -133,7 +131,6 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [BugPkVideoClient](https://sv.bugpk.com/)                         | [短视频解析工具](https://sv.bugpk.com/)                         |   ✔️     |   ✔️     | [bugpk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/bugpk.py)           |
 | [GVVIPVideoClient](https://greenvideo.cc/video/vip)               | [GreenVideoVIP视频解析](https://greenvideo.cc/video/vip)        |   ✔️     |   ✔️     | [gvvip.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/gvvip.py)           |
 | [IIILabVideoClient](https://roar.iiilab.com/)                     | [兽音译者](https://roar.iiilab.com/)                            |   ✔️     |   ✔️     | [iiilab.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/iiilab.py)         |
-| [ILoveAPIVideoClient](https://www.52api.cn/)                      | [我爱API](https://www.52api.cn/)                                |   ✔️     |   ✔️     | [iloveapi.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/iloveapi.py)     |
 | [KedouVideoClient](https://www.kedou.life/)                       | [Kedou视频解析](https://www.kedou.life/)                        |   ✔️     |   ✔️     | [kedou.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kedou.py)           |
 | [KuKuToolVideoClient](https://dy.kukutool.com/)                   | [KuKuTool视频解析](https://dy.kukutool.com/)                    |   ✔️     |   ✔️     | [kukutool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kukutool.py)     |
 | [LongZhuVideoClient](https://www.hhlqilongzhu.cn/H5_home.php)     | [龙珠API视频解析](https://www.hhlqilongzhu.cn/H5_home.php)      |   ✔️     |   ✔️     | [longzhu.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/longzhu.py)       |

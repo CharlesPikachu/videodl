@@ -8,8 +8,6 @@ videodl -i "https://www.youtube.com/watch?v=uZ8rxvAoFuc&list=RDuZ8rxvAoFuc&start
 videodl -i "https://v.qq.com/x/cover/mzc00200ss1zz0x/r4101dsk6f5.html?cut_vid=p41012zzjzo&scene_id=3&start=1455" -g -a GVVIPVideoClient
 # VgetVideoClient
 videodl -i "https://x.com/iluminatibot/status/1996651394963734976" -g -a VgetVideoClient
-# ILoveAPIVideoClient
-videodl -i "http://peiyinxiu.com/m/127066455" -g -a ILoveAPIVideoClient
 # XMFlvVideoClient
 videodl -i "https://v.qq.com/x/cover/mzc00200tpgbo78/y4101ca2mcp.html" -g -a XMFlvVideoClient
 # QZXDPToolsVideoClient
