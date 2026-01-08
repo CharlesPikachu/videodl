@@ -234,7 +234,8 @@ VIDEODL_TEST_SAMPLES = {
     ],
     'XMFlvVideoClient': [
         'https://www.iqiyi.com/v_16ne2x4z6zc.html',
-        'https://v.youku.com/v_show/id_XNDU3MDY3NjQ3Mg==.html?s=e2b1cec58f1546cd97dc'
+        'https://v.youku.com/v_show/id_XNDU3MDY3NjQ3Mg==.html?s=e2b1cec58f1546cd97dc',
+        'https://v.qq.com/x/cover/mzc00200c1keuqc/y4101dz2uja.html?cut_vid=b41011l7r1s&scene_id=3&start=963'
     ],
     'C56VideoClient': [
         'https://www.56.com/u11/v_MTk5NjI0OTIw.html',
@@ -281,10 +282,6 @@ VIDEODL_TEST_SAMPLES = {
     'ZanqianbaVideoClient': [
         'https://www.bilibili.com/video/BV1XhSKBFE5Q/?spm_id_from=333.1007.tianma.1-2-2.click',
         'https://www.toutiao.com/video/7585120439421108278/?log_from=33b1706a090018_1766131556972',
-    ],
-    'CenguiguiVideoClient': [
-        'https://www.douyin.com/jingxuan?modal_id=7577683349268608426',
-        'https://www.bilibili.com/video/BV1pKq5BKE78',
     ],
     'QingtingVideoClient': [
         'https://www.bilibili.com/video/BV1wRqrB7EkZ/?spm_id_from=333.1007.tianma.1-1-1.click',

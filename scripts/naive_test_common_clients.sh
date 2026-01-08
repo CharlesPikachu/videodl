@@ -28,8 +28,6 @@ videodl -i "https://www.douyin.com/jingxuan?modal_id=7580605435187596559" -g -a 
 videodl -i "https://www.douyin.com/jingxuan?modal_id=7583556644202761487" -g -a BugPkVideoClient
 # ZanqianbaVideoClient
 videodl -i "https://www.toutiao.com/video/7585120439421108278/?log_from=33b1706a090018_1766131556972" -g -a ZanqianbaVideoClient
-# CenguiguiVideoClient
-videodl -i "https://www.douyin.com/jingxuan?modal_id=7577683349268608426" -g -a CenguiguiVideoClient
 # QingtingVideoClient
 videodl -i "https://www.kuaishou.com/short-video/3x5a3tcqjss9sgw?authorId=3xna23q7fq2jn4i&streamSource=brilliant&hotChannelId=00&area=brilliantxxcarefully" -g -a QingtingVideoClient
 # BVVideoClient
