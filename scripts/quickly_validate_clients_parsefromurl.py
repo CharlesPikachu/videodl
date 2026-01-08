@@ -282,6 +282,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.toutiao.com/video/7585120439421108278/?log_from=33b1706a090018_1766131556972',
     ],
     'QingtingVideoClient': [
+        'https://www.xiaohongshu.com/explore/6949dd4d000000001e028b9e?xsec_token=ABIyOqubVaiYv0bO_esnHROFBfG9cnxfaBfmGf9UFegSY=&xsec_source=pc_feed&source=404', # will expire
         'https://www.bilibili.com/video/BV1wRqrB7EkZ/?spm_id_from=333.1007.tianma.1-1-1.click',
         'https://www.douyin.com/jingxuan/theater?modal_id=7580778868509933947',
         'https://www.kuaishou.com/short-video/3x5a3tcqjss9sgw?authorId=3xna23q7fq2jn4i&streamSource=brilliant&hotChannelId=00&area=brilliantxxcarefully',
