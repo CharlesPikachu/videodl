@@ -143,6 +143,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [VideoFKVideoClient](https://www.videofk.com/)                    | [免费短视频下载器](https://www.videofk.com/)                    |   ✔️     |   ✔️     | [videofk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/videofk.py)       |
 | [XiazaitoolVideoClient](https://www.xiazaitool.com/dy)            | [下载狗](https://www.xiazaitool.com/dy)                         |   ✔️     |   ✔️     | [xiazaitool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/xiazaitool.py) |
 | [XMFlvVideoClient](https://jx.xmflv.com/)                         | [虾米解析](https://jx.xmflv.com/)                               |   ✔️     |   ✔️     | [xmflv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/xmflv.py)           |
+| [XCVTSVideoClient](https://api.xcvts.cn/)                         | [小尘聚合短视频去水印](https://api.xcvts.cn/)                   |   ✔️     |   ✔️     | [xcvts.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/xcvts.py)           |
 | [ZanqianbaVideoClient](https://www.zanqianba.com/)                | [考拉解析](https://www.zanqianba.com/)                          |   ✔️     |   ✔️     | [zanqianba.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/zanqianba.py)   |
 
 The default parsing order is to first use the parsers in the supported list. If those fail, the generic parsers are then invoked one by one until parsing succeeds.

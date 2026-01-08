@@ -13,9 +13,9 @@ videodl -i "https://v.qq.com/x/cover/mzc00200tpgbo78/y4101ca2mcp.html" -g -a XMF
 # QZXDPToolsVideoClient
 videodl -i "https://www.bilibili.com/video/BV1uymuBcE6D/?spm_id_from=333.1007.tianma.1-2-2.click" -g -a QZXDPToolsVideoClient
 # KuKuToolVideoClient
-videodl -i "https://www.xiaohongshu.com/explore/6898415f000000000403dc3b?xsec_token=ABozZxFfnIo4Jum5RDrI97yLjwD0ng6sc5_55zhZGU4gQ=&xsec_source=pc_user" -g -a KuKuToolVideoClient
+videodl -i "https://www.bilibili.com/bangumi/play/ep2550182" -g -a KuKuToolVideoClient
 # LongZhuVideoClient
-videodl -i "https://www.toutiao.com/video/7358202402865938953/?log_from=24fdd11d4e4e68_1765499453711" -g -a LongZhuVideoClient
+videodl -i "https://www.bilibili.com/video/BV1DxCQBBE24/?spm_id_from=333.1007.tianma.2-2-5.click" -g -a LongZhuVideoClient
 # XiazaitoolVideoClient
 videodl -i "https://www.instagram.com/reel/DSO-KpuEqud/" -g -a XiazaitoolVideoClient
 # NoLogoVideoClient
@@ -23,7 +23,7 @@ videodl -i "https://www.douyin.com/jingxuan?modal_id=7561075993822416185" -g -a 
 # SnapWCVideoClient
 videodl -i "https://www.douyin.com/jingxuan?modal_id=7580605435187596559" -g -a SnapWCVideoClient
 # BugPkVideoClient
-videodl -i "https://www.douyin.com/jingxuan?modal_id=7583556644202761487" -g -a BugPkVideoClient
+videodl -i "https://www.kuaishou.com/short-video/3xvnepai44qi65m?authorId=3xxk837em5amm9u&streamSource=find&area=homexxbrilliant" -g -a BugPkVideoClient
 # ZanqianbaVideoClient
 videodl -i "https://www.toutiao.com/video/7585120439421108278/?log_from=33b1706a090018_1766131556972" -g -a ZanqianbaVideoClient
 # QingtingVideoClient
@@ -32,3 +32,5 @@ videodl -i "https://www.kuaishou.com/short-video/3x5a3tcqjss9sgw?authorId=3xna23
 videodl -i "https://www.tiktok.com/@j4y273/video/7582553332242271510" -g -a BVVideoClient
 # VideoFKVideoClient
 videodl -i "https://www.youtube.com/watch?v=CXuFh6YsyM4&list=RDCXuFh6YsyM4&start_radio=1" -g -a VideoFKVideoClient
+# XCVTSVideoClient
+videodl -i "https://v.kuaishou.com/8CU76w" -g -a XCVTSVideoClient

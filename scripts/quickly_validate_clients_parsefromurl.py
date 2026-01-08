@@ -316,6 +316,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.tiktok.com/@konbini/video/7556989514065939714?lang=en',
         'https://www.facebook.com/facebook/videos/facebook-blue-never-looked-so-good-video-by-molchanovamuamusic-by-fausto-papetti/1185846950029459/'
     ],
+    'XCVTSVideoClient': [
+        'https://v.douyin.com/irwsqD47/',
+        'https://v.kuaishou.com/8CU76w',
+    ]
 }
 
 
