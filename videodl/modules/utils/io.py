@@ -18,8 +18,8 @@ def touchdir(directory, exist_ok=True, mode=511, auto_sanitize=True):
     return os.makedirs(directory, exist_ok=exist_ok, mode=mode)
 
 
-'''uniquetmppath'''
-def uniquetmppath(dir: str = ".", ext: str = 'mp4'):
+'''generateuniquetmppath'''
+def generateuniquetmppath(dir: str = ".", ext: str = 'mp4'):
     d = pathlib.Path(dir)
     while True:
         p = d / f"{uuid.uuid4().hex}.{ext}"

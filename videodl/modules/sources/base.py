@@ -10,6 +10,7 @@ import os
 import re
 import copy
 import time
+import base64
 import pickle
 import shutil
 import requests
@@ -24,7 +25,7 @@ from platformdirs import user_log_dir
 from pathvalidate import sanitize_filepath
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from rich.progress import Progress, TextColumn, BarColumn, DownloadColumn, TransferSpeedColumn, TimeRemainingColumn, TimeElapsedColumn, ProgressColumn
-from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, cookies2dict, uniquetmppath, LoggerHandle, VideoInfo
+from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, cookies2dict, generateuniquetmppath, LoggerHandle, VideoInfo
 
 
 '''VideoAwareColumn'''
@@ -46,6 +47,7 @@ class VideoAwareColumn(ProgressColumn):
 '''BaseVideoClient'''
 class BaseVideoClient():
     source = 'BaseVideoClient'
+    LESHI_BASE64_ENCODE_PATTERN = re.compile(r'data:[^;]+;base64,([A-Za-z0-9+/=]+)')
     def __init__(self, auto_set_proxies: bool = False, random_update_ua: bool = False, max_retries: int = 5, maintain_session: bool = False, 
                  logger_handle: LoggerHandle = None, disable_print: bool = False, work_dir: str = 'videodl_outputs', freeproxy_settings: dict = None,
                  default_search_cookies: dict = None, default_download_cookies: dict = None, default_parse_cookies: dict = None):
@@ -102,6 +104,21 @@ class BaseVideoClient():
     @usesearchheaderscookies
     def search(self):
         raise NotImplementedError()
+    '''_convertspecialdownloadurl'''
+    def _convertspecialdownloadurl(self, download_url: str, tmp_file_name: str = None):
+        # init
+        is_converter_performed = False
+        # leshi base64 encoded url
+        leshi_m = self.LESHI_BASE64_ENCODE_PATTERN.match(download_url)
+        if leshi_m:
+            download_url, is_converter_performed = base64.b64decode(leshi_m.group(1)).decode("utf-8", errors="ignore"), True
+            if not download_url.startswith('#EXTM3U'): return download_url, is_converter_performed
+            touchdir(os.path.join(self.work_dir, self.source))
+            download_url = os.path.join(self.work_dir, self.source, f'{tmp_file_name}.m3u8') if tmp_file_name else generateuniquetmppath(os.path.join(self.work_dir, self.source), ext='m3u8')
+            with open(download_url, 'w') as fp: fp.write(download_url)
+            return download_url, is_converter_performed
+        # no matched known specifical urls
+        return download_url, is_converter_performed
     '''_downloadyoutube'''
     @usedownloadheaderscookies
     def _downloadyoutube(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
@@ -156,13 +173,7 @@ class BaseVideoClient():
         header_str = f"headers={header_str}"
         # append headers to text file
         download_urls = []
-        with open(video_info["download_url"], 'r', encoding='utf-8') as fp:
-            for line in fp.readlines():
-                line = line.strip()
-                if not line: continue
-                download_url = f"{line}|{header_str}"
-                download_url = download_url.replace("\\", "\\\\").replace("'", "\\'")
-                download_urls.append(download_url)
+        with open(video_info["download_url"], "r", encoding="utf-8") as fp: download_urls.extend([f"{s}|{header_str}".replace("\\", "\\\\").replace("'", "\\'") for line in fp if (s := line.strip())])
         video_info["download_url"] = video_info["download_url"][:-4] + '_ffmpeg.txt'
         with open(video_info["download_url"], 'w', encoding='utf-8') as fp:
             for download_url in download_urls: fp.write(f"file '{download_url}'\n")
@@ -250,9 +261,7 @@ class BaseVideoClient():
             self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
         # del useless files auto
         shutil.rmtree(tmp_dir, ignore_errors=True)
-        if os.path.exists('output.txt') and not open('output.txt', 'r').read().strip():
-            os.remove('output.txt')
-            os.remove('UDRM_LICENSE.v1.0')
+        if os.path.exists('output.txt') and not open('output.txt', 'r').read().strip(): os.remove('output.txt'); os.remove('UDRM_LICENSE.v1.0')
         # return
         return downloaded_video_infos
     '''_downloadwithffmpeg'''
@@ -320,7 +329,7 @@ class BaseVideoClient():
         nm3u8dlre_settings = video_info.get('nm3u8dlre_settings', {}) or {}
         default_nm3u8dlre_settings.update(nm3u8dlre_settings)
         log_dir = user_log_dir(appname='videodl', appauthor='zcjin')
-        log_file_path = uniquetmppath(dir=log_dir, ext='log')
+        log_file_path = generateuniquetmppath(dir=log_dir, ext='log')
         cmd = [
             'N_m3u8DL-RE', video_info["download_url"], "--auto-select", "--save-dir", os.path.dirname(video_info["file_path"]), "--save-name", os.path.basename(video_info["file_path"]),
             "--thread-count", default_nm3u8dlre_settings['thread_count'], "--download-retry-count", default_nm3u8dlre_settings['download_retry_count'], "--check-segments-count",
@@ -402,7 +411,7 @@ class BaseVideoClient():
         audio_ext = downloaded_audio_infos[0]['ext']
         tgt_dvi = [dvi for dvi in downloaded_video_infos if dvi['identifier'] == video_info["identifier"]]
         video_file_path = tgt_dvi[0]['file_path']
-        tmp_merged_file_path = uniquetmppath(dir=os.path.join(self.work_dir, self.source), ext=tgt_dvi[0]["ext"])
+        tmp_merged_file_path = generateuniquetmppath(dir=os.path.join(self.work_dir, self.source), ext=tgt_dvi[0]["ext"])
         cmd = ['ffmpeg', '-y', '-i', video_file_path, '-i', audio_file_path, '-c', 'copy', '-map', '0:v:0', '-map', '1:a:0', tmp_merged_file_path]
         capture_output = True if self.disable_print else False
         ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
