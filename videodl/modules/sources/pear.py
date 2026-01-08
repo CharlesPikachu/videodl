@@ -44,7 +44,6 @@ class PearVideoClient(BaseVideoClient):
             headers = copy.deepcopy(self.default_headers)
             headers['Referer'] = f"https://www.pearvideo.com/detail_{video_id}"
             resp = self.get(f"https://www.pearvideo.com/videoStatus.jsp?contId={video_id}&mrd={random.random()}", headers=headers, **request_overrides)
-            self.default_headers.pop('Referer')
             resp.raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
