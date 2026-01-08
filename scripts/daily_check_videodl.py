@@ -249,6 +249,9 @@ VIDEODL_TEST_SAMPLES = {
     'QZXDPToolsVideoClient': [
         'https://www.bilibili.com/video/BV1uymuBcE6D/?spm_id_from=333.1007.tianma.1-2-2.click',
         'https://www.douyin.com/user/MS4wLjABAAAAswuDtKmG0QULFeYM6qX_sqEKVOUDvEgwAVj3jGpoM6s?modal_id=6679709231748287757',
+        'https://www.huya.com/video/play/1090411452.html',
+        'https://v.6.cn/profile/watchMini.php?vid=7359943',
+        'https://h5.pipix.com/s/hukXsy/',
     ],
     'RedditVideoClient': [
         'https://www.reddit.com/r/videos/comments/6rrwyj/that_small_heart_attack/',
@@ -287,6 +290,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.kuaishou.com/short-video/3xumtfzh4aqiqc6?authorId=3xbbsmxr7cdmhqs',
     ],
     'ZanqianbaVideoClient': [
+        'https://www.bilibili.com/bangumi/play/ep396009',
         'https://www.bilibili.com/video/BV1XhSKBFE5Q/?spm_id_from=333.1007.tianma.1-2-2.click',
         'https://www.toutiao.com/video/7585120439421108278/?log_from=33b1706a090018_1766131556972',
     ],
