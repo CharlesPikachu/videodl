@@ -261,8 +261,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.reddit.com/r/KamenRider/comments/wzqkxp/finale_kamen_rider_revice_episode_50_family_to/'
     ],
     'KuKuToolVideoClient': [
-        'https://www.bilibili.com/video/BV1epspzAERJ/?spm_id_from=333.1007.tianma.5-2-16.click',
-        'https://www.xiaohongshu.com/explore/6898415f000000000403dc3b?xsec_token=ABozZxFfnIo4Jum5RDrI97yLjwD0ng6sc5_55zhZGU4gQ=&xsec_source=pc_user',
+        'https://www.tiktok.com/@swag2632w32/video/7589066360295017750?lang=en',
+        'https://www.bilibili.com/bangumi/play/ep2550182',
+        'https://www.bilibili.com/video/BV19ai2BCEnm/?spm_id_from=333.1007.tianma.7-3-25.click',
+        'https://www.xiaohongshu.com/explore/6943e2c9000000001e00d46b?xsec_token=ABfgTE82ram6ZRhJHZt40YSxfkFQAVx79di0NPVMyarUM=&xsec_source=pc_feed', # will expire
+        'https://www.douyin.com/jingxuan?modal_id=7563478365211987259',
     ],
     'LongZhuVideoClient': [
         'https://www.bilibili.com/video/BV1DxCQBBE24/?spm_id_from=333.1007.tianma.2-2-5.click',
