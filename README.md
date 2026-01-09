@@ -392,14 +392,27 @@ from videodl import videodl
 your_vip_cookies_with_str_or_dict_format = ""
 init_video_clients_cfg = dict()
 init_video_clients_cfg['TencentVideoClient'] = {'default_parse_cookies': your_vip_cookies_with_str_or_dict_format, 'default_download_cookies': your_vip_cookies_with_str_or_dict_format}
-video_client = videodl.VideoClient(init_video_clients_cfg=init_video_clients_cfg)
+video_client = videodl.VideoClient(init_video_clients_cfg=init_video_clients_cfg, allowed_video_sources=['TencentVideoClient'])
 video_client.startparseurlcmdui()
 ```
 
 Alternatively, you can run the following command directly in the terminal,
 
 ```bash
-videodl -i "URL" -c "{'TencentVideoClient': {'default_parse_cookies': your_vip_cookies_with_str_or_dict_format, 'default_download_cookies': your_vip_cookies_with_str_or_dict_format}}"
+videodl -i "URL" -c "{'TencentVideoClient': {'default_parse_cookies': your_vip_cookies_with_str_or_dict_format, 'default_download_cookies': your_vip_cookies_with_str_or_dict_format}}" -a TencentVideoClient
+```
+
+Some platforms may return a direct download URL that should not include VIP/member cookies; otherwise, the download may fail. 
+For example, with `IQiyiVideoClient`, you only need to provide the VIP cookies during the parsing step, *e.g.*,
+
+```python
+from videodl import videodl
+
+your_vip_cookies_with_str_or_dict_format = ""
+init_video_clients_cfg = dict()
+init_video_clients_cfg['IQiyiVideoClient'] = {'default_parse_cookies': your_vip_cookies_with_str_or_dict_format}
+video_client = videodl.VideoClient(init_video_clients_cfg=init_video_clients_cfg, allowed_video_sources=['IQiyiVideoClient'])
+video_client.startparseurlcmdui()
 ```
 
 Of course, you can also choose a general-purpose parser that supports VIP video parsing to achieve video extraction, for example,

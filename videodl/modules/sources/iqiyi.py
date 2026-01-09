@@ -48,15 +48,7 @@ class IQiyiVideoClient(BaseVideoClient):
         return device_id
     '''_calcvf'''
     def _calcvf(self, url):
-        def _ovappend(e):
-            r = e
-            for t in range(0, 4):
-                for i in range(0, 2):
-                    for n in range(0, 4):
-                        a = (70 * t + 677 * i + 21 * n + 87 * t * i * n + 59) % 30
-                        a += 48 if a < 9 else 88
-                        r += chr(a)
-            return r
+        def _ovappend(e): return e + ''.join(chr(((70*t+677*i+21*n+87*t*i*n+59)%30) + (48 if ((70*t+677*i+21*n+87*t*i*n+59)%30) < 9 else 88)) for t in range(4) for i in range(2) for n in range(4))
         path_n_query = re.sub(r"^(https?://)?cache\.video\.iqiyi\.com", "", url, flags=re.IGNORECASE)
         return hashlib.md5(_ovappend(path_n_query).encode('utf-8')).hexdigest()
     '''_authkey'''
