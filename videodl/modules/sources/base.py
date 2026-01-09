@@ -321,7 +321,7 @@ class BaseVideoClient():
         proxy_url = None
         for _, p in request_overrides.get("proxies", {}).items(): proxy_url = p; break
         # start to download
-        default_nm3u8dlre_settings = {'thread_count': '8', 'download_retry_count': '3'}
+        default_nm3u8dlre_settings = {'thread_count': '8', 'download_retry_count': '3', 'check_segments_count': False if video_info['source'] in ['XMFlvVideoClient'] else True}
         nm3u8dlre_settings = video_info.get('nm3u8dlre_settings', {}) or {}
         default_nm3u8dlre_settings.update(nm3u8dlre_settings)
         log_dir = user_log_dir(appname='videodl', appauthor='zcjin')
@@ -329,8 +329,9 @@ class BaseVideoClient():
         cmd = [
             'N_m3u8DL-RE', video_info["download_url"], "--auto-select", "--save-dir", os.path.dirname(video_info["file_path"]), "--save-name", os.path.basename(video_info["file_path"]),
             "--thread-count", default_nm3u8dlre_settings['thread_count'], "--download-retry-count", default_nm3u8dlre_settings['download_retry_count'], "--check-segments-count",
-            "--del-after-done", "-M", f"format={video_info['ext']}", '--log-file-path', log_file_path,
         ]
+        if default_nm3u8dlre_settings['check_segments_count']: cmd.extend(["--del-after-done", "-M", f"format={video_info['ext']}", '--log-file-path', log_file_path])
+        else: cmd.extend(["false", "--del-after-done", "-M", f"format={video_info['ext']}", '--log-file-path', log_file_path])
         cmd.extend(header_args)
         if proxy_url: cmd.extend(["--custom-proxy", proxy_url])
         capture_output = True if self.disable_print else False
