@@ -433,6 +433,8 @@ class BaseVideoClient():
     def _download(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
         # init
         request_overrides = request_overrides or {}
+        # some formats maybe incorrect, auto correct
+        if video_info.get('ext') in ['m4s']: video_info.update(dict(ext='mp4', file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
         # not deal with video info with errors
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
         # YouTubeVideoClient use specific downloader (highest-priority)
@@ -477,8 +479,6 @@ class BaseVideoClient():
         if video_info.get('download_with_aria2c', False): return self._downloadwitharia2c(
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
         )
-        # some formats maybe incorrect, auto correct
-        if video_info.get('ext') in ['m4s']: video_info.update(dict(ext='mp4', file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
         # prepare
         touchdir(os.path.dirname(video_info['file_path']))
         video_info = copy.deepcopy(video_info)

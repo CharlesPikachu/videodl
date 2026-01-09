@@ -77,6 +77,7 @@ class BilibiliVideoClient(BaseVideoClient):
                     url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
                 )
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_page_info['ext']
+                if ext in ['m4s']: ext = 'mp4'
                 video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f'{video_id}-{cid}'))
                 video_infos.append(video_page_info)
         except Exception as err:
@@ -126,6 +127,7 @@ class BilibiliVideoClient(BaseVideoClient):
                     url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
                 )
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_page_info['ext']
+                if ext in ['m4s']: ext = 'mp4'
                 video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=episode_id))
                 audio_formats = []
                 for item in safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'dolby', 'audio'], []) + safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'audio'], []):
@@ -190,6 +192,7 @@ class BilibiliVideoClient(BaseVideoClient):
                     url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
                 )
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_page_info['ext']
+                if ext in ['m4s']: ext = 'mp4'
                 video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=episode_id))
                 audio_formats = []
                 for item in safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'dolby', 'audio'], []) + safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'audio'], []):
@@ -251,6 +254,7 @@ class BilibiliVideoClient(BaseVideoClient):
                     url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
                 )
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_page_info['ext']
+                if ext in ['m4s']: ext = 'mp4'
                 video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=episode_id))
                 audio_formats = []
                 for item in safeextractfromdict(page_raw_data, ['data', 'dash', 'audio'], []):

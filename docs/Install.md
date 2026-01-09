@@ -33,10 +33,10 @@ Specifically, these CLI tools include,
 
 - **[N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE)**: 
   FFmpeg is a general-purpose media tool that can download standard HLS/m3u8 streams, but it assumes that the playlist and segment URLs strictly follow the protocol. 
-  N_m3u8DL-RE is a specialized m3u8 downloader that adds extensive logic for handling encryption, anti-leech headers, redirects, and malformed playlists, so it can capture many ‘protected’ or non-standard videos that FFmpeg fails on. 
+  N_m3u8DL-RE is a specialized m3u8 downloader that adds extensive logic for handling encryption, anti-leech headers, redirects, and malformed playlists, so it can capture many "protected" or non-standard videos that FFmpeg fails on. 
   In many cases it’s also faster, because N_m3u8DL-RE can download HLS segments in parallel with optimized retries/merging, while FFmpeg typically pulls segments sequentially by default.
   ❗ **Therefore, we recommend that all videodl users install N_m3u8DL-RE to ensure videodl delivers the best possible performance.** ❗
-  Of course, you can choose not to install it, but in that case you may not be able to use videodl to parse the following platforms,
+  Of course, you can choose not to install it, however, in that case, videodl may not be able to parse certain platforms, including but not limited to,
   ```
   CCTVVideoClient, FoxNewsVideoClient, TencentVideoClient, GVVIPVideoClient, 
   SnapAnyVideoClient, VgetVideoClient, ArteTVVideoClient, XMFlvVideoClient, 
