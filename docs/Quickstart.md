@@ -79,8 +79,8 @@ videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL" -g -a QZXDPToolsVideoClient
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL" -g -a NoLogoVideoClient
 # Examples
-videodl -i "https://www.douyin.com/jingxuan?modal_id=7569541184671974899" -g -a VideoFKVideoClient
-videodl -i "https://www.tiktok.com/@pet_statione/video/7579841364599328013?lang=en" -g -a VideoFKVideoClient
+videodl -i "https://www.douyin.com/jingxuan?modal_id=7569541184671974899" -g -a SnapAnyVideoClient
+videodl -i "https://www.tiktok.com/@pet_statione/video/7579841364599328013?lang=en" -g -a SnapAnyVideoClient
 
 # 1905 (1905电影网)
 videodl -i "M1905 VIDEO URL" -a M1905VideoClient
