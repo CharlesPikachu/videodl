@@ -36,6 +36,7 @@ class VideoClient():
         self.logger_handle = LoggerHandle()
         if not allowed_video_sources: allowed_video_sources = list(VideoClientBuilder.REGISTERED_MODULES.keys()) + list(CommonVideoClientBuilder.REGISTERED_MODULES.keys())
         allowed_video_sources = list(set(allowed_video_sources))
+        allowed_video_sources = sorted(allowed_video_sources, key={v:i for i,v in enumerate(list(VideoClientBuilder.REGISTERED_MODULES.keys()) + list(CommonVideoClientBuilder.REGISTERED_MODULES.keys()))}.get)
         if apply_common_video_clients_only: allowed_video_sources = [s for s in allowed_video_sources if s in CommonVideoClientBuilder.REGISTERED_MODULES]
         init_video_clients_cfg, clients_threadings, requests_overrides = init_video_clients_cfg or {}, clients_threadings or {}, requests_overrides or {}
         # instance video_clients (lazy instance to speed up parsing)
