@@ -334,6 +334,13 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.douyin.com/jingxuan?modal_id=7585277829261151542',
         'https://www.kuaishou.com/short-video/3xd8b4qa8vtn6ie?authorId=3xmup9yp228r3ze&streamSource=find&area=homexxbrilliant',
     ],
+    'PVVideoClient': [
+        'https://www.youtube.com/watch?v=lBNYpPmjH8M',
+        'https://www.bilibili.com/video/BV1vjmYBqETJ',
+        'https://www.le.com/ptv/vplay/77974953.html',
+        'https://www.douyin.com/jingxuan?modal_id=7585502221816155451',
+        'https://www.facebook.com/facebook/videos/paint-me-like-one-of-your-facebook-reels-video-by-sams-sketchbooksmusic-by-conni/9879297875528418/',
+    ],
 }
 
 

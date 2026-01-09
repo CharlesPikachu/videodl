@@ -38,3 +38,5 @@ videodl -i "https://v.kuaishou.com/8CU76w" -g -a XCVTSVideoClient
 videodl -i "https://show.meitu.com/detail?feed_id=6873229026351926275" -g -a KIT9VideoClient
 # XZDXVideoClient
 videodl -i "https://www.douyin.com/jingxuan?modal_id=7585277829261151542" -g -a XZDXVideoClient
+# PVVideoClient
+videodl -i "https://www.youtube.com/watch?v=lBNYpPmjH8M" -g -a PVVideoClient
