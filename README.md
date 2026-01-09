@@ -210,8 +210,8 @@ Specifically, these CLI tools include,
   python -c "import shutil; print(shutil.which('ffmpeg'))"
   ```
 
-- **[Node.js](https://nodejs.org/en)**: Currently, Node.js is only used in `YouTubeVideoClient` to execute certain JavaScript code for video parsing. 
-  Therefore, if you don’t need to use `YouTubeVideoClient`, you can safely skip installing this CLI tool.
+- **[Node.js](https://nodejs.org/en)**: Currently, Node.js is only used in `YouTubeVideoClient` and `TencentVideoClient` to execute certain JavaScript code for video parsing. 
+  Therefore, if you don’t need to use `YouTubeVideoClient` and `TencentVideoClient`, you can safely skip installing this CLI tool.
   A quick way to check whether Node.js has been installed successfully is to open a terminal (or Command Prompt on Windows) and run,
   ```bash
   node -v (npm -v)
