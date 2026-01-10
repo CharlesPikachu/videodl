@@ -341,6 +341,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.douyin.com/jingxuan?modal_id=7585502221816155451',
         'https://www.facebook.com/facebook/videos/paint-me-like-one-of-your-facebook-reels-video-by-sams-sketchbooksmusic-by-conni/9879297875528418/',
     ],
+    'MiZhiVideoClient': [
+        'https://www.douyin.com/jingxuan?modal_id=7592623211763718287',
+        'https://share.xiaochuankeji.cn/hybrid/share/post?pid=415744765',
+        'https://v.6.cn/minivideo/7466460',
+    ],
 }
 
 

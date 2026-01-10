@@ -113,7 +113,7 @@ class XiguaVideoClient(BaseVideoClient):
     def parsefromurl(self, url: str, request_overrides: dict = None):
         for parser in [self._parsefromurlwithsucps, self._parsefromurlwithmixiguadouyin]:
             video_infos = parser(url, request_overrides)
-            if any(((info.get("download_url") or "") not in ("", "NULL")) for info in (video_infos or [])): break
+            if any(((info.get("download_url") or "").upper() not in ("", "NULL")) for info in (video_infos or [])): break
         return video_infos
     '''belongto'''
     @staticmethod
