@@ -346,6 +346,9 @@ VIDEODL_TEST_SAMPLES = {
         'https://share.xiaochuankeji.cn/hybrid/share/post?pid=415744765',
         'https://v.6.cn/minivideo/7466460',
     ],
+    'CCCVideoClient': [
+        'https://media.ccc.de/v/30C3_-_5443_-_en_-_saal_g_-_201312281830_-_introduction_to_processor_design_-_byterazor#video',
+    ],
 }
 
 
