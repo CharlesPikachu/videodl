@@ -8,7 +8,6 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import copy
-from bs4 import BeautifulSoup
 from ..sources import BaseVideoClient
 from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
 
@@ -18,9 +17,7 @@ class MiZhiVideoClient(BaseVideoClient):
     source = 'MiZhiVideoClient'
     def __init__(self, **kwargs):
         super(MiZhiVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {}
         self.default_download_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
         }
@@ -47,7 +44,7 @@ class MiZhiVideoClient(BaseVideoClient):
             video_title = legalizestring(raw_data['data'].get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --download url
             download_url = raw_data['data']['url']
-            if not download_url.startswith('https:'): download_url = f'https:{download_url}'
+            if not download_url.startswith('http'): download_url = f'https:{download_url}'
             video_info.update(dict(download_url=download_url))
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
