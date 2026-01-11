@@ -78,7 +78,7 @@ def legalizestring(string: str, fit_gbk: bool = True, max_len: int = 255, fit_ut
 
 
 '''shortenpathsinvideoinfos'''
-def shortenpathsinvideoinfos(video_infos: list[dict], key: str = "file_path", max_path: int = 240, keep_ext: bool = True):
+def shortenpathsinvideoinfos(video_infos: list[dict], key: str = "file_path", max_path: int = 240, keep_ext: bool = True, with_hash_suffix: bool = False):
     used_paths = set()
     for info in video_infos:
         raw_path = (info.get(key) or "").strip()
@@ -89,7 +89,7 @@ def shortenpathsinvideoinfos(video_infos: list[dict], key: str = "file_path", ma
         stem = src_path.stem
         digest = hashlib.md5(str(src_path).encode("utf-8")).hexdigest()
         for hash_len in (8, 10):
-            hash_suffix = f"_{digest[:hash_len]}"
+            hash_suffix = f"-{digest[:hash_len]}" if with_hash_suffix else ""
             max_stem_len = max(1, max_path - (len(str(output_dir)) + 1 + len(hash_suffix) + len(ext)))
             safe_stem = (stem[:max_stem_len].rstrip(" .") or "NULL")
             out_path = str(output_dir / f"{safe_stem}{hash_suffix}{ext}")
