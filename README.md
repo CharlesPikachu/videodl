@@ -143,6 +143,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [PVVideoClient](https://www.parsevideo.com/)                      | [在线视频解析工具](https://www.parsevideo.com/)                         |   ✔️     |   ✔️     | [pv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/pv.py)                 |
 | [QingtingVideoClient](https://33tool.com/video_parse/)            | [蜻蜓工具](https://33tool.com/video_parse/)                             |   ✔️     |   ✔️     | [qingting.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/qingting.py)     |
 | [QZXDPToolsVideoClient](https://tools.qzxdp.cn/video_spider)      | [全栈工具视频解析](https://tools.qzxdp.cn/video_spider)                 |   ✔️     |   ✔️     | [qzxdptools.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/qzxdptools.py) |
+| [RayVideoClient](https://www.raydownloader.com/)                  | [飞鱼视频下载助手](https://www.raydownloader.com/)                      |   ✔️     |   ✔️     | [ray.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/ray.py)               |
 | [SnapAnyVideoClient](https://snapany.com/zh)                      | [SnapAny万能解析](https://snapany.com/zh)                               |   ✔️     |   ✔️     | [snapany.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/snapany.py)       |
 | [SnapWCVideoClient](https://snapwc.com/zh)                        | [SnapWC视频解析](https://snapwc.com/zh)                                 |   ✔️     |   ✔️     | [snapwc.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/snapwc.py)         |
 | [VgetVideoClient](https://vget.xyz/)                              | [Vget视频解析](https://vget.xyz/)                                       |   ✔️     |   ✔️     | [vget.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/vget.py)             |
@@ -294,6 +295,7 @@ videodl -i "https://www.iqiyi.com/v_cy4phe8b08.html" -g -a XMFlvVideoClient
 videodl -i "https://v.qq.com/x/cover/mzc002001nl46xm/t410130yz0y.html" -g -a XMFlvVideoClient
 
 # MIGU (咪咕视频)
+videodl -i "MIGU VIDEO URL" -g -a RayVideoClient
 videodl -i "MIGU VIDEO URL" -g -a KedouVideoClient
 # Examples
 videodl -i "https://www.miguvideo.com/p/detail/759959727" -g -a KedouVideoClient

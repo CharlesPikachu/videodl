@@ -42,3 +42,5 @@ videodl -i "https://www.douyin.com/jingxuan?modal_id=7585277829261151542" -g -a 
 videodl -i "https://www.youtube.com/watch?v=lBNYpPmjH8M" -g -a PVVideoClient
 # MiZhiVideoClient
 videodl -i "https://www.douyin.com/jingxuan?modal_id=7592623211763718287" -g -a MiZhiVideoClient
+# RayVideoClient
+videodl -i "https://www.miguvideo.com/p/detail/759959727" -g -a RayVideoClient

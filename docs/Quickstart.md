@@ -62,6 +62,7 @@ videodl -i "https://www.iqiyi.com/v_cy4phe8b08.html" -g -a XMFlvVideoClient
 videodl -i "https://v.qq.com/x/cover/mzc002001nl46xm/t410130yz0y.html" -g -a XMFlvVideoClient
 
 # MIGU (咪咕视频)
+videodl -i "MIGU VIDEO URL" -g -a RayVideoClient
 videodl -i "MIGU VIDEO URL" -g -a KedouVideoClient
 # Examples
 videodl -i "https://www.miguvideo.com/p/detail/759959727" -g -a KedouVideoClient

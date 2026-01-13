@@ -349,6 +349,13 @@ VIDEODL_TEST_SAMPLES = {
     'CCCVideoClient': [
         'https://media.ccc.de/v/30C3_-_5443_-_en_-_saal_g_-_201312281830_-_introduction_to_processor_design_-_byterazor#video',
     ],
+    'RayVideoClient': [
+        'https://www.bilibili.com/video/BV1fiiuBjEPH/',
+        'https://www.bilibili.com/bangumi/play/ep247270',
+        'https://www.douyin.com/jingxuan?modal_id=7585180912409726259',
+        'https://www.le.com/ptv/vplay/77953712.html',
+        'https://www.miguvideo.com/p/detail/759959727'
+    ],
 }
 
 
