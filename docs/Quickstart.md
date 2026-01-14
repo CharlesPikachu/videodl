@@ -226,11 +226,12 @@ video_client.download(video_infos=video_infos)
 For VIP (premium) video links, you have two options to parse and download the video. 
 
 The first option is to use a third-party parsing service. 
-For example, for an IQIYI/YOUKU/TENCENT VIDEO URL, you can run the following command,
+For example, for an IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL, you can run the following command,
 
 ```bash
-videodl -i "IQIYI/YOUKU/TENCENT VIDEO URL" -g -a XMFlvVideoClient
-videodl -i "IQIYI/YOUKU/TENCENT VIDEO URL" -g -a GVVIPVideoClient
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a SENJiexiVideoClient (Recommended)
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a XMFlvVideoClient
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a GVVIPVideoClient
 ```
 
 Of course, it’s worth noting that this approach may come with some drawbacks, for example, some third-party parsing services may occasionally insert a few seconds of unwanted ads into the downloaded video.
