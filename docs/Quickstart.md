@@ -54,12 +54,13 @@ The demonstration is as follows,
 Recommended parsing and downloading commands for some widely used video platforms are as follows,
 
 ```bash
-# IQIYI / YOUKU / TENCENT (爱奇艺, 优酷, 腾讯视频, 含VIP)
-videodl -i "IQIYI/YOUKU/TENCENT VIDEO URL" -g -a XMFlvVideoClient
-videodl -i "IQIYI/YOUKU/TENCENT VIDEO URL" -g -a GVVIPVideoClient
+# IQIYI / YOUKU / TENCENT / PPTV / MGTV (爱奇艺, 优酷, 腾讯视频, PPTV, 芒果TV, 含VIP视频)
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a SENJiexiVideoClient (Recommended)
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a XMFlvVideoClient
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a GVVIPVideoClient
 # Examples
-videodl -i "https://www.iqiyi.com/v_cy4phe8b08.html" -g -a XMFlvVideoClient
-videodl -i "https://v.qq.com/x/cover/mzc002001nl46xm/t410130yz0y.html" -g -a XMFlvVideoClient
+videodl -i "https://www.iqiyi.com/v_cy4phe8b08.html" -g -a SENJiexiVideoClient
+videodl -i "https://v.qq.com/x/cover/mzc002001nl46xm/t410130yz0y.html" -g -a SENJiexiVideoClient
 
 # MIGU (咪咕视频)
 videodl -i "MIGU VIDEO URL" -g -a RayVideoClient

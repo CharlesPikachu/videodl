@@ -20,6 +20,7 @@ import functools
 import json_repair
 import unicodedata
 from pathlib import Path
+from typing import Optional
 from datetime import datetime
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
@@ -40,6 +41,37 @@ def cookies2string(cookies: str | dict = None):
     if isinstance(cookies, str): return cookies
     if isinstance(cookies, dict): return "; ".join(f"{k}={v}" for k, v in cookies.items())
     raise TypeError(f'cookies type is "{type(cookies)}", expect cookies to "str" or "dict" or "None".')
+
+
+'''decodehtml'''
+def decodehtml(resp: requests.Response) -> str:
+    b = resp.content
+    ct = resp.headers.get("Content-Type", "")
+    m = re.search(r"charset=([^\s;]+)", ct, re.I)
+    enc = m.group(1).strip('"').lower() if m else None
+    if not enc:
+        head = b[:8192].decode("ascii", "ignore")
+        m = re.search(r'charset=["\']?\s*([a-zA-Z0-9_\-]+)', head, re.I)
+        enc = m.group(1).lower() if m else None
+    if not enc or enc in ("iso-8859-1", "latin-1"): enc = (resp.apparent_encoding or "utf-8").lower()
+    if enc in ("gbk", "gb2312"): enc = "gb18030"
+    return b.decode(enc, errors="replace")
+
+
+'''extracttitlefromurl'''
+def extracttitlefromurl(url: str, *, timeout: float = 10.0, headers: dict = None, cookies: dict = None, request_overrides: dict = None) -> Optional[str]:
+    request_overrides, headers, cookies = request_overrides or {}, headers or {}, cookies or {}
+    resp = requests.get(url, headers=headers, timeout=timeout, cookies=cookies, allow_redirects=True, **request_overrides)
+    resp.raise_for_status()
+    text = decodehtml(resp)
+    soup = BeautifulSoup(text, "html.parser")
+    for css, attr in [('meta[property="og:title"]', "content"), ('meta[name="twitter:title"]', "content"), ("title", None), ("h1", None)]:
+        el = soup.select_one(css)
+        if not el: continue
+        t: str = (el.get(attr) if attr else el.get_text(" ", strip=True)) or ""
+        t: str = html.unescape(re.sub(r"\s+", " ", t)).strip(" -|\u2013\u2014")
+        if t: return t
+    return None
 
 
 '''legalizestring'''

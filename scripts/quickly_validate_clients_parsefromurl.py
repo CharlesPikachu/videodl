@@ -356,6 +356,14 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.le.com/ptv/vplay/77953712.html',
         'https://www.miguvideo.com/p/detail/759959727'
     ],
+    'SENJiexiVideoClient': [
+        'https://v.qq.com/x/cover/mzc00200ezim4vr.html',
+        'https://www.iqiyi.com/v_rmbopj0g60.html',
+        'https://v.youku.com/v_show/id_XNjUwMjQxMjI0MA==.html',
+        'https://v.pptv.com/show/31nibfeVLuiclc2kI.html',
+        'https://www.mgtv.com/b/292920/3592322.html',
+        'https://www.bilibili.com/bangumi/play/ss89933'
+    ],
 }
 
 

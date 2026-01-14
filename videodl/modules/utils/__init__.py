@@ -10,5 +10,5 @@ from .io import touchdir, generateuniquetmppath
 from .logger import printtable, colorize, printfullline, LoggerHandle
 from .misc import (
     legalizestring, byte2mb, resp2json, usedownloadheaderscookies, useparseheaderscookies, usesearchheaderscookies, searchdictbykey, cookies2dict, cookies2string, 
-    safeextractfromdict, yieldtimerelatedtitle, shortenpathsinvideoinfos, FileTypeSniffer, SpinWithBackoff
+    safeextractfromdict, yieldtimerelatedtitle, shortenpathsinvideoinfos, extracttitlefromurl, FileTypeSniffer, SpinWithBackoff
 )

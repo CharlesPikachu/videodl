@@ -146,6 +146,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [RayVideoClient](https://www.raydownloader.com/)                  | [飞鱼视频下载助手](https://www.raydownloader.com/)                      |   ✔️     |   ✔️     | [ray.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/ray.py)               |
 | [SnapAnyVideoClient](https://snapany.com/zh)                      | [SnapAny万能解析](https://snapany.com/zh)                               |   ✔️     |   ✔️     | [snapany.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/snapany.py)       |
 | [SnapWCVideoClient](https://snapwc.com/zh)                        | [SnapWC视频解析](https://snapwc.com/zh)                                 |   ✔️     |   ✔️     | [snapwc.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/snapwc.py)         |
+| [SENJiexiVideoClient](https://jiexi.789jiexi.icu:4433/)           | [789视频解析](https://jiexi.789jiexi.icu:4433/)                         |   ✔️     |   ✔️     | [senjiexi.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/senjiexi.py)     |
 | [VgetVideoClient](https://vget.xyz/)                              | [Vget视频解析](https://vget.xyz/)                                       |   ✔️     |   ✔️     | [vget.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/vget.py)             |
 | [VideoFKVideoClient](https://www.videofk.com/)                    | [免费短视频下载器](https://www.videofk.com/)                            |   ✔️     |   ✔️     | [videofk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/videofk.py)       |
 | [XiazaitoolVideoClient](https://www.xiazaitool.com/dy)            | [下载狗](https://www.xiazaitool.com/dy)                                 |   ✔️     |   ✔️     | [xiazaitool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/xiazaitool.py) |
@@ -287,12 +288,13 @@ The demonstration is as follows,
 Recommended parsing and downloading commands for some widely used video platforms are as follows,
 
 ```bash
-# IQIYI / YOUKU / TENCENT (爱奇艺, 优酷, 腾讯视频, 含VIP)
-videodl -i "IQIYI/YOUKU/TENCENT VIDEO URL" -g -a XMFlvVideoClient
-videodl -i "IQIYI/YOUKU/TENCENT VIDEO URL" -g -a GVVIPVideoClient
+# IQIYI / YOUKU / TENCENT / PPTV / MGTV (爱奇艺, 优酷, 腾讯视频, PPTV, 芒果TV, 含VIP视频)
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a SENJiexiVideoClient (Recommended)
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a XMFlvVideoClient
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a GVVIPVideoClient
 # Examples
-videodl -i "https://www.iqiyi.com/v_cy4phe8b08.html" -g -a XMFlvVideoClient
-videodl -i "https://v.qq.com/x/cover/mzc002001nl46xm/t410130yz0y.html" -g -a XMFlvVideoClient
+videodl -i "https://www.iqiyi.com/v_cy4phe8b08.html" -g -a SENJiexiVideoClient
+videodl -i "https://v.qq.com/x/cover/mzc002001nl46xm/t410130yz0y.html" -g -a SENJiexiVideoClient
 
 # MIGU (咪咕视频)
 videodl -i "MIGU VIDEO URL" -g -a RayVideoClient

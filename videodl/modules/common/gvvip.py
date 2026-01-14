@@ -54,10 +54,10 @@ class GVVIPVideoClient(BaseVideoClient):
             # --video title
             video_title = legalizestring(raw_data['data'].get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --sort by success rate
-            _successrate = lambda item: int(m.group(1)) if (m := re.search(r"成功率:(\d+)%", item["label"])) else 0
+            success_rate_func = lambda item: int(m.group(1)) if (m := re.search(r"成功率:(\d+)%", item["label"])) else 0
             play_list = raw_data["data"]["playList"]
             play_list = [pl for pl in play_list if '.html?' not in pl['url']]
-            sorted_play_list = sorted(play_list, key=_successrate, reverse=True)
+            sorted_play_list = sorted(play_list, key=success_rate_func, reverse=True)
             download_url = sorted_play_list[0]['url']
             video_info.update(dict(download_url=download_url))
             # --other infos
