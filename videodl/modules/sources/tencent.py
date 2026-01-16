@@ -19,7 +19,8 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 from .base import BaseVideoClient
 from typing import Dict, Any, List
-from urllib.parse import urlparse, urlencode
+from urllib.parse import urlencode
+from ..utils.domains import TENCENT_SUFFIXES
 from ..utils import legalizestring, searchdictbykey, useparseheaderscookies, safeextractfromdict, writevodm3u8fortencent, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo, AESAlgorithmWrapper, SpinWithBackoff
 
 
@@ -453,10 +454,9 @@ class TencentVQQVideoClient(BaseVideoClient):
         return video_infos
     '''belongto'''
     @staticmethod
-    def belongto(url: str, valid_domains: list = None):
-        if valid_domains is None:
-            valid_domains = ["v.qq.com"]
-        return BaseVideoClient.belongto(url=url, valid_domains=valid_domains)
+    def belongto(url: str, valid_domains: list[str] | set[str] = None):
+        valid_domains = set(valid_domains or []) | {"v.qq.com"}
+        return BaseVideoClient.belongto(url, valid_domains)
 
 
 '''TencentVideoClient'''
@@ -544,9 +544,8 @@ class TencentVideoClient(BaseVideoClient):
         null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
-            # --basic info extract with different netloc
-            parsed_url = urlparse(url)
-            if parsed_url.netloc in ['v.qq.com']:
+            # --basic info extract with different belong
+            if self.belongto(url, {"v.qq.com"}):
                 try:
                     video_infos: list[dict] = self.vqq_video_client.parsefromurl(url, request_overrides)
                     if any(((info.get("download_url") or "").upper() not in ("", "NULL")) for info in (video_infos or [])): return video_infos
@@ -559,7 +558,7 @@ class TencentVideoClient(BaseVideoClient):
                 resp.raise_for_status()
                 raw_data = re.search(r'window\.__(?:pinia|PINIA__)\s*=\s*({.*?})\s*;?\s*</script>', resp.text, flags=re.S).group(1)
                 raw_data = json_repair.loads(raw_data)
-            elif parsed_url.netloc in ['www.iflix.com']:
+            elif self.belongto(url, {"iflix.com"}):
                 api_url, app_version, platform, host, referer = 'https://vplay.iflix.com/getvinfo', '3.5.57', '330201', 'www.iflix.com', 'www.iflix.com'
                 m = re.match(r'https?://(?:www\.)?iflix\.com/(?:[^?#]+/)?play/(?P<series_id>\w+)(?:-[^?#]+)?/(?P<id>\w+)(?:-[^?#]+)?', url)
                 video_id, series_id = m.group('id'), m.group('series_id')
@@ -567,7 +566,7 @@ class TencentVideoClient(BaseVideoClient):
                 resp.raise_for_status()
                 raw_data = re.search(r'<script[^>]+id="__NEXT_DATA__"[^>]*>(\{.*?\})</script>', resp.text, flags=re.S).group(1)
                 raw_data = json_repair.loads(raw_data)
-            elif parsed_url.netloc in ['wetv.vip']:
+            elif self.belongto(url, {"wetv.vip"}):
                 api_url, app_version, platform, host, referer = 'https://play.wetv.vip/getvinfo', '3.5.57', '4830201', 'wetv.vip', 'wetv.vip'
                 m = re.match(r'https?://(?:www\.)?wetv\.vip/(?:[^?#]+/)?play/(?P<series_id>\w+)(?:-[^?#]+)?/(?P<id>\w+)(?:-[^?#]+)?', url)
                 video_id, series_id = m.group('id'), m.group('series_id')
@@ -647,7 +646,6 @@ class TencentVideoClient(BaseVideoClient):
         return video_infos
     '''belongto'''
     @staticmethod
-    def belongto(url: str, valid_domains: list = None):
-        if valid_domains is None:
-            valid_domains = ["v.qq.com", "www.iflix.com", "wetv.vip"]
-        return BaseVideoClient.belongto(url=url, valid_domains=valid_domains)
+    def belongto(url: str, valid_domains: list[str] | set[str] = None):
+        valid_domains = set(valid_domains or []) | TENCENT_SUFFIXES
+        return BaseVideoClient.belongto(url, valid_domains)

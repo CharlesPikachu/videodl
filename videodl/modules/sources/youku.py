@@ -11,6 +11,7 @@ import time
 import random
 import string
 from .base import BaseVideoClient
+from ..utils.domains import YOUKU_SUFFIXES
 from urllib.parse import urlparse, parse_qs
 from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
@@ -46,7 +47,7 @@ class YoukuVideoClient(BaseVideoClient):
         # try parse
         try:
             parsed_url = urlparse(url)
-            if parsed_url.netloc in ["v.youku.com"]:
+            if self.belongto(url, {"v.youku.com"}):
                 vid = parsed_url.path.strip('/').split('/')[-1].removesuffix('.html').removeprefix('id_')
             else:
                 vid = parse_qs(parsed_url.query, keep_blank_values=True)['vid'][0]
@@ -86,7 +87,6 @@ class YoukuVideoClient(BaseVideoClient):
         return video_infos
     '''belongto'''
     @staticmethod
-    def belongto(url: str, valid_domains: list = None):
-        if valid_domains is None:
-            valid_domains = ["v.youku.com", "www.youku.com"]
-        return BaseVideoClient.belongto(url=url, valid_domains=valid_domains)
+    def belongto(url: str, valid_domains: list[str] | set[str] = None):
+        valid_domains = set(valid_domains or []) | YOUKU_SUFFIXES
+        return BaseVideoClient.belongto(url, valid_domains)

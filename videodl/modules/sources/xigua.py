@@ -117,7 +117,6 @@ class XiguaVideoClient(BaseVideoClient):
         return video_infos
     '''belongto'''
     @staticmethod
-    def belongto(url: str, valid_domains: list = None):
-        if valid_domains is None:
-            valid_domains = ["www.ixigua.com", "v.ixigua.com", 'm.ixigua.com']
-        return BaseVideoClient.belongto(url=url, valid_domains=valid_domains)
+    def belongto(url: str, valid_domains: list[str] | set[str] = None):
+        valid_domains = set(valid_domains or []) | {"ixigua.com"}
+        return BaseVideoClient.belongto(url, valid_domains)

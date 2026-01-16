@@ -134,7 +134,6 @@ class WeiboVideoClient(BaseVideoClient):
         return self._parsefromurlwithh5videoweibo(url, request_overrides)
     '''belongto'''
     @staticmethod
-    def belongto(url: str, valid_domains: list = None):
-        if valid_domains is None:
-            valid_domains = ["weibo.com", "m.weibo.cn"]
-        return BaseVideoClient.belongto(url=url, valid_domains=valid_domains)
+    def belongto(url: str, valid_domains: list[str] | set[str] = None):
+        valid_domains = set(valid_domains or []) | {"weibo.com", "weibo.cn"}
+        return BaseVideoClient.belongto(url, valid_domains)
