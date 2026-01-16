@@ -52,11 +52,10 @@
 
 # 🆕 What's New
 
+- 2026-01-15: Released videofetch v0.5.5 - Added universal video parser NNXVVideoClient, optimized Kuaishou video downloading and platform-specific site matching algorithms, and included minor improvements.
 - 2026-01-15: Released videofetch v0.5.4 - Add two general-purpose video parsing APIs, where SENJiexiVideoClient can improve video quality for iQIYI, Tencent Video, and Youku.
 - 2026-01-11: Released videofetch v0.5.3 - added two video parsers, namely, CCCVideoClient and MiZhiVideoClient.
 - 2026-01-10: Released videofetch v0.5.2 - partial code optimization, supports both direct-link parsing and standard webpage parsing, and adds a unified/general-purpose parsing interface.
-- 2026-01-09: Released videofetch v0.5.1 - add three new short-video parsing APIs.
-- 2026-01-09: Released videofetch v0.5.0 - refactored the code structure, improved the stability of some video clients, removed deprecated interfaces and paid platforms, and fixed some potential bugs.
 
 
 # 🚀 Introduction
