@@ -21,7 +21,6 @@ import socket
 import pathlib
 import subprocess
 import http.client
-import nodejs_wheel.executable
 from enum import Enum
 from pathlib import Path
 from urllib import parse
@@ -484,6 +483,7 @@ def applypotoken(stream_manifest, vid_info: dict, po_token: str):
 
 '''generatepotoken'''
 def generatepotoken(video_id: str):
+    import nodejs_wheel.executable
     suffix = ".exe" if os.name == "nt" else ""
     bin_dir = nodejs_wheel.executable.ROOT_DIR if os.name == "nt" else os.path.join(nodejs_wheel.executable.ROOT_DIR, "bin")
     try:
@@ -672,6 +672,7 @@ class NodeRunner:
     '''_nodepath'''
     @staticmethod
     def _nodepath():
+        import nodejs_wheel.executable
         suffix = ".exe" if os.name == "nt" else ""
         bin_dir = nodejs_wheel.executable.ROOT_DIR if os.name == "nt" else os.path.join(nodejs_wheel.executable.ROOT_DIR, "bin")
         return os.path.join(bin_dir, 'node' + suffix)
