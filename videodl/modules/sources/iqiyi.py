@@ -15,6 +15,7 @@ import random
 import hashlib
 from .base import BaseVideoClient
 from urllib.parse import urlencode, quote
+from ..utils.domains import IQIYI_SUFFIXES
 from ..utils import legalizestring, useparseheaderscookies, resp2json, touchdir, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
@@ -149,7 +150,6 @@ class IQiyiVideoClient(BaseVideoClient):
         return video_infos
     '''belongto'''
     @staticmethod
-    def belongto(url: str, valid_domains: list = None):
-        if valid_domains is None:
-            valid_domains = ["www.iqiyi.com"]
-        return BaseVideoClient.belongto(url=url, valid_domains=valid_domains)
+    def belongto(url: str, valid_domains: list[str] | set[str] = None):
+        valid_domains = set(valid_domains or []) | IQIYI_SUFFIXES
+        return BaseVideoClient.belongto(url, valid_domains)

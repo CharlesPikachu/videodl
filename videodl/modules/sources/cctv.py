@@ -12,7 +12,7 @@ import time
 import shutil
 import hashlib
 from .base import BaseVideoClient
-from urllib.parse import urlsplit
+from ..utils.domains import CCTV_SUFFIXES
 from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
 
 
@@ -87,13 +87,6 @@ class CCTVVideoClient(BaseVideoClient):
         return video_infos
     '''belongto'''
     @staticmethod
-    def belongto(url: str, valid_domains: list = None):
-        # set valid domains
-        if valid_domains is None:
-            valid_domains = []
-        # extract domain
-        parsed_url = urlsplit(url)
-        domain = parsed_url.netloc
-        # judge and return according to domain
-        is_valid = (domain in valid_domains) or domain.endswith('cctv.com') or domain.endswith('cctv.cn')
-        return is_valid
+    def belongto(url: str, valid_domains: list[str] | set[str] = None):
+        valid_domains = set(valid_domains or []) | CCTV_SUFFIXES
+        return BaseVideoClient.belongto(url, valid_domains)

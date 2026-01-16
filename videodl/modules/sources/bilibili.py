@@ -11,6 +11,7 @@ import re
 import copy
 from .base import BaseVideoClient
 from urllib.parse import urlparse, parse_qs
+from ..utils.domains import BILIBILI_SUFFIXES
 from ..utils import legalizestring, resp2json, useparseheaderscookies, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
@@ -320,7 +321,6 @@ class BilibiliVideoClient(BaseVideoClient):
         return [VideoInfo(source=self.source)]
     '''belongto'''
     @staticmethod
-    def belongto(url: str, valid_domains: list = None):
-        if valid_domains is None:
-            valid_domains = ["www.bilibili.com", "b23.tv"]
-        return BaseVideoClient.belongto(url=url, valid_domains=valid_domains)
+    def belongto(url: str, valid_domains: list[str] | set[str] = None):
+        valid_domains = set(valid_domains or []) | BILIBILI_SUFFIXES
+        return BaseVideoClient.belongto(url, valid_domains)
