@@ -54,10 +54,11 @@ The demonstration is as follows,
 Recommended parsing and downloading commands for some widely used video platforms are as follows,
 
 ```bash
-# IQIYI / YOUKU / TENCENT / PPTV / MGTV (爱奇艺, 优酷, 腾讯视频, PPTV, 芒果TV, 含VIP视频)
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a SENJiexiVideoClient (Recommended)
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a XMFlvVideoClient
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a GVVIPVideoClient
+# IQIYI / YOUKU / TENCENT / PPTV / MGTV / CCTV / BILIBILI (爱奇艺, 优酷, 腾讯视频, PPTV, 芒果TV, CCTV, B站等平台的电影电视剧)
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a SENJiexiVideoClient (Recommended)
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a XMFlvVideoClient
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a GVVIPVideoClient
+videodl -i "IQIYI" -g -a NNXVVideoClient
 # Examples
 videodl -i "https://www.iqiyi.com/v_cy4phe8b08.html" -g -a SENJiexiVideoClient
 videodl -i "https://v.qq.com/x/cover/mzc002001nl46xm/t410130yz0y.html" -g -a SENJiexiVideoClient
@@ -226,12 +227,13 @@ video_client.download(video_infos=video_infos)
 For VIP (premium) video links, you have two options to parse and download the video. 
 
 The first option is to use a third-party parsing service. 
-For example, for an IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL, you can run the following command,
+For example, for an IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL (Movies and TV shows), you can run the following command,
 
 ```bash
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a SENJiexiVideoClient (Recommended)
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a XMFlvVideoClient
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a GVVIPVideoClient
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a SENJiexiVideoClient (Recommended)
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a XMFlvVideoClient
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a GVVIPVideoClient
+videodl -i "IQIYI" -g -a NNXVVideoClient
 ```
 
 Of course, it’s worth noting that this approach may come with some drawbacks, for example, some third-party parsing services may occasionally insert a few seconds of unwanted ads into the downloaded video.

@@ -18,11 +18,10 @@ import subprocess
 from pathlib import Path
 from rich.text import Text
 from rich.progress import Task
-from functools import lru_cache
-from urllib.parse import urlsplit
 from fake_useragent import UserAgent
 from platformdirs import user_log_dir
 from pathvalidate import sanitize_filepath
+from ..utils.domains import obtainhostname, hostmatchessuffix
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from rich.progress import Progress, TextColumn, BarColumn, DownloadColumn, TransferSpeedColumn, TimeRemainingColumn, TimeElapsedColumn, ProgressColumn
 from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, cookies2dict, generateuniquetmppath, shortenpathsinvideoinfos, LoggerHandle, VideoInfo
@@ -534,21 +533,16 @@ class BaseVideoClient():
         self.logger_handle.info(f'Finished downloading videos using {self.source}. Valid downloads: {len(downloaded_video_infos)}.', disable_print=self.disable_print)
         # return
         return downloaded_video_infos
-    '''fetchhostname'''
-    @staticmethod
-    @lru_cache(maxsize=200_000)
-    def obtainhostname(url: str):
-        return urlsplit(url).hostname
     '''belongto'''
     @staticmethod
-    def belongto(url: str, valid_domains: list = None):
+    def belongto(url: str, valid_domains: list[str] | set[str] = None):
         # set valid domains
         if valid_domains is None: valid_domains = []
-        # extract domain
-        domain = BaseVideoClient.obtainhostname(url)
-        # judge and return according to domain
-        if not domain: return False
-        return domain in valid_domains
+        # extract url domain
+        domain = obtainhostname(url)
+        # judge and return according to valid domains
+        if not domain or not valid_domains: return False
+        return hostmatchessuffix(domain, valid_domains)
     '''get'''
     def get(self, url, **kwargs):
         if 'cookies' not in kwargs: kwargs['cookies'] = self.default_cookies
@@ -602,5 +596,4 @@ class BaseVideoClient():
     '''_savetopkl'''
     def _savetopkl(self, data, file_path, auto_sanitize=True):
         if auto_sanitize: file_path = sanitize_filepath(file_path)
-        with open(file_path, 'wb') as fp:
-            pickle.dump(data, fp)
+        with open(file_path, 'wb') as fp: pickle.dump(data, fp)

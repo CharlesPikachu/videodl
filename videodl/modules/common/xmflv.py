@@ -110,7 +110,7 @@ class XMFlvVideoClient(BaseVideoClient):
             decrypted_data = json_repair.loads(decrypted_data)
             # --video title
             video_title = legalizestring(decrypted_data.get('name', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            if "解析失败啦" == video_title: raise RuntimeError('only youku, tencent and iqiyi sites can be parsed with XMFlvVideoClient')
+            if "解析失败啦" == video_title: raise
             # --download url
             download_url = decrypted_data['url']
             video_info.update(dict(download_url=download_url))

@@ -139,8 +139,9 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [KuKuToolVideoClient](https://dy.kukutool.com/)                   | [KuKuTool视频解析](https://dy.kukutool.com/)                            |   ✔️     |   ✔️     | [kukutool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kukutool.py)     |
 | [KIT9VideoClient](https://apis.kit9.cn/api/aggregate_videos/)     | [聚合短视频解析](https://apis.kit9.cn/api/aggregate_videos/)            |   ✔️     |   ✔️     | [kit9.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kit9.py)             |
 | [LongZhuVideoClient](https://www.hhlqilongzhu.cn/H5_home.php)     | [龙珠API视频解析](https://www.hhlqilongzhu.cn/H5_home.php)              |   ✔️     |   ✔️     | [longzhu.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/longzhu.py)       |
-| [MiZhiVideoClient](https://api.98dou.cn/doc/video_qsy/juhe.html)  | [觅知聚合短视频去水印](https://api.98dou.cn/doc/video_qsy/juhe.html)    |   ✔️     |   ✔️     | [nologo.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/nologo.py)         |
+| [MiZhiVideoClient](https://api.98dou.cn/doc/video_qsy/juhe.html)  | [觅知聚合短视频去水印](https://api.98dou.cn/doc/video_qsy/juhe.html)    |   ✔️     |   ✔️     | [mizhi.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/mizhi.py)           |
 | [NoLogoVideoClient](https://nologo.code24.top/)                   | [去水印下载鸭](https://nologo.code24.top/)                              |   ✔️     |   ✔️     | [nologo.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/nologo.py)         |
+| [NNXVVideoClient](https://jx.nnxv.cn/)                            | [七哥解析](https://jx.nnxv.cn/)                                         |   ✔️     |   ✔️     | [nnxv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/nnxv.py)             |
 | [PVVideoClient](https://www.parsevideo.com/)                      | [在线视频解析工具](https://www.parsevideo.com/)                         |   ✔️     |   ✔️     | [pv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/pv.py)                 |
 | [QingtingVideoClient](https://33tool.com/video_parse/)            | [蜻蜓工具](https://33tool.com/video_parse/)                             |   ✔️     |   ✔️     | [qingting.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/qingting.py)     |
 | [QZXDPToolsVideoClient](https://tools.qzxdp.cn/video_spider)      | [全栈工具视频解析](https://tools.qzxdp.cn/video_spider)                 |   ✔️     |   ✔️     | [qzxdptools.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/qzxdptools.py) |
@@ -289,10 +290,11 @@ The demonstration is as follows,
 Recommended parsing and downloading commands for some widely used video platforms are as follows,
 
 ```bash
-# IQIYI / YOUKU / TENCENT / PPTV / MGTV (爱奇艺, 优酷, 腾讯视频, PPTV, 芒果TV, 含VIP视频)
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a SENJiexiVideoClient (Recommended)
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a XMFlvVideoClient
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a GVVIPVideoClient
+# IQIYI / YOUKU / TENCENT / PPTV / MGTV / CCTV / BILIBILI (爱奇艺, 优酷, 腾讯视频, PPTV, 芒果TV, CCTV, B站等平台的电影电视剧)
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a SENJiexiVideoClient (Recommended)
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a XMFlvVideoClient
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a GVVIPVideoClient
+videodl -i "IQIYI" -g -a NNXVVideoClient
 # Examples
 videodl -i "https://www.iqiyi.com/v_cy4phe8b08.html" -g -a SENJiexiVideoClient
 videodl -i "https://v.qq.com/x/cover/mzc002001nl46xm/t410130yz0y.html" -g -a SENJiexiVideoClient
@@ -461,12 +463,13 @@ video_client.download(video_infos=video_infos)
 For VIP (premium) video links, you have two options to parse and download the video. 
 
 The first option is to use a third-party parsing service. 
-For example, for an IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL, you can run the following command,
+For example, for an IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL (Movies and TV shows), you can run the following command,
 
 ```bash
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a SENJiexiVideoClient (Recommended)
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a XMFlvVideoClient
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV VIDEO URL" -g -a GVVIPVideoClient
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a SENJiexiVideoClient (Recommended)
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a XMFlvVideoClient
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a GVVIPVideoClient
+videodl -i "IQIYI" -g -a NNXVVideoClient
 ```
 
 Of course, it’s worth noting that this approach may come with some drawbacks, for example, some third-party parsing services may occasionally insert a few seconds of unwanted ads into the downloaded video.
