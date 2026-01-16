@@ -51,18 +51,6 @@ Specifically, these CLI tools include,
   If N_m3u8DL-RE is installed correctly, `N_m3u8DL-RE --version` will print the N_m3u8DL-RE version (*e.g.*, `0.5.1+c1f6db5639397dde362c31b31eebd88c796c90da`).
   If you see a similar `command not found` / `not recognized` error, N_m3u8DL-RE is not installed correctly or not available on your `PATH`.
 
-- **[CBox](https://github.com/CharlesPikachu/videodl/releases/tag/clitools)**:
-  CBox is an optional dependency for `CCTVVideoClient`. It helps prevent garbled output when downloading HD streams, which can happen when the m3u8 playlist is encrypted.
-  To enable it, download CBox from the GitHub release above and add the CBox folder to your system `PATH`.
-  If you intend to use `CCTVVideoClient`, you should also install [FFmpeg](https://ffmpeg.org/) and [N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE) and ensure they are available on your `PATH` as well.
-  If you’re not using `CCTVVideoClient` for HD downloads, you can skip the CBox setup entirely.
-  To verify your setup, these commands should print the full executable paths (instead of returning nothing),
-  ```bash
-  python -c "import shutil; print(shutil.which('cbox'))"
-  python -c "import shutil; print(shutil.which('N_m3u8DL-RE'))"
-  python -c "import shutil; print(shutil.which('ffmpeg'))"
-  ```
-
 - **[Node.js](https://nodejs.org/en)**: Currently, Node.js is only used in `YouTubeVideoClient` and `TencentVideoClient` to execute certain JavaScript code for video parsing. 
   Therefore, if you don’t need to use `YouTubeVideoClient` and `TencentVideoClient`, you can safely skip installing this CLI tool.
   A quick way to check whether Node.js has been installed successfully is to open a terminal (or Command Prompt on Windows) and run,

@@ -190,75 +190,6 @@ class BaseVideoClient():
             self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
         # return
         return downloaded_video_infos
-    '''_downloadwithffmpegcctv'''
-    @usedownloadheaderscookies
-    def _downloadwithffmpegcctv(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
-        # init
-        request_overrides = request_overrides or {}
-        # not deal with video info with errors
-        if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
-        # prepare
-        work_dir = os.path.dirname(video_info['file_path'])
-        video_info = copy.deepcopy(video_info)
-        video_info['ext'] = 'mp4'
-        video_info['file_path'] = os.path.join(work_dir, f'{video_info["title"]}.{video_info["ext"]}')
-        video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
-        # download m3u8 files with N_m3u8DL-RE
-        cli = shutil.which("N_m3u8DL-RE.exe")
-        pid = str(video_info['pid'])
-        tmp_dir = Path(os.path.join(work_dir, str(pid))).expanduser().resolve()
-        default_headers = video_info.get('default_download_headers') or request_overrides.get('headers', {}) or copy.deepcopy(self.default_headers)
-        default_cookies = video_info.get('default_download_cookies') or request_overrides.get('cookies', {}) or self.default_cookies or {}
-        if default_cookies: default_headers['Cookie'] = '; '.join([f'{k}={v}' for k, v in default_cookies.items()])
-        header_args = []
-        for k, v in default_headers.items(): header_args.extend(["-H", f"{k}: {v}"])
-        cmd = [
-            cli, video_info["download_url"], "--auto-select", "--tmp-dir", str(tmp_dir), "--save-dir", str(tmp_dir.parent), "--save-name", pid, "--skip-merge", "--del-after-done", "false", *header_args,
-        ]
-        for _, proxy_url in (request_overrides.get('proxies', {}) or {}).items(): cmd.extend(["--use-system-proxy", "false", "--custom-proxy", proxy_url]); break
-        capture_output = True if self.disable_print else False
-        ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
-        if ret.returncode not in [0]:
-            err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
-            self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
-            shutil.rmtree(tmp_dir, ignore_errors=True)
-            return downloaded_video_infos
-        # decrypt
-        def _naturalkey(p: Path): return [int(t) if t.isdigit() else t for t in re.findall(r"\d+|\D+", p.stem)]
-        tmp_part_dir, cbox = tmp_dir / pid, shutil.which("cbox.exe")
-        for d in tmp_part_dir.iterdir():
-            if d.is_dir() and any(p.is_file() and p.suffix == ".ts" for p in d.iterdir()): ts_dir = d; break
-        tmp_part_dir = tmp_part_dir / ts_dir
-        ts_files = sorted([p for p in tmp_part_dir.glob("*.ts") if not p.name.endswith("_output.ts")], key=_naturalkey)
-        output_ts_files: list[Path] = []
-        for _, ts_file in enumerate(ts_files, 1):
-            out_ts_file = ts_file.with_name(ts_file.stem + "_output.ts")
-            cmd = [cbox, str(ts_file), str(out_ts_file)]
-            ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
-            if ret.returncode == 0 and out_ts_file.exists():
-                output_ts_files.append(out_ts_file)
-            else:
-                err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
-                self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
-                shutil.rmtree(tmp_dir, ignore_errors=True)
-                return downloaded_video_infos
-        # merge with ffmpeg
-        ffmpeg = shutil.which("ffmpeg")
-        output_ts_files_txt_path = tmp_dir / f'{pid}_{int(time.time())}.txt'
-        with open(output_ts_files_txt_path, "w", encoding="utf-8") as fp:
-            for p in output_ts_files: fp.write(f"file '{p.as_posix()}'\n")
-        cmd = [ffmpeg, "-hide_banner", "-f", "concat", "-safe", "0", "-i", str(output_ts_files_txt_path), "-c", "copy", "-movflags", "+faststart", Path(video_info['file_path']).resolve()]
-        ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
-        if ret.returncode == 0 and Path(video_info['file_path']).resolve().exists():
-            downloaded_video_infos.append(video_info)
-        else:
-            err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
-            self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
-        # del useless files auto
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-        if os.path.exists('output.txt') and not open('output.txt', 'r').read().strip(): os.remove('output.txt'); os.remove('UDRM_LICENSE.v1.0')
-        # return
-        return downloaded_video_infos
     '''_downloadwithffmpeg'''
     @usedownloadheaderscookies
     def _downloadwithffmpeg(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
@@ -438,10 +369,6 @@ class BaseVideoClient():
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
         # YouTubeVideoClient use specific downloader (highest-priority)
         if video_info.get('source') in ['YouTubeVideoClient']: return self._downloadyoutube(
-            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
-        )
-        # CCTVVideoClient use specific downloader for high-quality video files (highest-priority)
-        if video_info.get('source') in ['CCTVVideoClient'] and video_info.get('download_with_ffmpeg_cctv', False): return self._downloadwithffmpegcctv(
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
         )
         # requires merging videos and audios like some third-part video clients and bilibili (highest-priority)

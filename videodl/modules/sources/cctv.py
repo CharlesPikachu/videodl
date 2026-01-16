@@ -9,7 +9,6 @@ WeChat Official Account (微信公众号):
 import os
 import re
 import time
-import shutil
 import hashlib
 from .base import BaseVideoClient
 from ..utils.domains import CCTV_SUFFIXES
@@ -45,15 +44,10 @@ class CCTVVideoClient(BaseVideoClient):
                 r'load[Vv]ideo\s*\(\s*["\']([\da-fA-F]+)', r'var\s+initMyAray\s*=\s*["\']([\da-fA-F]+)', r'var\s+ids\s*=\s*\[["\']([\da-fA-F]+)'
             ]
             for rule in rules:
-                try:
-                    pid = re.findall(rule, resp.text)[0]
-                    break
-                except:
-                    continue
+                try: pid = re.findall(rule, resp.text)[0]; break
+                except: continue
             md5 = lambda value: hashlib.md5(value.encode('utf-8')).hexdigest()
-            params = {
-                'pid': pid, 'client': 'flash', 'im': '0', 'tsp': str(int(time.time())), 'vn': '2049', 'vc': None, 'uid': '826D8646DEBBFD97A82D23CAE45A55BE', 'wlan': '',
-            }
+            params = {'pid': pid, 'client': 'flash', 'im': '0', 'tsp': str(int(time.time())), 'vn': '2049', 'vc': None, 'uid': '826D8646DEBBFD97A82D23CAE45A55BE', 'wlan': ''}
             params['vc'] = md5((params['tsp'] + params['vn'] + "47899B86370B879139C08EA3B5E88267" + params['uid']))
             resp = self.get('https://vdn.apps.cntv.cn/api/getHttpVideoInfo.do', params=params, **request_overrides)
             resp.raise_for_status()
@@ -61,13 +55,12 @@ class CCTVVideoClient(BaseVideoClient):
             video_info.update(dict(raw_data=raw_data))
             # --parse urls
             manifest, download_urls = raw_data.get('manifest'), []
-            hls_candidates = ['hls_enc2_url', 'hls_url'] if shutil.which('cbox') else ['hls_url']
+            hls_candidates = ['hls_url']
             for hls_key in hls_candidates:
                 if raw_data.get(hls_key) or manifest.get(hls_key):
                     download_urls.append([hls_key, raw_data.get(hls_key) or manifest.get(hls_key)])
             hls_key, download_url = download_urls[0]
-            if hls_key not in ['hls_url']: download_url = re.sub(r"https://[^/]+/asp/enc2/", 'https://drm.cntv.vod.dnsv1.com/asp/enc2/', download_url)
-            video_info.update(dict(download_url=download_url, download_with_ffmpeg_cctv=True if hls_key not in ['hls_url'] else False, pid=pid))
+            video_info.update(dict(download_url=download_url, pid=pid))
             # --create video info's extra entries
             video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(

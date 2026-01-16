@@ -13,8 +13,8 @@ from typing import Any
 class VideoInfo(dict):
     _defaults = {
         'source': None, 'raw_data': {}, 'download_url': '', 'title': '', 'file_path': '', 'ext': 'mp4', 'err_msg': "", 
-        'download_with_ffmpeg': False, 'download_with_aria2c': False, 'download_with_ffmpeg_cctv': False, 'enable_nm3u8dlre': False,
-        'identifier': '', 'guess_video_ext_result': {}, 'audio_download_url': '', 'guess_audio_ext_result': {}, 'audio_ext': 'm4a', 
+        'download_with_ffmpeg': False, 'download_with_aria2c': False, 'enable_nm3u8dlre': False, 'identifier': '', 
+        'guess_video_ext_result': {}, 'audio_download_url': '', 'guess_audio_ext_result': {}, 'audio_ext': 'm4a', 
         'audio_file_path': '', 'default_download_headers': None, 'default_download_cookies': None,
     }
     def __init__(self, *args, **kwargs):

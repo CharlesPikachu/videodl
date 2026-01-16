@@ -140,7 +140,6 @@ The output of this code looks like,
     "err_msg": "",
     "download_with_ffmpeg": true,
     "download_with_aria2c": false,
-    "download_with_ffmpeg_cctv": false,
     "enable_nm3u8dlre": false,
     "identifier": "XNDUxOTc1NDg4MA==",
     "guess_video_ext_result": {
