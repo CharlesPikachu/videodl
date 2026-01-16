@@ -369,6 +369,12 @@ VIDEODL_TEST_SAMPLES = {
     'NNXVVideoClient': [
         'https://www.iqiyi.com/v_cy4phe8b08.html', 
     ],
+    'ODwonVideoClient': [
+        'https://www.bilibili.com/video/BV1abi9BfEZU',
+        'https://www.douyin.com/video/6982497745948921092',
+        'https://www.kuaishou.com/short-video/3xn2uj6cstk6qts?authorId=3xgyzwvca7pq3pi',
+        'https://tv.sohu.com/v/cGwvMC82OTQxNjM0NTIuc2h0bWw=.html'
+    ],
 }
 
 

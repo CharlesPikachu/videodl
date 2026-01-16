@@ -48,3 +48,5 @@ videodl -i "https://www.miguvideo.com/p/detail/759959727" -g -a RayVideoClient
 videodl -i "https://www.iqiyi.com/v_rmbopj0g60.html" -g -a SENJiexiVideoClient
 # NNXVVideoClient
 videodl -i "https://www.iqiyi.com/v_cy4phe8b08.html" -g -a NNXVVideoClient
+# ODwonVideoClient
+videodl -i "https://www.douyin.com/video/6982497745948921092" -g -a ODwonVideoClient
