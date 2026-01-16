@@ -15,3 +15,6 @@ pycryptodome
 cryptography
 tldextract
 fake_useragent
+nodejs-wheel
+pyfreeproxy
+playwright
