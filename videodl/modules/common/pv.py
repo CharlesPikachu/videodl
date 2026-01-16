@@ -165,7 +165,7 @@ class PVVideoClient(BaseVideoClient):
             if random.random() > 0.5: video_medias = [vm for vm in video_medias if 'https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/' in vm['url']][0]
             else: video_medias = [vm for vm in video_medias if 'https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/' not in vm['url']][0]
             audio_medias: dict = audio_medias[0] if audio_medias else {}
-            download_url, audio_download_url = video_medias.get('url'), audio_medias.get('audio_url')
+            download_url, audio_download_url = video_medias.get('url'), audio_medias.get('url')
             # --deal with special download urls
             download_url, is_converter_performed = self._convertspecialdownloadurl(download_url)
             if is_converter_performed: video_info.update(dict(enable_nm3u8dlre=True))
