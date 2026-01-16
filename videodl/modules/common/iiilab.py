@@ -10,8 +10,8 @@ import os
 import time
 import copy
 import hashlib
-from urllib.parse import urlparse
 from ..sources import BaseVideoClient
+from ..utils.domains import platformfromurl
 from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
 
 
@@ -42,7 +42,7 @@ class IIILabVideoClient(BaseVideoClient):
             # --encrypt post data
             headers = copy.deepcopy(self.default_headers)
             RandomIPGenerator().addrandomipv4toheaders(headers)
-            site, timestamp = urlparse(url).netloc.split('.')[-2], str(int(time.time()))
+            site, timestamp = platformfromurl(url), str(int(time.time()))
             headers['G-Footer'] = hashlib.md5(f"{url}{site}{timestamp}{self.SALT}".encode('utf-8')).hexdigest()
             headers['G-Timestamp'] = timestamp
             # --post request

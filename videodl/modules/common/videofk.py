@@ -10,8 +10,8 @@ import os
 import re
 import copy
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse
 from ..sources import BaseVideoClient
+from ..utils.domains import platformfromurl
 from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, yieldtimerelatedtitle
 
 
@@ -69,7 +69,7 @@ class VideoFKVideoClient(BaseVideoClient):
             headers = copy.deepcopy(self.default_headers)
             RandomIPGenerator().addrandomipv4toheaders(headers)
             try:
-                site = urlparse(url).netloc.split('.')[-2]
+                site = platformfromurl(url)
                 resp = self.get(f'https://www.videofk.com/{site}-video-download/search?url={url}&select={site}', **request_overrides)
                 resp.raise_for_status()
             except:

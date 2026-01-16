@@ -10,8 +10,8 @@ import os
 import time
 import copy
 import hashlib
-from urllib.parse import urlparse
 from ..sources import BaseVideoClient
+from ..utils.domains import platformfromurl
 from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
 
 
@@ -40,7 +40,7 @@ class SnapAnyVideoClient(BaseVideoClient):
             # --encrypt post data
             headers = copy.deepcopy(self.default_headers)
             RandomIPGenerator().addrandomipv4toheaders(headers)
-            site = urlparse(url).netloc.split('.')[-2]
+            site = platformfromurl(url)
             timestamp = str(int(time.time() * 1000))
             headers['G-Footer'] = hashlib.md5(f"{url}{site}{timestamp}{self.SALT}".encode('utf-8')).hexdigest()
             headers['G-Timestamp'] = timestamp

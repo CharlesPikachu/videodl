@@ -6,6 +6,7 @@ Author:
 WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
+import tldextract
 from functools import lru_cache
 from urllib.parse import urlsplit
 
@@ -39,3 +40,10 @@ def hostmatchessuffix(host: str | None, suffixes: set[str]) -> bool:
         s = s.lower().strip(".")
         if h == s or h.endswith("." + s): return True
     return False
+
+
+'''platformfromurl'''
+def platformfromurl(url: str) -> str:
+    ext = tldextract.TLDExtract(include_psl_private_domains=True)
+    r = ext(url)
+    return r.domain or "unknown"
