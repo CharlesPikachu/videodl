@@ -9,6 +9,7 @@ WeChat Official Account (微信公众号):
 import os
 import re
 import time
+import random
 import struct
 import base64
 import hashlib
@@ -161,7 +162,8 @@ class PVVideoClient(BaseVideoClient):
             video_title = legalizestring(raw_data.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --extract download urls
             video_medias, audio_medias = self._splitandsortformats(raw_data['formats'])
-            video_medias: dict = video_medias[0] if video_medias else {}
+            if random.random() > 0.5: video_medias = [vm for vm in video_medias if 'https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/' in vm['url']][0]
+            else: video_medias = [vm for vm in video_medias if 'https://manifest.googlevideo.com/api/manifest/hls_playlist/expire/' not in vm['url']][0]
             audio_medias: dict = audio_medias[0] if audio_medias else {}
             download_url, audio_download_url = video_medias.get('url'), audio_medias.get('audio_url')
             # --deal with special download urls
