@@ -52,22 +52,18 @@ from .xinpianchang import XinpianchangVideoClient
 '''VideoClientBuilder'''
 class VideoClientBuilder(BaseModuleBuilder):
     REGISTERED_MODULES = {
-        'AcFunVideoClient': AcFunVideoClient, 'HaokanVideoClient': HaokanVideoClient, 'TedVideoClient': TedVideoClient,
-        'PipigaoxiaoVideoClient': PipigaoxiaoVideoClient, 'PipixVideoClient': PipixVideoClient, 'Ku6VideoClient': Ku6VideoClient,
-        'KuaishouVideoClient': KuaishouVideoClient, 'BilibiliVideoClient': BilibiliVideoClient, 'YinyuetaiVideoClient': YinyuetaiVideoClient,
-        'BaiduTiebaVideoClient': BaiduTiebaVideoClient, 'MGTVVideoClient': MGTVVideoClient, 'OasisVideoClient': OasisVideoClient,
-        'PearVideoClient': PearVideoClient, 'HuyaVideoClient': HuyaVideoClient, 'MeipaiVideoClient': MeipaiVideoClient,
-        'WeishiVideoClient': WeishiVideoClient, 'SixRoomVideoClient': SixRoomVideoClient, 'DuxiaoshiVideoClient': DuxiaoshiVideoClient,
-        'ZuiyouVideoClient': ZuiyouVideoClient, 'XinpianchangVideoClient': XinpianchangVideoClient, 'WeSingVideoClient': WeSingVideoClient,
-        'XiguaVideoClient': XiguaVideoClient, 'RednoteVideoClient': RednoteVideoClient, 'WeiboVideoClient': WeiboVideoClient,
-        'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient, 'YouTubeVideoClient': YouTubeVideoClient,
-        'ZhihuVideoClient': ZhihuVideoClient, 'KakaoVideoClient': KakaoVideoClient, 'YoukuVideoClient': YoukuVideoClient,
-        'TencentVideoClient': TencentVideoClient, 'GeniusVideoClient': GeniusVideoClient, 'UnityVideoClient': UnityVideoClient,
-        'FoxNewsVideoClient': FoxNewsVideoClient, 'SinaVideoClient': SinaVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,
-        'Open163VideoClient': Open163VideoClient, 'CCtalkVideoClient': CCtalkVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient,
-        'ArteTVVideoClient': ArteTVVideoClient, 'C56VideoClient': C56VideoClient, 'RedditVideoClient': RedditVideoClient,
-        'WWEVideoClient': WWEVideoClient, 'M1905VideoClient': M1905VideoClient, 'IQiyiVideoClient': IQiyiVideoClient,
-        'CCCVideoClient': CCCVideoClient,
+        'AcFunVideoClient': AcFunVideoClient, 'HaokanVideoClient': HaokanVideoClient, 'TedVideoClient': TedVideoClient, 'PipigaoxiaoVideoClient': PipigaoxiaoVideoClient, 
+        'PipixVideoClient': PipixVideoClient, 'Ku6VideoClient': Ku6VideoClient, 'KuaishouVideoClient': KuaishouVideoClient, 'BilibiliVideoClient': BilibiliVideoClient, 
+        'YinyuetaiVideoClient': YinyuetaiVideoClient, 'BaiduTiebaVideoClient': BaiduTiebaVideoClient, 'MGTVVideoClient': MGTVVideoClient, 'OasisVideoClient': OasisVideoClient,
+        'PearVideoClient': PearVideoClient, 'HuyaVideoClient': HuyaVideoClient, 'MeipaiVideoClient': MeipaiVideoClient, 'WeishiVideoClient': WeishiVideoClient, 
+        'SixRoomVideoClient': SixRoomVideoClient, 'DuxiaoshiVideoClient': DuxiaoshiVideoClient, 'ZuiyouVideoClient': ZuiyouVideoClient, 'XinpianchangVideoClient': XinpianchangVideoClient, 
+        'WeSingVideoClient': WeSingVideoClient, 'XiguaVideoClient': XiguaVideoClient, 'RednoteVideoClient': RednoteVideoClient, 'WeiboVideoClient': WeiboVideoClient,
+        'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient, 'YouTubeVideoClient': YouTubeVideoClient, 'ZhihuVideoClient': ZhihuVideoClient, 
+        'KakaoVideoClient': KakaoVideoClient, 'YoukuVideoClient': YoukuVideoClient, 'TencentVideoClient': TencentVideoClient, 'GeniusVideoClient': GeniusVideoClient, 
+        'UnityVideoClient': UnityVideoClient, 'FoxNewsVideoClient': FoxNewsVideoClient, 'SinaVideoClient': SinaVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,
+        'Open163VideoClient': Open163VideoClient, 'CCtalkVideoClient': CCtalkVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient, 'ArteTVVideoClient': ArteTVVideoClient, 
+        'C56VideoClient': C56VideoClient, 'RedditVideoClient': RedditVideoClient, 'WWEVideoClient': WWEVideoClient, 'M1905VideoClient': M1905VideoClient, 
+        'IQiyiVideoClient': IQiyiVideoClient, 'CCCVideoClient': CCCVideoClient,
     }
 
 

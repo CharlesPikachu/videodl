@@ -18,3 +18,4 @@ fake_useragent
 nodejs-wheel
 pyfreeproxy
 playwright
+questionary

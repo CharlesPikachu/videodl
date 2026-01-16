@@ -375,6 +375,13 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.kuaishou.com/short-video/3xn2uj6cstk6qts?authorId=3xgyzwvca7pq3pi',
         'https://tv.sohu.com/v/cGwvMC82OTQxNjM0NTIuc2h0bWw=.html'
     ],
+    'IM1907VideoClient': [
+        'http://www.iqiyi.com/v_19rrk4egc4.html',
+        'https://v.qq.com/x/cover/iksywx0zzdetobi/r003073v399.html',
+        'https://v.youku.com/v_show/id_XNjUxOTA0MzE4MA==.html',
+        'https://www.mgtv.com/b/823245/24067596.html',
+        'https://www.bilibili.com/bangumi/play/ss12548',
+    ],
 }
 
 
