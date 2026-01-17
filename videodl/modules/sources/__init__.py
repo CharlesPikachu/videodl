@@ -39,6 +39,7 @@ from .rednote import RednoteVideoClient
 from .sixroom import SixRoomVideoClient
 from .tencent import TencentVideoClient
 from .xuexicn import XuexiCNVideoClient
+from .plusfifa import PlusFIFAVideoClient
 from .kuaishou import KuaishouVideoClient
 from .bilibili import BilibiliVideoClient
 from .yinyuetai import YinyuetaiVideoClient
@@ -63,7 +64,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'UnityVideoClient': UnityVideoClient, 'FoxNewsVideoClient': FoxNewsVideoClient, 'SinaVideoClient': SinaVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,
         'Open163VideoClient': Open163VideoClient, 'CCtalkVideoClient': CCtalkVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient, 'ArteTVVideoClient': ArteTVVideoClient, 
         'C56VideoClient': C56VideoClient, 'RedditVideoClient': RedditVideoClient, 'WWEVideoClient': WWEVideoClient, 'M1905VideoClient': M1905VideoClient, 
-        'IQiyiVideoClient': IQiyiVideoClient, 'CCCVideoClient': CCCVideoClient,
+        'IQiyiVideoClient': IQiyiVideoClient, 'CCCVideoClient': CCCVideoClient, 'PlusFIFAVideoClient': PlusFIFAVideoClient,
     }
 
 

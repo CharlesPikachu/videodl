@@ -1,1 +1,2 @@
 recursive-include videodl/modules/js *.js *.json *.wasm
+recursive-include videodl/modules/cdm *.wvd

@@ -1,6 +1,7 @@
 '''initialize'''
 from .data import VideoInfo
 from .ip import RandomIPGenerator
+from .cdm import initcdm, closecdm
 from .aes import AESAlgorithmWrapper
 from .hls import writevodm3u8fortencent
 from .smuggler import BrightcoveSmuggler
