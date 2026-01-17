@@ -251,19 +251,21 @@ class BaseVideoClient():
         proxy_url = None
         for _, p in request_overrides.get("proxies", {}).items(): proxy_url = p; break
         # start to download
-        default_nm3u8dlre_settings = {'thread_count': '8', 'download_retry_count': '3', 'check_segments_count': False if video_info['source'] in ['XMFlvVideoClient'] else True}
+        default_nm3u8dlre_settings = {'thread_count': '8', 'download_retry_count': '3', 'check_segments_count': False if video_info['source'] in ['XMFlvVideoClient'] else True, 'key': None, 'extra_options': None}
         nm3u8dlre_settings = video_info.get('nm3u8dlre_settings', {}) or {}
         default_nm3u8dlre_settings.update(nm3u8dlre_settings)
         log_dir = user_log_dir(appname='videodl', appauthor='zcjin')
         log_file_path = generateuniquetmppath(dir=log_dir, ext='log')
         cmd = [
             'N_m3u8DL-RE', video_info["download_url"], "--auto-select", "--save-dir", os.path.dirname(video_info["file_path"]), "--save-name", os.path.basename(video_info["file_path"]),
-            "--thread-count", default_nm3u8dlre_settings['thread_count'], "--download-retry-count", default_nm3u8dlre_settings['download_retry_count'], "--check-segments-count",
+            "--thread-count", default_nm3u8dlre_settings['thread_count'], "--download-retry-count", default_nm3u8dlre_settings['download_retry_count'], 
         ]
-        if default_nm3u8dlre_settings['check_segments_count']: cmd.extend(["--del-after-done", "-M", f"format={video_info['ext']}", '--log-file-path', log_file_path])
-        else: cmd.extend(["false", "--del-after-done", "-M", f"format={video_info['ext']}", '--log-file-path', log_file_path])
+        if default_nm3u8dlre_settings['key']: cmd.extend(["--key", default_nm3u8dlre_settings['key']])
+        if default_nm3u8dlre_settings['check_segments_count']: cmd.extend(["--check-segments-count", "--del-after-done", "-M", f"format={video_info['ext']}", '--log-file-path', log_file_path])
+        else: cmd.extend(["--check-segments-count", "false", "--del-after-done", "-M", f"format={video_info['ext']}", '--log-file-path', log_file_path])
         cmd.extend(header_args)
         if proxy_url: cmd.extend(["--custom-proxy", proxy_url])
+        if default_nm3u8dlre_settings['extra_options'] and isinstance(default_nm3u8dlre_settings['extra_options'], (list, tuple)): cmd.extend(list(default_nm3u8dlre_settings['extra_options']))
         capture_output = True if self.disable_print else False
         ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
         if ret.returncode == 0:
@@ -376,10 +378,10 @@ class BaseVideoClient():
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
         )
         # use ffmpeg to deal with m3u8 likes, auto set according to video_info cues, a naive judgement is applied (high-priority)
-        if video_info.get('ext') in ['m3u8', 'm3u'] or video_info['download_url'].split('?')[0].endswith('.m3u8') or video_info['download_url'].split('?')[0].endswith('m3u'):
+        if any((video_info.get('ext', '').lower() in {'m3u8', 'm3u', 'mpd'}, video_info.get('download_url', '').split('?', 1)[0].lower().endswith(('.m3u8', '.m3u', '.mpd')))):
             ext = video_info.get('ext') if video_info.get('ext') in ('mkv',) else 'mp4'
             video_info.update(dict(ext=ext, download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.{ext}')))
-        if (video_info.get('ext') not in ['txt']) and (not video_info.get('download_url').endswith('.txt')) and video_info.get('download_with_ffmpeg', False):
+        if video_info.get('download_with_ffmpeg') and not ({video_info.get('ext', ''), video_info.get('download_url', '').split('?', 1)[0].rsplit('.', 1)[-1]} & {'txt'}):
             if shutil.which('N_m3u8DL-RE') and video_info.source not in ['TedVideoClient', 'XinpianchangVideoClient']: video_info['enable_nm3u8dlre'] = True
             elif video_info['enable_nm3u8dlre'] and (not shutil.which('N_m3u8DL-RE')):
                 warning_msg = ('"enable_nm3u8dlre" has been set to True, but N_m3u8DL-RE was not found in the environment variables.' 
