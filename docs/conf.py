@@ -20,7 +20,7 @@
 project = 'videodl'
 copyright = '2021-2030, Zhenchao Jin'
 author = 'Zhenchao Jin'
-release = '0.5.6'
+release = '0.5.7'
 
 # -- General configuration ---------------------------------------------------
 

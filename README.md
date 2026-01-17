@@ -52,6 +52,7 @@
 
 # 🆕 What's New
 
+- 2026-01-17: Released videofetch v0.5.7 - Added plusfifa parsing support and various code optimizations.
 - 2026-01-17: Released videofetch v0.5.6 - CCTV HD parsing is no longer supported due to frequent interface updates. We’ve added two new universal interfaces for 1080p movie downloads and fixed some minor bugs.
 - 2026-01-16: Released videofetch v0.5.5 - Added universal video parser NNXVVideoClient, optimized Kuaishou video downloading and platform-specific site matching algorithms, and included minor improvements.
 - 2026-01-15: Released videofetch v0.5.4 - Add two general-purpose video parsing APIs, where SENJiexiVideoClient can improve video quality for iQIYI, Tencent Video, and Youku.
@@ -329,6 +330,11 @@ videodl -i "https://www.bilibili.com/video/av8903802/" -a BilibiliVideoClient
 videodl -i "CCTV VIDEO URL" -a CCTVVideoClient
 # Examples
 videodl -i "https://v.cctv.com/2026/01/09/VIDE0ifonRhsuR952gJ3zUKu260109.shtml?spm=C90324.PE6LRxWJhH5P.S23920.3" -a CCTVVideoClient
+
+# PLUSFIFA (国际足联+比赛视频)
+videodl -i "PLUSFIFA VIDEO URL" -a PlusFIFAVideoClient
+# Examples
+videodl -i "https://www.plus.fifa.com/en/content/fc-sochaux-montbeliard-vs-lb-chateauroux/6ff75563-c6fc-4b08-b324-54771dbd7029" -a PlusFIFAVideoClient
 ```
 
 In practice, the general-purpose video parsers listed under [Supported Video Client](https://github.com/CharlesPikachu/videodl/tree/master?tab=readme-ov-file#-supported-video-client) can handle parsing and downloading videos from most major platforms. 

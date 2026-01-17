@@ -19,3 +19,4 @@ nodejs-wheel
 pyfreeproxy
 playwright
 questionary
+pywidevine
