@@ -382,6 +382,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.mgtv.com/b/823245/24067596.html',
         'https://www.bilibili.com/bangumi/play/ss12548',
     ],
+    'PlusFIFAVideoClient': [
+        "https://www.plus.fifa.com/en/player/580e692e-e8fc-4ad1-a649-5ec0af83f94d?catalogId=5f24e303-ff42-499f-9d7a-b4f8e0eff2ce",
+        "https://www.plus.fifa.com/en/content/fc-sochaux-montbeliard-vs-lb-chateauroux/6ff75563-c6fc-4b08-b324-54771dbd7029",
+    ],
 }
 
 
