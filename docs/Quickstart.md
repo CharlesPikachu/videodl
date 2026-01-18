@@ -63,6 +63,10 @@ videodl -i "IQIYI" -g -a NNXVVideoClient
 # Examples
 videodl -i "https://www.iqiyi.com/v_cy4phe8b08.html" -g -a IM1907VideoClient
 videodl -i "https://v.qq.com/x/cover/mzc002001nl46xm/t410130yz0y.html" -g -a IM1907VideoClient
+# Please Note
+Since the parsing relies on a third-party online parsing API, the downloaded video may contain inserted advertisements. 
+These ads are not added by videodl, they are inserted by the online parsing website. 
+We recommend using ffmpeg to trim out the ad segments.
 
 # MIGU (咪咕视频)
 videodl -i "MIGU VIDEO URL" -g -a RayVideoClient
@@ -243,6 +247,8 @@ videodl -i "IQIYI" -g -a NNXVVideoClient
 ```
 
 Of course, it’s worth noting that this approach may come with some drawbacks, for example, some third-party parsing services may occasionally insert a few seconds of unwanted ads into the downloaded video.
+These ads are not added by videodl, they are inserted by the online parsing website. 
+We recommend using ffmpeg to trim out the ad segments.
 
 The second option is to parse and download VIP (premium) videos directly via the platform’s native APIs (you’ll need to provide cookies from an account logged in with an active membership on that platform),
 

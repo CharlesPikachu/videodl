@@ -32,8 +32,8 @@ from .xiazaitool import XiazaitoolVideoClient
 '''CommonVideoClientBuilder'''
 class CommonVideoClientBuilder(BaseModuleBuilder):
     REGISTERED_MODULES = {
-        'IM1907VideoClient': IM1907VideoClient, 'NNXVVideoClient': NNXVVideoClient, 'SnapAnyVideoClient': SnapAnyVideoClient, 'SENJiexiVideoClient': SENJiexiVideoClient, 
-        'XMFlvVideoClient': XMFlvVideoClient, 'PVVideoClient': PVVideoClient, 'IIILabVideoClient': IIILabVideoClient, 'VideoFKVideoClient': VideoFKVideoClient, 
+        'XMFlvVideoClient': XMFlvVideoClient, 'NNXVVideoClient': NNXVVideoClient, 'SnapAnyVideoClient': SnapAnyVideoClient, 'IM1907VideoClient': IM1907VideoClient,
+        'SENJiexiVideoClient': SENJiexiVideoClient, 'PVVideoClient': PVVideoClient, 'IIILabVideoClient': IIILabVideoClient, 'VideoFKVideoClient': VideoFKVideoClient, 
         'VgetVideoClient': VgetVideoClient, 'SnapWCVideoClient': SnapWCVideoClient, 'ODwonVideoClient': ODwonVideoClient, 'RayVideoClient': RayVideoClient, 
         'KedouVideoClient': KedouVideoClient, 'KuKuToolVideoClient': KuKuToolVideoClient, 'XZDXVideoClient': XZDXVideoClient, 'KIT9VideoClient': KIT9VideoClient, 
         'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'MiZhiVideoClient': MiZhiVideoClient, 'BugPkVideoClient': BugPkVideoClient, 'NoLogoVideoClient': NoLogoVideoClient, 
