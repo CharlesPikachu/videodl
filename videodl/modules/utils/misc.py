@@ -244,7 +244,8 @@ class FileTypeSniffer:
         outputs = {'ext': 'NULL', 'sniffer': 'NULL', 'ok': False}
         # urllib.parse
         if not skip_urllib_parse:
-            ext = os.path.splitext(urlparse(url).path)[1].strip('. ')
+            ext_with_dot = os.path.splitext(urlparse(url).path)[1]
+            ext = ext_with_dot.strip('. ') if ext_with_dot else ''
             if ext:
                 outputs.update(dict(ext=ext, sniffer='urllib.parse', ok=True))
                 return outputs
@@ -252,7 +253,8 @@ class FileTypeSniffer:
         resp = requests.head(url, allow_redirects=True, **request_overrides)
         content_type = resp.headers.get('Content-Type', '').split(';')[0]
         if content_type:
-            ext = mimetypes.guess_extension(content_type).strip('. ')
+            ext_raw = mimetypes.guess_extension(content_type)
+            ext = ext_raw.strip('. ') if ext_raw else ''
             if ext:
                 outputs.update(dict(ext=ext, sniffer='requests.head', ok=True))
                 return outputs
@@ -260,7 +262,8 @@ class FileTypeSniffer:
         resp = requests.get(url, allow_redirects=True, stream=True, **request_overrides)
         content_type = resp.headers.get('Content-Type', '').split(';')[0]
         if content_type:
-            ext = mimetypes.guess_extension(content_type).strip('. ')
+            ext_raw = mimetypes.guess_extension(content_type)
+            ext = ext_raw.strip('. ') if ext_raw else ''
             if ext:
                 outputs.update(dict(ext=ext, sniffer='requests.get.stream', ok=True))
                 return outputs
