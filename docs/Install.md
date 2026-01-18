@@ -52,7 +52,7 @@ Specifically, these CLI tools include,
   If N_m3u8DL-RE is installed correctly, `N_m3u8DL-RE --version` will print the N_m3u8DL-RE version (*e.g.*, `0.5.1+c1f6db5639397dde362c31b31eebd88c796c90da`).
   If you see a similar `command not found` / `not recognized` error, N_m3u8DL-RE is not installed correctly or not available on your `PATH`.
 
-- **[Node.js](https://nodejs.org/en)**: Currently, Node.js is only used in `YouTubeVideoClient` and `TencentVideoClient` to execute certain JavaScript code for video parsing. 
+- **[Node.js](https://nodejs.org/en)**: Currently, Node.js is only used in `YouTubeVideoClient`, `CCTVVideoClient` and `TencentVideoClient` to execute certain JavaScript code for video parsing. 
   Therefore, if you don’t need to use `YouTubeVideoClient` and `TencentVideoClient`, you can safely skip installing this CLI tool.
   A quick way to check whether Node.js has been installed successfully is to open a terminal (or Command Prompt on Windows) and run,
   ```bash

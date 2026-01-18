@@ -10,9 +10,10 @@ import os
 import re
 import time
 import hashlib
+from urllib.parse import urlsplit
 from .base import BaseVideoClient
 from ..utils.domains import CCTV_SUFFIXES
-from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo, HLSBestParser
 
 
 '''CCTVVideoClient'''
@@ -55,18 +56,22 @@ class CCTVVideoClient(BaseVideoClient):
             video_info.update(dict(raw_data=raw_data))
             # --parse urls
             manifest, download_urls = raw_data.get('manifest'), []
-            hls_candidates = ['hls_url']
+            hls_candidates = ['hls_h5e_url', 'hls_url']
             for hls_key in hls_candidates:
                 if raw_data.get(hls_key) or manifest.get(hls_key):
                     download_urls.append([hls_key, raw_data.get(hls_key) or manifest.get(hls_key)])
             hls_key, download_url = download_urls[0]
-            video_info.update(dict(download_url=download_url, pid=pid))
+            resp = self.get(download_url, **request_overrides)
+            resp.raise_for_status()
+            download_url = HLSBestParser(f"{urlsplit(download_url).scheme}://{urlsplit(download_url).netloc}/").best(resp.text)['uri']
+            video_info.update(dict(download_url=download_url, hls_key=hls_key))
             # --create video info's extra entries
             video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            if hls_key in ['hls_h5e_url']: ext = 'mp4' # manually correct for js decrypt
             video_info.update(dict(
                 title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=pid,
             ))

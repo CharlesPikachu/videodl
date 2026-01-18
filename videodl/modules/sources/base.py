@@ -151,6 +151,29 @@ class BaseVideoClient():
             self.logger_handle.error(f'{self.source}._download >>> {video_info["identifier"]} (Error: {err})', disable_print=self.disable_print)
         # return
         return downloaded_video_infos
+    '''_downloadcctv'''
+    @usedownloadheaderscookies
+    def _downloadcctv(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
+        # init
+        request_overrides = request_overrides or {}
+        # not deal with video info with errors
+        if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
+        # prepare
+        touchdir(os.path.dirname(video_info['file_path']))
+        video_info = copy.deepcopy(video_info)
+        video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
+        # start to download
+        node_script = Path(__file__).resolve().parents[2] / "modules" / "js" / "cctv" / "decrypt.js"
+        cmd = ["node", node_script, video_info['download_url'], video_info['file_path']]
+        capture_output = True if self.disable_print else False
+        ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
+        if ret.returncode == 0:
+            downloaded_video_infos.append(video_info)
+        else:
+            err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
+            self.logger_handle.error(f'{self.source}._download >>> {video_info["download_url"]} (Error{err_msg})', disable_print=self.disable_print)
+        # return
+        return downloaded_video_infos
     '''_downloadwithffmpegfromlocalfile'''
     @usedownloadheaderscookies
     def _downloadwithffmpegfromlocalfile(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
@@ -371,6 +394,10 @@ class BaseVideoClient():
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
         # YouTubeVideoClient use specific downloader (highest-priority)
         if video_info.get('source') in ['YouTubeVideoClient']: return self._downloadyoutube(
+            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
+        )
+        # CCTVVideoClient use specific downloader (highest-priority)
+        if video_info.get('source') in ['CCTVVideoClient'] and video_info.get('hls_key') in ['hls_h5e_url']: return self._downloadcctv(
             video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
         )
         # requires merging videos and audios like some third-part video clients and bilibili (highest-priority)

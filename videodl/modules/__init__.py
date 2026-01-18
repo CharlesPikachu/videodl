@@ -6,5 +6,5 @@ from .utils import (
     touchdir, legalizestring, printtable, colorize, byte2mb, resp2json, usedownloadheaderscookies, useparseheaderscookies, usesearchheaderscookies, initcdm,
     ensureplaywrightchromium, searchdictbykey, printfullline, cookies2string, cookies2dict, safeextractfromdict, writevodm3u8fortencent, yieldtimerelatedtitle,
     generateuniquetmppath, shortenpathsinvideoinfos, extracttitlefromurl, closecdm, LoggerHandle, BaseModuleBuilder, FileTypeSniffer, VideoInfo, AESAlgorithmWrapper, 
-    BrightcoveSmuggler, RandomIPGenerator, SpinWithBackoff,
+    BrightcoveSmuggler, RandomIPGenerator, SpinWithBackoff, HLSBestParser,
 )

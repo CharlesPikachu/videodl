@@ -7,11 +7,12 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 from __future__ import annotations
+import re
 import time
 import requests
 import statistics
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Sequence, Union, Literal, Optional, Dict, List, Tuple
 
@@ -146,3 +147,30 @@ def writevodm3u8fortencent(
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     # return
     return out_path
+
+
+'''HLSBestParser'''
+class HLSBestParser:
+    KV = re.compile(r'([A-Z0-9\-]+)=(".*?"|[^,]*)')
+    def __init__(self, master_url: str | None = None):
+        self.master_url = master_url
+    '''best'''
+    def best(self, master_text: str) -> dict:
+        lines, variants, idx = [ln.strip() for ln in master_text.splitlines() if ln.strip()], [], 0
+        while idx < len(lines):
+            line = lines[idx]
+            if line.startswith("#EXT-X-STREAM-INF:"):
+                attrs_text = line.split(":", 1)[1]
+                attrs = {k: str(v[1: -1] if str(v).startswith('"') and str(v).endswith('"') else v).strip() for k, v in self.KV.findall(attrs_text)}
+                uri_idx = idx + 1
+                while uri_idx < len(lines) and (lines[uri_idx].startswith("#") or not lines[uri_idx]): uri_idx += 1
+                if uri_idx >= len(lines): break
+                uri = urljoin(self.master_url, lines[uri_idx]) if self.master_url else lines[uri_idx]
+                bandwidth = int(attrs.get("BANDWIDTH", "0") or 0)
+                res = attrs.get("RESOLUTION", "")
+                width, height = (map(int, res.lower().split("x", 1)) if "x" in res else (0, 0))
+                variants.append({"uri": uri, "bandwidth": bandwidth, "resolution": (width, height), "attrs": attrs, "score": (width * height, bandwidth)})
+                idx = uri_idx
+            idx += 1
+        if not variants: raise ValueError("No HLS variants found")
+        return max(variants, key=lambda v: v["score"])
