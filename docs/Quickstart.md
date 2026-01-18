@@ -66,7 +66,7 @@ videodl -i "https://v.qq.com/x/cover/mzc002001nl46xm/t410130yz0y.html" -g -a IM1
 # Please Note
 Since the parsing relies on a third-party online parsing API, the downloaded video may contain inserted advertisements. 
 These ads are not added by videodl, they are inserted by the online parsing website. 
-We recommend using ffmpeg to trim out the ad segments.
+We recommend using ffmpeg to trim out the ad segments. (example code see ./scripts/ffmpeg_segment_remover.py)
 
 # MIGU (咪咕视频)
 videodl -i "MIGU VIDEO URL" -g -a RayVideoClient
@@ -248,7 +248,7 @@ videodl -i "IQIYI" -g -a NNXVVideoClient
 
 Of course, it’s worth noting that this approach may come with some drawbacks, for example, some third-party parsing services may occasionally insert a few seconds of unwanted ads into the downloaded video.
 These ads are not added by videodl, they are inserted by the online parsing website. 
-We recommend using ffmpeg to trim out the ad segments.
+We recommend using ffmpeg to trim out the ad segments ([Example Script](https://github.com/CharlesPikachu/videodl/blob/master/scripts/ffmpeg_segment_remover.py)).
 
 The second option is to parse and download VIP (premium) videos directly via the platform’s native APIs (you’ll need to provide cookies from an account logged in with an active membership on that platform),
 
