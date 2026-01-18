@@ -52,10 +52,10 @@
 
 # 🆕 What's New
 
-- 2026-01-17: Released videofetch v0.5.7 - Added plusfifa parsing support and various code optimizations.
+- 2026-01-19: Released videofetch v0.5.8 - fixed some bugs and re-enabled support for downloading CCTV high-definition videos.
+- 2026-01-17: Released videofetch v0.5.7 - added plusfifa parsing support and various code optimizations.
 - 2026-01-17: Released videofetch v0.5.6 - CCTV HD parsing is no longer supported due to frequent interface updates. We’ve added two new universal interfaces for 1080p movie downloads and fixed some minor bugs.
-- 2026-01-16: Released videofetch v0.5.5 - Added universal video parser NNXVVideoClient, optimized Kuaishou video downloading and platform-specific site matching algorithms, and included minor improvements.
-- 2026-01-15: Released videofetch v0.5.4 - Add two general-purpose video parsing APIs, where SENJiexiVideoClient can improve video quality for iQIYI, Tencent Video, and Youku.
+- 2026-01-16: Released videofetch v0.5.5 - added universal video parser NNXVVideoClient, optimized Kuaishou video downloading and platform-specific site matching algorithms, and included minor improvements.
 
 
 # 🚀 Introduction
