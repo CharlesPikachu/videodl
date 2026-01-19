@@ -118,11 +118,12 @@ VIDEODL_TEST_SAMPLES = {
     'WeiboVideoClient': [
         'https://weibo.com/tv/show/1034:5234817776943232?mid=5234851004547318',
         'https://m.weibo.cn/detail/5234820306442377',
-        'https://m.weibo.cn/detail/4749967266939049',
+        'https://m.weibo.cn/detail/5249667961979398',
         'https://weibo.com/tv/v/HApWK8FAc?fid=1034:4386795211940756',
     ],
     'RednoteVideoClient': [
-        'http://xhslink.com/o/6B9wstL9kEM',
+        'http://xhslink.com/o/Pm3rJbTTBl',
+        'http://xhslink.com/o/1WrmgHGWFYh',
     ],
     'CCTVVideoClient': [
         'https://v.cctv.com/2021/06/05/VIDEwn0n7VRJokIL7rBi2ink210605.shtml?spm=C90324.Pfdd0SYeqktv.Eri5TUDwaTXO.6',
