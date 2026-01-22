@@ -360,6 +360,7 @@ VIDEODL_TEST_SAMPLES = {
     ],
     'CCCVideoClient': [
         'https://media.ccc.de/v/30C3_-_5443_-_en_-_saal_g_-_201312281830_-_introduction_to_processor_design_-_byterazor#video',
+        'https://media.ccc.de/v/denog17-75209-evpn-flex-cross-connect-l2-p2p-vpns-can-be-agile-as-well#t=1',
     ],
     'RayVideoClient': [
         'https://www.bilibili.com/video/BV1fiiuBjEPH/',
