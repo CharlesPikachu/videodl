@@ -94,6 +94,7 @@ class PlusFIFAVideoClient(BaseVideoClient):
             licence = self.post(PlusFIFAVideoClient.LICENSE_URL.format(session_id=session_id), data=challenge)
             licence.raise_for_status()
             raw_data['LICENSE_URL_RESPONSE'] = licence.content
+            video_info.update(dict(raw_data=raw_data))
             key = list(set(closecdm(cdm, cdm_session_id, licence.content)))[0]
             video_info.update(dict(
                 title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info.ext}'), identifier=video_id, nm3u8dlre_settings={'key': key}

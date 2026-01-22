@@ -388,6 +388,11 @@ VIDEODL_TEST_SAMPLES = {
         "https://www.plus.fifa.com/en/player/580e692e-e8fc-4ad1-a649-5ec0af83f94d?catalogId=5f24e303-ff42-499f-9d7a-b4f8e0eff2ce",
         "https://www.plus.fifa.com/en/content/fc-sochaux-montbeliard-vs-lb-chateauroux/6ff75563-c6fc-4b08-b324-54771dbd7029",
     ],
+    'WittyTVVideoClient': [
+        "https://www.wittytv.it/originals/google-bar-con-nina-zilli/",
+        "https://www.wittytv.it/amici/giovedi-22-gennaio-il-quotidiano-di-amici/",
+        "https://www.wittytv.it/ce-posta-per-te/quarta-puntata-sabato-3-febbraio/",
+    ],
 }
 
 

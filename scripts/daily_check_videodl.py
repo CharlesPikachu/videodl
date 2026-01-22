@@ -397,6 +397,11 @@ VIDEODL_TEST_SAMPLES = {
         "https://www.plus.fifa.com/en/player/580e692e-e8fc-4ad1-a649-5ec0af83f94d?catalogId=5f24e303-ff42-499f-9d7a-b4f8e0eff2ce",
         "https://www.plus.fifa.com/en/content/fc-sochaux-montbeliard-vs-lb-chateauroux/6ff75563-c6fc-4b08-b324-54771dbd7029",
     ],
+    'WittyTVVideoClient': [
+        "https://www.wittytv.it/originals/google-bar-con-nina-zilli/",
+        "https://www.wittytv.it/amici/giovedi-22-gennaio-il-quotidiano-di-amici/",
+        "https://www.wittytv.it/ce-posta-per-te/quarta-puntata-sabato-3-febbraio/",
+    ],
 }
 PARSE_SUPPLEMENT = {
     'Ku6VideoClient': {'name': 'Ku6VideoClient', 'display_name': 'Ku6VideoClient', 'success_count': 2, 'total_count': 2, 'success_rate': 1.0, 'status': 'ok', 'tests': [{'name': 'Ku6VideoClient', 'test_url': 'https://www.ku6.com/video/detail?id=McZoSe_hgG_jwzy7pQLqvMJ3IoI.', 'ok': True, 'err_msg': 'NULL', 'parse_result': {'source': 'Ku6VideoClient', 'download_url': 'https://rbv01.ku6.com/wifi/o_1f9dtdubn8l8154lddtcdtdusm', 'title': '看到泪崩！微视频百年风华', 'file_path': 'videodl_tmp_outputs\\Ku6VideoClient\\看到泪崩！微视频百年风华.mp4', 'ext': 'mp4', 'download_with_ffmpeg': False, 'err_msg': 'NULL', 'identifier': 'NULL', 'guess_video_ext_result': {'ext': 'mp4', 'sniffer': 'requests.head', 'ok': True}}}, {'name': 'Ku6VideoClient', 'test_url': 'https://www.ku6.com/video/detail?id=HE3lfhcp13Gd0qND4zfzXYQONMY.', 'ok': True, 'err_msg': 'NULL', 'parse_result': {'source': 'Ku6VideoClient', 'download_url': 'https://rbv01.ku6.com/wifi/o_1evr90gl2sdhjs4nn31bad1v3ue', 'title': '微视频｜领航新征程', 'file_path': 'videodl_tmp_outputs\\Ku6VideoClient\\微视频｜领航新征程.mp4', 'ext': 'mp4', 'download_with_ffmpeg': False, 'err_msg': 'NULL', 'identifier': 'NULL', 'guess_video_ext_result': {'ext': 'mp4', 'sniffer': 'requests.head', 'ok': True}}}]},

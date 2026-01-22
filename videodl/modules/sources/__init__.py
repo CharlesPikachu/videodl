@@ -32,6 +32,7 @@ from .meipai import MeipaiVideoClient
 from ..utils import BaseModuleBuilder
 from .wesing import WeSingVideoClient
 from .cctalk import CCtalkVideoClient
+from .wittytv import WittyTVVideoClient
 from .open163 import Open163VideoClient
 from .foxnews import FoxNewsVideoClient
 from .youtube import YouTubeVideoClient
@@ -64,7 +65,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'UnityVideoClient': UnityVideoClient, 'FoxNewsVideoClient': FoxNewsVideoClient, 'SinaVideoClient': SinaVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,
         'Open163VideoClient': Open163VideoClient, 'CCtalkVideoClient': CCtalkVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient, 'ArteTVVideoClient': ArteTVVideoClient, 
         'C56VideoClient': C56VideoClient, 'RedditVideoClient': RedditVideoClient, 'WWEVideoClient': WWEVideoClient, 'M1905VideoClient': M1905VideoClient, 
-        'IQiyiVideoClient': IQiyiVideoClient, 'CCCVideoClient': CCCVideoClient, 'PlusFIFAVideoClient': PlusFIFAVideoClient,
+        'IQiyiVideoClient': IQiyiVideoClient, 'CCCVideoClient': CCCVideoClient, 'PlusFIFAVideoClient': PlusFIFAVideoClient, 'WittyTVVideoClient': WittyTVVideoClient,
     }
 
 

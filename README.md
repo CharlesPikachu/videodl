@@ -124,6 +124,7 @@ The video platforms currently supported for parsing are,
 |                                                        | TedVideoClient                        | TED视频                            | ✔️        | ✔️       | [ted.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/ted.py)                     |
 |                                                        | UnityVideoClient                      | Unity                              | ✔️        | ✔️       | [unity.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/unity.py)                 |
 |                                                        | WWEVideoClient                        | 世界摔角娱乐                       | ✔️        | ✔️       | [wwe.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/wwe.py)                     |
+|                                                        | WittyTVVideoClient                    | Witty TV (意大利多媒体娱乐平台)    | ✔️        | ✔️       | [wittytv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/wittytv.py)             |
 |                                                        | YouTubeVideoClient                    | 油管视频                           | ✔️        | ✔️       | [youtube.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/youtube.py)             |
 
 To make videodl more robust and able to adaptively parse videos from more websites, even when the video URL is not in the supported list above, 
