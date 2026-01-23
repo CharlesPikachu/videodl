@@ -1,6 +1,6 @@
 # Development Log
 
-- 2026-01-19: Released videofetch v0.5.8 - fixed some bugs and re-enabled support for downloading CCTV high-definition videos.
+- 2026-01-19: Released videofetch v0.5.8 - fixed some bugs and re-enabled support for downloading CCTV high-definition videos with the help of Node.js.
 
 - 2026-01-17: Released videofetch v0.5.7 - added plusfifa parsing support and various code optimizations.
 
