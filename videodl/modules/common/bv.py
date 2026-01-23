@@ -18,7 +18,7 @@ from ..utils import VideoInfo, FileTypeSniffer, RandomIPGenerator, useparseheade
 class BVVideoClient(XiazaitoolVideoClient):
     source = 'BVVideoClient'
     def __init__(self, **kwargs):
-        if 'enable_curl_cffi' not in kwargs: kwargs['enable_curl_cffi'] = True
+        if 'enable_parse_curl_cffi' not in kwargs: kwargs['enable_parse_curl_cffi'] = True
         super(BVVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "accept": "application/json, text/javascript, */*; q=0.01", "accept-encoding": "gzip, deflate, br, zstd", "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",

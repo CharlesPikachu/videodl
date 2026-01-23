@@ -52,10 +52,9 @@
 
 # 🆕 What's New
 
+- 2026-01-24: Released videofetch v0.6.0 - introduce `curl_cffi` to make network requests more robust for some websites, and add multiple new parsers.
 - 2026-01-19: Released videofetch v0.5.8 - fixed some bugs and re-enabled support for downloading CCTV high-definition videos with the help of Node.js.
 - 2026-01-17: Released videofetch v0.5.7 - added plusfifa parsing support and various code optimizations.
-- 2026-01-17: Released videofetch v0.5.6 - CCTV HD parsing is no longer supported due to frequent interface updates. We’ve added two new universal interfaces for 1080p movie downloads and fixed some minor bugs.
-- 2026-01-16: Released videofetch v0.5.5 - added universal video parser NNXVVideoClient, optimized Kuaishou video downloading and platform-specific site matching algorithms, and included minor improvements.
 
 
 # 🚀 Introduction

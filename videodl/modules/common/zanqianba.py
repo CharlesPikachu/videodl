@@ -22,7 +22,7 @@ from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalize
 class ZanqianbaVideoClient(BaseVideoClient):
     source = 'ZanqianbaVideoClient'
     def __init__(self, **kwargs):
-        if 'enable_curl_cffi' not in kwargs: kwargs['enable_curl_cffi'] = True
+        if 'enable_parse_curl_cffi' not in kwargs: kwargs['enable_parse_curl_cffi'] = True
         super(ZanqianbaVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",

@@ -25,7 +25,9 @@ The `VideoClient` class is a high-level manager for multiple site-specific video
 
     - `auto_set_proxies`: `False`  
     - `random_update_ua`: `False`  
-    - `enable_curl_cffi`: `False`
+    - `enable_parse_curl_cffi`: `False`
+    - `enable_search_curl_cffi`: `False`
+    - `enable_download_curl_cffi`: `False`
     - `max_retries`: `5`  
     - `maintain_session`: `False`  
     - `logger_handle`: internal `LoggerHandle` instance  
@@ -183,9 +185,17 @@ These subclasses share the same initialization pattern and public APIs (`parsefr
   Whether to randomly update the `User-Agent` header every time a new session is created.  
   - If `True`, `UserAgent().random` is used before each request (when `maintain_session=False`).
 
-- **enable_curl_cffi**: `bool`, default `False`  
-  Whether to use `curl_cffi.requests.Session` instead of `requests.Session` to bypass website access restrictions. In general, the default is set to `True` for general-purpose video parsers, and `False` for platform-specific clients.  
-  - If `True`, `curl_cffi.requests.Session` is used for each request.
+- **enable_parse_curl_cffi**: `bool`, default `False`  
+  Whether to use `curl_cffi.requests.Session` instead of `requests.Session` to bypass website access restrictions for **parsefromurl** requests. In general, the default is set to `True` for general-purpose video parsers, and `False` for platform-specific clients.  
+  - If `True`, `curl_cffi.requests.Session` is used for each **parsefromurl** request.
+
+- **enable_search_curl_cffi**: `bool`, default `False`  
+  Whether to use `curl_cffi.requests.Session` instead of `requests.Session` to bypass website access restrictions for **search** requests.  
+  - If `True`, `curl_cffi.requests.Session` is used for each **search** request.
+
+- **enable_download_curl_cffi**: `bool`, default `False`  
+  Whether to use `curl_cffi.requests.Session` instead of `requests.Session` to bypass website access restrictions for **download** requests.  
+  - If `True`, `curl_cffi.requests.Session` is used for each **download** request.
 
 - **max_retries**: `int`, default `5`  
   Maximum number of retry attempts for `get` and `post` requests.  
@@ -219,7 +229,7 @@ These subclasses share the same initialization pattern and public APIs (`parsefr
     `dict(disable_print=True, proxy_sources=['ProxiflyProxiedSession'], max_tries=20, init_proxied_session_cfg={})`.
 
 - **default_search_cookies**: `dict | None`, default `None`  
-  Default cookies for **search-type** requests.  
+  Default cookies for **search** requests.  
   - Used by methods decorated with `@usesearchheaderscookies`.
 
 - **default_download_cookies**: `dict | None`, default `None`  
@@ -227,7 +237,7 @@ These subclasses share the same initialization pattern and public APIs (`parsefr
   - Used by methods decorated with `@usedownloadheaderscookies`.
 
 - **default_parse_cookies**: `dict | None`, default `None`  
-  Default cookies for **parse** requests.
+  Default cookies for **parsefromurl** requests.
   - Used by methods decorated with `@useparseheaderscookies`.
 
 Basic initialization example (for a subclass):

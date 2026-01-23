@@ -48,9 +48,9 @@ class VideoAwareColumn(ProgressColumn):
 class BaseVideoClient():
     source = 'BaseVideoClient'
     LESHI_BASE64_ENCODE_PATTERN = re.compile(r'data:[^;]+;base64,([A-Za-z0-9+/=]+)')
-    def __init__(self, auto_set_proxies: bool = False, random_update_ua: bool = False, enable_curl_cffi: bool = False, max_retries: int = 5, maintain_session: bool = False,
-                 logger_handle: LoggerHandle = None, disable_print: bool = False, work_dir: str = 'videodl_outputs', freeproxy_settings: dict = None, default_search_cookies: dict = None,
-                 default_download_cookies: dict = None, default_parse_cookies: dict = None):
+    def __init__(self, auto_set_proxies: bool = False, random_update_ua: bool = False, enable_parse_curl_cffi: bool = False, enable_search_curl_cffi: bool = False, enable_download_curl_cffi: bool = False,
+                 max_retries: int = 5, maintain_session: bool = False, logger_handle: LoggerHandle = None, disable_print: bool = False, work_dir: str = 'videodl_outputs', freeproxy_settings: dict = None, 
+                 default_search_cookies: dict = None, default_download_cookies: dict = None, default_parse_cookies: dict = None):
         # set up work dir
         touchdir(work_dir)
         # set attributes
@@ -59,8 +59,11 @@ class BaseVideoClient():
         self.disable_print = disable_print
         self.logger_handle = logger_handle if logger_handle else LoggerHandle()
         self.random_update_ua = random_update_ua
-        self.enable_curl_cffi = enable_curl_cffi
-        self.cc_impersonates = self._listccimpersonates() if self.enable_curl_cffi else None
+        self.enable_parse_curl_cffi = enable_parse_curl_cffi
+        self.enable_search_curl_cffi = enable_search_curl_cffi
+        self.enable_download_curl_cffi = enable_download_curl_cffi
+        self.enable_curl_cffi = self.enable_parse_curl_cffi
+        self.cc_impersonates = self._listccimpersonates() if (enable_parse_curl_cffi or enable_search_curl_cffi or enable_download_curl_cffi) else None
         self.maintain_session = maintain_session
         self.auto_set_proxies = auto_set_proxies
         self.freeproxy_settings = freeproxy_settings or {}

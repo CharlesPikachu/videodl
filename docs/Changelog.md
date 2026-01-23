@@ -1,5 +1,7 @@
 # Development Log
 
+- 2026-01-24: Released videofetch v0.6.0 - introduce `curl_cffi` to make network requests more robust for some websites, and add multiple new parsers.
+
 - 2026-01-19: Released videofetch v0.5.8 - fixed some bugs and re-enabled support for downloading CCTV high-definition videos with the help of Node.js.
 
 - 2026-01-17: Released videofetch v0.5.7 - added plusfifa parsing support and various code optimizations.
