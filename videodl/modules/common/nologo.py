@@ -8,7 +8,6 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import copy
-from bs4 import BeautifulSoup
 from ..sources import BaseVideoClient
 from ..utils.domains import platformfromurl
 from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
@@ -47,11 +46,7 @@ class NoLogoVideoClient(BaseVideoClient):
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             # --video title
-            resp = self.get(url, verify=False, allow_redirects=True, **request_overrides)
-            resp.encoding = resp.apparent_encoding
-            soup = BeautifulSoup(resp.text, "html.parser")
-            video_title = soup.title.get_text(strip=True) if soup.title else None
-            video_title = legalizestring(video_title or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
+            video_title = legalizestring(raw_data['data'].get('title') or raw_data['data'].get('desc') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --download url
             video_info.update(dict(download_url=raw_data['data']['url']))
             # --other infos
