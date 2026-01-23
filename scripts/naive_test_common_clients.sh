@@ -52,3 +52,5 @@ videodl -i "https://www.iqiyi.com/v_cy4phe8b08.html" -g -a NNXVVideoClient
 videodl -i "https://www.douyin.com/video/6982497745948921092" -g -a ODwonVideoClient
 # IM1907VideoClient
 videodl -i "https://www.mgtv.com/b/823245/24067596.html" -g -a IM1907VideoClient
+# AnyFetcherVideoClient
+videodl -i "https://www.youtube.com/watch?v=093JOWo1vqE" -g -a AnyFetcherVideoClient

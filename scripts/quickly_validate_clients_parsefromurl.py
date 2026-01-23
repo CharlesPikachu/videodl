@@ -397,6 +397,13 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.kugou.com/mv/8cwxy96/',
         'https://www.kugou.com/mv/8gtun15/',
     ],
+    'AnyFetcherVideoClient': [
+        'https://www.youtube.com/watch?v=093JOWo1vqE',
+        'https://www.bilibili.com/bangumi/play/ep165004',
+        'https://www.bilibili.com/video/BV1d4BfBpENe',
+        'https://www.douyin.com/jingxuan?modal_id=7577970216932609315',
+        'https://www.tiktok.com/@ddlovato/video/7593447593493941559?lang=en',
+    ],
 }
 
 

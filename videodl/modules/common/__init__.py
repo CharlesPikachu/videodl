@@ -33,7 +33,7 @@ from .xiazaitool import XiazaitoolVideoClient
 '''CommonVideoClientBuilder'''
 class CommonVideoClientBuilder(BaseModuleBuilder):
     REGISTERED_MODULES = {
-        'XMFlvVideoClient': XMFlvVideoClient, 'NNXVVideoClient': NNXVVideoClient, 'AnyFetcherVideoClient': AnyFetcherVideoClient, 'SnapAnyVideoClient': SnapAnyVideoClient, 
+        'XMFlvVideoClient': XMFlvVideoClient, 'NNXVVideoClient': NNXVVideoClient, 'SnapAnyVideoClient': SnapAnyVideoClient, 'AnyFetcherVideoClient': AnyFetcherVideoClient,
         'IM1907VideoClient': IM1907VideoClient, 'SENJiexiVideoClient': SENJiexiVideoClient, 'PVVideoClient': PVVideoClient, 'IIILabVideoClient': IIILabVideoClient, 
         'VideoFKVideoClient': VideoFKVideoClient, 'VgetVideoClient': VgetVideoClient, 'SnapWCVideoClient': SnapWCVideoClient, 'ODwonVideoClient': ODwonVideoClient, 
         'RayVideoClient': RayVideoClient, 'KedouVideoClient': KedouVideoClient, 'KuKuToolVideoClient': KuKuToolVideoClient, 'XZDXVideoClient': XZDXVideoClient, 
