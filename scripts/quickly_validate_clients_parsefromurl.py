@@ -393,6 +393,10 @@ VIDEODL_TEST_SAMPLES = {
         "https://www.wittytv.it/amici/giovedi-22-gennaio-il-quotidiano-di-amici/",
         "https://www.wittytv.it/ce-posta-per-te/quarta-puntata-sabato-3-febbraio/",
     ],
+    'KugouMVVideoClient': [
+        'https://www.kugou.com/mv/8cwxy96/',
+        'https://www.kugou.com/mv/8gtun15/',
+    ],
 }
 
 
