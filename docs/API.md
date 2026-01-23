@@ -25,6 +25,7 @@ The `VideoClient` class is a high-level manager for multiple site-specific video
 
     - `auto_set_proxies`: `False`  
     - `random_update_ua`: `False`  
+    - `enable_curl_cffi`: `False`
     - `max_retries`: `5`  
     - `maintain_session`: `False`  
     - `logger_handle`: internal `LoggerHandle` instance  
@@ -181,6 +182,10 @@ These subclasses share the same initialization pattern and public APIs (`parsefr
 - **random_update_ua**: `bool`, default `False`  
   Whether to randomly update the `User-Agent` header every time a new session is created.  
   - If `True`, `UserAgent().random` is used before each request (when `maintain_session=False`).
+
+- **enable_curl_cffi**: `bool`, default `False`  
+  Whether to use `curl_cffi.requests.Session` instead of `requests.Session` to bypass website access restrictions. In general, the default is set to `True` for general-purpose video parsers, and `False` for platform-specific clients.  
+  - If `True`, `curl_cffi.requests.Session` is used for each request.
 
 - **max_retries**: `int`, default `5`  
   Maximum number of retry attempts for `get` and `post` requests.  

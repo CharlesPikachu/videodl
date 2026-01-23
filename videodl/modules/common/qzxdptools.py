@@ -18,6 +18,7 @@ from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalize
 class QZXDPToolsVideoClient(BaseVideoClient):
     source = 'QZXDPToolsVideoClient'
     def __init__(self, **kwargs):
+        if 'enable_curl_cffi' not in kwargs: kwargs['enable_curl_cffi'] = True
         super(QZXDPToolsVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "host": "tools.qzxdp.cn", "origin": "https://tools.qzxdp.cn", "referer": "https://tools.qzxdp.cn/video_spider",

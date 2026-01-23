@@ -19,6 +19,7 @@ from ..utils import VideoInfo, FileTypeSniffer, RandomIPGenerator, useparseheade
 class NNXVVideoClient(BaseVideoClient):
     source = 'NNXVVideoClient'
     def __init__(self, **kwargs):
+        if 'enable_curl_cffi' not in kwargs: kwargs['enable_curl_cffi'] = True
         super(NNXVVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",

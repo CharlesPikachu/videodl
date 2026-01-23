@@ -20,6 +20,7 @@ from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalize
 class VgetVideoClient(BaseVideoClient):
     source = 'VgetVideoClient'
     def __init__(self, **kwargs):
+        if 'enable_curl_cffi' not in kwargs: kwargs['enable_curl_cffi'] = True
         super(VgetVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',

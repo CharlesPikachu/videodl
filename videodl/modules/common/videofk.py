@@ -19,6 +19,7 @@ from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheade
 class VideoFKVideoClient(BaseVideoClient):
     source = 'VideoFKVideoClient'
     def __init__(self, **kwargs):
+        if 'enable_curl_cffi' not in kwargs: kwargs['enable_curl_cffi'] = True
         super(VideoFKVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "cookie": "s_id=WGU4FQv4cCTwpoTiJsvT7NEJickpfHU1aTReuApb; _gid=GA1.2.1043013594.1766816578; fpestid=V073VlcaXHE1sWTkcdQq443oTArRtitOAz9US79UBd1hrlEFs2GB1VXJZS0bRhoN5ShMow; _cc_id=19c1ec36d7eeeb3ca212f1f91099c901; panoramaId_expiry=1767421380656; panoramaId=d09e53fafbb650331acba9f48b8c16d53938fc4f5f628a86250cfa97dc16a655; panoramaIdType=panoIndiv; douyin=eyJpdiI6ImhUaERuQ3AzblVXMDN2Q3RmNTdPQWc9PSIsInZhbHVlIjoiQUlJMG8wNnB4SHhJb2JpYllzblhZZz09IiwibWFjIjoiYjA5MTFkM2VmOTZkNDgwNzA0MTBmOGYyMjM3Nzc1ZWM5ZTlhODkxMmNhYzVlNmY2OTBiZTA0N2E3YTRiMDcxZCJ9; _ga=GA1.1.1950505045.1766816578; _ga_XHH8LXKGMC=GS2.1.s1766828551$o2$g1$t1766828794$j54$l0$h0; XSRF-TOKEN=eyJpdiI6Ik55WFBnZFlXcGUrUEdFS2V5WXVjaFE9PSIsInZhbHVlIjoicVZ5bW5EVllqblhIbmJXVWNWRTFIS2VWOHM1REFaSjJIRzVtY0JoanF0VTNLSmtBcTNaMVhCUXRHMW1EaVBxKyIsIm1hYyI6IjRlN2U4ZWFlMDllMWZhM2E4ZDU0MjBhYWNlNDUyNjFlMTA5MjU4YjVjYjMzYThlZmU5YmJhZmZmNTIwNzIwNDMifQ%3D%3D; youtube=eyJpdiI6IlI4TGFRM080dTJaNnFqMTc3OFE3SlE9PSIsInZhbHVlIjoiMkVnZWhQQzRsZ3ZtTjRcLzhWcEtzalE9PSIsIm1hYyI6IjU0ZmQzMDI4OTJlMjg4ZjE0ZDI1MTlhYjJkNTI4NjVhNmI5MTBmY2Q0NjE0NzFjODEzOGJhYmMxODdlOWQ0NTYifQ%3D%3D",

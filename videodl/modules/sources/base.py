@@ -9,11 +9,12 @@ WeChat Official Account (微信公众号):
 import os
 import re
 import copy
-import time
+import random
 import base64
 import pickle
 import shutil
 import requests
+import curl_cffi
 import subprocess
 from pathlib import Path
 from rich.text import Text
@@ -47,9 +48,9 @@ class VideoAwareColumn(ProgressColumn):
 class BaseVideoClient():
     source = 'BaseVideoClient'
     LESHI_BASE64_ENCODE_PATTERN = re.compile(r'data:[^;]+;base64,([A-Za-z0-9+/=]+)')
-    def __init__(self, auto_set_proxies: bool = False, random_update_ua: bool = False, max_retries: int = 5, maintain_session: bool = False, 
-                 logger_handle: LoggerHandle = None, disable_print: bool = False, work_dir: str = 'videodl_outputs', freeproxy_settings: dict = None,
-                 default_search_cookies: dict = None, default_download_cookies: dict = None, default_parse_cookies: dict = None):
+    def __init__(self, auto_set_proxies: bool = False, random_update_ua: bool = False, enable_curl_cffi: bool = False, max_retries: int = 5, maintain_session: bool = False,
+                 logger_handle: LoggerHandle = None, disable_print: bool = False, work_dir: str = 'videodl_outputs', freeproxy_settings: dict = None, default_search_cookies: dict = None,
+                 default_download_cookies: dict = None, default_parse_cookies: dict = None):
         # set up work dir
         touchdir(work_dir)
         # set attributes
@@ -58,6 +59,8 @@ class BaseVideoClient():
         self.disable_print = disable_print
         self.logger_handle = logger_handle if logger_handle else LoggerHandle()
         self.random_update_ua = random_update_ua
+        self.enable_curl_cffi = enable_curl_cffi
+        self.cc_impersonates = self._listccimpersonates() if self.enable_curl_cffi else None
         self.maintain_session = maintain_session
         self.auto_set_proxies = auto_set_proxies
         self.freeproxy_settings = freeproxy_settings or {}
@@ -78,9 +81,15 @@ class BaseVideoClient():
             default_freeproxy_settings = dict(disable_print=True, proxy_sources=['ProxiflyProxiedSession'], max_tries=20, init_proxied_session_cfg={})
             default_freeproxy_settings.update(self.freeproxy_settings)
             self.proxied_session_client = freeproxy.ProxiedSessionClient(**default_freeproxy_settings)
+    '''_listccimpersonates'''
+    def _listccimpersonates(self):
+        root = Path(curl_cffi.__file__).resolve().parent
+        exts = {".py", ".so", ".pyd", ".dll", ".dylib"}
+        pat = re.compile(rb"\b(?:chrome|edge|safari|firefox|tor)(?:\d+[a-z_]*|_android|_ios)?\b")
+        return sorted({m.decode("utf-8", "ignore") for p in root.rglob("*") if p.suffix in exts for m in pat.findall(p.read_bytes())})
     '''_initsession'''
     def _initsession(self):
-        self.session = requests.Session()
+        self.session = requests.Session() if not self.enable_curl_cffi else curl_cffi.requests.Session()
         self.session.headers = self.default_headers
     '''_ensureuniquefilepath'''
     def _ensureuniquefilepath(self, file_path: str):
@@ -502,6 +511,7 @@ class BaseVideoClient():
     '''get'''
     def get(self, url, **kwargs):
         if 'cookies' not in kwargs: kwargs['cookies'] = self.default_cookies
+        if 'impersonate' not in kwargs and self.enable_curl_cffi: kwargs['impersonate'] = random.choice(self.cc_impersonates)
         resp = None
         for _ in range(self.max_retries):
             if not self.maintain_session:
@@ -527,6 +537,7 @@ class BaseVideoClient():
     '''post'''
     def post(self, url, **kwargs):
         if 'cookies' not in kwargs: kwargs['cookies'] = self.default_cookies
+        if 'impersonate' not in kwargs and self.enable_curl_cffi: kwargs['impersonate'] = random.choice(self.cc_impersonates)
         resp = None
         for _ in range(self.max_retries):
             if not self.maintain_session:

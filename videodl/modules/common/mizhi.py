@@ -17,6 +17,7 @@ from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheade
 class MiZhiVideoClient(BaseVideoClient):
     source = 'MiZhiVideoClient'
     def __init__(self, **kwargs):
+        if 'enable_curl_cffi' not in kwargs: kwargs['enable_curl_cffi'] = True
         super(MiZhiVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {}
         self.default_download_headers = {

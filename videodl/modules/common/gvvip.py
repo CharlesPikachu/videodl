@@ -17,6 +17,7 @@ from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalize
 class GVVIPVideoClient(BaseVideoClient):
     source = 'GVVIPVideoClient'
     def __init__(self, **kwargs):
+        if 'enable_curl_cffi' not in kwargs: kwargs['enable_curl_cffi'] = True
         super(GVVIPVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",

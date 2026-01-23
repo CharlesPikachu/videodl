@@ -28,6 +28,7 @@ class KuKuToolVideoClient(BaseVideoClient):
     STANDARD_B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
     CUSTOM_B64   = "ZYXABCDEFGHIJKLMNOPQRSTUVWzyxabcdefghijklmnopqrstuvw9876543210-_"
     def __init__(self, **kwargs):
+        if 'enable_curl_cffi' not in kwargs: kwargs['enable_curl_cffi'] = True
         super(KuKuToolVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "host": "dy.kukutool.com", "origin": "https://dy.kukutool.com", "referer": "https://dy.kukutool.com/xiaohongshu",

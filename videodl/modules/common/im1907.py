@@ -25,6 +25,7 @@ class IM1907VideoClient(BaseVideoClient):
         ("instruction", "fg:#808080"), ("disabled", "fg:#585858 italic"), ("separator", "fg:#444444"), ("text", ""), ("validation-toolbar", "fg:#ff5f5f bold"),
     ])
     def __init__(self, **kwargs):
+        if 'enable_curl_cffi' not in kwargs: kwargs['enable_curl_cffi'] = True
         super(IM1907VideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',

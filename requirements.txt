@@ -20,3 +20,4 @@ pyfreeproxy
 playwright
 questionary
 pywidevine
+curl_cffi
