@@ -12,6 +12,7 @@ import json
 import base64
 from ..utils import RandomIPGenerator
 from ..sources import BaseVideoClient
+from ..utils.domains import platformfromurl
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.asymmetric import rsa, padding as asympad
 from cryptography.hazmat.primitives import hashes, padding as sympad, serialization
@@ -87,6 +88,7 @@ class SnapWCVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source, enable_nm3u8dlre=True)
         null_backup_title = yieldtimerelatedtitle(self.source)
+        if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
         # try parse
         video_infos = []
         try:

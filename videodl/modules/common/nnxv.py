@@ -11,6 +11,7 @@ import copy
 from urllib.parse import urlparse
 from ..sources import BaseVideoClient
 from ..utils.domains import IQIYI_SUFFIXES
+from ..utils.domains import platformfromurl
 from ..utils import VideoInfo, FileTypeSniffer, RandomIPGenerator, useparseheaderscookies, legalizestring, yieldtimerelatedtitle, resp2json
 
 
@@ -38,6 +39,7 @@ class NNXVVideoClient(BaseVideoClient):
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
         null_backup_title = yieldtimerelatedtitle(self.source)
+        if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
         # try parse
         video_infos = []
         try:

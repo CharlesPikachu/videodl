@@ -33,6 +33,7 @@ class XZDXVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         null_backup_title = yieldtimerelatedtitle(self.source)
+        if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
         # try parse
         video_infos = []
         try:
@@ -47,9 +48,7 @@ class XZDXVideoClient(BaseVideoClient):
             video_title = legalizestring(raw_data['data'].get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --download url
             video_info.update(dict(download_url=raw_data['data']['video_url']))
-            if platformfromurl(url) in ['bilibili']:
-                video_info.update(dict(download_url=video_info.download_url.removeprefix('https://xzdx.top/api/duan/proxy/?url=')))
-                video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
+            if platformfromurl(url) in ['bilibili']: video_info.update(dict(download_url=video_info.download_url.removeprefix('https://xzdx.top/api/duan/proxy/?url=')))
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=video_info.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,

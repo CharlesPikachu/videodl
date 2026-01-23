@@ -10,6 +10,7 @@ import os
 import copy
 from ..sources import BaseVideoClient
 from ..utils import RandomIPGenerator
+from ..utils.domains import platformfromurl
 from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
 
 
@@ -33,6 +34,7 @@ class BugPkVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         null_backup_title = yieldtimerelatedtitle(self.source)
+        if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
         # try parse
         video_infos = []
         try:

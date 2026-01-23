@@ -11,6 +11,7 @@ import re
 import html
 from bs4 import BeautifulSoup
 from ..sources import BaseVideoClient
+from ..utils.domains import platformfromurl
 from urllib.parse import parse_qs, urlparse
 from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, yieldtimerelatedtitle
 
@@ -57,6 +58,7 @@ class VgetVideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         null_backup_title = yieldtimerelatedtitle(self.source)
+        if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
         url = (lambda u: f"https://www.youtube.com/watch?v={parse_qs(urlparse(u).query, keep_blank_values=True)['v'][0]}" if u.startswith("https://www.youtube.com/watch?") else u)(url)
         # try parse
         video_infos = []

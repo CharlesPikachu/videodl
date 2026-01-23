@@ -34,6 +34,7 @@ class KIT9VideoClient(BaseVideoClient):
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source)
         null_backup_title = yieldtimerelatedtitle(self.source)
+        if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
         # try parse
         video_infos = []
         try:
@@ -53,7 +54,6 @@ class KIT9VideoClient(BaseVideoClient):
                 video_info.update(dict(download_url=list(video_link.values())[-1]))
             else:
                 video_info.update(dict(download_url=video_link))
-            if platformfromurl(url) in ['bilibili']: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                 url=video_info.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
