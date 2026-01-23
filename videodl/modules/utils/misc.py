@@ -15,6 +15,7 @@ import random
 import bleach
 import hashlib
 import requests
+import curl_cffi
 import mimetypes
 import functools
 import json_repair
@@ -143,7 +144,7 @@ def byte2mb(size: int):
 
 '''resp2json'''
 def resp2json(resp: requests.Response):
-    if not isinstance(resp, requests.Response): return {}
+    if not isinstance(resp, (requests.Response, curl_cffi.requests.Response)): return {}
     try:
         result = resp.json()
     except:
