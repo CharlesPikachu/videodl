@@ -8,6 +8,7 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import re
+import time
 from ..sources import BaseVideoClient
 from ..utils.domains import platformfromurl
 from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, ensureplaywrightchromium
@@ -35,7 +36,8 @@ class GVVIPVideoClient(BaseVideoClient):
             browser = pw.chromium.launch(headless=False)
             context = browser.new_context()
             page = context.new_page()
-            page.goto(homepage)
+            page.goto(homepage, wait_until="domcontentloaded", timeout=60000)
+            time.sleep(2)
             browser.close()
     '''parsefromurl'''
     @useparseheaderscookies
