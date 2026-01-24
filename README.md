@@ -142,9 +142,9 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [KuKuToolVideoClient](https://dy.kukutool.com/)                   | [KuKuTool视频解析](https://dy.kukutool.com/)                            |   ✔️     |   ✔️     | [kukutool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kukutool.py)     |
 | [KIT9VideoClient](https://apis.kit9.cn/api/aggregate_videos/)     | [聚合短视频解析](https://apis.kit9.cn/api/aggregate_videos/)            |   ✔️     |   ✔️     | [kit9.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kit9.py)             |
 | [LongZhuVideoClient](https://www.hhlqilongzhu.cn/H5_home.php)     | [龙珠API视频解析](https://www.hhlqilongzhu.cn/H5_home.php)              |   ✔️     |   ✔️     | [longzhu.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/longzhu.py)       |
+| [LvlongVideoClient](https://jcy.lvlong.xyz/jxr.php)               | [绿龙解析](https://jcy.lvlong.xyz/jxr.php)                              |   ✔️     |   ✔️     | [lvlong.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/lvlong.py)         |
 | [MiZhiVideoClient](https://api.98dou.cn/doc/video_qsy/juhe.html)  | [觅知聚合短视频去水印](https://api.98dou.cn/doc/video_qsy/juhe.html)    |   ✔️     |   ✔️     | [mizhi.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/mizhi.py)           |
 | [NoLogoVideoClient](https://nologo.code24.top/)                   | [去水印下载鸭](https://nologo.code24.top/)                              |   ✔️     |   ✔️     | [nologo.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/nologo.py)         |
-| [NNXVVideoClient](https://jx.nnxv.cn/)                            | [七哥解析](https://jx.nnxv.cn/)                                         |   ✔️     |   ✔️     | [nnxv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/nnxv.py)             |
 | [ODwonVideoClient](https://odown.cc/cctv)                         | [橙子解析](https://odown.cc/cctv)                                       |   ✔️     |   ✔️     | [odown.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/odown.py)           |
 | [PVVideoClient](https://www.parsevideo.com/)                      | [在线视频解析工具](https://www.parsevideo.com/)                         |   ✔️     |   ✔️     | [pv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/pv.py)                 |
 | [QingtingVideoClient](https://33tool.com/video_parse/)            | [蜻蜓工具](https://33tool.com/video_parse/)                             |   ✔️     |   ✔️     | [qingting.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/qingting.py)     |
@@ -288,7 +288,7 @@ videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a IM1907V
 videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a SENJiexiVideoClient (Recommended)
 videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a XMFlvVideoClient
 videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a GVVIPVideoClient
-videodl -i "IQIYI" -g -a NNXVVideoClient
+videodl -i "YOUKU/TENCENT" -g -a LvlongVideoClient
 # Examples
 videodl -i "https://www.iqiyi.com/v_cy4phe8b08.html" -g -a IM1907VideoClient
 videodl -i "https://v.qq.com/x/cover/mzc002001nl46xm/t410130yz0y.html" -g -a IM1907VideoClient
@@ -473,7 +473,7 @@ videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a IM1907V
 videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a SENJiexiVideoClient (Recommended)
 videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a XMFlvVideoClient
 videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a GVVIPVideoClient
-videodl -i "IQIYI" -g -a NNXVVideoClient
+videodl -i "YOUKU/TENCENT" -g -a LvlongVideoClient
 ```
 
 Of course, it’s worth noting that this approach may come with some drawbacks, for example, some third-party parsing services may occasionally insert a few seconds of unwanted ads into the downloaded video.

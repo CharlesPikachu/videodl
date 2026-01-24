@@ -377,8 +377,9 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.mgtv.com/b/292920/3592322.html',
         'https://www.bilibili.com/bangumi/play/ss89933'
     ],
-    'NNXVVideoClient': [
-        'https://www.iqiyi.com/v_cy4phe8b08.html', 
+    'LvlongVideoClient': [
+        'https://v.youku.com/v_show/id_XNTg0OTk3ODQ3Ng==.html',
+        'https://v.qq.com/x/cover/hcx1ffsjpj63xuj/e0024mhahej.html',
     ],
     'ODwonVideoClient': [
         'https://www.bilibili.com/video/BV1abi9BfEZU',

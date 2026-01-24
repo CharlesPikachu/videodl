@@ -46,8 +46,8 @@ videodl -i "https://www.douyin.com/jingxuan?modal_id=7592623211763718287" -g -a 
 videodl -i "https://www.miguvideo.com/p/detail/759959727" -g -a RayVideoClient
 # SENJiexiVideoClient
 videodl -i "https://www.iqiyi.com/v_rmbopj0g60.html" -g -a SENJiexiVideoClient
-# NNXVVideoClient
-videodl -i "https://www.iqiyi.com/v_cy4phe8b08.html" -g -a NNXVVideoClient
+# LvlongVideoClient
+videodl -i "https://v.qq.com/x/cover/hcx1ffsjpj63xuj/e0024mhahej.html" -g -a LvlongVideoClient
 # ODwonVideoClient
 videodl -i "https://www.douyin.com/video/6982497745948921092" -g -a ODwonVideoClient
 # IM1907VideoClient
