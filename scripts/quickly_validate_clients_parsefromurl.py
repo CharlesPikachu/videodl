@@ -19,7 +19,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.acfun.cn/v/ac36491489',
     ],
     'HaokanVideoClient': [
-        'https://haokan.baidu.com/v?vid=7295039339702288421', 
+        'https://haokan.baidu.com/v?vid=7754398076535398724',
         'https://haokan.baidu.com/v?vid=7224830823778858146',
     ],
     'TedVideoClient': [
@@ -122,8 +122,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://weibo.com/tv/v/HApWK8FAc?fid=1034:4386795211940756',
     ],
     'RednoteVideoClient': [
-        'http://xhslink.com/o/Pm3rJbTTBl',
         'http://xhslink.com/o/1WrmgHGWFYh',
+        'http://xhslink.com/o/3A6kXCDzntm',
+        'http://xhslink.com/o/1XSb8VSEeFv',
+        'http://xhslink.com/o/3hFb1CXputg',
     ],
     'CCTVVideoClient': [
         'https://v.cctv.com/2021/06/05/VIDEwn0n7VRJokIL7rBi2ink210605.shtml?spm=C90324.Pfdd0SYeqktv.Eri5TUDwaTXO.6',
