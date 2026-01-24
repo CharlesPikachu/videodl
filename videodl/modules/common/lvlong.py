@@ -52,10 +52,11 @@ class LvlongVideoClient(BaseVideoClient):
             video_url = re.compile(r'(?m)^\s*var\s+videoUrl\s*=\s*([\'"])(.*?)\1\s*;').search(resp.text).group(2)
             video_url = f'https://api.s01s.cn/API/Sp_jx/{video_url}'
             resp = self.get(video_url, **request_overrides)
+            resp.raise_for_status()
             download_url = os.path.join(self.work_dir, self.source, f'{vid}.m3u8')
             touchdir(os.path.dirname(download_url))
-            with open(download_url, "w", encoding="utf-8") as fp: fp.write(resp.text)
             assert '#EXTM3U' in resp.text and 'https://' in resp.text
+            with open(download_url, "w", encoding="utf-8") as fp: fp.write(resp.text)
             video_info.update(dict(download_url=download_url))
             # --video title
             video_title = legalizestring(raw_data.get('name') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
@@ -65,7 +66,7 @@ class LvlongVideoClient(BaseVideoClient):
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, enable_nm3u8dlre=True, guess_video_ext_result=guess_video_ext_result, identifier=video_title,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, enable_nm3u8dlre=True, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=raw_data.get('cover')
             ))
             video_infos.append(video_info)
         except Exception as err:

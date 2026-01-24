@@ -22,6 +22,7 @@ from .kakao import KakaoVideoClient
 from .youku import YoukuVideoClient
 from .m1905 import M1905VideoClient
 from .iqiyi import IQiyiVideoClient
+from .douyin import DouyinVideoClient
 from .artetv import ArteTVVideoClient
 from .reddit import RedditVideoClient
 from .genius import GeniusVideoClient
@@ -67,7 +68,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'Open163VideoClient': Open163VideoClient, 'CCtalkVideoClient': CCtalkVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient, 'ArteTVVideoClient': ArteTVVideoClient, 
         'C56VideoClient': C56VideoClient, 'RedditVideoClient': RedditVideoClient, 'WWEVideoClient': WWEVideoClient, 'M1905VideoClient': M1905VideoClient, 
         'IQiyiVideoClient': IQiyiVideoClient, 'CCCVideoClient': CCCVideoClient, 'PlusFIFAVideoClient': PlusFIFAVideoClient, 'WittyTVVideoClient': WittyTVVideoClient,
-        'KugouMVVideoClient': KugouMVVideoClient,
+        'KugouMVVideoClient': KugouMVVideoClient, 'DouyinVideoClient': DouyinVideoClient,
     }
 
 

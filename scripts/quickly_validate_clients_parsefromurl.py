@@ -407,6 +407,12 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.douyin.com/jingxuan?modal_id=7577970216932609315',
         'https://www.tiktok.com/@ddlovato/video/7593447593493941559?lang=en',
     ],
+    'DouyinVideoClient': [
+        'https://www.douyin.com/jingxuan?modal_id=7584665891071282432',
+        'https://www.douyin.com/jingxuan?modal_id=7568524426870951219',
+        'https://v.douyin.com/iLYNG8vA/',
+        'https://v.douyin.com/JdngHhh/',
+    ],
 }
 
 
