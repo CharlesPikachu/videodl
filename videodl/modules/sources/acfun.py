@@ -11,7 +11,7 @@ import os
 import json_repair
 from .base import BaseVideoClient
 from urllib.parse import urlparse
-from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, searchdictbykey, VideoInfo
 
 
 '''AcFunVideoClient'''
@@ -48,7 +48,9 @@ class AcFunVideoClient(BaseVideoClient):
                 download_url = json_repair.loads(raw_data['currentVideoInfo']['ksPlayJson'])['adaptationSet'][0]['representation'][0]['url']
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info["ext"]}'), identifier=vid))
+            cover_url = searchdictbykey(raw_data, 'coverUrl')
+            cover_url = cover_url[0] if cover_url and isinstance(cover_url, list) else None
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info["ext"]}'), identifier=vid, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

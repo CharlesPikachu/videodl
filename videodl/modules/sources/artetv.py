@@ -10,7 +10,7 @@ import os
 import re
 import copy
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''ArteTVVideoClient'''
@@ -34,6 +34,7 @@ class ArteTVVideoClient(BaseVideoClient):
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
         null_backup_title = yieldtimerelatedtitle(self.source)
+        quality_value_func = lambda stream: next((int(part) for part in stream.get("mainQuality", {}).get("label", "").split("p") if part.isdigit()), 0)
         # try parse
         try:
             vid = re.search(r"/videos/([^/]+)/", url).group(1)
@@ -45,12 +46,7 @@ class ArteTVVideoClient(BaseVideoClient):
             raw_data = resp2json(resp=resp)
             video_title = legalizestring(raw_data["data"]["attributes"]['metadata'].get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             streams = raw_data["data"]["attributes"]['streams']
-            def _qualityvalue(stream: dict):
-                label: str = stream.get("mainQuality", {}).get("label", "")
-                for part in label.split("p"):
-                    if part.isdigit(): return int(part)
-                return 0
-            sorted_streams: list[dict] = sorted(streams, key=_qualityvalue, reverse=True)
+            sorted_streams: list[dict] = sorted(streams, key=quality_value_func, reverse=True)
             sorted_streams: list[dict] = [item for item in sorted_streams if item.get('url')]
             download_url = sorted_streams[0]['url']
             video_info.update(dict(download_url=download_url))
@@ -59,8 +55,8 @@ class ArteTVVideoClient(BaseVideoClient):
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, enable_nm3u8dlre=True,
-                guess_video_ext_result=guess_video_ext_result, identifier=vid,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, enable_nm3u8dlre=True, guess_video_ext_result=guess_video_ext_result, 
+                identifier=vid, cover_url=safeextractfromdict(raw_data, ['data', 'attributes', 'metadata', 'images', 0, 'url'], None)
             ))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
