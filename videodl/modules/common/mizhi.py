@@ -39,8 +39,8 @@ class MiZhiVideoClient(BaseVideoClient):
             # --get request
             headers = copy.deepcopy(self.default_headers)
             RandomIPGenerator().addrandomipv4toheaders(headers)
-            resp = self.get(f'https://api.98dou.cn/api/video_qsy/juhe?url={url}', headers=headers, **request_overrides)
-            resp.raise_for_status()
+            try: resp = self.get(f'https://api.98dou.cn/api/video_qsy/juhe?url={url}', headers=headers, **request_overrides); resp.raise_for_status()
+            except: resp = self.get(f'https://api-v2.cenguigui.cn/api/juhe/video.php?url={url}', headers=headers, **request_overrides); resp.raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             # --video title
