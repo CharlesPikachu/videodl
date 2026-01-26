@@ -12,7 +12,7 @@ import warnings
 from ..sources import BaseVideoClient
 from ..utils import RandomIPGenerator
 from ..utils.domains import platformfromurl
-from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
+from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, optionalimport
 warnings.filterwarnings('ignore')
 
 
@@ -20,7 +20,7 @@ warnings.filterwarnings('ignore')
 class LongZhuVideoClient(BaseVideoClient):
     source = 'LongZhuVideoClient'
     def __init__(self, **kwargs):
-        if 'enable_parse_curl_cffi' not in kwargs: kwargs['enable_parse_curl_cffi'] = True
+        if ('enable_parse_curl_cffi' not in kwargs) and optionalimport('curl_cffi'): kwargs['enable_parse_curl_cffi'] = True
         super(LongZhuVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",

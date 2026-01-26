@@ -14,7 +14,6 @@ import base64
 import pickle
 import shutil
 import requests
-import curl_cffi
 import subprocess
 from pathlib import Path
 from rich.text import Text
@@ -25,7 +24,7 @@ from pathvalidate import sanitize_filepath
 from ..utils.domains import obtainhostname, hostmatchessuffix
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from rich.progress import Progress, TextColumn, BarColumn, DownloadColumn, TransferSpeedColumn, TimeRemainingColumn, TimeElapsedColumn, ProgressColumn
-from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, cookies2dict, generateuniquetmppath, shortenpathsinvideoinfos, LoggerHandle, VideoInfo
+from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, cookies2dict, generateuniquetmppath, shortenpathsinvideoinfos, optionalimport, LoggerHandle, VideoInfo
 
 
 '''VideoAwareColumn'''
@@ -86,12 +85,14 @@ class BaseVideoClient():
             self.proxied_session_client = freeproxy.ProxiedSessionClient(**default_freeproxy_settings)
     '''_listccimpersonates'''
     def _listccimpersonates(self):
+        curl_cffi = optionalimport('curl_cffi')
         root = Path(curl_cffi.__file__).resolve().parent
         exts = {".py", ".so", ".pyd", ".dll", ".dylib"}
         pat = re.compile(rb"\b(?:chrome|edge|safari|firefox|tor)(?:\d+[a-z_]*|_android|_ios)?\b")
         return sorted({m.decode("utf-8", "ignore") for p in root.rglob("*") if p.suffix in exts for m in pat.findall(p.read_bytes())})
     '''_initsession'''
     def _initsession(self):
+        curl_cffi = optionalimport('curl_cffi')
         self.session = requests.Session() if not self.enable_curl_cffi else curl_cffi.requests.Session()
         self.session.headers = self.default_headers
     '''_ensureuniquefilepath'''

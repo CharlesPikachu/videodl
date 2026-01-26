@@ -10,14 +10,14 @@ import os
 import copy
 from ..sources import BaseVideoClient
 from ..utils.domains import platformfromurl
-from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
+from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, optionalimport
 
 
 '''MiZhiVideoClient'''
 class MiZhiVideoClient(BaseVideoClient):
     source = 'MiZhiVideoClient'
     def __init__(self, **kwargs):
-        if 'enable_parse_curl_cffi' not in kwargs: kwargs['enable_parse_curl_cffi'] = True
+        if ('enable_parse_curl_cffi' not in kwargs) and optionalimport('curl_cffi'): kwargs['enable_parse_curl_cffi'] = True
         super(MiZhiVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {}
         self.default_download_headers = {

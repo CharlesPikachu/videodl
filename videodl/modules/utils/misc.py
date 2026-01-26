@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of common utils
+    Implementation of Common Utils
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):
@@ -15,7 +15,6 @@ import random
 import bleach
 import hashlib
 import requests
-import curl_cffi
 import mimetypes
 import functools
 import json_repair
@@ -25,6 +24,7 @@ from typing import Optional
 from datetime import datetime
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
+from .importutils import optionalimport
 from pathvalidate import sanitize_filename
 
 
@@ -144,7 +144,9 @@ def byte2mb(size: int):
 
 '''resp2json'''
 def resp2json(resp: requests.Response):
-    if not isinstance(resp, (requests.Response, curl_cffi.requests.Response)): return {}
+    curl_cffi = optionalimport('curl_cffi')
+    valid_resp_object = (requests.Response, curl_cffi.requests.Response) if curl_cffi else requests.Response
+    if not isinstance(resp, valid_resp_object): return {}
     try: result = resp.json()
     except: result = json_repair.loads(resp.text)
     if not result: result = dict()

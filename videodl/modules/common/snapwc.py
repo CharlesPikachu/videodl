@@ -16,7 +16,7 @@ from ..utils.domains import platformfromurl
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.asymmetric import rsa, padding as asympad
 from cryptography.hazmat.primitives import hashes, padding as sympad, serialization
-from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
+from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, optionalimport
 
 
 '''SnapWCVideoClient'''
@@ -32,7 +32,7 @@ class SnapWCVideoClient(BaseVideoClient):
     fQIDAQAB
     -----END PUBLIC KEY-----"""
     def __init__(self, **kwargs):
-        if 'enable_parse_curl_cffi' not in kwargs: kwargs['enable_parse_curl_cffi'] = True
+        if ('enable_parse_curl_cffi' not in kwargs) and optionalimport('curl_cffi'): kwargs['enable_parse_curl_cffi'] = True
         super(SnapWCVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",

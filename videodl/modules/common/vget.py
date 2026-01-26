@@ -13,14 +13,14 @@ from bs4 import BeautifulSoup
 from ..sources import BaseVideoClient
 from ..utils.domains import platformfromurl
 from urllib.parse import parse_qs, urlparse
-from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, yieldtimerelatedtitle
+from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, yieldtimerelatedtitle, optionalimport
 
 
 '''VgetVideoClient'''
 class VgetVideoClient(BaseVideoClient):
     source = 'VgetVideoClient'
     def __init__(self, **kwargs):
-        if 'enable_parse_curl_cffi' not in kwargs: kwargs['enable_parse_curl_cffi'] = True
+        if ('enable_parse_curl_cffi' not in kwargs) and optionalimport('curl_cffi'): kwargs['enable_parse_curl_cffi'] = True
         super(VgetVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',

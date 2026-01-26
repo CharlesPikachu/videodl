@@ -14,14 +14,14 @@ from typing import Mapping, Any
 from urllib.parse import urlparse
 from ..sources import BaseVideoClient
 from ..utils.domains import platformfromurl
-from ..utils import VideoInfo, FileTypeSniffer, RandomIPGenerator, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
+from ..utils import VideoInfo, FileTypeSniffer, RandomIPGenerator, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, optionalimport
 
 
 '''XiazaitoolVideoClient'''
 class XiazaitoolVideoClient(BaseVideoClient):
     source = 'XiazaitoolVideoClient'
     def __init__(self, **kwargs):
-        if 'enable_parse_curl_cffi' not in kwargs: kwargs['enable_parse_curl_cffi'] = True
+        if ('enable_parse_curl_cffi' not in kwargs) and optionalimport('curl_cffi'): kwargs['enable_parse_curl_cffi'] = True
         super(XiazaitoolVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "accept": "application/json, text/javascript, */*; q=0.01", "accept-encoding": "gzip, deflate, br, zstd", "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",

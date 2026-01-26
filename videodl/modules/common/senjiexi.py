@@ -16,14 +16,14 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
 from ..sources import BaseVideoClient
 from ..utils.domains import platformfromurl
-from ..utils import VideoInfo, FileTypeSniffer, RandomIPGenerator, useparseheaderscookies, legalizestring, yieldtimerelatedtitle, resp2json, extracttitlefromurl
+from ..utils import VideoInfo, FileTypeSniffer, RandomIPGenerator, useparseheaderscookies, legalizestring, yieldtimerelatedtitle, resp2json, extracttitlefromurl, optionalimport
 
 
 '''SENJiexiVideoClient'''
 class SENJiexiVideoClient(BaseVideoClient):
     source = 'SENJiexiVideoClient'
     def __init__(self, **kwargs):
-        if 'enable_parse_curl_cffi' not in kwargs: kwargs['enable_parse_curl_cffi'] = True
+        if ('enable_parse_curl_cffi' not in kwargs) and optionalimport('curl_cffi'): kwargs['enable_parse_curl_cffi'] = True
         super(SENJiexiVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
