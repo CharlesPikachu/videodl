@@ -1,5 +1,7 @@
 # Development Log
 
+- 2026-01-27: Released videofetch v0.6.2 - fixed video artifacting in CCTV downloads and resolved several known bugs.
+
 - 2026-01-25: Released videofetch v0.6.1 - implement native Douyin API integration for parsing, optimize segments of the codebase.
 
 - 2026-01-24: Released videofetch v0.6.0 - introduce `curl_cffi` to make network requests more robust for some websites, and add multiple new parsers.
