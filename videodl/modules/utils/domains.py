@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of Domain Related Function
+    Implementation of URL Domain Related Utils
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):

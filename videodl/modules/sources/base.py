@@ -179,6 +179,7 @@ class BaseVideoClient():
         # prepare
         touchdir(os.path.dirname(video_info['file_path']))
         ts_work_dir = os.path.join(os.path.dirname(video_info['file_path']), video_info['identifier'])
+        shutil.rmtree(ts_work_dir, ignore_errors=True)
         touchdir(ts_work_dir)
         video_info = copy.deepcopy(video_info)
         video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])

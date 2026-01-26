@@ -156,7 +156,7 @@ class RedditVideoClient(BaseVideoClient):
                 download_url = media.hls_url or media.dash_url
                 if download_url: download_url = self._augmenthlsquery(download_url)
                 elif media.fallback_url: download_url = media.fallback_url
-                else: raise
+                else: raise Exception
                 video_title = legalizestring(media.title or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
                     url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,

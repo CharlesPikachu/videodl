@@ -40,7 +40,7 @@ class WWEVideoClient(BaseVideoClient):
             resp.raise_for_status()
             soup = BeautifulSoup(resp.text, "html.parser")
             tag = soup.select_one('script[type="application/json"][data-drupal-selector="drupal-settings-json"]')
-            if not tag or not tag.string: raise
+            if not tag or not tag.string: raise Exception
             raw_data = json_repair.loads(tag.string)
             video_info.update(dict(raw_data=raw_data))
             vid = raw_data['WWEVideoLanding']['initialVideoId']

@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of chromium related utils
+    Implementation of Chromium Related Utils
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):

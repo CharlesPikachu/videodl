@@ -145,7 +145,7 @@ class M1905VideoClient(BaseVideoClient):
                 assert host and path
                 if sign: download_url = (host + sign + path).replace('\\', '')
                 elif 'sign=' in path: download_url = (host + path).replace('\\', '')
-                else: raise
+                else: raise Exception
                 break
             except:
                 continue

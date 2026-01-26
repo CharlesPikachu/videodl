@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of HLS Related Functions
+    Implementation of HLS Related Utils
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):

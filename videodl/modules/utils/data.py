@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of Data format related utils
+    Implementation of Data Format Related Utils
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):

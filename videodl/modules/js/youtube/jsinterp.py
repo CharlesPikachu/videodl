@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of JSInterpreter, refer to https://pytubefix.readthedocs.io/en/latest/index.html
+    Implementation of JSInterpreter (Refer To https://pytubefix.readthedocs.io/en/latest/index.html)
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):
@@ -722,8 +722,7 @@ class JSInterpreter:
                         try:
                             self._objects[variable] = self.extractobject(variable, local_vars)
                         except self.Exception:
-                            if not nullish:
-                                raise
+                            if not nullish: raise Exception
                     obj = self._objects.get(variable, JSUndefined)
                 if nullish and obj is JSUndefined: return JSUndefined
                 if arg_str is None: return self._index(obj, member, nullish)
