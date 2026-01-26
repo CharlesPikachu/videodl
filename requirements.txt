@@ -21,3 +21,4 @@ playwright
 questionary
 pywidevine
 curl_cffi
+m3u8

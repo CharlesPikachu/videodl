@@ -9,6 +9,7 @@ WeChat Official Account (微信公众号):
 import os
 import re
 import copy
+import m3u8
 import random
 import base64
 import pickle
@@ -39,6 +40,10 @@ class VideoAwareColumn(ProgressColumn):
             completed = int(task.completed)
             total = int(task.total) if task.total is not None else 0
             return Text(f"{completed}/{total} videos")
+        elif kind == 'm3u8download':
+            completed = int(task.completed)
+            total = int(task.total) if task.total is not None else 0
+            return Text(f"{completed}/{total} ts")
         else:
             return self._download_col.render(task)
 
@@ -173,14 +178,32 @@ class BaseVideoClient():
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
         # prepare
         touchdir(os.path.dirname(video_info['file_path']))
+        ts_work_dir = os.path.join(os.path.dirname(video_info['file_path']), video_info['identifier'])
+        touchdir(ts_work_dir)
         video_info = copy.deepcopy(video_info)
         video_info['file_path'] = self._ensureuniquefilepath(video_info['file_path'])
-        # start to download
         node_script = Path(__file__).resolve().parents[2] / "modules" / "js" / "cctv" / "decrypt.js"
-        cmd = ["node", node_script, video_info['download_url'], video_info['file_path']]
+        # start to download
+        loaded_m3u8_url, processed_files_fp = m3u8.load(video_info['download_url']), open(os.path.join(ts_work_dir, f'{video_info.identifier}.txt'), 'w')
+        if len(os.path.basename(video_info['file_path'])) > 10:
+            desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10] + '...'}"
+        else:
+            desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10]}"
+        video_task_id = progress.add_task(desc_name, total=len(loaded_m3u8_url.segments), kind="m3u8download")
+        for seg_idx, segment in enumerate(loaded_m3u8_url.segments):
+            cmd = ["node", node_script, segment.absolute_uri, os.path.join(ts_work_dir, f"segment_{seg_idx:08d}.mp4")]
+            ret = subprocess.run(cmd, check=True, capture_output=True, text=True, encoding='utf-8', errors='ignore')
+            if ret.returncode != 0:
+                err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}'
+                self.logger_handle.error(f'{self.source}._download >>> {segment.absolute_uri} (Error{err_msg})', disable_print=self.disable_print)
+            progress.update(video_task_id, advance=1)
+            processed_files_fp.write(f"file 'segment_{seg_idx:08d}.mp4'\n")
+        processed_files_fp.close()
+        merge_cmd = ["ffmpeg", "-f", "concat", "-safe", "0", "-i", processed_files_fp, "-c", "copy", "-movflags", "+faststart", video_info["file_path"]]
         capture_output = True if self.disable_print else False
-        ret = subprocess.run(cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
+        ret = subprocess.run(merge_cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
         if ret.returncode == 0:
+            shutil.rmtree(ts_work_dir, ignore_errors=True)
             downloaded_video_infos.append(video_info)
         else:
             err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}' if capture_output else ""
