@@ -111,6 +111,7 @@ class XMFlvVideoClient(BaseVideoClient):
             # --decrypt response
             decrypted_data = self._decryptresp(raw_data['API.js']['data'])
             decrypted_data = json_repair.loads(decrypted_data)
+            raw_data['API.js']['decrypted_data'] = decrypted_data
             # --video title
             video_title = legalizestring(decrypted_data.get('name', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             if "解析失败啦" == video_title: raise Exception
@@ -123,7 +124,7 @@ class XMFlvVideoClient(BaseVideoClient):
             )
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, enable_nm3u8dlre=True, guess_video_ext_result=guess_video_ext_result, identifier=video_title,
+                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, enable_nm3u8dlre=True, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=decrypted_data.get('pic')
             ))
             video_infos.append(video_info)
         except Exception as err:
