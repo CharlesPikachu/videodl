@@ -200,7 +200,10 @@ class BaseVideoClient():
             progress.update(video_task_id, advance=1)
             processed_files_fp.write(f"file 'segment_{seg_idx:08d}.mp4'\n")
         processed_files_fp.close()
-        merge_cmd = ["ffmpeg", "-f", "concat", "-safe", "0", "-i", os.path.join(ts_work_dir, f'{video_info.identifier}.txt'), "-c", "copy", "-movflags", "+faststart", video_info["file_path"]]
+        merge_cmd = [
+            "ffmpeg", "-y", "-fflags", "+genpts", "-f", "concat", "-safe", "0", "-i", os.path.join(ts_work_dir, f"{video_info.identifier}.txt"), "-avoid_negative_ts", "make_zero", "-map", "0:v:0", 
+            "-map", "0:a?", "-c:v", "libx264", "-preset", "veryfast", "-crf", "16", "-pix_fmt", "yuv420p", "-c:a", "copy", "-movflags", "+faststart", "-vsync", "0", video_info["file_path"]
+        ]
         capture_output = True if self.disable_print else False
         ret = subprocess.run(merge_cmd, check=True, capture_output=capture_output, text=True, encoding='utf-8', errors='ignore')
         if ret.returncode == 0:
