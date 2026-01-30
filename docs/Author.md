@@ -6,32 +6,31 @@ Personal Homepage: [https://charlespikachu.github.io/](https://charlespikachu.gi
 
 #### Social Media
 
-- **WeChat Official Account (微信公众号)**
+**WeChat Official Account (微信公众号)**
 
-I’ve shared my WeChat Official Account below, thanks for searching or scanning the QR code to follow!
+Here’s my WeChat Official Account! You can scan the QR code to follow, or search "Charles的皮卡丘" / "Charles_pikachu" Thanks!
 
-Charles的皮卡丘 (*Charles_pikachu*)  
 ![img](https://raw.githubusercontent.com/CharlesPikachu/imagedl/main/docs/pikachu.jpg)
 
-- **Twitter (推特账号)**
+**Twitter (推特账号)**
 
 My Twitter handle is listed below. You’re very welcome to follow.
 
 [https://x.com/Charles40973215](https://x.com/Charles40973215)
 
-- **Zhihu (知乎账号)**
+**Zhihu (知乎账号)**
 
 If you use Zhihu, you can follow me via the account below.
 
 [https://www.zhihu.com/people/charles_pikachu](https://www.zhihu.com/people/charles_pikachu)
 
-- **Bilibili (B站账号)**
+**Bilibili (B站账号)**
 
 You can find my Bilibili account below. I’d be glad to have you as a follower.
 
 [https://space.bilibili.com/406756145](https://space.bilibili.com/406756145)
 
-- **Github**
+**Github**
 
 My GitHub profile is shared below, where I post code and projects, feel free to follow.
 
