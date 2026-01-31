@@ -12,7 +12,7 @@ import json_repair
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, ensureplaywrightchromium, searchdictbykey, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, ensureplaywrightchromium, searchdictbykey, safeextractfromdict, requestsproxytoplaywright, FileTypeSniffer, VideoInfo
 
 
 '''KuaishouVideoClient'''
@@ -54,29 +54,20 @@ class KuaishouVideoClient(BaseVideoClient):
             if photo.get("photoH265Url"): candidates.append({"codec": "hevc_single", "maxBitrate": 1, "resolution": 1, "url": photo["photoH265Url"], "qualityLabel": "single_hevc"})
             if photo.get("photoUrl"): candidates.append({"codec": "h264_single", "maxBitrate": 1, "resolution": 1, "url": photo["photoUrl"], "qualityLabel": "single_h264"})
             vr = photo.get("videoResource")
-            if isinstance(vr, dict):
-                vr_json: dict = vr.get("json", {})
-                for codec_name in ["hevc", "h264"]:
-                    codec = vr_json.get(codec_name)
-                    if not codec or not isinstance(codec, dict): continue
-                    for aset in codec.get("adaptationSet", []):
-                        if not isinstance(aset, dict): continue
-                        for rep in aset.get("representation", []):
-                            if not isinstance(rep, dict) or not rep.get("url"): continue
-                            candidates.append({"codec": codec_name, "maxBitrate": rep.get("maxBitrate", 0), "resolution": rep.get("width", 0) * rep.get("height", 0), "url": rep.get("url"), "qualityLabel": rep.get("qualityLabel")})
+            if isinstance(vr, dict) and (j := (vr.get("json", {}) or {})):
+                candidates.extend([
+                    {"codec": c, "maxBitrate": r.get("maxBitrate", 0), "resolution": r.get("width", 0) * r.get("height", 0), "url": r.get("url"), "qualityLabel": r.get("qualityLabel")} for c in ("hevc", "h264") for a in j.get(c, {}).get("adaptationSet", []) if isinstance(j.get(c), dict) and isinstance(a, dict) for r in a.get("representation", []) if isinstance(r, dict) and r.get("url")
+                ])
             codec_priority = {"hevc": 2, "hevc_single": 2, "h264": 1, "h264_single": 1}
             candidates: list[dict] = [c for c in candidates if c.get('url')]
             candidates.sort(key=lambda c: (codec_priority.get(c["codec"], 0), c["maxBitrate"], c["resolution"]), reverse=True)
             download_url = [c["url"] for c in candidates][0]
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(photo.get('caption', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid
-            ))
+            cover_url = searchdictbykey(raw_data, 'coverUrl')
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url[0] if cover_url else None))
         except Exception as err:
             err_msg = f'{self.source}._parsefromurlusingrequests >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
@@ -99,11 +90,13 @@ class KuaishouVideoClient(BaseVideoClient):
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
             with sync_playwright() as p:
-                browser = p.chromium.launch(headless=True)
+                browser = p.chromium.launch(headless=True, proxy=requestsproxytoplaywright(proxy=request_overrides.get('proxies')))
                 context = browser.new_context(**p.devices['iPhone 13'])
+                context.set_extra_http_headers(request_overrides.get('headers') or self.default_headers or {})
                 page = context.new_page()
                 page.goto(url, wait_until="domcontentloaded", timeout=30000)
                 html_content = page.content()
+                context.close()
                 browser.close()
             t = next((s.get_text() for s in BeautifulSoup(html_content, "html.parser").find_all("script") if "window.INIT_STATE" in s.get_text()), "")
             i = t.find("window.INIT_STATE"); s = t.find("{", i); d = q = e = 0
@@ -122,13 +115,11 @@ class KuaishouVideoClient(BaseVideoClient):
             if isinstance(video_title, list): video_title = video_title[0]
             video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
             video_info.update(dict(download_url=download_url))
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid
-            ))
+            cover_url = searchdictbykey(raw_data, 'coverUrls') or searchdictbykey(raw_data, 'webpCoverUrls')
+            if cover_url: cover_url = safeextractfromdict(cover_url[0], [0, 'url'], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}._parsefromurlusingplaywright >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

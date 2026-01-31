@@ -23,9 +23,9 @@ from pathlib import Path
 from typing import Optional
 from datetime import datetime
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse
 from .importutils import optionalimport
 from pathvalidate import sanitize_filename
+from urllib.parse import urlparse, urlsplit
 
 
 '''cookies2dict'''
@@ -216,6 +216,25 @@ def yieldtimerelatedtitle(source: str):
     dt = datetime.fromtimestamp(time.time())
     date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
     return f'{source}_null_{date_str}'
+
+
+'''requestsproxytoplaywright'''
+def requestsproxytoplaywright(proxy: dict | str, *, prefer: tuple = ("https", "http", "all"), bypass: str = None):
+    if not proxy: return None
+    s = (proxy if isinstance(proxy, str) else next((proxy.get(k) for k in prefer if proxy.get(k)), None) or next(iter(proxy.values()), None))
+    if not s or not isinstance(s, str): return None
+    s = s.strip()
+    if "://" not in s: s = "http://" + s
+    u = urlsplit(s)
+    scheme = ("socks5" if u.scheme == "socks5h" else u.scheme)
+    host, port = u.hostname, u.port
+    if not host or port is None: raise ValueError(f"Invalid proxy (need host:port): {s!r}")
+    host = f"[{host}]" if ":" in host else host
+    out = {"server": f"{scheme}://{host}:{port}"}
+    if u.username: out["username"] = u.username
+    if u.password: out["password"] = u.password
+    if bypass: out["bypass"] = bypass
+    return out
 
 
 '''SpinWithBackoff'''

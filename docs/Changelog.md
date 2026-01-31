@@ -1,5 +1,7 @@
 # Development Log
 
+- 2026-01-31: Released videofetch v0.6.3 - introduce reference frames to address jitter during CCTV video downloads, add cover metadata to the response for some supported platforms, and optimize parts of the code.
+
 - 2026-01-27: Released videofetch v0.6.2 - resolved video artifacting issues in CCTV high-definition downloads and addressed multiple known bugs.
 
 - 2026-01-25: Released videofetch v0.6.1 - implement native Douyin API integration for parsing, optimize segments of the codebase.

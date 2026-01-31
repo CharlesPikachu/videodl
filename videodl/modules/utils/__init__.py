@@ -12,5 +12,5 @@ from .importutils import optionalimport, optionalimportfrom
 from .logger import printtable, colorize, printfullline, LoggerHandle
 from .misc import (
     legalizestring, byte2mb, resp2json, usedownloadheaderscookies, useparseheaderscookies, usesearchheaderscookies, searchdictbykey, cookies2dict, cookies2string, 
-    safeextractfromdict, yieldtimerelatedtitle, shortenpathsinvideoinfos, extracttitlefromurl, FileTypeSniffer, SpinWithBackoff
+    safeextractfromdict, yieldtimerelatedtitle, shortenpathsinvideoinfos, extracttitlefromurl, requestsproxytoplaywright, FileTypeSniffer, SpinWithBackoff
 )
