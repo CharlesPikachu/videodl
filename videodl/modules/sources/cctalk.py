@@ -72,13 +72,9 @@ class CCtalkVideoClient(BaseVideoClient):
                 if root_video_title and len(video_ids) > 1: video_title = f"{root_video_title}-ep{len(video_infos)+1}-{video_title}"
                 elif len(video_ids) > 1: video_title = f"ep{len(video_infos)+1}-{video_title}"
                 video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
-                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                    url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-                )
+                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-                video_info_page.update(dict(
-                    title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f"{sid}-{video_id}" if sid else video_id,
-                ))
+                video_info_page.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f"{sid}-{video_id}" if sid else video_id, cover_url=raw_data['data'].get('coverUrl')))
                 video_infos.append(video_info_page)
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'

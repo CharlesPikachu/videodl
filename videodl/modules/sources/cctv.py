@@ -40,10 +40,7 @@ class CCTVVideoClient(BaseVideoClient):
             # --fetch raw data
             resp = self.get(url, **request_overrides)
             resp.raise_for_status()
-            rules = [
-                r'var\s+guid\s*=\s*["\']([\da-fA-F]+)', r'videoCenterId(?:["\']\s*,|:)\s*["\']([\da-fA-F]+)', r'changePlayer\s*\(\s*["\']([\da-fA-F]+)',
-                r'load[Vv]ideo\s*\(\s*["\']([\da-fA-F]+)', r'var\s+initMyAray\s*=\s*["\']([\da-fA-F]+)', r'var\s+ids\s*=\s*\[["\']([\da-fA-F]+)'
-            ]
+            rules = [r'var\s+guid\s*=\s*["\']([\da-fA-F]+)', r'videoCenterId(?:["\']\s*,|:)\s*["\']([\da-fA-F]+)', r'changePlayer\s*\(\s*["\']([\da-fA-F]+)', r'load[Vv]ideo\s*\(\s*["\']([\da-fA-F]+)', r'var\s+initMyAray\s*=\s*["\']([\da-fA-F]+)', r'var\s+ids\s*=\s*\[["\']([\da-fA-F]+)']
             for rule in rules:
                 try: pid = re.findall(rule, resp.text)[0]; break
                 except: continue
@@ -67,14 +64,10 @@ class CCTVVideoClient(BaseVideoClient):
             video_info.update(dict(download_url=download_url, hls_key=hls_key))
             # --create video info's extra entries
             video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             if hls_key in ['hls_h5e_url']: ext = 'mp4' # manually correct for js decrypt
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=pid, cover_url=raw_data.get('image')
-            ))
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=pid, cover_url=raw_data.get('image')))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

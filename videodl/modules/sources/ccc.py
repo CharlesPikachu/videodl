@@ -50,11 +50,9 @@ class CCCVideoClient(BaseVideoClient):
             videos = [r for r in raw_data["recordings"] if _isvideo(r)]
             videos_sorted = sorted(videos, key=quality_key, reverse=True)
             video_info.update(dict(download_url=videos_sorted[0]['recording_url']))
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=videos_sorted[0]['recording_url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=videos_sorted[0]['recording_url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f'{display_id}-{event_id}'))
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f'{display_id}-{event_id}', cover_url=raw_data.get('poster_url')))
         except Exception as err:
             err_msg = f'{self.source}._parsefromurlsinglevideo >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

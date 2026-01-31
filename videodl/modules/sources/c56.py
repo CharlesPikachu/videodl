@@ -52,9 +52,7 @@ class C56VideoClient(BaseVideoClient):
             assert len(video_info) == 1
             video_info = video_info[0]
             video_title = legalizestring(raw_data.get('Subject', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            video_info.update(dict(
-                identifier=vid, raw_data=raw_data, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info["ext"]}'), source=self.source
-            ))
+            video_info.update(dict(identifier=vid, raw_data=raw_data, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info["ext"]}'), source=self.source, cover_url=raw_data.get('img')))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
