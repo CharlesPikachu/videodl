@@ -131,7 +131,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://weibo.com/tv/v/HApWK8FAc?fid=1034:4386795211940756',
     ],
     'RednoteVideoClient': [
-        'http://xhslink.com/o/1WrmgHGWFYh',
+        'http://xhslink.com/o/7DegL4I0Sjy',
         'http://xhslink.com/o/3A6kXCDzntm',
         'http://xhslink.com/o/1XSb8VSEeFv',
         'http://xhslink.com/o/3hFb1CXputg',
