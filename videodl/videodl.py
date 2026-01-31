@@ -127,19 +127,13 @@ class VideoClient():
                 classified_video_infos[video_info['source']] = [video_info]
         for source, source_video_infos in classified_video_infos.items():
             if source in (self.web_media_grabber.source,):
-                self.web_media_grabber.download(
-                    video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}),
-                )
+                self.web_media_grabber.download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}))
             elif source in self.video_clients:
                 if isinstance(self.video_clients[source], dict): self.video_clients[source] = BuildVideoClient(module_cfg=self.video_clients[source]['cfg'])
-                self.video_clients[source].download(
-                    video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}),
-                )
+                self.video_clients[source].download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}))
             else:
                 if isinstance(self.common_video_clients[source], dict): self.common_video_clients[source] = BuildCommonVideoClient(module_cfg=self.common_video_clients[source]['cfg'])
-                self.common_video_clients[source].download(
-                    video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}),
-                )
+                self.common_video_clients[source].download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}))
     '''processinputs'''
     def processinputs(self, input_tip='', prefix: str = '\n', restart_ui: str = 'startparseurlcmdui'):
         # accept user inputs
@@ -182,16 +176,11 @@ class VideoClient():
 )
 def VideoClientCMD(index_url: str, allowed_video_sources: str, init_video_clients_cfg: str, requests_overrides: str, clients_threadings: str, apply_common_video_clients_only: bool):
     # load settings
-    def _safe_load(string):
-        if string is not None:
-            result = json_repair.loads(string) or {}
-        else:
-            result = {}
-        return result
+    safe_load_func = lambda s: (json_repair.loads(s) or {}) if s else {}
     allowed_video_sources = [s.strip() for s in allowed_video_sources.strip().split(',')] if allowed_video_sources else []
-    init_video_clients_cfg = _safe_load(init_video_clients_cfg)
-    requests_overrides = _safe_load(requests_overrides)
-    clients_threadings = _safe_load(clients_threadings)
+    init_video_clients_cfg = safe_load_func(init_video_clients_cfg)
+    requests_overrides = safe_load_func(requests_overrides)
+    clients_threadings = safe_load_func(clients_threadings)
     # instance video client
     video_client = VideoClient(
         allowed_video_sources=allowed_video_sources, init_video_clients_cfg=init_video_clients_cfg, clients_threadings=clients_threadings, 

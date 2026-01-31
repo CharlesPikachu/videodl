@@ -19,10 +19,7 @@ class EyepetizerVideoClient(BaseVideoClient):
         super(EyepetizerVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
             "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
-            "x-thefair-appid": "xfpa44crf2p70lk8",
-            "x-thefair-auth": "",
-            "x-thefair-cid": "",
-            "x-thefair-forward-host": "https://api.eyepetizer.net",
+            "x-thefair-appid": "xfpa44crf2p70lk8", "x-thefair-auth": "", "x-thefair-cid": "", "x-thefair-forward-host": "https://api.eyepetizer.net",
             "x-thefair-ua": "EYEPETIZER_UNIAPP_H5/100000 (android;android;OS_VERSION_UNKNOWN;zh-Hans-CN;h5;2.0.0;cn-bj;SOURCE_UNKNOWN;PHPSESSID;2560*1440;NETWORK_UNKNOWN) cardsystem/2.0"
         }
         self.default_download_headers = {

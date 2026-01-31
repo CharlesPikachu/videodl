@@ -20,17 +20,10 @@ class CCtalkVideoClient(BaseVideoClient):
     def __init__(self, **kwargs):
         super(CCtalkVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
-            "harmony-os": "pcweb",
-            "host": "www.cctalk.com",
-            "hujiang-app-key": "pcweb",
-            "referer": "https://www.cctalk.com/v/17604950351552?sid=1760494906733025",
-            "sec-ch-ua": '"Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"',
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": '"Windows"',
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36", "sec-ch-ua-mobile": "?0", 
+            "harmony-os": "pcweb", "host": "www.cctalk.com", "hujiang-app-key": "pcweb", "referer": "https://www.cctalk.com/v/17604950351552?sid=1760494906733025", 
+            "sec-ch-ua": '"Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"', "sec-ch-ua-platform": '"Windows"', "sec-fetch-dest": "empty", 
+            "sec-fetch-mode": "cors", "sec-fetch-site": "same-origin", 
         }
         self.default_download_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',

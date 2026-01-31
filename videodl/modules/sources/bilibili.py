@@ -59,11 +59,8 @@ class BilibiliVideoClient(BaseVideoClient):
             for page_idx, page in enumerate(raw_data['data']["pages"]):
                 if part_id and page_idx + 1 != part_id: continue
                 cid = page['cid']
-                try:
-                    resp = self.get(f"https://api.bilibili.com/x/player/playurl?otype=json&fnver=0&fnval=0&qn=80&bvid={video_id}&cid={cid}&platform=html5", **request_overrides)
-                    resp.raise_for_status()
-                except:
-                    continue
+                try: (resp := self.get(f"https://api.bilibili.com/x/player/playurl?otype=json&fnver=0&fnval=0&qn=80&bvid={video_id}&cid={cid}&platform=html5", **request_overrides)).raise_for_status()
+                except Exception: continue
                 page_raw_data = resp2json(resp=resp)
                 page_raw_data['x/web-interface/view'] = copy.deepcopy(raw_data)
                 video_page_info = copy.deepcopy(video_info)
@@ -74,12 +71,10 @@ class BilibiliVideoClient(BaseVideoClient):
                 video_page_info.update(dict(download_url=download_url))
                 video_title = f"ep{len(video_infos)+1}-{page.get('part')}" if len(raw_data['data']["pages"]) > 1 else raw_data["data"].get('title')
                 video_title = legalizestring(video_title or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                    url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-                )
+                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_page_info['ext']
                 if ext in ['m4s']: ext = 'mp4'
-                video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f'{video_id}-{cid}'))
+                video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f'{video_id}-{cid}', cover_url=safeextractfromdict(page, ['first_frame'], None) or safeextractfromdict(page_raw_data['x/web-interface/view'], ['data', 'pic'], None)))
                 video_infos.append(video_page_info)
         except Exception as err:
             err_msg = f'{self.source}._parsefromcommonurl >>> {url} (Error: {err})'
@@ -107,11 +102,8 @@ class BilibiliVideoClient(BaseVideoClient):
             for item in safeextractfromdict(raw_data, ['result', 'section'], []): result_episodes += item.get('episodes', [])
             for _, page in enumerate(result_episodes):
                 if str(page['ep_id']) != episode_id: continue
-                try:
-                    resp = self.get(f"https://api.bilibili.com/pgc/player/web/v2/playurl?fnval=12240&ep_id={str(page['ep_id'])}", **request_overrides)
-                    resp.raise_for_status()
-                except:
-                    continue
+                try: (resp := self.get(f"https://api.bilibili.com/pgc/player/web/v2/playurl?fnval=12240&ep_id={str(page['ep_id'])}", **request_overrides)).raise_for_status()
+                except Exception: continue
                 page_raw_data = resp2json(resp=resp)
                 page_raw_data['pgc/view/web/season'] = copy.deepcopy(raw_data)
                 video_page_info, formats = copy.deepcopy(video_info), []
@@ -124,26 +116,20 @@ class BilibiliVideoClient(BaseVideoClient):
                 video_page_info.update(dict(download_url=download_url))
                 video_title = page.get('share_copy') or page.get('show_title') or null_backup_title
                 video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
-                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                    url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-                )
+                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_page_info['ext']
                 if ext in ['m4s']: ext = 'mp4'
-                video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=episode_id))
+                video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=episode_id, cover_url=safeextractfromdict(page, ['cover'], None)))
                 audio_formats = []
                 for item in safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'dolby', 'audio'], []) + safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'audio'], []):
                     audio_formats.append({'url': item.get('baseUrl') or item.get('base_url') or item.get('url'), 'filesize': item.get('size') or 0})
                 audio_formats: list[dict] = sorted(audio_formats, key=lambda x: x["filesize"], reverse=True)
                 audio_formats: list[dict] = [item for item in audio_formats if item.get('url')]
                 if len(audio_formats) == 0: video_infos.append(video_page_info); continue
-                guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                    url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-                )
+                guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 audio_ext = guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info['audio_ext']
                 if audio_ext in ['m4s']: audio_ext = 'm4a'
-                video_page_info.update(dict(
-                    audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}')
-                ))
+                video_page_info.update(dict(audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}')))
                 video_infos.append(video_page_info)
         except Exception as err:
             err_msg = f'{self.source}._parsefrombangumiepurl >>> {url} (Error: {err})'
@@ -171,11 +157,8 @@ class BilibiliVideoClient(BaseVideoClient):
             for item in safeextractfromdict(raw_data, ['result', 'section'], []): result_episodes += item.get('episodes', [])
             for _, page in enumerate(result_episodes):
                 episode_id = page['id']
-                try:
-                    resp = self.get(f"https://api.bilibili.com/pgc/player/web/v2/playurl?fnval=12240&ep_id={episode_id}", **request_overrides)
-                    resp.raise_for_status()
-                except:
-                    continue
+                try: (resp := self.get(f"https://api.bilibili.com/pgc/player/web/v2/playurl?fnval=12240&ep_id={episode_id}", **request_overrides)).raise_for_status()
+                except Exception: continue
                 page_raw_data = resp2json(resp=resp)
                 page_raw_data['pgc/web/season/section'] = copy.deepcopy(raw_data)
                 video_page_info, formats = copy.deepcopy(video_info), []
@@ -189,26 +172,20 @@ class BilibiliVideoClient(BaseVideoClient):
                 video_page_info.update(dict(download_url=download_url))
                 video_title = page.get('long_title') or page.get('title') or null_backup_title
                 video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
-                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                    url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-                )
+                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_page_info['ext']
                 if ext in ['m4s']: ext = 'mp4'
-                video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=episode_id))
+                video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=episode_id, cover_url=safeextractfromdict(page, ['cover'], None)))
                 audio_formats = []
                 for item in safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'dolby', 'audio'], []) + safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'audio'], []):
                     audio_formats.append({'url': item.get('baseUrl') or item.get('base_url') or item.get('url'), 'filesize': item.get('size') or 0})
                 audio_formats: list[dict] = sorted(audio_formats, key=lambda x: x["filesize"], reverse=True)
                 audio_formats: list[dict] = [item for item in audio_formats if item.get('url')]
                 if len(audio_formats) == 0: video_infos.append(video_page_info); continue
-                guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                    url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-                )
+                guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 audio_ext = guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info['audio_ext']
                 if audio_ext in ['m4s']: audio_ext = 'm4a'
-                video_page_info.update(dict(
-                    audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}')
-                ))
+                video_page_info.update(dict(audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}')))
                 video_infos.append(video_page_info)
         except Exception as err:
             err_msg = f'{self.source}._parsefrombangumissurl >>> {url} (Error: {err})'
@@ -234,11 +211,8 @@ class BilibiliVideoClient(BaseVideoClient):
             raw_data = resp2json(resp=resp)
             for _, page in enumerate(raw_data['data']['episodes']):
                 if str(page['id']) != episode_id: continue
-                try:
-                    resp = self.get('https://api.bilibili.com/pugv/player/web/playurl', params={'avid': page['aid'], 'cid': page['cid'], 'ep_id': episode_id, 'fnval': 16, 'fourk': 1}, **request_overrides)
-                    resp.raise_for_status()
-                except:
-                    continue
+                try: (resp := self.get('https://api.bilibili.com/pugv/player/web/playurl', params={'avid': page['aid'], 'cid': page['cid'], 'ep_id': episode_id, 'fnval': 16, 'fourk': 1}, **request_overrides)).raise_for_status()
+                except Exception: continue
                 page_raw_data = resp2json(resp=resp)
                 page_raw_data['pugv/view/web/season'] = copy.deepcopy(raw_data)
                 video_page_info, formats = copy.deepcopy(video_info), []
@@ -251,26 +225,20 @@ class BilibiliVideoClient(BaseVideoClient):
                 video_page_info.update(dict(download_url=download_url))
                 video_title = page.get('title') or null_backup_title
                 video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
-                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                    url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-                )
+                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_page_info['ext']
                 if ext in ['m4s']: ext = 'mp4'
-                video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=episode_id))
+                video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=episode_id, cover_url=safeextractfromdict(page, ['cover'], None)))
                 audio_formats = []
                 for item in safeextractfromdict(page_raw_data, ['data', 'dash', 'audio'], []):
                     audio_formats.append({'url': item.get('baseUrl') or item.get('base_url') or item.get('url'), 'filesize': item.get('size') or 0})
                 audio_formats: list[dict] = sorted(audio_formats, key=lambda x: x["filesize"], reverse=True)
                 audio_formats: list[dict] = [item for item in audio_formats if item.get('url')]
                 if len(audio_formats) == 0: video_infos.append(video_page_info); continue
-                guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                    url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-                )
+                guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 audio_ext = guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info['audio_ext']
                 if audio_ext in ['m4s']: audio_ext = 'm4a'
-                video_page_info.update(dict(
-                    audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}')
-                ))
+                video_page_info.update(dict(audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}')))
                 video_infos.append(video_page_info)
         except Exception as err:
             err_msg = f'{self.source}._parsefromcheeseepurl >>> {url} (Error: {err})'
