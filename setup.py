@@ -25,15 +25,16 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     classifiers=[
-        'License :: OSI Approved :: Apache Software License',
-        'Programming Language :: Python :: 3',
-        'Intended Audience :: Developers',
-        'Operating System :: OS Independent'
+        "License :: Free for non-commercial use",
+        "Programming Language :: Python :: 3",
+        "Intended Audience :: Developers",
+        "Operating System :: OS Independent",
     ],
     author=videodl.__author__,
     url=videodl.__url__,
     author_email=videodl.__email__,
     license=videodl.__license__,
+    license_files=("LICENSE",),
     include_package_data=True,
     packages=find_packages(),
     package_data={"videodl": [

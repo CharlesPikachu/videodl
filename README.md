@@ -14,7 +14,7 @@
     <img src="https://img.shields.io/pypi/v/videofetch" alt="PyPI" />
   </a>
   <a href="https://github.com/CharlesPikachu/videodl/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/CharlesPikachu/videodl.svg" alt="license" />
+    <img src="https://img.shields.io/badge/license-PolyForm--Noncommercial--1.0.0-blue" alt="license" />
   </a>
   <a href="https://pypi.org/project/videofetch/">
     <img src="https://static.pepy.tech/badge/videofetch" alt="PyPI - Downloads">
