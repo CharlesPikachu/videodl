@@ -98,12 +98,35 @@ class KuaishouVideoClient(BaseVideoClient):
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
+            # request_overrides should carry Cookie via headers["Cookie"] from caller.
+            headers = request_overrides.get("headers") or {}
+            launch_kwargs = {"headless": True}
+            # Playwright consumes proxy via requests-style request_overrides["proxies"].
+            proxy = None
+            proxies = request_overrides.get("proxies") or {}
+            if isinstance(proxies, dict):
+                proxy = proxies.get("https") or proxies.get("http")
+            if proxy:
+                parsed = urlparse(proxy)
+                if parsed.scheme and parsed.hostname:
+                    server = f"{parsed.scheme}://{parsed.hostname}"
+                    if parsed.port:
+                        server = f"{server}:{parsed.port}"
+                    launch_kwargs["proxy"] = {"server": server}
+                    if parsed.username:
+                        launch_kwargs["proxy"]["username"] = parsed.username
+                    if parsed.password:
+                        launch_kwargs["proxy"]["password"] = parsed.password
+                else:
+                    launch_kwargs["proxy"] = {"server": proxy}
             with sync_playwright() as p:
-                browser = p.chromium.launch(headless=True)
+                browser = p.chromium.launch(**launch_kwargs)
                 context = browser.new_context(**p.devices['iPhone 13'])
+                if headers: context.set_extra_http_headers(headers)
                 page = context.new_page()
                 page.goto(url, wait_until="domcontentloaded", timeout=30000)
                 html_content = page.content()
+                context.close()
                 browser.close()
             t = next((s.get_text() for s in BeautifulSoup(html_content, "html.parser").find_all("script") if "window.INIT_STATE" in s.get_text()), "")
             i = t.find("window.INIT_STATE"); s = t.find("{", i); d = q = e = 0
