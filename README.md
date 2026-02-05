@@ -213,7 +213,7 @@ Specifically, these CLI tools include,
   If you see a similar `command not found` / `not recognized` error, N_m3u8DL-RE is not installed correctly or not available on your `PATH`.
 
 - **[Node.js](https://nodejs.org/en)**: Currently, Node.js is only used in `YouTubeVideoClient`, `CCTVVideoClient` and `TencentVideoClient` to execute certain JavaScript code for video parsing. 
-  Therefore, if you don’t need to use `YouTubeVideoClient` and `TencentVideoClient`, you can safely skip installing this CLI tool.
+  Therefore, if you don’t need to use `YouTubeVideoClient`, `CCTVVideoClient` and `TencentVideoClient`, you can safely skip installing this CLI tool.
   A quick way to check whether Node.js has been installed successfully is to open a terminal (or Command Prompt on Windows) and run,
   ```bash
   node -v (npm -v)
@@ -325,6 +325,11 @@ videodl -i "https://www.tiktok.com/@pet_statione/video/7579841364599328013?lang=
 videodl -i "M1905 VIDEO URL" -a M1905VideoClient
 # Examples
 videodl -i "https://www.1905.com/video/play/1751538.shtml" -a M1905VideoClient
+
+# XINPIANCHANG (新片场)
+videodl -i "M1905 VIDEO URL" -a XinpianchangVideoClient
+# Examples
+videodl -i "https://www.xinpianchang.com/a13536060?from=IndexPick&part=%E7%BC%96%E8%BE%91%E7%B2%BE%E9%80%89&index=1" -a XinpianchangVideoClient
 
 # BILIBILI (B站)
 videodl -i "BILIBILI VIDEO URL" -a BilibiliVideoClient

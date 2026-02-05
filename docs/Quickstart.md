@@ -96,6 +96,11 @@ videodl -i "M1905 VIDEO URL" -a M1905VideoClient
 # Examples
 videodl -i "https://www.1905.com/video/play/1751538.shtml" -a M1905VideoClient
 
+# XINPIANCHANG (新片场)
+videodl -i "M1905 VIDEO URL" -a XinpianchangVideoClient
+# Examples
+videodl -i "https://www.xinpianchang.com/a13536060?from=IndexPick&part=%E7%BC%96%E8%BE%91%E7%B2%BE%E9%80%89&index=1" -a XinpianchangVideoClient
+
 # BILIBILI (B站)
 videodl -i "BILIBILI VIDEO URL" -a BilibiliVideoClient
 videodl -i "BILIBILI VIDEO URL" -g -a VideoFKVideoClient
