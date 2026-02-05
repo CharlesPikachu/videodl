@@ -214,7 +214,7 @@ Specifically, these CLI tools include,
 
 - **[Node.js](https://nodejs.org/en)**: Currently, Node.js is only used in `YouTubeVideoClient`, `CCTVVideoClient` and `TencentVideoClient` to execute certain JavaScript code for video parsing. 
   Therefore, if you don’t need to use `YouTubeVideoClient`, `CCTVVideoClient` and `TencentVideoClient`, you can safely skip installing this CLI tool.
-  A quick way to check whether Node.js has been installed successfully is to open a terminal (or Command Prompt on Windows) and run,
+  A quick way to check whether Node.js has been installed successfully is to open a terminal and run,
   ```bash
   node -v (npm -v)
   ```
