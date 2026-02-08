@@ -54,7 +54,7 @@ class XinpianchangVideoClient(BaseVideoClient):
                     sorted_by_resolution = sorted(v, key=lambda x: (x.get('height', 0) * x.get('width', 0), x.get('filesize', 0)), reverse=True)
                     download_url = [item.get('url') or item.get('backupUrl') for item in sorted_by_resolution if item.get('url') or item.get('backupUrl')][0]
                     break
-            video_info.update(dict(download_url=download_url, download_with_ffmpeg=True))
+            video_info.update(dict(download_url=download_url))
             video_title = legalizestring(safeextractfromdict(raw_data[f'media/{vid}'], ['data', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
