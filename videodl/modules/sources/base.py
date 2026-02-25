@@ -151,17 +151,14 @@ class BaseVideoClient():
         try:
             content_length = int(float(video_info['download_url'].filesize or 0))
             chunk_size = video_info.get('chunk_size', 1024 * 1024)
-            if len(os.path.basename(video_info['file_path'])) > 10:
-                desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10] + '...'}"
-            else:
-                desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10]}"
+            if len(os.path.basename(video_info['file_path'])) > 10: desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10] + '...'}"
+            else: desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10]}"
             total_bytes = content_length if content_length > 0 else None
             video_task_id, downloaded_bytes = progress.add_task(desc_name, total=total_bytes, kind="download"), 0
             with open(video_info['file_path'], "wb") as fp:
                 for chunk in video_info['download_url'].iterchunks(chunk_size=chunk_size):
                     if not chunk: continue
-                    fp.write(chunk)
-                    downloaded_bytes += len(chunk)
+                    fp.write(chunk); downloaded_bytes += len(chunk)
                     if total_bytes is None: progress.update(video_task_id, total=downloaded_bytes)
                     progress.update(video_task_id, advance=len(chunk))
             downloaded_video_infos.append(video_info)
@@ -186,17 +183,13 @@ class BaseVideoClient():
         node_script = Path(__file__).resolve().parents[2] / "modules" / "js" / "cctv" / "decrypt.js"
         # start to download
         loaded_m3u8_url, processed_files_fp = m3u8.load(video_info['download_url']), open(os.path.join(ts_work_dir, f'{video_info.identifier}.txt'), 'w')
-        if len(os.path.basename(video_info['file_path'])) > 10:
-            desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10] + '...'}"
-        else:
-            desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10]}"
+        if len(os.path.basename(video_info['file_path'])) > 10: desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10] + '...'}"
+        else: desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10]}"
         video_task_id = progress.add_task(desc_name, total=len(loaded_m3u8_url.segments), kind="m3u8download")
         for seg_idx, segment in enumerate(loaded_m3u8_url.segments):
             cmd = ["node", node_script, segment.absolute_uri, os.path.join(ts_work_dir, f"segment_{seg_idx:08d}.mp4")]
             ret = subprocess.run(cmd, check=True, capture_output=True, text=True, encoding='utf-8', errors='ignore')
-            if ret.returncode != 0:
-                err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}'
-                self.logger_handle.error(f'{self.source}._download >>> {segment.absolute_uri} (Error{err_msg})', disable_print=self.disable_print)
+            if ret.returncode != 0: err_msg = f': {ret.stdout or ""}\n\n{ret.stderr or ""}'; self.logger_handle.error(f'{self.source}._download >>> {segment.absolute_uri} (Error{err_msg})', disable_print=self.disable_print)
             progress.update(video_task_id, advance=1)
             processed_files_fp.write(f"file 'segment_{seg_idx:08d}.mp4'\n")
         processed_files_fp.close()
@@ -320,7 +313,7 @@ class BaseVideoClient():
         log_dir = user_log_dir(appname='videodl', appauthor='zcjin')
         log_file_path = generateuniquetmppath(dir=log_dir, ext='log')
         cmd = [
-            'N_m3u8DL-RE', video_info["download_url"], "--auto-select", "--save-dir", os.path.dirname(video_info["file_path"]), "--save-name", os.path.basename(video_info["file_path"]),
+            'N_m3u8DL-RE', video_info["download_url"], "--auto-select", "--save-dir", os.path.dirname(video_info["file_path"]), "--save-name", os.path.splitext(os.path.basename(video_info["file_path"]))[0],
             "--thread-count", default_nm3u8dlre_settings['thread_count'], "--download-retry-count", default_nm3u8dlre_settings['download_retry_count'], 
         ]
         if default_nm3u8dlre_settings['key']: cmd.extend(["--key", default_nm3u8dlre_settings['key']])
@@ -360,10 +353,8 @@ class BaseVideoClient():
         default_aria2c_settings.update(aria2c_settings)
         # construct cmd
         cmd = [
-            "aria2c", "-c", "-x", str(default_aria2c_settings['max_connection_per_server']), "-s", str(default_aria2c_settings['split']),
-            "-k", str(default_aria2c_settings['piece_size']), f"--file-allocation={default_aria2c_settings['file_allocation']}",
-            f"--max-tries={default_aria2c_settings['max_tries']}", f"--max-concurrent-downloads={default_aria2c_settings['max_concurrent_downloads']}",
-            "-o", os.path.basename(video_info["file_path"]), "-d", os.path.dirname(video_info["file_path"]),
+            "aria2c", "-c", "-x", str(default_aria2c_settings['max_connection_per_server']), "-s", str(default_aria2c_settings['split']), "-k", str(default_aria2c_settings['piece_size']), f"--file-allocation={default_aria2c_settings['file_allocation']}",
+            f"--max-tries={default_aria2c_settings['max_tries']}", f"--max-concurrent-downloads={default_aria2c_settings['max_concurrent_downloads']}", "-o", os.path.basename(video_info["file_path"]), "-d", os.path.dirname(video_info["file_path"]),
         ]
         for k, v in default_headers.items(): cmd.extend(["--header", f"{k}: {v}"])
         proxies = request_overrides.get("proxies", {}) or {}
@@ -433,47 +424,32 @@ class BaseVideoClient():
         # not deal with video info with errors
         if not video_info.get('download_url') or video_info.get('download_url') == 'NULL': return downloaded_video_infos
         # YouTubeVideoClient use specific downloader (highest-priority)
-        if video_info.get('source') in ['YouTubeVideoClient']: return self._downloadyoutube(
-            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
-        )
+        if video_info.get('source') in ['YouTubeVideoClient']: return self._downloadyoutube(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # CCTVVideoClient use specific downloader (highest-priority)
-        if video_info.get('source') in ['CCTVVideoClient'] and video_info.get('hls_key') in ['hls_h5e_url']: return self._downloadcctv(
-            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
-        )
+        if video_info.get('source') in ['CCTVVideoClient'] and video_info.get('hls_key') in ['hls_h5e_url']: return self._downloadcctv(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # requires merging videos and audios like some third-part video clients and bilibili (highest-priority)
-        if video_info.get('audio_download_url') and video_info.get('audio_download_url') != 'NULL' and video_info.get('audio_ext') in ['m4a', 'mp3', 'aac', 'weba', 'webm']: return self._naivedownloadvideoaudiothenmerge(
-            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
-        )
+        if video_info.get('audio_download_url') and video_info.get('audio_download_url') != 'NULL' and video_info.get('audio_ext') in ['m4a', 'mp3', 'aac', 'weba', 'webm']: return self._naivedownloadvideoaudiothenmerge(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # use ffmpeg to deal with m3u8 likes, auto set according to video_info cues, a naive judgement is applied (high-priority)
         if any((video_info.get('ext', '').lower() in {'m3u8', 'm3u', 'mpd'}, video_info.get('download_url', '').split('?', 1)[0].lower().endswith(('.m3u8', '.m3u', '.mpd')))):
             ext = video_info.get('ext') if video_info.get('ext') in ('mkv',) else 'mp4'
             video_info.update(dict(ext=ext, download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.{ext}')))
         if video_info.get('download_with_ffmpeg') and not ({video_info.get('ext', ''), video_info.get('download_url', '').split('?', 1)[0].rsplit('.', 1)[-1]} & {'txt'}):
-            if shutil.which('N_m3u8DL-RE') and video_info.source not in ['TedVideoClient', 'XinpianchangVideoClient']: video_info['enable_nm3u8dlre'] = True
+            if shutil.which('N_m3u8DL-RE') and (video_info.source not in ['TedVideoClient', 'XinpianchangVideoClient']):
+                video_info['enable_nm3u8dlre'] = True
             elif video_info['enable_nm3u8dlre'] and (not shutil.which('N_m3u8DL-RE')):
-                warning_msg = ('"enable_nm3u8dlre" has been set to True, but N_m3u8DL-RE was not found in the environment variables.' 
-                               'Please visit https://github.com/nilaoda/N_m3u8DL-RE to download and install the version of N_m3u8DL-RE that matches your system,'
-                               'and then add it to your environment variables. Now, we will switch "enable_nm3u8dlre" to False and try downloading again.')
+                warning_msg = ('"enable_nm3u8dlre" has been set to True, but N_m3u8DL-RE was not found in the environment variables.' 'Please visit https://github.com/nilaoda/N_m3u8DL-RE to download and install the version of N_m3u8DL-RE that matches your system,' 'and then add it to your environment variables. Now, we will switch "enable_nm3u8dlre" to False and try downloading again.')
                 video_info['enable_nm3u8dlre'] = False
                 self.logger_handle.warning(f'{self.source}._download >>> {video_info["download_url"]} (Warning: {warning_msg})', disable_print=self.disable_print)
             if video_info.get('enable_nm3u8dlre', False):
-                return self._downloadwithnm3u8dlre(
-                    video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
-                )
+                return self._downloadwithnm3u8dlre(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
             else:
-                return self._downloadwithffmpeg(
-                    video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
-                )
+                return self._downloadwithffmpeg(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # use ffmpeg to deal with .txt files which contain video links (high-priority)
         if (video_info.get('ext') in ['txt'] or video_info.get('download_url').endswith('.txt')) and video_info.get('download_with_ffmpeg', False): 
             video_info.update(dict(ext='mp4', download_with_ffmpeg=True, file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
-            return self._downloadwithffmpegfromlocalfile(
-                video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress
-            )
+            return self._downloadwithffmpegfromlocalfile(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # use aria2c to speed up downloading video files, requires manually set in video_info (medium-priority)
-        if video_info.get('download_with_aria2c', False): return self._downloadwitharia2c(
-            video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides
-        )
+        if video_info.get('download_with_aria2c', False): return self._downloadwitharia2c(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides)
         # prepare
         touchdir(os.path.dirname(video_info['file_path']))
         video_info = copy.deepcopy(video_info)
@@ -487,17 +463,14 @@ class BaseVideoClient():
             resp.raise_for_status()
             content_length = int(float(resp.headers.get("Content-Length", 0) or 0))
             chunk_size = video_info.get('chunk_size', 1024 * 1024)
-            if len(os.path.basename(video_info['file_path'])) > 10:
-                desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10] + '...'}"
-            else:
-                desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10]}"
+            if len(os.path.basename(video_info['file_path'])) > 10: desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10] + '...'}"
+            else: desc_name = f"[{video_info_index+1}] {os.path.basename(video_info['file_path'])[:10]}"
             total_bytes = content_length if content_length > 0 else None
             video_task_id, downloaded_bytes = progress.add_task(desc_name, total=total_bytes, kind="download"), 0
             with open(video_info['file_path'], "wb") as fp:
                 for chunk in resp.iter_content(chunk_size=chunk_size):
                     if not chunk: continue
-                    fp.write(chunk)
-                    downloaded_bytes += len(chunk)
+                    fp.write(chunk); downloaded_bytes += len(chunk)
                     if total_bytes is None: progress.update(video_task_id, total=downloaded_bytes)
                     progress.update(video_task_id, advance=len(chunk))
             downloaded_video_infos.append(video_info)
@@ -523,8 +496,7 @@ class BaseVideoClient():
             overall_task_id = progress.add_task("[bold cyan]Overall videos", total=len(video_infos), kind="overall")
             with ThreadPoolExecutor(max_workers=num_threadings) as executor:
                 futures = [executor.submit(self._download, video_info, vid, downloaded_video_infos, request_overrides, progress) for vid, video_info in enumerate(video_infos)]
-                for _ in as_completed(futures):
-                    progress.update(overall_task_id, advance=1)
+                for _ in as_completed(futures): progress.update(overall_task_id, advance=1)
         # logging
         self.logger_handle.info(f'Finished downloading videos using {self.source}. Valid downloads: {len(downloaded_video_infos)}.', disable_print=self.disable_print)
         # return
