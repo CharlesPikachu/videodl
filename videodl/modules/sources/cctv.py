@@ -55,8 +55,7 @@ class CCTVVideoClient(BaseVideoClient):
             manifest, download_urls = raw_data.get('manifest'), []
             hls_candidates = ['hls_h5e_url', 'hls_url']
             for hls_key in hls_candidates:
-                if raw_data.get(hls_key) or manifest.get(hls_key):
-                    download_urls.append([hls_key, raw_data.get(hls_key) or manifest.get(hls_key)])
+                if raw_data.get(hls_key) or manifest.get(hls_key): download_urls.append([hls_key, raw_data.get(hls_key) or manifest.get(hls_key)])
             hls_key, download_url = download_urls[0]
             resp = self.get(download_url, **request_overrides)
             resp.raise_for_status()

@@ -48,23 +48,16 @@ class CCtalkVideoClient(BaseVideoClient):
             if not sid:
                 video_ids = [parsed_url.path.strip('/').split('/')[-1]]
             else:
-                try:
-                    resp = self.get(f'https://www.cctalk.com/webapi/content/v1.2/series/all_lesson_list?_timestamp={int(time.time() * 1000)}&seriesId={sid}&showStudyTime=true', **request_overrides)
-                    resp.raise_for_status()
-                    all_lesson_list = resp2json(resp=resp)['data']['items']
-                    video_ids = [lesson['contentId'] for lesson in all_lesson_list]
-                except:
-                    video_ids = [parsed_url.path.strip('/').split('/')[-1]]
+                try: (resp := self.get(f'https://www.cctalk.com/webapi/content/v1.2/series/all_lesson_list?_timestamp={int(time.time() * 1000)}&seriesId={sid}&showStudyTime=true', **request_overrides)).raise_for_status(); video_ids = [lesson['contentId'] for lesson in resp2json(resp=resp)['data']['items']]
+                except Exception: video_ids = [parsed_url.path.strip('/').split('/')[-1]]
             # --iter to parse
             for _, video_id in enumerate(video_ids):
                 video_info_page = copy.deepcopy(video_info)
-                try:
-                    resp = self.get(f'https://www.cctalk.com/webapi/content/v1.1/video/detail?videoId={video_id}&seriesId=&_timestamp={int(time.time() * 1000)}', **request_overrides)
-                    resp.raise_for_status()
-                    raw_data = resp2json(resp=resp)
-                    download_url = raw_data['data']['videoUrl']
-                except:
-                    continue
+                try: (resp := self.get(f'https://www.cctalk.com/webapi/content/v1.1/video/detail?videoId={video_id}&seriesId=&_timestamp={int(time.time() * 1000)}', **request_overrides)).raise_for_status()
+                except Exception: continue
+                raw_data = resp2json(resp=resp)
+                download_url = safeextractfromdict(raw_data, ['data', 'videoUrl'], '')
+                if not download_url or not download_url.startswith('http'): continue
                 video_info_page.update(dict(raw_data=raw_data))
                 video_info_page.update(dict(download_url=download_url))
                 video_title = raw_data['data'].get('videoName', null_backup_title)

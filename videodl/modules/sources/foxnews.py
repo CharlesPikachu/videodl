@@ -9,7 +9,7 @@ WeChat Official Account (微信公众号):
 import os
 import re
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, resp2json, searchdictbykey, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, searchdictbykey, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''FoxNewsVideoClient'''
@@ -17,12 +17,8 @@ class FoxNewsVideoClient(BaseVideoClient):
     source = 'FoxNewsVideoClient'
     def __init__(self, **kwargs):
         super(FoxNewsVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -36,27 +32,18 @@ class FoxNewsVideoClient(BaseVideoClient):
         # try parse
         try:
             re_patterns = [r'https?://(?:www\.)?foxnews\.com/video/(?P<id>\d+)', r'https?://video\.(?:insider\.)?fox(?:news|business)\.com/v/(?:video-embed\.html\?video_id=)?(?P<id>\d+)']
-            for re_pattern in re_patterns:
-                try:
-                    video_id = re.compile(re_pattern).match(url).group('id')
-                    break
-                except:
-                    continue
-            resp = self.get(f'https://api.foxnews.com/v3/video-player/{video_id}?callback=uid_{video_id}', **request_overrides)
-            resp.raise_for_status()
+            video_id = next((m.group('id') for p in re_patterns if (m := re.match(p, url)) and 'id' in m.groupdict()), None)
+            (resp := self.get(f'https://api.foxnews.com/v3/video-player/{video_id}?callback=uid_{video_id}', **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             download_url = searchdictbykey(raw_data, 'media-content')[0][0]['@attributes']['url']
             video_info.update(dict(download_url=download_url))
             video_title = searchdictbykey(raw_data, 'media-title')
             video_title = legalizestring(video_title[0] if video_title else null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_id,
-            ))
+            cover_url = safeextractfromdict(raw_data, ['channel', 'item', 'media-group', 'media-thumbnail', '@attributes', 'url'], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_id, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

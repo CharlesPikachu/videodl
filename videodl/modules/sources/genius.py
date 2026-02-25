@@ -11,7 +11,7 @@ import re
 import copy
 import json_repair
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, searchdictbykey, yieldtimerelatedtitle, FileTypeSniffer, BrightcoveSmuggler, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, searchdictbykey, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, BrightcoveSmuggler, VideoInfo
 
 
 '''GeniusVideoClient'''
@@ -19,12 +19,8 @@ class GeniusVideoClient(BaseVideoClient):
     source = 'GeniusVideoClient'
     def __init__(self, **kwargs):
         super(GeniusVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -39,8 +35,7 @@ class GeniusVideoClient(BaseVideoClient):
         try:
             m = re.compile(r'https?://(?:www\.)?genius\.com/(?:videos|(?P<article>a))/(?P<id>[^?/#]+)').match(url)
             video_title = m.group("id")
-            resp = self.get(url, **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(url, **request_overrides)).raise_for_status()
             resp.encoding = 'utf-8'
             m = re.search(r'["\']brightcove_video_id["\']\s*[:,]\s*(?:\[\s*)?["\'](\d{6,})["\']', resp.text, flags=re.DOTALL)
             if not m: m = re.search(r'"provider"\s*:\s*"brightcove"[^}]*?"provider_id"\s*:\s*"(\d{6,})"', resp.text, flags=re.DOTALL)
@@ -53,9 +48,7 @@ class GeniusVideoClient(BaseVideoClient):
             app_config = json_repair.loads(app_config)
             account_id = app_config.get('brightcove_account_id', '4863540648001')
             keys = ["brightcove_standard_web_player_id", "brightcove_standard_no_autoplay_web_player_id", "brightcove_modal_web_player_id", "brightcove_song_story_web_player_id"]
-            for key in keys:
-                player_id = searchdictbykey(app_config, key)
-                if player_id: break
+            player_id = next((pid for key in keys if (pid := searchdictbykey(app_config, key))), None)
             player_id = player_id[0] if player_id else "S1ZcmcOC1x"
             player_url = f"https://players.brightcove.net/{account_id}/{player_id}_default/index.html?videoId={video_id}"
             player_url = BrightcoveSmuggler.smuggleurl(player_url, {'referrer': url})
@@ -67,13 +60,10 @@ class GeniusVideoClient(BaseVideoClient):
             download_url = raw_data['formats'][0]['url']
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_id,
-            ))
+            cover_url = safeextractfromdict(raw_data, ['raw', 'poster'], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_id, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

@@ -539,6 +539,13 @@ class BaseVideoClient():
         # judge and return according to valid domains
         if not domain or not valid_domains: return False
         return hostmatchessuffix(domain, valid_domains)
+    '''_autosetproxies'''
+    def _autosetproxies(self):
+        if self.auto_set_proxies:
+            try: self.session.proxies = self.proxied_session_client.getrandomproxy()
+            except Exception as err: self.logger_handle.error(f'{self.source}._autosetproxies >>> freeproxy lib failed to auto fetch proxies (Error: {err})', disable_print=self.disable_print); self.session.proxies = {}
+        else:
+            self.session.proxies = {}
     '''get'''
     def get(self, url, **kwargs):
         if 'cookies' not in kwargs: kwargs['cookies'] = self.default_cookies
@@ -548,21 +555,10 @@ class BaseVideoClient():
             if not self.maintain_session:
                 self._initsession()
                 if self.random_update_ua: self.session.headers.update({'User-Agent': UserAgent().random})
-            if self.auto_set_proxies:
-                try:
-                    self.session.proxies = self.proxied_session_client.getrandomproxy()
-                except Exception as err:
-                    self.logger_handle.error(f'{self.source}.get >>> {url} (Error: {err})', disable_print=self.disable_print)
-                    self.session.proxies = {}
-            else:
-                self.session.proxies = {}
+            self._autosetproxies()
             proxies = kwargs.pop('proxies', None) or self.session.proxies
-            try:
-                resp = self.session.get(url, proxies=proxies, **kwargs)
-                resp.raise_for_status()
-            except Exception as err:
-                self.logger_handle.error(f'{self.source}.get >>> {url} (Error: {err})', disable_print=self.disable_print)
-                continue
+            try: (resp := self.session.get(url, proxies=proxies, **kwargs)).raise_for_status()
+            except Exception as err: self.logger_handle.error(f'{self.source}.get >>> {url} (Error: {err}; status={getattr(locals().get("resp"), "status_code", None)})', disable_print=self.disable_print); continue
             return resp
         return resp
     '''post'''
@@ -574,21 +570,10 @@ class BaseVideoClient():
             if not self.maintain_session:
                 self._initsession()
                 if self.random_update_ua: self.session.headers.update({'User-Agent': UserAgent().random})
-            if self.auto_set_proxies:
-                try:
-                    self.session.proxies = self.proxied_session_client.getrandomproxy()
-                except Exception as err:
-                    self.logger_handle.error(f'{self.source}.post >>> {url} (Error: {err})', disable_print=self.disable_print)
-                    self.session.proxies = {}
-            else:
-                self.session.proxies = {}
+            self._autosetproxies()
             proxies = kwargs.pop('proxies', None) or self.session.proxies
-            try:
-                resp = self.session.post(url, proxies=proxies, **kwargs)
-                resp.raise_for_status()
-            except Exception as err:
-                self.logger_handle.error(f'{self.source}.post >>> {url} (Error: {err})', disable_print=self.disable_print)
-                continue
+            try: (resp := self.session.post(url, proxies=proxies, **kwargs)).raise_for_status()
+            except Exception as err: self.logger_handle.error(f'{self.source}.post >>> {url} (Error: {err}; status={getattr(locals().get("resp"), "status_code", None)})', disable_print=self.disable_print); continue
             return resp
         return resp
     '''_savetopkl'''

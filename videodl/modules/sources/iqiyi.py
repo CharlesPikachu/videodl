@@ -24,21 +24,14 @@ class IQiyiVideoClient(BaseVideoClient):
     source = 'IQiyiVideoClient'
     def __init__(self, **kwargs):
         super(IQiyiVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', 
-            'Accept-Encoding': 'gzip, deflate, br', 'Accept': '*/*', 'Connection': 'keep-alive'
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36', 'Accept-Encoding': 'gzip, deflate, br', 'Accept': '*/*', 'Connection': 'keep-alive'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''_calcsign'''
     def _calcsign(self, params: dict, secret_key: str = "howcuteitis"):
         query, ks = "", sorted(params.keys())
-        for k in ks:
-            q = k + "=" + str(params[k])
-            query += q + "&"
+        for k in ks: query += (k + "=" + str(params[k])) + "&"
         query = query[:-1]
         return hashlib.md5((query + "&secret_key=" + secret_key).encode("utf-8")).hexdigest().upper()
     '''_generatedeviceid'''
@@ -49,9 +42,9 @@ class IQiyiVideoClient(BaseVideoClient):
         return device_id
     '''_calcvf'''
     def _calcvf(self, url):
-        def _ovappend(e): return e + ''.join(chr(((70*t+677*i+21*n+87*t*i*n+59)%30) + (48 if ((70*t+677*i+21*n+87*t*i*n+59)%30) < 9 else 88)) for t in range(4) for i in range(2) for n in range(4))
+        ovappend_func = lambda e: e + ''.join(chr(((70*t + 677*i + 21*n + 87*t*i*n + 59) % 30) + (48 if ((70*t + 677*i + 21*n + 87*t*i*n + 59) % 30) < 9 else 88)) for t in range(4) for i in range(2) for n in range(4))
         path_n_query = re.sub(r"^(https?://)?cache\.video\.iqiyi\.com", "", url, flags=re.IGNORECASE)
-        return hashlib.md5(_ovappend(path_n_query).encode('utf-8')).hexdigest()
+        return hashlib.md5(ovappend_func(path_n_query).encode('utf-8')).hexdigest()
     '''_authkey'''
     def _authkey(self, tm, tvid):
         giveaway = hashlib.md5("".encode('utf-8')).hexdigest()
@@ -70,20 +63,12 @@ class IQiyiVideoClient(BaseVideoClient):
             # --tvid
             headers = copy.deepcopy(self.default_headers)
             headers.update({'referer': url})
-            resp = self.get('https://mesh.if.iqiyi.com/player/lw/lwplay/accelerator.js?apiVer=3', headers=headers, **request_overrides)
-            resp.raise_for_status()
-            resp.encoding = 'utf-8'
+            (resp := self.get('https://mesh.if.iqiyi.com/player/lw/lwplay/accelerator.js?apiVer=3', headers=headers, **request_overrides)).raise_for_status(); resp.encoding = 'utf-8'
             tvid = re.compile(r"\"tvid\":\s*(?P<tvid>\d+)", re.MULTILINE | re.DOTALL | re.IGNORECASE).search(resp.text).group('tvid')
             # --basic info
-            params = {
-                'entity_id': int(tvid), 'device_id': device_id, 'auth_cookie': '', 'pcv': '13.062.22175', 'app_version': '13.062.22175',
-                'ext': '', 'app_mode': 'standard', 'scale': 125, 'timestamp': int(time.time() * 1000), 'src': 'pca_tvg', 'os': '', 'conduit_id': ''
-            }
-            sign = self._calcsign(params)
-            params['sign'] = sign
-            resp = self.get('https://mesh.if.iqiyi.com/tvg/v2/lw/base_info', params=params, **request_overrides)
-            resp.raise_for_status()
-            resp.encoding = 'utf-8'
+            params = {'entity_id': int(tvid), 'device_id': device_id, 'auth_cookie': '', 'pcv': '13.062.22175', 'app_version': '13.062.22175', 'ext': '', 'app_mode': 'standard', 'scale': 125, 'timestamp': int(time.time() * 1000), 'src': 'pca_tvg', 'os': '', 'conduit_id': ''}
+            params['sign'] = self._calcsign(params)
+            (resp := self.get('https://mesh.if.iqiyi.com/tvg/v2/lw/base_info', params=params, **request_overrides)).raise_for_status(); resp.encoding = 'utf-8'
             raw_data = resp2json(resp=resp)
             # --video title
             video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'base_data', 'title'], "") or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
@@ -95,10 +80,8 @@ class IQiyiVideoClient(BaseVideoClient):
             # ----tv
             else:
                 videos = [vd['videos'] for vd in data_details if vd['videos'] and not isinstance(vd['videos'], str)][0]
-                if isinstance(videos, dict):
-                    vis = [vi for part, vi_lst in sorted(videos['feature_paged'].items(), key=lambda x: int(x[0].split('-')[0])) for vi in vi_lst]
-                else:
-                    vis = [vi for vd in sorted(videos, key=lambda x: int(x['title'].split('-')[0])) for vi in vd['data']]
+                if isinstance(videos, dict): vis = [vi for part, vi_lst in sorted(videos['feature_paged'].items(), key=lambda x: int(x[0].split('-')[0])) for vi in vi_lst]
+                else: vis = [vi for vd in sorted(videos, key=lambda x: int(x['title'].split('-')[0])) for vi in vd['data']]
                 ep, normal_ids = 1, []
                 for vi in vis:
                     if 0 < vi['album_order'] != ep: ep = vi['album_order']
@@ -112,34 +95,24 @@ class IQiyiVideoClient(BaseVideoClient):
             for bid in list(qualities.values()):
                 if bid in bid_tried: continue
                 bid_tried.add(bid)
-                params = {
-                    'tvid': vinfo_hit_tvid['V'], 'bid': bid, 'vid': '', 'src': '01010031010000000000', 'vt': 0, 'rs': 1, 'uid': '', 'ori': 'pcw', 'ps': 1,
-                    'k_uid': device_id, 'pt': 0, 'd': 0, 's': '', 'lid': 0, 'cf': 0, 'ct': 0, 'authKey': self._authkey(tm, vinfo_hit_tvid['V']), 'k_tag': 1, 'dfp': '',
-                    'locale': 'zh_cn', 'pck': '', 'k_err_retries': 0, 'up': '', 'qd_v': 'a1', 'tm': tm, 'k_ft1': '706436220846084', 'k_ft4': '1162321298202628',
-                    'k_ft5': '150994945', 'k_ft7': '4', 'fr_300': '120_120_120_120_120_120', 'fr_500': '120_120_120_120_120_120', 'fr_600': '120_120_120_120_120_120',
-                    'fr_800': '120_120_120_120_120_120', 'fr_1020': '120_120_120_120_120_120', 'bop': quote('{"version":"10.0","dfp":"","b_ft1":28}'), 'sr': 1, 'ost': 0, 'ut': 0
-                }
+                params = {'tvid': vinfo_hit_tvid['V'], 'bid': bid, 'vid': '', 'src': '01010031010000000000', 'vt': 0, 'rs': 1, 'uid': '', 'ori': 'pcw', 'ps': 1, 'k_uid': device_id, 'pt': 0, 'd': 0, 's': '', 'lid': 0, 'cf': 0, 'ct': 0, 'authKey': self._authkey(tm, vinfo_hit_tvid['V']), 'k_tag': 1, 'dfp': '', 'locale': 'zh_cn', 'pck': '', 'k_err_retries': 0, 'up': '', 'qd_v': 'a1', 'tm': tm, 'k_ft1': '706436220846084', 'k_ft4': '1162321298202628', 'k_ft5': '150994945', 'k_ft7': '4', 'fr_300': '120_120_120_120_120_120', 'fr_500': '120_120_120_120_120_120', 'fr_600': '120_120_120_120_120_120', 'fr_800': '120_120_120_120_120_120', 'fr_1020': '120_120_120_120_120_120', 'bop': quote('{"version":"10.0","dfp":"","b_ft1":28}'), 'sr': 1, 'ost': 0, 'ut': 0}
                 params['vf'] = self._calcvf('/dash?' + urlencode(params))
                 try:
-                    resp = self.get('https://cache.video.iqiyi.com/dash', params=params, **request_overrides)
-                    resp.raise_for_status()
-                    resp.encoding = 'utf-8'
+                    (resp := self.get('https://cache.video.iqiyi.com/dash', params=params, **request_overrides)).raise_for_status(); resp.encoding = 'utf-8'
                     raw_data['cache.video.iqiyi.com/dash'] = resp2json(resp=resp)
                     video_info.update(dict(raw_data=raw_data))
                     vd = [vd for vd in sorted(raw_data['cache.video.iqiyi.com/dash']['data']['program']['video'], key=lambda x: x['bid'], reverse=True) if vd.get('m3u8') and vd['ff'] != 'dash'][0]
                     download_url = os.path.join(self.work_dir, self.source, f'{tvid}.m3u8')
                     touchdir(os.path.dirname(download_url))
                     with open(download_url, 'w') as fp: fp.write(vd['m3u8'])
-                    video_info.update(download_url=download_url)
-                    break
-                except:
+                    video_info.update(download_url=download_url); break
+                except Exception:
                     continue
             # --misc
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=tvid))
+            cover_url = safeextractfromdict(raw_data, ['data', 'base_data', 'image_url'], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=tvid, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

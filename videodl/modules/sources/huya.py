@@ -9,7 +9,7 @@ WeChat Official Account (微信公众号):
 import os
 import re
 from .base import BaseVideoClient
-from ..utils import legalizestring, resp2json, useparseheaderscookies, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, resp2json, useparseheaderscookies, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''HuyaVideoClient'''
@@ -17,13 +17,8 @@ class HuyaVideoClient(BaseVideoClient):
     source = 'HuyaVideoClient'
     def __init__(self, **kwargs):
         super(HuyaVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-            'Referer': 'https://v.huya.com/',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'Referer': 'https://v.huya.com/'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -34,32 +29,23 @@ class HuyaVideoClient(BaseVideoClient):
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
         null_backup_title = yieldtimerelatedtitle(self.source)
+        quality_key_func = lambda d: (int(d.get("width", 0)) * int(d.get("height", 0)), int(d.get("definition", 0)), int(d.get("size", 0)))
         # try parse
         try:
             vid = re.search(r"\/(\d+).html", url).group(1)
-            resp = self.get(f"https://liveapi.huya.com/moment/getMomentContent?videoId={vid}", **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(f"https://liveapi.huya.com/moment/getMomentContent?videoId={vid}", **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
-            def _qualitykey(d):
-                w, h = int(d.get("width", 0)), int(d.get("height", 0))
-                res = w * h
-                definition = int(d.get("definition", 0))
-                size = int(d.get("size", 0))
-                return (res, definition, size)
             candidate_urls = raw_data["data"]["moment"]["videoInfo"]['definitions']
-            candidate_urls = [u for u in candidate_urls if u.get('url') or u.get('m3u8')]
-            candidate_urls = sorted(candidate_urls, key=_qualitykey, reverse=True)
+            candidate_urls = [u for u in candidate_urls if isinstance(u, dict) and (u.get('url') or u.get('m3u8'))]
+            candidate_urls = sorted(candidate_urls, key=quality_key_func, reverse=True)
             download_url = candidate_urls[0].get('url') or candidate_urls[0].get('m3u8')
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(raw_data["data"]["moment"]["videoInfo"].get('videoTitle', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid
-            ))
+            cover_url = safeextractfromdict(raw_data, ['data', 'moment', 'videoInfo', 'videoCover'], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
