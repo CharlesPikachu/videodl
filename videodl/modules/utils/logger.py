@@ -14,17 +14,8 @@ from prettytable import PrettyTable
 from platformdirs import user_log_dir
 
 
-'''predefined colors in terminal'''
-COLORS = {
-    'red': '\033[31m',
-    'green': '\033[32m',
-    'yellow': '\033[33m',
-    'blue': '\033[34m',
-    'pink': '\033[35m',
-    'cyan': '\033[36m',
-    'highlight': '\033[93m',
-    'number': '\033[96m',
-}
+'''settings'''
+COLORS = {'red': '\033[31m', 'green': '\033[32m', 'yellow': '\033[33m', 'blue': '\033[34m', 'pink': '\033[35m', 'cyan': '\033[36m', 'highlight': '\033[93m', 'number': '\033[96m'}
 
 
 '''LoggerHandle'''
@@ -38,10 +29,7 @@ class LoggerHandle():
         log_file_path = os.path.join(log_dir, "videodl.log")
         self.log_file_path = log_file_path
         # config logging
-        logging.basicConfig(
-            level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-            handlers=[logging.FileHandler(log_file_path, encoding="utf-8"), logging.StreamHandler()]
-        )
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", handlers=[logging.FileHandler(log_file_path, encoding="utf-8"), logging.StreamHandler()])
     '''log'''
     @staticmethod
     def log(level, message):
@@ -71,8 +59,7 @@ class LoggerHandle():
             fp = open(self.log_file_path, 'a', encoding='utf-8')
             fp.write(message + '\n')
         else:
-            if '\033[31m' not in message:
-                message = colorize(message, 'red')
+            if '\033[31m' not in message: message = colorize(message, 'red')
             LoggerHandle.log(logging.WARNING, message)
     '''error'''
     def error(self, message, disable_print=False):
@@ -81,8 +68,7 @@ class LoggerHandle():
             fp = open(self.log_file_path, 'a', encoding='utf-8')
             fp.write(message + '\n')
         else:
-            if '\033[31m' not in message:
-                message = colorize(message, 'red')
+            if '\033[31m' not in message: message = colorize(message, 'red')
             LoggerHandle.log(logging.ERROR, message)
 
 

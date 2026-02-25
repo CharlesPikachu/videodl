@@ -39,25 +39,17 @@ class BrightcoveSmuggler():
         account_id, player_id, video_id = BrightcoveSmuggler._parseplayerurl(player_url)
         policy_key = BrightcoveSmuggler._fetchpolicykey(session=session, player_url=player_url, request_overrides=request_overrides)
         api_url = f'https://edge.api.brightcove.com/playback/v1/accounts/{account_id}/videos/{video_id}'
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-            'Accept': f'application/json;pk={policy_key}',
-            'BCOV-Policy': policy_key,
-            'Origin': 'https://players.brightcove.net',
-            'Referer': player_url,
-        }
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'Accept': f'application/json;pk={policy_key}', 'BCOV-Policy': policy_key, 'Origin': 'https://players.brightcove.net', 'Referer': player_url}
         request_overrides.pop('headers')
         resp = session.get(api_url, headers=headers, **request_overrides)
         resp.raise_for_status()
         data = resp2json(resp=resp)
         formats = []
         for s in data.get('sources', []):
+            if not isinstance(s, dict): continue
             src = s.get('src')
             if not src: continue
-            fmt = {
-                'url': src, 'type': s.get('type'), 'container': s.get('container'), 'codec': s.get('codec') or s.get('codecs'), 'height': s.get('height'),
-                'width': s.get('width'), 'avg_bitrate': s.get('avg_bitrate') or s.get('bitrate'),
-            }
+            fmt = {'url': src, 'type': s.get('type'), 'container': s.get('container'), 'codec': s.get('codec') or s.get('codecs'), 'height': s.get('height'), 'width': s.get('width'), 'avg_bitrate': s.get('avg_bitrate') or s.get('bitrate')}
             formats.append(fmt)
         formats.sort(key=lambda f: (f.get('height') or 0, f.get('avg_bitrate') or 0), reverse=True)
         return {'id': data.get('id') or video_id, 'title': data.get('name'), 'formats': formats, 'raw': data, 'player_url': player_url}
