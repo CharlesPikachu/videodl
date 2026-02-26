@@ -14,7 +14,7 @@ import urllib.parse
 from .base import BaseVideoClient
 from dataclasses import dataclass, asdict
 from typing import Optional, List, Dict, Any
-from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''RedditMediaInfo'''
@@ -24,6 +24,7 @@ class RedditMediaInfo:
     display_id: str
     title: str
     alt_title: str
+    cover_url: str
     subreddit: Optional[str]
     author: Optional[str]
     over_18: bool
@@ -67,6 +68,7 @@ class RedditVideoClient(BaseVideoClient):
         # basic parse
         request_overrides = request_overrides or {}
         js = self._fetchpostjson(url, request_overrides=request_overrides)
+        cover_url: str = safeextractfromdict(js, [0, 'data', 'children', 0, 'data', 'thumbnail'], None)
         data: dict = js[0]["data"]["children"][0]["data"]
         post_id, title = data.get("id") or "", data.get("title") or ""
         display_id, alt_title = data.get("name") or post_id, title
@@ -101,10 +103,7 @@ class RedditVideoClient(BaseVideoClient):
         elif is_playlist:
             video_id = None
         # return
-        return RedditMediaInfo(
-            post_id=post_id, display_id=display_id, title=title, alt_title=alt_title, subreddit=subreddit, author=author, over_18=over_18, duration=duration, video_id=video_id, 
-            hls_url=hls_url, dash_url=dash_url, fallback_url=fallback_url, is_playlist=is_playlist, playlist_items=playlist_items or None,
-        )
+        return RedditMediaInfo(cover_url=cover_url, post_id=post_id, display_id=display_id, title=title, alt_title=alt_title, subreddit=subreddit, author=author, over_18=over_18, duration=duration, video_id=video_id, hls_url=hls_url, dash_url=dash_url, fallback_url=fallback_url, is_playlist=is_playlist, playlist_items=playlist_items or None)
     '''_augmenthlsquery'''
     def _augmenthlsquery(self, url: str) -> str:
         if not url: return url
@@ -142,15 +141,10 @@ class RedditVideoClient(BaseVideoClient):
                     elif dash_url: hls_url = dash_url
                     if not hls_url: continue
                     video_title = legalizestring(f'ep{len(video_infos)+1}-{media.title or null_backup_title}', replace_null_string=null_backup_title).removesuffix('.')
-                    guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                        url=hls_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-                    )
+                    guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=hls_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                     ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
                     video_info_page = copy.deepcopy(video_info)
-                    video_info_page.update(dict(
-                        raw_data=item, download_url=hls_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext,
-                        guess_video_ext_result=guess_video_ext_result, identifier=vid, enable_nm3u8dlre=True
-                    ))
+                    video_info_page.update(dict(raw_data=item, download_url=hls_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, enable_nm3u8dlre=True, cover_url=media.cover_url))
                     video_infos.append(video_info_page)
             else:
                 download_url = media.hls_url or media.dash_url
@@ -158,14 +152,9 @@ class RedditVideoClient(BaseVideoClient):
                 elif media.fallback_url: download_url = media.fallback_url
                 else: raise Exception
                 video_title = legalizestring(media.title or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                    url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-                )
+                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-                video_info.update(dict(
-                    raw_data=asdict(media), download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext,
-                    guess_video_ext_result=guess_video_ext_result, identifier=media.post_id or media.display_id or video_title, enable_nm3u8dlre=True
-                ))
+                video_info.update(dict(raw_data=asdict(media), download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=media.post_id or media.display_id or video_title, enable_nm3u8dlre=True, cover_url=media.cover_url))
                 video_infos.append(video_info)
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
