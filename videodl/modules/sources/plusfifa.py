@@ -12,7 +12,7 @@ from pathlib import Path
 from .base import BaseVideoClient
 from ..utils import initcdm, closecdm
 from urllib.parse import urlparse, parse_qs
-from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, resp2json, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, resp2json, safeextractfromdict, VideoInfo
 
 
 '''PlusFIFAVideoClient'''
@@ -96,9 +96,8 @@ class PlusFIFAVideoClient(BaseVideoClient):
             raw_data['LICENSE_URL_RESPONSE'] = licence.content
             video_info.update(dict(raw_data=raw_data))
             key = list(set(closecdm(cdm, cdm_session_id, licence.content)))[0]
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info.ext}'), identifier=video_id, nm3u8dlre_settings={'key': key}
-            ))
+            cover_url = safeextractfromdict(raw_data, ['CONTENTS_URL_RESPONSE', 'backdropUrl'], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info.ext}'), identifier=video_id, nm3u8dlre_settings={'key': key}, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

@@ -9,7 +9,7 @@ WeChat Official Account (微信公众号):
 import os
 import re
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''PipixVideoClient'''
@@ -17,12 +17,8 @@ class PipixVideoClient(BaseVideoClient):
     source = 'PipixVideoClient'
     def __init__(self, **kwargs):
         super(PipixVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -36,26 +32,19 @@ class PipixVideoClient(BaseVideoClient):
         # try parse
         try:
             item_id = re.findall(r'item/(\d+)', url)[0]
-            resp = self.get(f"https://api.pipix.com/bds/cell/cell_comment/?offset=0&cell_type=1&api_version=1&cell_id={item_id}&ac=wifi&channel=huawei_1319_64&aid=1319&app_name=super", **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(f"https://api.pipix.com/bds/cell/cell_comment/?offset=0&cell_type=1&api_version=1&cell_id={item_id}&ac=wifi&channel=huawei_1319_64&aid=1319&app_name=super", **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             data: dict = raw_data["data"]["cell_comments"][0]["comment_info"]["item"]
             author_id, download_url = data["author"]["id"], ""
-            for comment in data.get("comments", []):
-                if comment["item"]["author"]["id"] == author_id and comment["item"]["video"]["video_high"]["url_list"][0]["url"]:
-                    download_url = comment["item"]["video"]["video_high"]["url_list"][0]["url"]
-                    if download_url: break
+            download_url = next((u for c in data.get("comments", []) if c.get("item", {}).get("author", {}).get("id") == author_id and (u := (((c.get("item", {}).get("video", {}).get("video_high", {}).get("url_list") or [{}])[0]).get("url")))), None)
             if not download_url: download_url = data["video"]["video_high"]["url_list"][0]["url"]
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(data.get('content', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies, skip_urllib_parse=True)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=item_id
-            ))
+            cover_url = safeextractfromdict(raw_data, ['data', 'cell_comments', 0, 'comment_info', 'item', 'cover', 'url_list', 0, 'url'], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=item_id, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

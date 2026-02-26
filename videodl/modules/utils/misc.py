@@ -254,6 +254,12 @@ class SpinWithBackoff:
 
 '''FileTypeSniffer'''
 class FileTypeSniffer:
+    COMMON_VIDEO_EXTS = (
+        "3g2", "3gp", "3gp2", "3gpp", "3gpp2", "amv", "apng", "asf", "avi", "avc", "avs", "avs2", "c2", "cdxl", "cgi", "cif", "dif", "dv", "f4p", "f4v", "flv", "gif", "gifv", "mng",
+        "h261", "h263", "h264", "h265", "h26l", "hevc", "idf", "ism", "isma", "ismv", "j2k", "m2p", "m2ts", "m2v", "mts", "ts", "m4v", "mj2", "mjpeg", "mjpg", "mk3d", "mks", "mkv", 
+        "mov", "mp4", "mp4v", "mpe", "mpeg", "mpg", "mpv", "mpo", "mvi", "mxf", "nsv", "obu", "ogg", "ogm", "ogv", "psp", "qcif", "rgb", "rm", "rmvb", "roq", "rrc", "svi", "v210", 
+        "vc1", "vob", "webm", "wmv", "yuv", "yuv10",
+    )
     '''getfileextensionfromurl'''
     @staticmethod
     def getfileextensionfromurl(url: str, headers: dict = None, cookies: dict = None, request_overrides: dict = None, skip_urllib_parse: bool = False):
@@ -265,7 +271,7 @@ class FileTypeSniffer:
         # urllib.parse
         if not skip_urllib_parse:
             ext = os.path.splitext(urlparse(url).path)[-1]
-            if ext:
+            if ext and (ext.strip('. ') in FileTypeSniffer.COMMON_VIDEO_EXTS):
                 outputs.update(dict(ext=ext.strip('. '), sniffer='urllib.parse', ok=True))
                 return outputs
         # requests.head
@@ -273,7 +279,7 @@ class FileTypeSniffer:
         content_type = resp.headers.get('Content-Type', '').split(';')[0]
         if content_type:
             ext = mimetypes.guess_extension(content_type)
-            if ext:
+            if ext and (ext.strip('. ') in FileTypeSniffer.COMMON_VIDEO_EXTS):
                 outputs.update(dict(ext=ext.strip('. '), sniffer='requests.head', ok=True))
                 return outputs
         # requests.get.stream
@@ -281,7 +287,7 @@ class FileTypeSniffer:
         content_type = resp.headers.get('Content-Type', '').split(';')[0]
         if content_type:
             ext = mimetypes.guess_extension(content_type)
-            if ext:
+            if ext and (ext.strip('. ') in FileTypeSniffer.COMMON_VIDEO_EXTS):
                 outputs.update(dict(ext=ext.strip('. '), sniffer='requests.get.stream', ok=True))
                 return outputs
         # return
