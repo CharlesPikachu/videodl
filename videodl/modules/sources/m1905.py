@@ -34,12 +34,9 @@ class M1905VideoClient(BaseVideoClient):
         self._initsession()
     '''_randomstring'''
     def _randomstring(self):
-        def _translate(c):
-            n = math.floor(16 * random.random())
-            t = "{:x}".format(n) if 'x' == c else "{:x}".format(3 & n | 8) if 'y' == c else c
-            return t
+        translate_func = lambda c: (lambda n: ("{:x}".format(n) if c == "x" else "{:x}".format((3 & n) | 8) if c == "y" else c))(math.floor(16 * random.random()))
         random.seed()
-        return ''.join(map(_translate, "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"))
+        return ''.join(map(translate_func, "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"))
     '''_randomplayerid'''
     def _randomplayerid(self):
         return self._randomstring().replace('-', '')[5: 20]
@@ -47,9 +44,7 @@ class M1905VideoClient(BaseVideoClient):
     def _signature(self, params: dict, appid: str = "dde3d61a0411511d"):
         query, ks = "", sorted(params.keys())
         for k in ks:
-            if k != "signature":
-                q = k + "=" + quote(str(params[k]), safe="")
-                query += "&" + q if query else q
+            if k != "signature": q = k + "=" + quote(str(params[k]), safe=""); query += "&" + q if query else q
         return hashlib.sha1((query + "." + appid).encode("utf-8")).hexdigest()
     '''_parsebasicinfo'''
     def _parsebasicinfo(self, cvurl, request_overrides: dict = None):
@@ -59,9 +54,7 @@ class M1905VideoClient(BaseVideoClient):
         resp.encoding = 'utf-8'
         html_str = resp.text
         year_match = re.compile(r"header-wrapper-h1.*?\(\s*(\d+)\s*\)", re.MULTILINE | re.DOTALL | re.IGNORECASE).search(resp.text)
-        if year_match:
-            year = year_match.group(1)
-            html_str = html_str[year_match.end(0):]
+        if year_match: year = year_match.group(1); html_str = html_str[year_match.end(0):]
         cover_match = re.compile(
             r"class\s*=\s*\"\s*watch-online.+?正片.+?(<ul\s+class\s*=\s*\"watch-online-list.*?</ul>)", re.MULTILINE | re.DOTALL | re.IGNORECASE
         ).search(html_str)
@@ -77,19 +70,16 @@ class M1905VideoClient(BaseVideoClient):
         resp.raise_for_status()
         resp.encoding, year = 'utf-8', ""
         html_str = resp.text
+        image_url = re.search(r'thumb\s*:\s*"(.*?)"', html_str)
+        if image_url: image_url = image_url.group(1)
         year_match = re.compile(r"playerBox-info-year.*?\(\s*(\d+)\s*\)", re.MULTILINE | re.DOTALL | re.IGNORECASE).search(html_str)
-        if year_match:
-            year = year_match.group(1)
-            html_str = html_str[year_match.end(0):]
+        if year_match: year = year_match.group(1); html_str = html_str[year_match.end(0):]
         conf_pattern = re.compile(r"(?:VODCONFIG|VIDEOCONFIG).*vid\s*:\s*\"(?P<vid>\d+)\".*?(?<!vip)title\s*:\s*\"(?P<title>.*?)\".*?apikey\s*:\s*\"(?P<apikey>.*?)\"", re.MULTILINE | re.DOTALL | re.IGNORECASE)
         conf_match = conf_pattern.search(html_str)
         api_key = conf_match.group('apikey')
         cover_id_match = re.search(r"mdbfilmid\s*:\s*\"(\d+)\"", conf_match.group(0), flags=re.MULTILINE | re.DOTALL | re.IGNORECASE)
         cover_id = cover_id_match.group(1) if cover_id_match else ""
-        basic_info = {
-            'title': conf_match.group('title'), 'year': year, 'cover_id': cover_id, 'type': 'MOVIE', 'api_key': api_key,
-            'normal_ids': [dict(V=conf_match.group('vid'), E=1, defns={}, free=True, vip=False, url=epurl)]
-        }
+        basic_info = {'image_url': image_url, 'title': conf_match.group('title'), 'year': year, 'cover_id': cover_id, 'type': 'MOVIE', 'api_key': api_key, 'normal_ids': [dict(V=conf_match.group('vid'), E=1, defns={}, free=True, vip=False, url=epurl)]}
         return basic_info
     '''_parsehdbasicinfo'''
     def _parsehdbasicinfo(self, epurl: str, request_overrides: dict = None):
@@ -102,10 +92,7 @@ class M1905VideoClient(BaseVideoClient):
         )
         conf_match = pattern.search(resp.text)
         if conf_match:
-            basic_info = {
-                'title': conf_match.group('title'), 'year': conf_match.group('year'), 'cover_id': conf_match.group('cover_id'), 'type': 'MOVIE', 'api_key': '',
-                'normal_ids': [dict(V=epurl.split('/')[-1].split('.')[0], E=1, defns={}, free=False, vip=True, url=epurl)]
-            }
+            basic_info = {'title': conf_match.group('title'), 'year': conf_match.group('year'), 'cover_id': conf_match.group('cover_id'), 'type': 'MOVIE', 'api_key': '', 'normal_ids': [dict(V=epurl.split('/')[-1].split('.')[0], E=1, defns={}, free=False, vip=True, url=epurl)]}
         else:
             cover_match = re.compile(r"<div\s+id=\"dramaList\">.+?(?P<dramalist><ul\s+.*?</ul>)\s*</div>", re.MULTILINE | re.DOTALL | re.IGNORECASE).search(resp.text)
             pattern1 = re.compile(r"(?<!<!--)<h4\s+class=\"tv_title\">(?P<title>[^<]+)</h4>.*?年份[^\d]+(?P<year>\d+).+?CONFIG\['vipid'\][^\d]+(?P<cover_id>\d+)", re.MULTILINE | re.DOTALL | re.IGNORECASE)
@@ -113,23 +100,15 @@ class M1905VideoClient(BaseVideoClient):
             if cover_match:
                 conf_match = pattern1.search(resp.text[cover_match.end(0):])
                 episodes_match = pattern2.finditer(cover_match.group('dramalist'))
-                if conf_match and episodes_match:
-                    basic_info = {
-                        'title': conf_match.group('title'), 'year': conf_match.group('year'), 'cover_id': conf_match.group('cover_id'), 'type': 'TV', 'api_key': '',
-                        'normal_ids': [dict(V=mo.group('vid'), E=int(mo.group('ep')), defns={}, free=bool(int(mo.group('free'))), vip=True, url="https://vip.1905.com/play/%s.shtml" % mo.group('vid')) for mo in episodes_match],
-                    }
+                if conf_match and episodes_match: basic_info = {'title': conf_match.group('title'), 'year': conf_match.group('year'), 'cover_id': conf_match.group('cover_id'), 'type': 'TV', 'api_key': '', 'normal_ids': [dict(V=mo.group('vid'), E=int(mo.group('ep')), defns={}, free=bool(int(mo.group('free'))), vip=True, url="https://vip.1905.com/play/%s.shtml" % mo.group('vid')) for mo in episodes_match],}
         return basic_info
     '''_parsesddownloadinfo'''
     def _parsesddownloadinfo(self, vi, request_overrides: dict = None):
         request_overrides = request_overrides or {}
         nonce = math.floor(time.time())
-        params = {
-            'cid': vi['V'], 'expiretime': nonce + 600, 'nonce': nonce, 'page': vi['url'], 'playerid': self._randomplayerid(),
-            'type': "hls", 'uuid': self._randomstring()
-        }
+        params = {'cid': vi['V'], 'expiretime': nonce + 600, 'nonce': nonce, 'page': vi['url'], 'playerid': self._randomplayerid(), 'type': "hls", 'uuid': self._randomstring()}
         params['signature'] = self._signature(params)
-        resp = self.get("https://profile.m1905.com/mvod/getVideoinfo.php", params=params, **request_overrides)
-        resp.raise_for_status()
+        (resp := self.get("https://profile.m1905.com/mvod/getVideoinfo.php", params=params, **request_overrides)).raise_for_status()
         data = json_repair.loads(resp.text[len("null("): -1]).get('data')
         qualities, qualities_tried = {
             'free': {'dolby': 'uhd', 'sfr_hdr': 'uhd', 'hdr10': 'uhd', 'uhd': 'uhd', 'fhd': 'uhd', 'shd': 'uhd', 'hd': 'hd', 'sd': 'sd'},
@@ -153,11 +132,8 @@ class M1905VideoClient(BaseVideoClient):
     '''_parsehddownloadinfo'''
     def _parsehddownloadinfo(self, vi, request_overrides: dict = None):
         request_overrides = request_overrides or {}
-        params = {
-            'vipid': vi['V'], 'playerid': self._randomplayerid(), 'uuid': self._randomstring(), 'callback': 'fnCallback0'
-        }
-        resp = self.get("https://vip.1905.com/playerhtml5/formal", params=params, **request_overrides)
-        resp.raise_for_status()
+        params = {'vipid': vi['V'], 'playerid': self._randomplayerid(), 'uuid': self._randomstring(), 'callback': 'fnCallback0'}
+        (resp := self.get("https://vip.1905.com/playerhtml5/formal", params=params, **request_overrides)).raise_for_status()
         data = json_repair.loads(resp.text[len("fnCallback0("): -1]).get('data')
         qualities, qualities_tried = {
             'free': {'dolby': 'uhd', 'sfr_hdr': 'uhd', 'hdr10': 'uhd', 'uhd': 'uhd', 'fhd': 'uhd', 'shd': 'uhd', 'hd': 'hd', 'sd': 'sd'},
@@ -214,13 +190,9 @@ class M1905VideoClient(BaseVideoClient):
             video_info.update(dict(raw_data=raw_data))
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid,
-            ))
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=raw_data.get('image_url')))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

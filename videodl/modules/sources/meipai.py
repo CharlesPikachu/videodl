@@ -31,23 +31,16 @@ class MeipaiVideoClient(BaseVideoClient):
     '''_decodedownloadurl'''
     def _decodedownloadurl(self, download_url_bs64: str):
         hex_val, str_val = download_url_bs64[:4], download_url_bs64[4:]
-        hex_1 = hex_val[::-1]
-        str_n = str(int(hex_1, 16))
-        length = len(str_n)
+        hex_1 = hex_val[::-1]; str_n = str(int(hex_1, 16)); length = len(str_n)
         pre = [int(str_n[i]) for i in range(length) if i < length - 2]
         tail = [int(str_n[i]) for i in range(length) if i >= length - 2]
         index_1, index_2 = pre[0], pre[0] + pre[1]
         c, d = str_val[:index_1], str_val[index_1:index_2]
         temp = str_val[index_2:].replace(d, "")
-        d_val = c + temp
-        tail[0] = len(d_val) - tail[0] - tail[1]
-        p_val = tail
-        index_1 = p_val[0]
-        index_2 = p_val[0] + p_val[1]
-        c2 = d_val[:index_1]
-        d2 = d_val[index_1:index_2]
-        temp2 = d_val[index_2:].replace(d2, "")
-        kk_val = c2 + temp2
+        d_val = c + temp; tail[0] = len(d_val) - tail[0] - tail[1]
+        p_val = tail; index_1 = p_val[0]; index_2 = p_val[0] + p_val[1]
+        c2 = d_val[:index_1]; d2 = d_val[index_1:index_2]
+        temp2 = d_val[index_2:].replace(d2, ""); kk_val = c2 + temp2
         decode_bs64 = base64.b64decode(kk_val)
         download_url = "https:" + decode_bs64.decode("utf-8")
         return download_url
@@ -70,16 +63,11 @@ class MeipaiVideoClient(BaseVideoClient):
             download_url_bs64 = resp_selector.css("#shareMediaBtn::attr(data-video)").get(default="")
             download_url = self._decodedownloadurl(download_url_bs64=download_url_bs64)
             video_info.update(dict(download_url=download_url))
-            video_title = legalizestring(
-                urllib.parse.unquote(resp_selector.css("#shareMediaBtn::attr(data-title)").get(default="").strip(), encoding="utf-8") or null_backup_title, replace_null_string=null_backup_title,
-            ).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            video_title = legalizestring(urllib.parse.unquote(resp_selector.css("#shareMediaBtn::attr(data-title)").get(default="").strip(), encoding="utf-8") or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid,
-            ))
+            cover_url = resp_selector.xpath('//*[@id="detailVideo"]/img/@src').get()
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
