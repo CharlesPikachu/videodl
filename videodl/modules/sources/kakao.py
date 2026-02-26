@@ -9,7 +9,7 @@ WeChat Official Account (微信公众号):
 import os
 from .base import BaseVideoClient
 from urllib.parse import urlparse
-from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''KakaoVideoClient'''
@@ -21,20 +21,9 @@ class KakaoVideoClient(BaseVideoClient):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
         }
         self.default_download_headers = {
-            "accept": "*/*",
-            "accept-encoding": "identity;q=1, *;q=0",
-            "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+            "accept": "*/*", "accept-encoding": "identity;q=1, *;q=0", "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7", "priority": "i", "range": "bytes=0-", "referer": "https://tv.kakao.com/", "sec-ch-ua": "\"Google Chrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"", "sec-ch-ua-mobile": "?0", "sec-fetch-mode": "no-cors", "sec-fetch-dest": "video",
             "cookie": "_T_ANO=cNZr9QAT2YddO2sd+iJCNsGtgrea4e5nNXRNVqkD4yryMoL4sOFTVwCgslL/krmUENF9erMo+wOhM3WZTcCpcj+2Rd7VOht4kvkWDuAlefWeLe4thR28cIeMnJnRG/FbOkHTNckveq6/LpAs1+A0sA38MedLQdS1Qrw1N+AIKTLOB+RYiVnfDB/sHmI06KmDMIsgxg+0c0mw2RxfnZU00reIa9O6ZF5lDukQzC27m2hiuSHr8YHfSGP68yyRtztEnqDGVtP8NLFExa2XOVEsmAB4IYp1BtQndUdvR80iqNFb5eS5+AUxpRKrmPENMKQyI1zIOszAa1IvwxruwEq7+g==",
-            "priority": "i",
-            "range": "bytes=0-",
-            "referer": "https://tv.kakao.com/",
-            "sec-ch-ua": "\"Google Chrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": "\"Windows\"",
-            "sec-fetch-dest": "video",
-            "sec-fetch-mode": "no-cors",
-            "sec-fetch-site": "same-site",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+            "sec-ch-ua-platform": "\"Windows\"", "sec-fetch-site": "same-site", "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
         }
         self.default_headers = self.default_parse_headers
         self._initsession()
@@ -50,14 +39,8 @@ class KakaoVideoClient(BaseVideoClient):
         try:
             parsed_url = urlparse(url)
             vid = parsed_url.path.strip('/').split('/')[-1]
-            params = {
-                'player': 'monet_html5', 'referer': url, 'uuid': '', 'service': 'kakao_tv', 'section': '', 'dteType': 'PC',
-                'fields': ','.join(['-*', 'tid', 'clipLink', 'displayTitle', 'clip', 'title', 'description', 'channelId', 'createTime', 'duration', 'playCount',
-                                    'likeCount', 'commentCount', 'tagList', 'channel', 'name', 'clipChapterThumbnailList', 'thumbnailUrl', 'timeInSec', 'isDefault',
-                                    'videoOutputList', 'width', 'height', 'kbps', 'profile', 'label']),
-            }
-            resp = self.get(f'http://tv.kakao.com/api/v1/ft/playmeta/cliplink/{vid}/', params=params, **request_overrides)
-            resp.raise_for_status()
+            params = {'player': 'monet_html5', 'referer': url, 'uuid': '', 'service': 'kakao_tv', 'section': '', 'dteType': 'PC', 'fields': ','.join(['-*', 'tid', 'clipLink', 'displayTitle', 'clip', 'title', 'description', 'channelId', 'createTime', 'duration', 'playCount', 'likeCount', 'commentCount', 'tagList', 'channel', 'name', 'clipChapterThumbnailList', 'thumbnailUrl', 'timeInSec', 'isDefault', 'videoOutputList', 'width', 'height', 'kbps', 'profile', 'label']),}
+            (resp := self.get(f'http://tv.kakao.com/api/v1/ft/playmeta/cliplink/{vid}/', params=params, **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             clip_link: dict = raw_data['clipLink']
@@ -69,25 +52,17 @@ class KakaoVideoClient(BaseVideoClient):
                 profile_name = fmt.get('profile')
                 if not profile_name or profile_name == 'AUDIO': continue
                 params.update({'profile': profile_name, 'fields': '-*,code,message,url'})
-                download_url = ""
-                try:
-                    resp = self.get(f'https://tv.kakao.com/katz/v1/ft/cliplink/{vid}/readyNplay?', params=params, **request_overrides)
-                    resp.raise_for_status()
-                    fmt_raw_data = resp2json(resp=resp)
-                    download_url = fmt_raw_data['videoLocation']['url']
-                    raw_data['readyNplay'] = fmt_raw_data
-                except:
-                    continue
-                if download_url: break
+                try: (resp := self.get(f'https://tv.kakao.com/katz/v1/ft/cliplink/{vid}/readyNplay?', params=params, **request_overrides)).raise_for_status()
+                except Exception: continue
+                fmt_raw_data = resp2json(resp=resp); raw_data['readyNplay'] = fmt_raw_data
+                download_url = safeextractfromdict(fmt_raw_data, ['videoLocation', 'url'], None)
+                if download_url and download_url.startswith('http'): break
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(clip.get('title') or clip_link.get('displayTitle') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid,
-            ))
+            cover_url = safeextractfromdict(raw_data, ['clipLink', 'clip', 'thumbnailUrl'], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

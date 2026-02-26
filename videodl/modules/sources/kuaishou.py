@@ -20,10 +20,7 @@ class KuaishouVideoClient(BaseVideoClient):
     source = 'KuaishouVideoClient'
     def __init__(self, **kwargs):
         super(KuaishouVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-            'Referer': 'https://v.kuaishou.com/',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'Referer': 'https://v.kuaishou.com/'}
         self.default_download_headers = {}
         self.default_headers = self.default_parse_headers
         self._initsession()
@@ -54,10 +51,7 @@ class KuaishouVideoClient(BaseVideoClient):
             if photo.get("photoH265Url"): candidates.append({"codec": "hevc_single", "maxBitrate": 1, "resolution": 1, "url": photo["photoH265Url"], "qualityLabel": "single_hevc"})
             if photo.get("photoUrl"): candidates.append({"codec": "h264_single", "maxBitrate": 1, "resolution": 1, "url": photo["photoUrl"], "qualityLabel": "single_h264"})
             vr = photo.get("videoResource")
-            if isinstance(vr, dict) and (j := (vr.get("json", {}) or {})):
-                candidates.extend([
-                    {"codec": c, "maxBitrate": r.get("maxBitrate", 0), "resolution": r.get("width", 0) * r.get("height", 0), "url": r.get("url"), "qualityLabel": r.get("qualityLabel")} for c in ("hevc", "h264") for a in j.get(c, {}).get("adaptationSet", []) if isinstance(j.get(c), dict) and isinstance(a, dict) for r in a.get("representation", []) if isinstance(r, dict) and r.get("url")
-                ])
+            if isinstance(vr, dict) and (j := (vr.get("json", {}) or {})): candidates.extend([{"codec": c, "maxBitrate": r.get("maxBitrate", 0), "resolution": r.get("width", 0) * r.get("height", 0), "url": r.get("url"), "qualityLabel": r.get("qualityLabel")} for c in ("hevc", "h264") for a in j.get(c, {}).get("adaptationSet", []) if isinstance(j.get(c), dict) and isinstance(a, dict) for r in a.get("representation", []) if isinstance(r, dict) and r.get("url")])
             codec_priority = {"hevc": 2, "hevc_single": 2, "h264": 1, "h264_single": 1}
             candidates: list[dict] = [c for c in candidates if c.get('url')]
             candidates.sort(key=lambda c: (codec_priority.get(c["codec"], 0), c["maxBitrate"], c["resolution"]), reverse=True)

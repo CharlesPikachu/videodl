@@ -19,10 +19,8 @@ class Ku6VideoClient(BaseVideoClient):
     def __init__(self, **kwargs):
         super(Ku6VideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-            'Referer': 'https://www.ku6.com/index',
-            'Host': 'www.ku6.com',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7', 'Host': 'www.ku6.com',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'Referer': 'https://www.ku6.com/index',
         }
         self.default_download_headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
@@ -42,8 +40,7 @@ class Ku6VideoClient(BaseVideoClient):
             vid = parse_qs(urlparse(url).query, keep_blank_values=True).get('id')
             if vid and isinstance(vid, list): vid = vid[0]
             else: vid = None
-            resp = self.get(url, **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(url, **request_overrides)).raise_for_status()
             raw_data = resp.text
             video_info.update(dict(raw_data=raw_data))
             pattern = r'this\.src\(\s*\{.*?src\s*:\s*["\']([^"\']+)["\']'
@@ -52,13 +49,11 @@ class Ku6VideoClient(BaseVideoClient):
             title = re.findall(r'document.title = "(.*?)";', raw_data) or null_backup_title
             if isinstance(title, list): title = title[0]
             video_title = legalizestring(title, replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid if vid else video_title
-            ))
+            cover_url = re.search(r'"poster":\s*"(.*?)"', raw_data)
+            if cover_url: cover_url = cover_url.group(1)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid if vid else video_title, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
