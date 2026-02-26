@@ -10,7 +10,7 @@ import os
 import copy
 from .base import BaseVideoClient
 from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''Open163VideoClient'''
@@ -40,12 +40,11 @@ class Open163VideoClient(BaseVideoClient):
         try:
             parsed_url = urlparse(url)
             pid = parse_qs(parsed_url.query, keep_blank_values=True)['pid'][0]
-            resp = self.get(f"https://c.open.163.com/open/mob/movie/list.do?plid={pid}", **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(f"https://c.open.163.com/open/mob/movie/list.do?plid={pid}", **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
-            root_video_title = raw_data['data'].get('title', "")
-            for idx, item in enumerate(raw_data['data']['videoList']):
+            root_video_title = safeextractfromdict(raw_data, ['data', 'title'], None)
+            for _, item in enumerate(raw_data['data']['videoList']):
                 if not isinstance(item, dict): continue
                 video_info_page = copy.deepcopy(video_info)
                 quality_rank, streams = {"Sd": 1, "Hd": 2, "Shd": 3}, []
@@ -63,13 +62,9 @@ class Open163VideoClient(BaseVideoClient):
                 if root_video_title and len(raw_data['data']['videoList']) > 1: video_title = f"{root_video_title}-ep{len(video_infos)+1}-{video_title}"
                 elif len(raw_data['data']['videoList']) > 1: video_title = f"ep{len(video_infos)+1}-{video_title}"
                 video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
-                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                    url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-                )
+                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-                video_info_page.update(dict(
-                    title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f"{item.get('mid')}-{item.get('plid')}",
-                ))
+                video_info_page.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f"{item.get('mid')}-{item.get('plid')}", cover_url=item.get('imgPath')))
                 video_infos.append(video_info_page)
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
