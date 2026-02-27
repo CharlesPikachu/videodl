@@ -20,12 +20,8 @@ class WeishiVideoClient(BaseVideoClient):
     source = 'WeishiVideoClient'
     def __init__(self, **kwargs):
         super(WeishiVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -36,13 +32,12 @@ class WeishiVideoClient(BaseVideoClient):
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
         null_backup_title = yieldtimerelatedtitle(self.source)
+        quality_score_func = lambda spec: (spec.get("videoQuality") or 0, (spec.get("width") or 0) * (spec.get("height") or 0), spec.get("fps") or 0, int(spec.get("size") or 0))
         # try parse
         try:
             parsed_url = urlparse(url)
-            if 'id' in parse_qs(parsed_url.query, keep_blank_values=True):
-                vid = parse_qs(parsed_url.query, keep_blank_values=True)['id'][0]
-            else:
-                vid = parsed_url.path.strip('/').split('/')[-1]
+            if 'id' in parse_qs(parsed_url.query, keep_blank_values=True): vid = parse_qs(parsed_url.query, keep_blank_values=True)['id'][0]
+            else: vid = parsed_url.path.strip('/').split('/')[-1]
             resp = self.get(url, **request_overrides)
             resp.raise_for_status()
             soup = BeautifulSoup(resp.text, "html.parser")
@@ -54,23 +49,17 @@ class WeishiVideoClient(BaseVideoClient):
             video_spec_urls: dict = raw_data["feedsList"][0]["videoSpecUrls"]
             spec_list: list[dict] = list(video_spec_urls.values())
             spec_list = [s for s in spec_list if s.get('url')]
-            def _qualityscore(spec: dict):
-                vq, w, h = spec.get("videoQuality") or 0, spec.get("width") or 0, spec.get("height") or 0
-                fps, size = spec.get("fps") or 0, int(spec.get("size") or 0)
-                return (vq, w * h, fps, size)
-            spec_list_sorted: list[dict] = sorted(spec_list, key=_qualityscore, reverse=True)
+            spec_list_sorted: list[dict] = sorted(spec_list, key=quality_score_func, reverse=True)
             spec_list_sorted: list[dict] = [item for item in spec_list_sorted if item.get('url')]
             if len(spec_list_sorted) > 0: download_url = spec_list_sorted[0]['url']
             else: download_url = raw_data["feedsList"][0]['videoUrl']
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(raw_data["feedsList"][0].get('feedDesc', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid,
-            ))
+            try: cover_url = raw_data['feedsList'][0]['images'][0]['url']
+            except Exception: cover_url = None
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

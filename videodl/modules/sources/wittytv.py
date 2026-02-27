@@ -90,9 +90,9 @@ class WittyTVVideoClient(BaseVideoClient):
             raw_data['LICENSE_URL_RESPONSE'] = licence.content
             video_info.update(dict(raw_data=raw_data))
             key = list(set(closecdm(cdm, cdm_session_id, licence.content)))[0]
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info.ext}'), identifier=content_id, nm3u8dlre_settings={'key': key}
-            ))
+            try: cover_url = raw_data['PROGRAM_URL_RESPONSE']['thumbnails']['image_horizontal_cover-704x396']['url']
+            except Exception: cover_url = None
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info.ext}'), identifier=content_id, nm3u8dlre_settings={'key': key}, cover_url=cover_url))
             video_infos.append(video_info)
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'

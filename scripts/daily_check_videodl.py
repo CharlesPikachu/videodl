@@ -120,9 +120,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://kg.qq.com/node/play?s=WYsF1AWj1UTvLWXu&g_f=personal&appsource=&pageId=personalH5'
     ],
     'XiguaVideoClient': [
-        'https://www.ixigua.com/7382121243505328655',
-        'https://www.ixigua.com/6898563893564703239',
-        'https://www.ixigua.com/7150802517322891779',
+        'https://www.ixigua.com/7336388303266152970',
+        'https://www.ixigua.com/7356542118082380340',
+        'https://www.ixigua.com/7357374222072545830',
+        'https://www.ixigua.com/7114823820632031752',
     ],
     'WeiboVideoClient': [
         'https://weibo.com/tv/show/1034:5234817776943232?mid=5234851004547318',
