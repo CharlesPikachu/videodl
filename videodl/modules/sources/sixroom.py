@@ -9,7 +9,7 @@ WeChat Official Account (微信公众号):
 import os
 from .base import BaseVideoClient
 from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, resp2json, useparseheaderscookies, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, resp2json, useparseheaderscookies, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''SixRoomVideoClient'''
@@ -36,24 +36,18 @@ class SixRoomVideoClient(BaseVideoClient):
         # try parse
         try:
             parsed_url = urlparse(url)
-            if 'vid' in parse_qs(parsed_url.query, keep_blank_values=True):
-                vid = parse_qs(parsed_url.query, keep_blank_values=True)['vid'][0]
-            else:
-                vid = parsed_url.path.strip('/').split('/')[-1]
-            resp = self.get(f"https://v.6.cn/coop/mobile/index.php?padapi=minivideo-watchVideo.php&av=3.0&encpass=&logiuid=&isnew=1&from=0&vid={vid}", **request_overrides)
-            resp.raise_for_status()
+            if 'vid' in parse_qs(parsed_url.query, keep_blank_values=True): vid = parse_qs(parsed_url.query, keep_blank_values=True)['vid'][0]
+            else: vid = parsed_url.path.strip('/').split('/')[-1]
+            (resp := self.get(f"https://v.6.cn/coop/mobile/index.php?padapi=minivideo-watchVideo.php&av=3.0&encpass=&logiuid=&isnew=1&from=0&vid={vid}", **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             download_url = raw_data['content']['playurl']
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(raw_data["content"].get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid,
-            ))
+            cover_url = safeextractfromdict(raw_data, ['content', 'picurl'], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

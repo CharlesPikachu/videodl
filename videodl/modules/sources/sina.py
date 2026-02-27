@@ -18,12 +18,10 @@ class SinaVideoClient(BaseVideoClient):
     def __init__(self, **kwargs):
         super(SinaVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-            'Referer': 'https://video.sina.cn/',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'Referer': 'https://video.sina.cn/',
         }
         self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-            'Referer': 'https://video.sina.cn/',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://video.sina.cn/',
         }
         self.default_headers = self.default_parse_headers
         self._initsession()
@@ -48,13 +46,11 @@ class SinaVideoClient(BaseVideoClient):
             video_id = pattern.match(url).group('id')
             if not video_id:
                 if pattern.match(url).group('token') is not None:
-                    resp = self.get(url, **request_overrides)
-                    resp.raise_for_status()
+                    (resp := self.get(url, **request_overrides)).raise_for_status()
                     assert resp.url != url
                     self.parsefromurl(resp.url, request_overrides=request_overrides)
                 else:
-                    resp = self.get(url, **request_overrides)
-                    resp.raise_for_status()
+                    (resp := self.get(url, **request_overrides)).raise_for_status()
                     for p in [r"video_id\s*:\s*'(\d+)'", r"video_id\s*:\s*(\d+),"]:
                         try: video_id = re.search(p, resp.text, flags=re.DOTALL).group(1); break
                         except: continue
@@ -76,24 +72,21 @@ class SinaVideoClient(BaseVideoClient):
             formats: list[dict] = [item for item in formats if item.get('download_url')]
             download_url = formats[0]['download_url']
             resp = self.get(download_url, stream=True, **request_overrides)
-            if resp.status_code > 400:
+            if not resp or resp.status_code > 400:
                 params = {
-                    "video_id": video_id, "appver": "V11220.210521.03", "appname": "sinaplayer_pc", "applt": "web", "tags": "sinaplayer_pc", "player": "all", "jsonp": "", 
-                    "plid": "2021012801", "prid": "", "uid": "", "tid": "", "pid": "1", "ran": "0.2649524433568291", "r": "https://video.sina.com.cn/p/finance/2025-11-28/detail-infyypay7178654.d.html", 
-                    "referrer": "", "ssid": "gusr_pc_1764397613438", "preload": "0", "uu": "114.92.19.247_1764392514.160162", "isAuto": "1",
+                    "video_id": video_id, "appver": "V11220.210521.03", "appname": "sinaplayer_pc", "applt": "web", "tags": "sinaplayer_pc", "player": "all", "jsonp": "", "plid": "2021012801", "prid": "", "uid": "", "tid": "", "pid": "1", "ran": "0.2649524433568291", 
+                    "r": "https://video.sina.com.cn/p/finance/2025-11-28/detail-infyypay7178654.d.html", "referrer": "", "ssid": "gusr_pc_1764397613438", "preload": "0", "uu": "114.92.19.247_1764392514.160162", "isAuto": "1",
                 }
-                resp = self.get('https://api.ivideo.sina.com.cn/public/video/play?', params=params, **request_overrides)
-                resp.raise_for_status()
+                (resp := self.get('https://api.ivideo.sina.com.cn/public/video/play?', params=params, **request_overrides)).raise_for_status()
                 raw_data['play'] = resp2json(resp=resp)
                 formats = raw_data['play']['data']['videos']
                 formats: list[dict] = sorted(formats, key=lambda x: quality_rank.get(x['definition'], -1), reverse=True)
-                formats: list[dict] = [item for item in formats if item['dispatch_result']['url'] or item['dispatch_result']['bakurl']]
-                download_url = formats[0]['dispatch_result']['url'] or formats[0]['dispatch_result']['bakurl']
+                formats: list[dict] = [item for item in formats if safeextractfromdict(item, ['dispatch_result', 'url'], None) or safeextractfromdict(item, ['dispatch_result', 'bakurl'], None)]
+                download_url = safeextractfromdict(formats[0], ['dispatch_result', 'url'], None) or safeextractfromdict(formats[0], ['dispatch_result', 'bakurl'], None)
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(video_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', identifier=video_id,
-            ))
+            cover_url = safeextractfromdict(raw_data, ['data', 'image'], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', identifier=video_id, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
