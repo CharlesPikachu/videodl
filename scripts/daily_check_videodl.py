@@ -113,7 +113,8 @@ VIDEODL_TEST_SAMPLES = {
     ],
     'XinpianchangVideoClient': [
         'https://www.xinpianchang.com/a13536060?from=IndexPick&part=%E7%BC%96%E8%BE%91%E7%B2%BE%E9%80%89&index=1',
-        'https://www.xinpianchang.com/a13419465?from=ArticleList'
+        'https://www.xinpianchang.com/a13419465?from=ArticleList', 
+        'https://www.xinpianchang.com/a11879903?searchKw=%E5%8F%A3%E8%85%94%E7%A7%91%E6%99%AE',
     ],
     'WeSingVideoClient': [
         'https://kg.qq.com/node/user/bb132c338e/song/play-edLkcwAsRj?s=bCyoDlbCUhcjXbkQ&shareuid=&topsource=znxvljkwehoit_rqojkwehfguioqef_fnajkgfb&g_f=',

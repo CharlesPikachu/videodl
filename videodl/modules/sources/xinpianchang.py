@@ -32,21 +32,19 @@ class XinpianchangVideoClient(BaseVideoClient):
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
         request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
+        video_info = VideoInfo(source=self.source, download_with_ffmpeg=True)
         if not self.belongto(url=url): return [video_info]
         null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
-            resp = self.get(url, headers={'Referer': url}, **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(url, headers={'Referer': url}, **request_overrides)).raise_for_status()
             soup = BeautifulSoup(resp.text, "html.parser")
             tag = soup.find("script", id="__NEXT_DATA__")
             raw = tag.string if tag.string is not None else tag.get_text()
             raw_data = json_repair.loads(raw.strip())
             video_data = raw_data['props']['pageProps']['detail']['video']
             vid = video_data["vid"]
-            resp = self.get(f"https://mod-api.xinpianchang.com/mod/api/v2/media/{vid}?appKey={video_data['appKey']}&extend=userInfo%2CuserStatus", **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(f"https://mod-api.xinpianchang.com/mod/api/v2/media/{vid}?appKey={video_data['appKey']}&extend=userInfo%2CuserStatus", **request_overrides)).raise_for_status()
             raw_data[f'media/{vid}'] = resp2json(resp=resp)
             for k, v in raw_data[f'media/{vid}']['data']['resource'].items():
                 if k in ('dash', 'hls') and isinstance(v, dict): download_url = v.get('url'); break
