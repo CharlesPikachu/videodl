@@ -40,7 +40,9 @@ class YouTubeVideoClient(BaseVideoClient):
             download_url = yt.streams.gethighestresolution()
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(yt.title, replace_null_string=null_backup_title).removesuffix('.')
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', identifier=vid))
+            try: cover_url = raw_data['videoDetails']['thumbnail']['thumbnails'][-1]['url']
+            except Exception: cover_url = None
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', identifier=vid, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

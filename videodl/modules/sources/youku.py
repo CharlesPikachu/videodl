@@ -21,12 +21,8 @@ class YoukuVideoClient(BaseVideoClient):
     source = 'YoukuVideoClient'
     def __init__(self, **kwargs):
         super(YoukuVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         if not self.default_parse_cookies: self.default_parse_cookies = {'__ysuid': self._getysuid(), 'xreferrer': 'http://www.youku.com'}
         self._initsession()
@@ -47,18 +43,14 @@ class YoukuVideoClient(BaseVideoClient):
         # try parse
         try:
             parsed_url = urlparse(url)
-            if self.belongto(url, {"v.youku.com"}):
-                vid = parsed_url.path.strip('/').split('/')[-1].removesuffix('.html').removeprefix('id_')
-            else:
-                vid = parse_qs(parsed_url.query, keep_blank_values=True)['vid'][0]
-            resp = self.get('https://log.mmstat.com/eg.js', **request_overrides)
-            resp.raise_for_status()
+            if self.belongto(url, {"v.youku.com"}): vid = parsed_url.path.strip('/').split('/')[-1].removesuffix('.html').removeprefix('id_')
+            else: vid = parse_qs(parsed_url.query, keep_blank_values=True)['vid'][0]
+            (resp := self.get('https://log.mmstat.com/eg.js', **request_overrides)).raise_for_status()
             etag = resp.headers.get('ETag') or resp.headers.get('etag')
             cna = etag.strip('"')
             params = {'vid': vid, 'ccode': '0564', 'client_ip': '192.168.1.1', 'utid': cna, 'client_ts': int(time.time())}
             self.default_headers.update({'Referer': url})
-            resp = self.get(f'https://ups.youku.com/ups/get.json', params=params, **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(f'https://ups.youku.com/ups/get.json', params=params, **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             video_data = raw_data.get('data') or {}
@@ -70,9 +62,7 @@ class YoukuVideoClient(BaseVideoClient):
             download_url = video_urls_sorted[0]['url']
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(safeextractfromdict(video_data, ['video', 'title'], null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(
                 title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid,

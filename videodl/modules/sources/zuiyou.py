@@ -9,7 +9,7 @@ WeChat Official Account (微信公众号):
 import os
 from .base import BaseVideoClient
 from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, resp2json, useparseheaderscookies, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, resp2json, useparseheaderscookies, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''ZuiyouVideoClient'''
@@ -17,12 +17,8 @@ class ZuiyouVideoClient(BaseVideoClient):
     source = 'ZuiyouVideoClient'
     def __init__(self, **kwargs):
         super(ZuiyouVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -38,20 +34,16 @@ class ZuiyouVideoClient(BaseVideoClient):
             parsed_url = urlparse(url)
             vid = parse_qs(parsed_url.query, keep_blank_values=True)['pid'][0]
             data = {"h_av": "5.2.13.011", "pid": int(vid)}
-            resp = self.post(f"https://share.xiaochuankeji.cn/planck/share/post/detail_h5", json=data, **request_overrides)
-            resp.raise_for_status()
+            (resp := self.post(f"https://share.xiaochuankeji.cn/planck/share/post/detail_h5", json=data, **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             download_url = raw_data["data"]["post"]["videos"][str(raw_data["data"]["post"]["imgs"][0]["id"])]["url"]
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(raw_data["data"]["post"].get('content', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid,
-            ))
+            cover_url = safeextractfromdict(raw_data, ['data', 'post', 'imgs', 0, 'urls', '540', 'urls', 0], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))

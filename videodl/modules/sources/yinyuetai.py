@@ -10,7 +10,7 @@ import os
 import re
 from .base import BaseVideoClient
 from urllib.parse import urlparse
-from ..utils import legalizestring, resp2json, useparseheaderscookies, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, resp2json, useparseheaderscookies, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''YinyuetaiVideoClient'''
@@ -34,32 +34,24 @@ class YinyuetaiVideoClient(BaseVideoClient):
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
         null_backup_title = yieldtimerelatedtitle(self.source)
+        sortkey_func = lambda s: ((("MP3" in (disp := s.get("display", "")).upper()) or (s.get("streamType") == 5)), -(int(m.group(1)) if (m := re.search(r"(\d+)", disp)) else 0))
         # try parse
         try:
             parsed_url = urlparse(url)
             vid = parsed_url.path.strip('/').split('/')[-1]
-            resp = self.get(f'https://video-api.yinyuetai.com/video/get?id={vid}', **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(f'https://video-api.yinyuetai.com/video/get?id={vid}', **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             candidate_urls = raw_data["data"]["fullClip"]["urls"]
             candidate_urls = [u for u in candidate_urls if u.get('url')]
-            def _sortkey(s: dict):
-                disp: str = s.get("display", "")
-                is_mp3 = "MP3" in disp.upper() or s.get("streamType") == 5
-                bitrate = int(m.group(1)) if (m := re.search(r"(\d+)", disp)) else 0
-                return (is_mp3, -bitrate)
-            candidate_urls = sorted(candidate_urls, key=_sortkey)
+            candidate_urls = sorted(candidate_urls, key=sortkey_func)
             download_url = candidate_urls[0]['url']
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(raw_data["data"].get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid
-            ))
+            cover_url = safeextractfromdict(raw_data, ['data', 'fullClip', 'cover'], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
