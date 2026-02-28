@@ -162,8 +162,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://tv.kakao.com/channel/2671005/cliplink/302362342?playlistId=70284&metaObjectType=Playlist',
     ],
     'YoukuVideoClient': [
-        'https://v.youku.com/v_show/id_XMTgzNDQxNTkzNg==.html?spm=a2hkl.14919748_WEBHOME_HOME.scg_scroll_2.d_2_play&s=cc17d2fe962411de83b1&scm=20140719.rcmd.feed.show_cc17d2fe962411de83b1&alginfo=-1reqId-2b07ec602%204b42%204177%20aeb0%204e65d2d04e8f%231764098407663-1seqId-20IU4z6f0BTnk0zFX-1abId-2468079-1sceneId-246595&scg_id=22896328',
+        'https://v.youku.com/v_show/id_XNDU1MTg1NjM2OA==',
+        'https://v.youku.com/v_show/id_XNDA4MjA3ODA4.html?s=cbfd4dee962411de83b1&scm=20140719.apircmd.298496.video_XNDA4MjA3ODA4&spm=a2hkt.13141534.1_7.d_1_1',
         'https://www.youku.com/ku/webduanju?vid=XNjQ4MzYzNTY5Ng%3D%3D&showid=afafff1a3aef4f96a2ff&spm=a2hkl.pcshortshow.feed_2.d_1_1&scm=20140689.rcmd.feed.video_XNjQ4MzYzNTY5Ng%3D%3D',
+        'https://v.youku.com/v_show/id_XNjQyOTgxMzQ2OA==.html',
     ],
     'TencentVideoClient': [
         'https://v.qq.com/x/cover/mzc00349vqikdb0/b3535d8h2a1.html',

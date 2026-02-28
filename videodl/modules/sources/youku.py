@@ -43,12 +43,12 @@ class YoukuVideoClient(BaseVideoClient):
         # try parse
         try:
             parsed_url = urlparse(url)
-            if self.belongto(url, {"v.youku.com"}): vid = parsed_url.path.strip('/').split('/')[-1].removesuffix('.html').removeprefix('id_')
-            else: vid = parse_qs(parsed_url.query, keep_blank_values=True)['vid'][0]
+            try: vid = parse_qs(parsed_url.query, keep_blank_values=True)['vid'][0]
+            except: vid = parsed_url.path.strip('/').split('/')[-1].removesuffix('.html').removeprefix('id_')
             (resp := self.get('https://log.mmstat.com/eg.js', **request_overrides)).raise_for_status()
             etag = resp.headers.get('ETag') or resp.headers.get('etag')
             cna = etag.strip('"')
-            params = {'vid': vid, 'ccode': '0564', 'client_ip': '192.168.1.1', 'utid': cna, 'client_ts': int(time.time())}
+            params = {'vid': vid, 'ccode': '0564', 'client_ip': '192.168.1.1', 'utid': cna, 'client_ts': int(time.time())} # [0564, 0566, 0568]
             self.default_headers.update({'Referer': url})
             (resp := self.get(f'https://ups.youku.com/ups/get.json', params=params, **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
@@ -64,9 +64,8 @@ class YoukuVideoClient(BaseVideoClient):
             video_title = legalizestring(safeextractfromdict(video_data, ['video', 'title'], null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid,
-            ))
+            cover_url = safeextractfromdict(raw_data, ['data', 'video', 'logo'], None) or safeextractfromdict(raw_data, ['data', 'preview', 'thumb_hd', 0], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
