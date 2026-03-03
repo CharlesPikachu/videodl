@@ -446,7 +446,7 @@ class TencentVideoClient(BaseVideoClient):
     source = 'TencentVideoClient'
     def __init__(self, **kwargs):
         super(TencentVideoClient, self).__init__(**kwargs)
-        self.vqq_video_client = TencentVQQVideoClient(**kwargs)
+        self.vqq_video_client = TencentVQQVideoClient(**kwargs); self.vqq_video_client.source = self.source
         self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'Accept-Language': 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
         self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
