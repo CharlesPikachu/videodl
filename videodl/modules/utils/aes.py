@@ -130,9 +130,7 @@ class AESAlgorithmWrapper:
         data_shifted, bit = [], 0
         for n in data:
             if bit: n |= 0x100
-            bit = n & 1
-            n >>= 1
-            data_shifted.append(n)
+            bit = n & 1; n >>= 1; data_shifted.append(n)
         return data_shifted
     '''keyexpansion'''
     @staticmethod
@@ -144,16 +142,9 @@ class AESAlgorithmWrapper:
             temp = AESAlgorithmWrapper.keyschedulecore(temp, rcon_iteration)
             rcon_iteration += 1
             data += AESAlgorithmWrapper.xor(temp, data[-key_size_bytes: 4 - key_size_bytes])
-            for _ in range(3):
-                temp = data[-4:]
-                data += AESAlgorithmWrapper.xor(temp, data[-key_size_bytes: 4 - key_size_bytes])
-            if key_size_bytes == 32:
-                temp = data[-4:]
-                temp = AESAlgorithmWrapper.subbytes(temp)
-                data += AESAlgorithmWrapper.xor(temp, data[-key_size_bytes: 4 - key_size_bytes])
-            for _ in range(3 if key_size_bytes == 32 else 2 if key_size_bytes == 24 else 0):
-                temp = data[-4:]
-                data += AESAlgorithmWrapper.xor(temp, data[-key_size_bytes: 4 - key_size_bytes])
+            for _ in range(3): temp = data[-4:]; data += AESAlgorithmWrapper.xor(temp, data[-key_size_bytes: 4 - key_size_bytes])
+            if key_size_bytes == 32: temp = data[-4:]; temp = AESAlgorithmWrapper.subbytes(temp); data += AESAlgorithmWrapper.xor(temp, data[-key_size_bytes: 4 - key_size_bytes])
+            for _ in range(3 if key_size_bytes == 32 else 2 if key_size_bytes == 24 else 0): temp = data[-4:]; data += AESAlgorithmWrapper.xor(temp, data[-key_size_bytes: 4 - key_size_bytes])
         return data[:expanded_key_size_bytes]
     '''pkcs7padding'''
     @staticmethod
@@ -314,14 +305,10 @@ class AESAlgorithmWrapper:
     '''aescbcdecryptbytes'''
     @staticmethod
     def aescbcdecryptbytes(data, key, iv):
-        try:
-            return Cryptodome.AES.new(key, Cryptodome.AES.MODE_CBC, iv).decrypt(data)
-        except:
-            return bytes(AESAlgorithmWrapper.aescbcdecrypt(*map(list, (data, key, iv))))
+        try: return Cryptodome.AES.new(key, Cryptodome.AES.MODE_CBC, iv).decrypt(data)
+        except: return bytes(AESAlgorithmWrapper.aescbcdecrypt(*map(list, (data, key, iv))))
     '''aesgcmdecryptandverifybytes'''
     @staticmethod
     def aesgcmdecryptandverifybytes(data, key, tag, nonce):
-        try:
-            return Cryptodome.AES.new(key, Cryptodome.AES.MODE_GCM, nonce).decrypt_and_verify(data, tag)
-        except:
-            return bytes(AESAlgorithmWrapper.aesgcmdecryptandverify(*map(list, (data, key, tag, nonce))))
+        try: return Cryptodome.AES.new(key, Cryptodome.AES.MODE_GCM, nonce).decrypt_and_verify(data, tag)
+        except: return bytes(AESAlgorithmWrapper.aesgcmdecryptandverify(*map(list, (data, key, tag, nonce))))

@@ -23,9 +23,52 @@ from pathlib import Path
 from typing import Optional
 from datetime import datetime
 from bs4 import BeautifulSoup
+from contextlib import suppress
 from .importutils import optionalimport
 from pathvalidate import sanitize_filename
 from urllib.parse import urlparse, urlsplit
+
+
+'''naivedetermineext'''
+def naivedetermineext(url: str, default_ext='unknown_video'):
+    if url is None or '.' not in url: return default_ext
+    guess = url.partition('?')[0].rpartition('.')[2]
+    if re.match(r'^[A-Za-z0-9]+$', guess): return guess
+    return default_ext
+
+
+'''floatornone'''
+def floatornone(v, scale=1):
+    if v is None: return None
+    try: return float(v) / scale
+    except (ValueError, TypeError): return None
+
+
+'''intornone'''
+def intornone(v):
+    if v is None: return None
+    try: return int(v)
+    except (ValueError, TypeError): return None
+
+
+'''naivejstojson'''
+def naivejstojson(code):
+    COMMENT_RE = r'/\*(?:(?!\*/).)*?\*/|//[^\n]*\n'
+    code = re.sub(COMMENT_RE, '', code)
+    code = re.sub(r"'([^']*)'", r'"\1"', code)
+    code = re.sub(r'(?<=[{,])\s*([a-zA-Z_$][\w$]*)\s*:', r'"\1":', code)
+    code = re.sub(r',\s*([}\]])', r'\1', code)
+    code = re.sub(r'\bundefined\b', 'null', code)
+    code = re.sub(r'\bvoid\s+0\b', 'null', code)
+    return code
+
+
+'''naivecleanhtml'''
+def naivecleanhtml(text):
+    if text is None: return None
+    text = re.sub(r'<[^>]+>', '', text)
+    text = html.unescape(text)
+    return text.strip()
 
 
 '''cookies2dict'''
@@ -202,13 +245,56 @@ def searchdictbykey(obj, target_key: str):
 
 
 '''safeextractfromdict'''
-def safeextractfromdict(data, progressive_keys, default_value):
+def safeextractfromdict(data, progressive_keys, default_value=None):
     try:
         result = data
         for key in progressive_keys: result = result[key]
     except:
         result = default_value
     return result
+
+
+'''traverseobj'''
+def traverseobj(obj, *paths, default=None, expected_type=None, get_all=True):
+    for path in paths:
+        result = traversesingle(obj, path, expected_type, get_all)
+        if result is not None: return result
+    return default
+
+
+'''traversesingle'''
+def traversesingle(obj, path, expected_type, get_all):
+    if not isinstance(path, (list, tuple)): path = (path,)
+    current, branched = [obj], False
+    for key in path:
+        new_current = []
+        for item in current:
+            if item is None or item == {}: continue
+            if key is Ellipsis: branched = True; new_current.extend(item.values() if isinstance(item, dict) else (item if isinstance(item, (list, tuple)) else ()))
+            elif callable(key) and not isinstance(key, type):
+                branched = True
+                it = item.items() if isinstance(item, dict) else (enumerate(item) if isinstance(item, (list, tuple)) else ())
+                for a, v in it:
+                    try: key(a, v) and new_current.append(v)
+                    except Exception: pass
+            elif isinstance(key, str): isinstance(item, dict) and (val := item.get(key)) is not None and new_current.append(val)
+            elif isinstance(key, int):
+                if isinstance(item, (list, tuple)):
+                    try: new_current.append(item[key])
+                    except IndexError: pass
+                elif isinstance(item, dict) and (val := item.get(key)) is not None: new_current.append(val)
+        current = new_current
+    if expected_type is not None:
+        if isinstance(expected_type, type): current = [v for v in current if isinstance(v, expected_type)]
+        elif callable(expected_type):
+            filtered = []
+            for v in current:
+                with suppress(Exception): r = expected_type(v); r is not None and filtered.append(r)
+            current = filtered
+    current = [v for v in current if v is not None and v != {}]
+    if not current: return None
+    if branched and get_all: return current
+    return current[0]
 
 
 '''yieldtimerelatedtitle'''

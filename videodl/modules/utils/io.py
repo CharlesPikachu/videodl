@@ -23,9 +23,5 @@ def generateuniquetmppath(dir: str = ".", ext: str = 'mp4'):
     d = pathlib.Path(dir)
     while True:
         p = d / f"{uuid.uuid4().hex}.{ext}"
-        try:
-            fd = os.open(p, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-            os.close(fd)
-            return str(p)
-        except FileExistsError:
-            pass
+        try: fd = os.open(p, os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.close(fd); return str(p)
+        except FileExistsError: pass

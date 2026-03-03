@@ -14,7 +14,7 @@ from urllib.parse import urlsplit
 '''settings'''
 YOUKU_SUFFIXES = {"youku.com", "youku.tv", "tudou.com", "laifeng.com", "soku.com", "paike.com"}
 IQIYI_SUFFIXES = {"iqiyi.com", "qiyi.com", "iq.com", "pps.tv", "ppstream.com"}
-TENCENT_SUFFIXES = {"v.qq.com", "film.qq.com", "wetv.vip", "wetv.qq.com"}
+TENCENT_SUFFIXES = {"v.qq.com", "film.qq.com", "wetv.vip", "wetv.qq.com", "iflix.com"}
 MANGO_SUFFIXES = {"mgtv.com", "hunantv.com", "imgo.tv"}
 PPTV_SUFFIXES = {"pptv.com", "pplive.com"}
 CCTV_SUFFIXES = {"cctv.com", "cctv.cn", "cntv.cn"}

@@ -12,6 +12,4 @@ import subprocess
 
 '''ensureplaywrightchromium'''
 def ensureplaywrightchromium():
-    subprocess.run(
-        [sys.executable, "-m", "playwright", "install", "chromium"], check=True
-    )
+    subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], check=True)

@@ -182,22 +182,22 @@ class WebMediaGrabber(BaseVideoClient):
         from playwright.sync_api import Response
         from playwright.sync_api import sync_playwright
         captured: List[Candidate] = []
-        def _normct(ct: Optional[str]) -> str: return "" if not ct else ct.split(";")[0].strip().lower()
-        def _ismediact(ct: str) -> bool: return ct.startswith(WebMediaGrabber.LIKELY_MEDIA_CT_PREFIX) or (ct in WebMediaGrabber.LIKELY_PLAYLIST_CT)
+        def normct_func(ct: Optional[str]) -> str: return "" if not ct else ct.split(";")[0].strip().lower()
+        def ismediact_func(ct: str) -> bool: return ct.startswith(WebMediaGrabber.LIKELY_MEDIA_CT_PREFIX) or (ct in WebMediaGrabber.LIKELY_PLAYLIST_CT)
         with sync_playwright() as p:
             launch_kwargs = launch_kwargs or {"headless": True}
             browser = p.chromium.launch(**launch_kwargs)
             context = browser.new_context(user_agent=self.default_parse_headers.get("User-Agent"), extra_http_headers={k: v for k, v in self.default_parse_headers.items() if k.lower() != "connection"}, ignore_https_errors=True)
             page = context.new_page()
-            def _onresponse(resp: Response):
+            def onresponse_func(resp: Response):
                 try:
                     u = resp.url
                     if u.startswith("blob:"): return
-                    ct = _normct(resp.headers.get("content-type"))
-                    if _ismediact(ct) or (self.guessextfromurl(u) in WebMediaGrabber.MEDIA_EXTS): captured.append(Candidate(u, source="playwright:response", content_type=ct or None))
+                    ct = normct_func(resp.headers.get("content-type"))
+                    if ismediact_func(ct) or (self.guessextfromurl(u) in WebMediaGrabber.MEDIA_EXTS): captured.append(Candidate(u, source="playwright:response", content_type=ct or None))
                 except Exception:
                     pass
-            page.on("response", _onresponse)
+            page.on("response", onresponse_func)
             try:
                 page.goto(url, wait_until=wait_until, timeout=timeout_ms)
                 try: page.wait_for_load_state("networkidle", timeout=timeout_ms)

@@ -37,14 +37,14 @@ class RandomIPGenerator:
             return self._randomglobalipv6()
     '''randomipv4scn'''
     def randomipv4scn(self, num_samples: int = 1) -> List[str]:
-        def _buildsampler(blocks):
+        def buildsampler_func(blocks):
             cum, s = [], 0
             for _, c in blocks: s += c; cum.append(s)
             total = s
-            def sample(n=10): out=[]; [out.append(str(ipaddress.IPv4Address((lambda bc: bc[0]+random.randrange(bc[1]))(blocks[bisect(cum, random.randrange(total))])))) for _ in range(n)]; return out
-            return sample
+            def sample_func(n=10): out=[]; [out.append(str(ipaddress.IPv4Address((lambda bc: bc[0]+random.randrange(bc[1]))(blocks[bisect(cum, random.randrange(total))])))) for _ in range(n)]; return out
+            return sample_func
         blocks = self._loadcnipv4blocks()
-        sampler = _buildsampler(blocks)
+        sampler = buildsampler_func(blocks)
         return sampler(num_samples)
     '''addrandomipv4toheaders'''
     def addrandomipv4toheaders(self, headers: dict = None, prefix: Optional[str] = None) -> dict:
