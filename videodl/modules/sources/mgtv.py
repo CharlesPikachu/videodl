@@ -74,7 +74,7 @@ class MGTVVideoClient(BaseVideoClient):
             video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'info', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            if ext in ['json']:
+            if ext in ['json', 'NULL', None, 'null']:
                 (resp := self.get(download_url, **request_overrides)).raise_for_status()
                 download_url = resp2json(resp=resp)['info']
                 video_info.update(dict(download_url=download_url))
