@@ -1,5 +1,7 @@
 # Development Log
 
+- 2026-03-03: Released videofetch v0.6.4 - fixed the video download functionality across multiple platforms (including Tencent Video, iQIYI, and Xinpianchang), improved the return of cover-link information for each platform, and refactored/optimized parts of the codebase.
+
 - 2026-01-31: Released videofetch v0.6.3 - introduce reference frames to address jitter during CCTV video downloads, add cover metadata to the response for some supported platforms, and optimize parts of the code.
 
 - 2026-01-27: Released videofetch v0.6.2 - resolved video artifacting issues in CCTV high-definition downloads and addressed multiple known bugs.
