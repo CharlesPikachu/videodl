@@ -33,6 +33,7 @@ class CCCVideoClient(BaseVideoClient):
         if not self.belongto(url=url): return [video_info]
         null_backup_title = yieldtimerelatedtitle(self.source)
         single_video_pattern = re.compile(r'https?://(?:www\.)?media\.ccc\.de/v/(?P<id>[^/?#&]+)')
+        isvideo_func = lambda rec: isinstance(rec.get("mime_type"), str) and rec["mime_type"].startswith("video/")
         # try parse
         try:
             display_id = single_video_pattern.match(url).group('id')
@@ -44,10 +45,9 @@ class CCCVideoClient(BaseVideoClient):
             raw_data = resp2json(resp)
             video_info.update(dict(raw_data=raw_data))
             video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            def _isvideo(rec: dict): return isinstance(rec.get("mime_type"), str) and rec["mime_type"].startswith("video/")
             fmt_rank = lambda rec: {"video/mp4": 2, "video/webm": 1}.get(rec.get("mime_type", ""), 0)
             quality_key = lambda rec: ((1 if rec.get("high_quality") else 0), ((rec.get("width") or 0) * (rec.get("height") or 0)), (rec.get("width") or 0), (rec.get("height") or 0), fmt_rank(rec))
-            videos = [r for r in raw_data["recordings"] if _isvideo(r)]
+            videos = [r for r in raw_data["recordings"] if isvideo_func(r)]
             videos_sorted = sorted(videos, key=quality_key, reverse=True)
             video_info.update(dict(download_url=videos_sorted[0]['recording_url']))
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=videos_sorted[0]['recording_url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
