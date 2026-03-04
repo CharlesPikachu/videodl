@@ -5,7 +5,7 @@
 
 <div align="center">
   <a href="https://videofetch.readthedocs.io/">
-    <img src="https://img.shields.io/badge/docs-latest-blue" alt="docs" />
+    <img src="https://img.shields.io/badge/docs-latest-blue" alt="Docs" />
   </a>
   <a href="https://pypi.org/project/videofetch/">
     <img src="https://img.shields.io/pypi/pyversions/videofetch" alt="PyPI - Python Version" />
@@ -14,19 +14,25 @@
     <img src="https://img.shields.io/pypi/v/videofetch" alt="PyPI" />
   </a>
   <a href="https://github.com/CharlesPikachu/videodl/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/license-PolyForm--Noncommercial--1.0.0-blue" alt="license" />
+    <img src="https://img.shields.io/badge/license-PolyForm--Noncommercial--1.0.0-blue" alt="License" />
   </a>
   <a href="https://pypi.org/project/videofetch/">
-    <img src="https://static.pepy.tech/badge/videofetch" alt="PyPI - Downloads">
+    <img src="https://static.pepy.tech/badge/videofetch" alt="PyPI - Downloads (total)">
   </a>
   <a href="https://pypi.org/project/videofetch/">
-    <img src="https://static.pepy.tech/badge/videofetch/month" alt="PyPI - Downloads">
+    <img src="https://static.pepy.tech/badge/videofetch/month" alt="PyPI - Downloads (month)">
+  </a>
+  <a href="https://pypi.org/project/videofetch/">
+    <img src="https://static.pepy.tech/badge/videofetch/week" alt="PyPI - Downloads (week)">
+  </a>
+  <a href="https://github.com/CharlesPikachu/videodl/actions/workflows/check_videodl.yml">
+    <img src="https://github.com/CharlesPikachu/videodl/actions/workflows/check_videodl.yml/badge.svg" alt="Check Videodl Status Daily">
   </a>
   <a href="https://github.com/CharlesPikachu/videodl/issues">
-    <img src="https://isitmaintained.com/badge/resolution/CharlesPikachu/videodl.svg" alt="issue resolution" />
+    <img src="https://isitmaintained.com/badge/resolution/CharlesPikachu/videodl.svg" alt="Issue Resolution" />
   </a>
   <a href="https://github.com/CharlesPikachu/videodl/issues">
-    <img src="https://isitmaintained.com/badge/open/CharlesPikachu/videodl.svg" alt="open issues" />
+    <img src="https://isitmaintained.com/badge/open/CharlesPikachu/videodl.svg" alt="Open Issues" />
   </a>
 </div>
 
