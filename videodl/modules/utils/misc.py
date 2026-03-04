@@ -340,11 +340,21 @@ class SpinWithBackoff:
 
 '''FileTypeSniffer'''
 class FileTypeSniffer:
-    COMMON_VIDEO_EXTS = (
+    COMMON_MIDEA_EXTS = (
+        # videos
         "3g2", "3gp", "3gp2", "3gpp", "3gpp2", "amv", "apng", "asf", "avi", "avc", "avs", "avs2", "c2", "cdxl", "cgi", "cif", "dif", "dv", "f4p", "f4v", "flv", "gif", "gifv", "mng",
         "h261", "h263", "h264", "h265", "h26l", "hevc", "idf", "ism", "isma", "ismv", "j2k", "m2p", "m2ts", "m2v", "mts", "ts", "m4v", "mj2", "mjpeg", "mjpg", "mk3d", "mks", "mkv", 
         "mov", "mp4", "mp4v", "mpe", "mpeg", "mpg", "mpv", "mpo", "mvi", "mxf", "nsv", "obu", "ogg", "ogm", "ogv", "psp", "qcif", "rgb", "rm", "rmvb", "roq", "rrc", "svi", "v210", 
         "vc1", "vob", "webm", "wmv", "yuv", "yuv10",
+        # audios
+        "aac", "aax", "aaxc", "ac3", "adts", "aif", "aifc", "aiff", "alac", "amr", "ape", "au", "avr", "awb", "caf", "cda", "dff", "dfsf", "dsf", "dss", "dts", "dtshd", "ec3", "f32", 
+        "f64", "flac", "gsm", "hca", "htk", "iff", "ima", "ircam", "kar", "kss", "la", "l16", "m15", "m3u8", "m4a", "m4b", "m4p", "m4r", "mat4", "mat5", "med", "midi", "mid", "mlp", 
+        "mod", "mo3", "mp1", "mp2", "mp3", "mpa", "mpc", "mp+", "mpp", "mptm", "msv", "mt2", "mtm", "mxmf", "nist", "nsf", "oga", "ogg", "okt", "oma", "ofr", "ofs", "opus", "paf", 
+        "pcm", "ptm", "pvf", "ra", "ram", "rf64", "rmi", "rmj", "rmm", "rmx", "roq", "raw", "s3m", "sap", "sds", "sd2", "sd2f", "sf", "shn", "sid", "snd", "spc", "spx", "stm", "tak", 
+        "tta", "thd", "ul", "ult", "umx", "voc", "vgm", "vgz", "wav", "wave", "wax", "w64", "wma", "wve", "wv", "wvx", "xi", "xm", "8svx", "16svx", "669", "amf", "dmf", "far", "gbs", 
+        "gym", "hes", "it", "mdl", "mpc2k", "nsa", "psf", "psf1", "psf2", "ssf", "miniusf", "usf", "2sf", "gsf", "qsf", "spu", "at3", "aa3", "at9", "3ga",
+        # special
+        "m4s"
     )
     '''getfileextensionfromurl'''
     @staticmethod
@@ -357,7 +367,7 @@ class FileTypeSniffer:
         # urllib.parse
         if not skip_urllib_parse:
             ext = os.path.splitext(urlparse(url).path)[-1]
-            if ext and (ext.strip('. ') in FileTypeSniffer.COMMON_VIDEO_EXTS):
+            if ext and (ext.strip('. ') in FileTypeSniffer.COMMON_MIDEA_EXTS):
                 outputs.update(dict(ext=ext.strip('. '), sniffer='urllib.parse', ok=True))
                 return outputs
         # requests.head
@@ -365,7 +375,7 @@ class FileTypeSniffer:
         content_type = resp.headers.get('Content-Type', '').split(';')[0]
         if content_type:
             ext = mimetypes.guess_extension(content_type)
-            if ext and (ext.strip('. ') in FileTypeSniffer.COMMON_VIDEO_EXTS):
+            if ext and (ext.strip('. ') in FileTypeSniffer.COMMON_MIDEA_EXTS):
                 outputs.update(dict(ext=ext.strip('. '), sniffer='requests.head', ok=True))
                 return outputs
         # requests.get.stream
@@ -373,7 +383,7 @@ class FileTypeSniffer:
         content_type = resp.headers.get('Content-Type', '').split(';')[0]
         if content_type:
             ext = mimetypes.guess_extension(content_type)
-            if ext and (ext.strip('. ') in FileTypeSniffer.COMMON_VIDEO_EXTS):
+            if ext and (ext.strip('. ') in FileTypeSniffer.COMMON_MIDEA_EXTS):
                 outputs.update(dict(ext=ext.strip('. '), sniffer='requests.get.stream', ok=True))
                 return outputs
         # return
