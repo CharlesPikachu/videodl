@@ -298,9 +298,9 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.wwe.com/videos/full-match-damian-priest-rhea-ripley-conquer-aleister-black-zelina-vega-smackdown-highlights'
     ],
     'BugPkVideoClient': [
-        'https://www.bilibili.com/video/BV1Ecm7BYECL/?spm_id_from=333.1007.tianma.1-1-1.click',
+        'https://www.bilibili.com/video/BV1Ecm7BYECL/?vd_source=1e2322dafd39d0d1fd29f32c8a02ef61',
         'https://share.xiaochuankeji.cn/hybrid/share/post?pid=415662469',
-        'https://www.kuaishou.com/short-video/3xvnepai44qi65m?authorId=3xxk837em5amm9u&streamSource=find&area=homexxbrilliant',
+        'https://weibo.com/tv/show/1034:5272829806182433?mid=5272830083338918',
     ],
     'ZanqianbaVideoClient': [
         'https://www.bilibili.com/bangumi/play/ep396009',
