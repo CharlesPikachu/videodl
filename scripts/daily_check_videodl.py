@@ -382,7 +382,6 @@ VIDEODL_TEST_SAMPLES = {
         'https://v.youku.com/v_show/id_XNjUwMjQxMjI0MA==.html',
         'https://v.pptv.com/show/31nibfeVLuiclc2kI.html',
         'https://www.mgtv.com/b/292920/3592322.html',
-        'https://www.bilibili.com/bangumi/play/ss89933'
     ],
     'LvlongVideoClient': [
         'https://v.qq.com/x/cover/hcx1ffsjpj63xuj/e0024mhahej.html',

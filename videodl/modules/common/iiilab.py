@@ -38,11 +38,9 @@ class IIILabVideoClient(BaseVideoClient):
         video_infos = []
         try:
             # --encrypt post data
-            headers = copy.deepcopy(self.default_headers)
-            RandomIPGenerator().addrandomipv4toheaders(headers)
+            headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
             site, timestamp = platformfromurl(url), str(int(time.time()))
-            headers['G-Footer'] = hashlib.md5(f"{url}{site}{timestamp}{self.SALT}".encode('utf-8')).hexdigest()
-            headers['G-Timestamp'] = timestamp
+            headers['G-Footer'] = hashlib.md5(f"{url}{site}{timestamp}{self.SALT}".encode('utf-8')).hexdigest(); headers['G-Timestamp'] = timestamp
             # --post request
             (resp := self.post('https://service.iiilab.com/iiilab/extract', json={'url': url, 'site': site}, headers=headers, **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
