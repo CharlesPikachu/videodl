@@ -18,7 +18,7 @@ from Crypto.Util.Padding import unpad
 from ..sources import BaseVideoClient
 from ..utils import RandomIPGenerator
 from ..utils.domains import platformfromurl
-from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
+from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, safeextractfromdict
 
 
 '''KuKuToolVideoClient'''
@@ -30,16 +30,12 @@ class KuKuToolVideoClient(BaseVideoClient):
     def __init__(self, **kwargs):
         super(KuKuToolVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
-            "host": "dy.kukutool.com", "origin": "https://dy.kukutool.com", "referer": "https://dy.kukutool.com/xiaohongshu",
-            "sec-ch-ua": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"", "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": "\"Windows\"", "sec-fetch-dest": "empty", "sec-fetch-mode": "cors", "sec-fetch-site": "same-origin",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
-            "accept": "*/*", "accept-encoding": "gzip, deflate, br, zstd", "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7", 
-            "connection": "keep-alive", "content-length": "212", "content-type": "application/json",
+            "host": "dy.kukutool.com", "origin": "https://dy.kukutool.com", "sec-ch-ua": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"", "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\"", "sec-fetch-dest": "empty", "sec-fetch-mode": "cors", "sec-fetch-site": "same-origin", "accept": "*/*", "accept-encoding": "gzip, deflate, br, zstd", 
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36", "connection": "keep-alive", "content-length": "212", 
+            "content-type": "application/json", "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7", "referer": "https://dy.kukutool.com/xiaohongshu",
         }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''_getparams'''
@@ -74,24 +70,18 @@ class KuKuToolVideoClient(BaseVideoClient):
     '''_aesdecrypt'''
     def _aesdecrypt(self, data_b64_str: str, iv_b64_str: str, key_str: str):
         cipher_bytes = base64.b64decode(data_b64_str)
-        iv_bytes = base64.b64decode(iv_b64_str)
-        key_bytes = key_str.encode("utf-8")
+        iv_bytes = base64.b64decode(iv_b64_str); key_bytes = key_str.encode("utf-8")
         cipher = AES.new(key_bytes, AES.MODE_CBC, iv_bytes)
-        plain_padded = cipher.decrypt(cipher_bytes)
-        plain = unpad(plain_padded, AES.block_size)
-        text = plain.decode("utf-8")
-        return json.loads(text)
+        plain_padded = cipher.decrypt(cipher_bytes); plain = unpad(plain_padded, AES.block_size)
+        return json.loads(plain.decode("utf-8"))
     '''_kukudemethodpy'''
     def _kukudemethodpy(self, data: str, iv: str, key: str):
         # 1) XOR
-        data_x = self._xorstring(data)
-        iv_x   = self._xorstring(iv)
+        data_x = self._xorstring(data); iv_x = self._xorstring(iv)
         # 2) blockReverse
-        data_r = self._blockreverse(data_x)
-        iv_r   = self._blockreverse(iv_x)
+        data_r = self._blockreverse(data_x); iv_r = self._blockreverse(iv_x)
         # 3) base64CustomDecode
-        data_m = self._base64customdecode(data_r)
-        iv_m   = self._base64customdecode(iv_r)
+        data_m = self._base64customdecode(data_r); iv_m = self._base64customdecode(iv_r)
         # 4) AES-CBC
         return self._aesdecrypt(data_m, iv_m, key)
     '''parsefromurl'''
@@ -99,7 +89,7 @@ class KuKuToolVideoClient(BaseVideoClient):
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
         request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
+        video_info = VideoInfo(source=self.source, enable_nm3u8dlre=False, download_with_ffmpeg=True) if BaseVideoClient.belongto(url, {"ted.com", "xinpianchang.com", "ifeng.com"}) else VideoInfo(source=self.source, enable_nm3u8dlre=True)
         null_backup_title = yieldtimerelatedtitle(self.source)
         if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
         # try parse
@@ -108,8 +98,7 @@ class KuKuToolVideoClient(BaseVideoClient):
             # --post request
             headers = copy.deepcopy(self.default_headers)
             RandomIPGenerator().addrandomipv4toheaders(headers)
-            resp = self.post(f'https://dy.kukutool.com/api/parse', json=self._getparams(url), headers=headers, **request_overrides)
-            resp.raise_for_status()
+            (resp := self.post(f'https://dy.kukutool.com/api/parse', json=self._getparams(url), headers=headers, **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
             raw_data: dict = self._kukudemethodpy(raw_data["data"], raw_data["iv"], self.KEY)
             video_info.update(dict(raw_data=raw_data))
@@ -118,13 +107,10 @@ class KuKuToolVideoClient(BaseVideoClient):
             # --download url
             video_info.update(dict(download_url=raw_data['url']))
             # --other infos
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=raw_data['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=raw_data['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title,
-            ))
+            cover_url = safeextractfromdict(raw_data, ['cover'], None) or safeextractfromdict(raw_data, ['pics', 0], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=cover_url))
             video_infos.append(video_info)
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
