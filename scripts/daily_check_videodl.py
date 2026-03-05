@@ -385,8 +385,8 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.bilibili.com/bangumi/play/ss89933'
     ],
     'LvlongVideoClient': [
-        'https://v.youku.com/v_show/id_XNTg0OTk3ODQ3Ng==.html',
         'https://v.qq.com/x/cover/hcx1ffsjpj63xuj/e0024mhahej.html',
+        'https://v.qq.com/x/cover/yg5drpt31xz2a1v/u4101uxlr02.html',
     ],
     'ODwonVideoClient': [
         'https://www.bilibili.com/video/BV1abi9BfEZU',
