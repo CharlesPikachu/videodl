@@ -58,7 +58,7 @@
 
 # 🆕 What's New
 
-- 2026-03-05: Released videofetch v0.6.5 - we added cover (thumbnail) metadata for the common video clients currently supported; we also fixed bugs affecting multiple general-purpose parsing platforms and unified the code style.
+- 2026-03-05: Released videofetch v0.6.5 - we added cover metadata for the common video clients currently supported; we also fixed bugs affecting multiple general-purpose parsing platforms and unified the code style.
 - 2026-03-03: Released videofetch v0.6.4 - fixed the video download functionality across multiple platforms (including Tencent Video, iQIYI, and Xinpianchang), improved the return of cover-link information for each platform, and refactored/optimized parts of the codebase.
 - 2026-01-31: Released videofetch v0.6.3 - introduce reference frames to address jitter during CCTV video downloads, add cover metadata to the response for some supported platforms, and optimize parts of the code.
 
