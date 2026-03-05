@@ -370,11 +370,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://media.ccc.de/v/denog17-75209-evpn-flex-cross-connect-l2-p2p-vpns-can-be-agile-as-well#t=1',
     ],
     'RayVideoClient': [
+        'https://www.youtube.com/watch?v=a0AyNzV3yk8',
         'https://www.bilibili.com/video/BV1fiiuBjEPH/',
         'https://www.bilibili.com/bangumi/play/ep247270',
         'https://www.douyin.com/jingxuan?modal_id=7585180912409726259',
-        'https://www.le.com/ptv/vplay/77953712.html',
-        'https://www.miguvideo.com/p/detail/759959727'
+        'https://www.miguvideo.com/p/detail/759959727',
     ],
     'SENJiexiVideoClient': [
         'https://v.qq.com/x/cover/mzc00200ezim4vr.html',
