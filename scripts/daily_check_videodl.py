@@ -392,7 +392,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.bilibili.com/video/BV1abi9BfEZU',
         'https://www.douyin.com/video/6982497745948921092',
         'https://www.kuaishou.com/short-video/3xn2uj6cstk6qts?authorId=3xgyzwvca7pq3pi',
-        'https://tv.sohu.com/v/cGwvMC82OTQxNjM0NTIuc2h0bWw=.html'
+        'https://www.xinpianchang.com/a11879902?from=articlePageOther',
     ],
     'IM1907VideoClient': [
         'http://www.iqiyi.com/v_19rrk4egc4.html',

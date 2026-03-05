@@ -55,9 +55,12 @@ class KedouVideoClient(BaseVideoClient):
             video_info.update(dict(raw_data=raw_data))
             # --sort by quality
             data_items = raw_data["data"]["videoItemVoList"]
-            video_items: list[dict] = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and (x.get('fileType') not in {"image"})]
+            video_items: list[dict] = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and (x.get('fileType') in {"video"})]
             video_items_sorted = sorted(video_items, key=lambda item: item.get("size", 0) or 0, reverse=True)
+            audio_items: list[dict] = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and (x.get('fileType') in {"audio"})]
+            audio_items_sorted = sorted(audio_items, key=lambda item: item.get("size", 0) or 0, reverse=True)
             download_url, audio_download_url = video_items_sorted[0]['baseUrl'], video_items_sorted[0].get('audioUrl')
+            if (not audio_download_url or audio_download_url == 'NULL') and audio_items_sorted: audio_download_url = audio_items_sorted[0].get('baseUrl')
             video_info.update(dict(download_url=download_url))
             if audio_download_url and audio_download_url != 'NULL': video_info.update(dict(audio_download_url=audio_download_url))
             # --video title
