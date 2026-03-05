@@ -11,28 +11,22 @@ import time
 import copy
 import hashlib
 from typing import Mapping, Any
-from urllib.parse import urlparse
 from ..sources import BaseVideoClient
-from ..utils.domains import platformfromurl
-from ..utils import VideoInfo, FileTypeSniffer, RandomIPGenerator, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, optionalimport
+from ..utils.domains import platformfromurl, obtainhostname
+from ..utils import VideoInfo, FileTypeSniffer, RandomIPGenerator, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
 
 
 '''XiazaitoolVideoClient'''
 class XiazaitoolVideoClient(BaseVideoClient):
     source = 'XiazaitoolVideoClient'
     def __init__(self, **kwargs):
-        if ('enable_parse_curl_cffi' not in kwargs) and optionalimport('curl_cffi'): kwargs['enable_parse_curl_cffi'] = True
         super(XiazaitoolVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
-            "accept": "application/json, text/javascript, */*; q=0.01", "accept-encoding": "gzip, deflate, br, zstd", "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-            "content-type": "application/json", "origin": "https://www.xiazaitool.com", "priority": "u=1, i", "referer": "https://www.xiazaitool.com/dy",
-            "sec-ch-ua": "\"Google Chrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"", "sec-ch-ua-mobile": "?0", "sec-ch-ua-platform": "\"Windows\"",
-            "sec-fetch-dest": "empty", "sec-fetch-mode": "cors", "sec-fetch-site": "same-origin", "timestamg": str(int(time.time() * 1000)), "x-requested-with": "XMLHttpRequest",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+            "accept": "application/json, text/javascript, */*; q=0.01", "accept-encoding": "gzip, deflate, br, zstd", "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7", "content-type": "application/json", "origin": "https://www.xiazaitool.com", "referer": "https://www.xiazaitool.com/dy",
+            "sec-ch-ua": "\"Google Chrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"", "sec-ch-ua-mobile": "?0", "sec-ch-ua-platform": "\"Windows\"", "sec-fetch-dest": "empty", "sec-fetch-mode": "cors", "sec-fetch-site": "same-origin", "timestamg": str(int(time.time() * 1000)), 
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36", "priority": "u=1, i", "x-requested-with": "XMLHttpRequest",
         }
-        self.default_download_headers = {
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
-        }
+        self.default_download_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''_confidential'''
@@ -45,7 +39,7 @@ class XiazaitoolVideoClient(BaseVideoClient):
         return params
     '''_detectplatform'''
     def _detectplatform(self, url: str) -> str | None:
-        host = (urlparse(url).hostname or "").lower()
+        host = obtainhostname(url)
         if any(x in host for x in ["bilibili.com", "b23.tv", "bili2233.cn"]): return "bilibili"
         if "douyin.com" in host: return "douyin"
         if "kuaishou.com" in host: return "kuaishou"
@@ -62,39 +56,32 @@ class XiazaitoolVideoClient(BaseVideoClient):
         if any(x in host for x in ["twitter.com", "x.com"]): return "twitter"
         if "instagram.com" in host: return "instagram"
         if "toutiao.com" in host: return "toutiao"
-        return host.split('.')[0]
+        return platformfromurl(url=url)
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
         request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
+        video_info = VideoInfo(source=self.source, enable_nm3u8dlre=False, download_with_ffmpeg=True) if BaseVideoClient.belongto(url, {"ted.com", "xinpianchang.com", "ifeng.com"}) else VideoInfo(source=self.source, enable_nm3u8dlre=True)
         null_backup_title = yieldtimerelatedtitle(self.source)
         if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
         # try parse
         video_infos = []
         try:
             # --post request
-            headers = copy.deepcopy(self.default_headers)
-            RandomIPGenerator().addrandomipv4toheaders(headers)
-            resp = self.post("https://www.xiazaitool.com/video/parseVideoUrl", json=self._confidential({"url": url, "platform": self._detectplatform(url)}), headers=headers, **request_overrides)
-            resp.raise_for_status()
+            headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
+            (resp := self.post("https://www.xiazaitool.com/video/parseVideoUrl", json=self._confidential({"url": url, "platform": self._detectplatform(url)}), headers=headers, **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             # --append all parsed results
             for item in raw_data['data']['voideDeatilVoList']:
                 if not isinstance(item, dict) or not item.get('url'): continue
-                video_info_page = copy.deepcopy(video_info)
                 video_title = legalizestring(item.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                video_info_page.update(dict(download_url=item['url']))
-                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                    url=item['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-                )
+                (video_info_page := copy.deepcopy(video_info)).update(dict(download_url=item['url']))
+                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=item['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
                 if ext in ['xsl', 'm4s']: ext = 'mp4'
-                video_info_page.update(dict(
-                    title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title,
-                ))
+                video_info_page.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title))
                 video_infos.append(video_info_page)
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
