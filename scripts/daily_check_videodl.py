@@ -230,10 +230,9 @@ VIDEODL_TEST_SAMPLES = {
         'https://v.qq.com/x/cover/mzc00200ss1zz0x/r4101dsk6f5.html?cut_vid=p41012zzjzo&scene_id=3&start=1455',
     ],
     'VgetVideoClient': [
-        'https://www.youtube.com/watch?v=SnQQVkfRxFs',
         'https://www.le.com/ptv/vplay/77905922.html#vid=77905922',
         'https://x.com/iluminatibot/status/1996651394963734976',
-        'https://v.youku.com/v_show/id_XNjQ0ODIxMzg1Mg==.html'
+        'https://v.youku.com/v_show/id_XNjQ0ODIxMzg1Mg==.html',
     ],
     'EyepetizerVideoClient': [
         'https://home.eyepetizer.net/video/video-detail?resource_id=219143&resource_type=pgc_video',
@@ -288,6 +287,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.kuaishou.com/short-video/3x94xdt5zvg26x9?authorId=3x6fxie2rn8ciai&streamSource=find&area=homexxbrilliant',
     ],
     'SnapWCVideoClient': [
+        'https://www.youtube.com/watch?v=Oz-Pak0YgJM',
         'https://www.youtube.com/watch?v=8EA71rLoY5s',
         'https://www.douyin.com/jingxuan?modal_id=7579947240421084426',
         'https://www.tiktok.com/@stars2kin.1/video/7590051214277053709?lang=en',

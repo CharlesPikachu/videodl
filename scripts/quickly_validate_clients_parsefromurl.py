@@ -36,11 +36,11 @@ VIDEODL_TEST_SAMPLES = {
     ],
     'Ku6VideoClient': [
         'https://www.ku6.com/video/detail?id=McZoSe_hgG_jwzy7pQLqvMJ3IoI.', 
-        'https://www.ku6.com/video/detail?id=HE3lfhcp13Gd0qND4zfzXYQONMY.'
+        'https://www.ku6.com/video/detail?id=HE3lfhcp13Gd0qND4zfzXYQONMY.',
     ],
     'KuaishouVideoClient': [
         'https://www.kuaishou.com/short-video/3xwzr5dveyqc5fa?authorId=3xv7d3j7hqqpksi', 
-        'https://www.kuaishou.com/short-video/3xjpwzyparcgnck?authorId=3xbbsmxr7cdmhqs'
+        'https://www.kuaishou.com/short-video/3xjpwzyparcgnck?authorId=3xbbsmxr7cdmhqs',
         'https://www.kuaishou.com/short-video/3x5k4yswvs3k9r9?authorId=3x9uj94tctww7fy',
         'https://v.kuaishou.com/8qIlZu',
     ],
@@ -67,8 +67,8 @@ VIDEODL_TEST_SAMPLES = {
     ],
     'MGTVVideoClient': [
         'https://www.mgtv.com/l/100026064/19868457.html?fpa=1684&fpos=&lastp=ch_home&cpid=5',
-        'https://www.mgtv.com/b/788366/23780111.html?fpa=1756&fpos=&lastp=ch_home', # requires pass VIP login-in cookies by default_download_cookies to download full video
-        'https://www.mgtv.com/b/805972/23756299.html?fpa=1261&fpos=&lastp=ch_home&cpid=5', # requires pass login-in cookies by default_download_cookies to download full video
+        'https://www.mgtv.com/b/788366/23780111.html?fpa=1756&fpos=&lastp=ch_home', # requires pass VIP login-in cookies by default_parse_cookies and default_download_cookies to download full video
+        'https://www.mgtv.com/b/805972/23756299.html?fpa=1261&fpos=&lastp=ch_home&cpid=5', # requires pass login-in cookies by default_parse_cookies and default_download_cookies to download full video
     ],
     'OasisVideoClient': [
         'https://m.oasis.weibo.cn/v1/h5/share?sid=4497689997350015&luicode=10001122&lfid=lz_qqfx&bid=4497689997350015',
@@ -104,16 +104,18 @@ VIDEODL_TEST_SAMPLES = {
     ],
     'XinpianchangVideoClient': [
         'https://www.xinpianchang.com/a13536060?from=IndexPick&part=%E7%BC%96%E8%BE%91%E7%B2%BE%E9%80%89&index=1',
-        'https://www.xinpianchang.com/a13419465?from=ArticleList'
+        'https://www.xinpianchang.com/a13419465?from=ArticleList', 
+        'https://www.xinpianchang.com/a11879903?searchKw=%E5%8F%A3%E8%85%94%E7%A7%91%E6%99%AE',
     ],
     'WeSingVideoClient': [
         'https://kg.qq.com/node/user/bb132c338e/song/play-edLkcwAsRj?s=bCyoDlbCUhcjXbkQ&shareuid=&topsource=znxvljkwehoit_rqojkwehfguioqef_fnajkgfb&g_f=',
         'https://kg.qq.com/node/play?s=WYsF1AWj1UTvLWXu&g_f=personal&appsource=&pageId=personalH5'
     ],
     'XiguaVideoClient': [
-        'https://www.ixigua.com/7382121243505328655',
-        'https://www.ixigua.com/6898563893564703239',
-        'https://www.ixigua.com/7150802517322891779',
+        'https://www.ixigua.com/7336388303266152970',
+        'https://www.ixigua.com/7356542118082380340',
+        'https://www.ixigua.com/7357374222072545830',
+        'https://www.ixigua.com/7114823820632031752',
     ],
     'WeiboVideoClient': [
         'https://weibo.com/tv/show/1034:5234817776943232?mid=5234851004547318',
@@ -122,10 +124,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://weibo.com/tv/v/HApWK8FAc?fid=1034:4386795211940756',
     ],
     'RednoteVideoClient': [
-        'http://xhslink.com/o/1WrmgHGWFYh',
-        'http://xhslink.com/o/3A6kXCDzntm',
-        'http://xhslink.com/o/1XSb8VSEeFv',
+        'http://xhslink.com/o/7DegL4I0Sjy',
+        'http://xhslink.com/o/A7MOvT2d4IM',
         'http://xhslink.com/o/3hFb1CXputg',
+        'http://xhslink.com/o/69q4KGNdyG',
     ],
     'CCTVVideoClient': [
         'https://v.cctv.com/2021/06/05/VIDEwn0n7VRJokIL7rBi2ink210605.shtml?spm=C90324.Pfdd0SYeqktv.Eri5TUDwaTXO.6',
@@ -151,13 +153,16 @@ VIDEODL_TEST_SAMPLES = {
         'https://tv.kakao.com/channel/2671005/cliplink/302362342?playlistId=70284&metaObjectType=Playlist',
     ],
     'YoukuVideoClient': [
-        'https://v.youku.com/v_show/id_XMTgzNDQxNTkzNg==.html?spm=a2hkl.14919748_WEBHOME_HOME.scg_scroll_2.d_2_play&s=cc17d2fe962411de83b1&scm=20140719.rcmd.feed.show_cc17d2fe962411de83b1&alginfo=-1reqId-2b07ec602%204b42%204177%20aeb0%204e65d2d04e8f%231764098407663-1seqId-20IU4z6f0BTnk0zFX-1abId-2468079-1sceneId-246595&scg_id=22896328',
+        'https://v.youku.com/v_show/id_XNDU1MTg1NjM2OA==',
+        'https://v.youku.com/v_show/id_XNDA4MjA3ODA4.html?s=cbfd4dee962411de83b1&scm=20140719.apircmd.298496.video_XNDA4MjA3ODA4&spm=a2hkt.13141534.1_7.d_1_1',
         'https://www.youku.com/ku/webduanju?vid=XNjQ4MzYzNTY5Ng%3D%3D&showid=afafff1a3aef4f96a2ff&spm=a2hkl.pcshortshow.feed_2.d_1_1&scm=20140689.rcmd.feed.video_XNjQ4MzYzNTY5Ng%3D%3D',
+        'https://v.youku.com/v_show/id_XNjQyOTgxMzQ2OA==.html',
     ],
     'TencentVideoClient': [
         'https://v.qq.com/x/cover/mzc00349vqikdb0/b3535d8h2a1.html',
         'https://v.qq.com/x/cover/ygci7rbfq3celp8/S0010phisz5.html?cut_vid=i4101ucafw7&scene_id=3&start=93',
         'https://www.iflix.com/en/play/0s682hc45t0ohll/a00340c66f8-EP1%3A_Miss_Gu_Who_Is_Silent',
+        'https://www.iflix.com/play/0s682hc45t0ohll',
         'https://v.qq.com/x/cover/nhtfh14i9y1egge/d00249ld45q.html',
         'https://v.qq.com/x/cover/nhtfh14i9y1egge.html',
         # 'https://wetv.vip/en/play/air11ooo2rdsdi3-Cute-Programmer/v0040pr89t9-EP1-Cute-Programmer'
@@ -216,10 +221,9 @@ VIDEODL_TEST_SAMPLES = {
         'https://v.qq.com/x/cover/mzc00200ss1zz0x/r4101dsk6f5.html?cut_vid=p41012zzjzo&scene_id=3&start=1455',
     ],
     'VgetVideoClient': [
-        'https://www.youtube.com/watch?v=SnQQVkfRxFs',
         'https://www.le.com/ptv/vplay/77905922.html#vid=77905922',
         'https://x.com/iluminatibot/status/1996651394963734976',
-        'https://v.youku.com/v_show/id_XNjQ0ODIxMzg1Mg==.html'
+        'https://v.youku.com/v_show/id_XNjQ0ODIxMzg1Mg==.html',
     ],
     'EyepetizerVideoClient': [
         'https://home.eyepetizer.net/video/video-detail?resource_id=219143&resource_type=pgc_video',
@@ -274,6 +278,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.kuaishou.com/short-video/3x94xdt5zvg26x9?authorId=3x6fxie2rn8ciai&streamSource=find&area=homexxbrilliant',
     ],
     'SnapWCVideoClient': [
+        'https://www.youtube.com/watch?v=Oz-Pak0YgJM',
         'https://www.youtube.com/watch?v=8EA71rLoY5s',
         'https://www.douyin.com/jingxuan?modal_id=7579947240421084426',
         'https://www.tiktok.com/@stars2kin.1/video/7590051214277053709?lang=en',
@@ -284,9 +289,9 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.wwe.com/videos/full-match-damian-priest-rhea-ripley-conquer-aleister-black-zelina-vega-smackdown-highlights'
     ],
     'BugPkVideoClient': [
-        'https://www.bilibili.com/video/BV1Ecm7BYECL/?spm_id_from=333.1007.tianma.1-1-1.click',
+        'https://www.bilibili.com/video/BV1Ecm7BYECL/?vd_source=1e2322dafd39d0d1fd29f32c8a02ef61',
         'https://share.xiaochuankeji.cn/hybrid/share/post?pid=415662469',
-        'https://www.kuaishou.com/short-video/3xvnepai44qi65m?authorId=3xxk837em5amm9u&streamSource=find&area=homexxbrilliant',
+        'https://weibo.com/tv/show/1034:5272829806182433?mid=5272830083338918',
     ],
     'ZanqianbaVideoClient': [
         'https://www.bilibili.com/bangumi/play/ep396009',
@@ -332,7 +337,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://ur.alipay.com/_nv7gnPJyDqjLbrPM9Dul7',
         'https://show.meitu.com/detail?feed_id=6873229026351926275',
         'https://www.bilibili.com/video/BV1eQYwzwEz4',
-        'https://ishare.ifeng.com/c/vs/v006uROwi--XAO9zMVtJUUewd8gnoa2qfWilMSzGxeoAPn7lWjN87mNtuzWQFWWXIvGIc?spss=np&crowdid=7355482289721053225&recallChannel=&aman=fgr0432r3rMfgMeQ04UODIR0Mj8M0N6TUyrNTBdkZjWYy1x00v'
+        'https://ishare.ifeng.com/c/vs/v006uROwi--XAO9zMVtJUUewd8gnoa2qfWilMSzGxeoAPn7lWjN87mNtuzWQFWWXIvGIc?spss=np&crowdid=7355482289721053225&recallChannel=&aman=fgr0432r3rMfgMeQ04UODIR0Mj8M0N6TUyrNTBdkZjWYy1x00v',
     ],
     'XZDXVideoClient': [
         'https://www.bilibili.com/video/BV12oS5B5Eye/?spm_id_from=333.1007.tianma.6-4-22.click',
@@ -356,11 +361,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://media.ccc.de/v/denog17-75209-evpn-flex-cross-connect-l2-p2p-vpns-can-be-agile-as-well#t=1',
     ],
     'RayVideoClient': [
+        'https://www.youtube.com/watch?v=a0AyNzV3yk8',
         'https://www.bilibili.com/video/BV1fiiuBjEPH/',
         'https://www.bilibili.com/bangumi/play/ep247270',
         'https://www.douyin.com/jingxuan?modal_id=7585180912409726259',
-        'https://www.le.com/ptv/vplay/77953712.html',
-        'https://www.miguvideo.com/p/detail/759959727'
+        'https://www.miguvideo.com/p/detail/759959727',
     ],
     'SENJiexiVideoClient': [
         'https://v.qq.com/x/cover/mzc00200ezim4vr.html',
@@ -368,17 +373,16 @@ VIDEODL_TEST_SAMPLES = {
         'https://v.youku.com/v_show/id_XNjUwMjQxMjI0MA==.html',
         'https://v.pptv.com/show/31nibfeVLuiclc2kI.html',
         'https://www.mgtv.com/b/292920/3592322.html',
-        'https://www.bilibili.com/bangumi/play/ss89933'
     ],
     'LvlongVideoClient': [
-        'https://v.youku.com/v_show/id_XNTg0OTk3ODQ3Ng==.html',
         'https://v.qq.com/x/cover/hcx1ffsjpj63xuj/e0024mhahej.html',
+        'https://v.qq.com/x/cover/yg5drpt31xz2a1v/u4101uxlr02.html',
     ],
     'ODwonVideoClient': [
         'https://www.bilibili.com/video/BV1abi9BfEZU',
         'https://www.douyin.com/video/6982497745948921092',
         'https://www.kuaishou.com/short-video/3xn2uj6cstk6qts?authorId=3xgyzwvca7pq3pi',
-        'https://tv.sohu.com/v/cGwvMC82OTQxNjM0NTIuc2h0bWw=.html'
+        'https://www.xinpianchang.com/a11879902?from=articlePageOther',
     ],
     'IM1907VideoClient': [
         'http://www.iqiyi.com/v_19rrk4egc4.html',
@@ -392,7 +396,6 @@ VIDEODL_TEST_SAMPLES = {
         "https://www.plus.fifa.com/en/content/fc-sochaux-montbeliard-vs-lb-chateauroux/6ff75563-c6fc-4b08-b324-54771dbd7029",
     ],
     'WittyTVVideoClient': [
-        "https://www.wittytv.it/originals/google-bar-con-nina-zilli/",
         "https://www.wittytv.it/amici/giovedi-22-gennaio-il-quotidiano-di-amici/",
         "https://www.wittytv.it/ce-posta-per-te/quarta-puntata-sabato-3-febbraio/",
     ],
