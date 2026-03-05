@@ -425,6 +425,12 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.bilibili.com/video/BV1S5PrzZE16/?spm_id_from=333.1007.tianma.1-1-1.click',
         'https://www.dongchedi.com/video/7585761929667346968',
     ],
+    'DongchediVideoClient': [
+        'https://www.dongchedi.com/video/7595864547580658200',
+        'https://www.dongchedi.com/video/7556176281977602606',
+        'https://www.dongchedi.com/video/7498933469267952137',
+        'https://www.dongchedi.com/video/7589928965104517656',
+    ],
 }
 
 

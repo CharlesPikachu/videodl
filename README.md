@@ -58,9 +58,9 @@
 
 # 🆕 What's New
 
+- 2026-03-06: Released videofetch v0.6.6 - fix a bug where audio tracks couldn’t be fetched on some platforms; add video parsing and downloading support for the Dongchedi (懂车帝) platform; and introduce an additional general-purpose video parsing platform.
 - 2026-03-05: Released videofetch v0.6.5 - we added cover metadata for the common video clients currently supported; we also fixed bugs affecting multiple general-purpose parsing platforms and unified the code style.
 - 2026-03-03: Released videofetch v0.6.4 - fixed the video download functionality across multiple platforms (including Tencent Video, iQIYI, and Xinpianchang), improved the return of cover-link information for each platform, and refactored/optimized parts of the codebase.
-- 2026-01-31: Released videofetch v0.6.3 - introduce reference frames to address jitter during CCTV video downloads, add cover metadata to the response for some supported platforms, and optimize parts of the code.
 
 
 # 🚀 Introduction
@@ -91,6 +91,7 @@ The video platforms currently supported for parsing are,
 |                                                        | CCtalkVideoClient                     | CCtalk                             | ✔️        | ✔️       | [cctalk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/cctalk.py)               |
 |                                                        | DuxiaoshiVideoClient                  | 度小视 (全民小视频)                | ✔️        | ✔️       | [duxiaoshi.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/duxiaoshi.py)         |
 |                                                        | DouyinVideoClient                     | 抖音视频                           | ✔️        | ✔️       | [douyin.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/douyin.py)               |
+|                                                        | DongchediVideoClient                  | 懂车帝                             | ✔️        | ✔️       | [dongchedi.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/dongchedi.py)         |
 |                                                        | EyepetizerVideoClient                 | 开眼视频                           | ✔️        | ✔️       | [eyepetizer.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/eyepetizer.py)       |
 |                                                        | HaokanVideoClient                     | 好看视频                           | ✔️        | ✔️       | [haokan.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/haokan.py)               |
 |                                                        | HuyaVideoClient                       | 虎牙视频                           | ✔️        | ✔️       | [huya.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/huya.py)                   |

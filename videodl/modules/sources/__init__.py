@@ -47,6 +47,7 @@ from .kuaishou import KuaishouVideoClient
 from .bilibili import BilibiliVideoClient
 from .yinyuetai import YinyuetaiVideoClient
 from .duxiaoshi import DuxiaoshiVideoClient
+from .dongchedi import DongchediVideoClient
 from .baidutieba import BaiduTiebaVideoClient
 from .eyepetizer import EyepetizerVideoClient
 from .pipigaoxiao import PipigaoxiaoVideoClient
@@ -56,19 +57,17 @@ from .xinpianchang import XinpianchangVideoClient
 '''VideoClientBuilder'''
 class VideoClientBuilder(BaseModuleBuilder):
     REGISTERED_MODULES = {
-        'AcFunVideoClient': AcFunVideoClient, 'HaokanVideoClient': HaokanVideoClient, 'TedVideoClient': TedVideoClient, 'PipigaoxiaoVideoClient': PipigaoxiaoVideoClient, 
-        'PipixVideoClient': PipixVideoClient, 'Ku6VideoClient': Ku6VideoClient, 'KuaishouVideoClient': KuaishouVideoClient, 'BilibiliVideoClient': BilibiliVideoClient, 
-        'YinyuetaiVideoClient': YinyuetaiVideoClient, 'BaiduTiebaVideoClient': BaiduTiebaVideoClient, 'MGTVVideoClient': MGTVVideoClient, 'OasisVideoClient': OasisVideoClient,
-        'PearVideoClient': PearVideoClient, 'HuyaVideoClient': HuyaVideoClient, 'MeipaiVideoClient': MeipaiVideoClient, 'WeishiVideoClient': WeishiVideoClient, 
-        'SixRoomVideoClient': SixRoomVideoClient, 'DuxiaoshiVideoClient': DuxiaoshiVideoClient, 'ZuiyouVideoClient': ZuiyouVideoClient, 'ZhihuVideoClient': ZhihuVideoClient, 
-        'WeSingVideoClient': WeSingVideoClient, 'XiguaVideoClient': XiguaVideoClient, 'RednoteVideoClient': RednoteVideoClient, 'WeiboVideoClient': WeiboVideoClient,
-        'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient, 'YouTubeVideoClient': YouTubeVideoClient, 'XinpianchangVideoClient': XinpianchangVideoClient, 
-        'KakaoVideoClient': KakaoVideoClient, 'YoukuVideoClient': YoukuVideoClient, 'TencentVideoClient': TencentVideoClient, 'GeniusVideoClient': GeniusVideoClient, 
-        'UnityVideoClient': UnityVideoClient, 'FoxNewsVideoClient': FoxNewsVideoClient, 'SinaVideoClient': SinaVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,
-        'Open163VideoClient': Open163VideoClient, 'CCtalkVideoClient': CCtalkVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient, 'ArteTVVideoClient': ArteTVVideoClient, 
-        'C56VideoClient': C56VideoClient, 'RedditVideoClient': RedditVideoClient, 'WWEVideoClient': WWEVideoClient, 'M1905VideoClient': M1905VideoClient, 
-        'IQiyiVideoClient': IQiyiVideoClient, 'CCCVideoClient': CCCVideoClient, 'PlusFIFAVideoClient': PlusFIFAVideoClient, 'WittyTVVideoClient': WittyTVVideoClient,
-        'KugouMVVideoClient': KugouMVVideoClient, 'DouyinVideoClient': DouyinVideoClient,
+        'CCCVideoClient': CCCVideoClient, 'BilibiliVideoClient': BilibiliVideoClient, 'AcFunVideoClient': AcFunVideoClient, 'HaokanVideoClient': HaokanVideoClient, 'YinyuetaiVideoClient': YinyuetaiVideoClient,
+        'HuyaVideoClient': HuyaVideoClient, 'TedVideoClient': TedVideoClient, 'PipigaoxiaoVideoClient': PipigaoxiaoVideoClient, 'PipixVideoClient': PipixVideoClient, 'PlusFIFAVideoClient': PlusFIFAVideoClient,
+        'BaiduTiebaVideoClient': BaiduTiebaVideoClient, 'MGTVVideoClient': MGTVVideoClient, 'OasisVideoClient': OasisVideoClient, 'MeipaiVideoClient': MeipaiVideoClient, 'ZuiyouVideoClient': ZuiyouVideoClient,
+        'DuxiaoshiVideoClient': DuxiaoshiVideoClient, 'Ku6VideoClient': Ku6VideoClient, 'RednoteVideoClient': RednoteVideoClient, 'WeiboVideoClient': WeiboVideoClient, 'Open163VideoClient': Open163VideoClient,
+        'KuaishouVideoClient': KuaishouVideoClient, 'WeishiVideoClient': WeishiVideoClient, 'ZhihuVideoClient': ZhihuVideoClient, 'YouTubeVideoClient': YouTubeVideoClient, 'M1905VideoClient': M1905VideoClient, 
+        'XinpianchangVideoClient': XinpianchangVideoClient, 'ArteTVVideoClient': ArteTVVideoClient, 'WWEVideoClient': WWEVideoClient, 'DouyinVideoClient': DouyinVideoClient, 'C56VideoClient': C56VideoClient,
+        'DongchediVideoClient': DongchediVideoClient, 'FoxNewsVideoClient': FoxNewsVideoClient, 'SinaVideoClient': SinaVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient, 'PearVideoClient': PearVideoClient, 
+        'SixRoomVideoClient': SixRoomVideoClient, 'WeSingVideoClient': WeSingVideoClient, 'XiguaVideoClient': XiguaVideoClient, 'TencentVideoClient': TencentVideoClient, 'GeniusVideoClient': GeniusVideoClient, 
+        'CCtalkVideoClient': CCtalkVideoClient, 'RedditVideoClient': RedditVideoClient, 'IQiyiVideoClient': IQiyiVideoClient,   'WittyTVVideoClient': WittyTVVideoClient, 'YoukuVideoClient': YoukuVideoClient, 
+        'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient, 'KugouMVVideoClient': KugouMVVideoClient, 'UnityVideoClient': UnityVideoClient, 
+        'KakaoVideoClient': KakaoVideoClient, 
     }
 
 
