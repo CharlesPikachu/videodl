@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of ODwonVideoClient: https://odown.cc/cctv
+    Implementation of GVVideoClient: https://greenvideo.cc/
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):
@@ -16,19 +16,19 @@ from Crypto.Util.Padding import pad
 from Crypto.Cipher import PKCS1_v1_5
 from ..sources import BaseVideoClient
 from ..utils.domains import platformfromurl
-from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
+from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, safeextractfromdict
 
 
-'''ODwonVideoClient'''
-class ODwonVideoClient(BaseVideoClient):
-    source = 'ODwonVideoClient'
+'''GVVideoClient'''
+class GVVideoClient(BaseVideoClient):
+    source = 'GVVideoClient'
     AES_KEY = "kedou@8989!63336"
     IV_BASE64 = "a2Vkb3VAODk4OSE2MzIzMw=="
     RSA_PUBLIC_KEY_BASE64 = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkJZWIUIje8VjJ3okESY8stCs/a95hTUqK3fD/AST0F8mf7rTLoHCaW+AjmrqVR9NM/tvQNni67b5tGC5z3PD6oROJJ24QfcAW9urz8WjtrS/pTAfGeP/2AMCZfCu9eECidy16U2oQzBl9Q0SPoz0paJ9AfgcrHa0Zm3RVPL7JvOUzscL4AnirYImPsdaHZ52hAwz5y9bYoiWzUkuG7LvnAxO6JHQ71B3VTzM3ZmstS7wBsQ4lIbD318b49x+baaXVmC3yPW/E4Ol+OBZIBMWhzl7FgwIpgbGmsJSsqrOq3D8IgjS12K5CgkOT7EB/sil7lscgc22E5DckRpMYRG8dwIDAQAB"
     def __init__(self, **kwargs):
-        super(ODwonVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"}
-        self.default_download_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"}
+        super(GVVideoClient, self).__init__(**kwargs)
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -46,10 +46,11 @@ class ODwonVideoClient(BaseVideoClient):
             json_string = json.dumps({"url": url}, separators=(",", ":"), ensure_ascii=False)
             aes_key_bytes = self.AES_KEY.encode("utf-8"); iv_bytes = base64.b64decode(self.IV_BASE64); data_bytes = json_string.encode("utf-8")
             aes_cipher = AES.new(aes_key_bytes, AES.MODE_CBC, iv_bytes); aes_encrypted = base64.b64encode(aes_cipher.encrypt(pad(data_bytes, AES.block_size))).decode("utf-8")
-            rsa_public_key = RSA.import_key(base64.b64decode(self.RSA_PUBLIC_KEY_BASE64)); rsa_cipher = PKCS1_v1_5.new(rsa_public_key); rsa_encrypted = base64.b64encode(rsa_cipher.encrypt(aes_encrypted.encode("utf-8"))).decode("utf-8")
+            rsa_public_key = RSA.import_key(base64.b64decode(self.RSA_PUBLIC_KEY_BASE64)); rsa_cipher = PKCS1_v1_5.new(rsa_public_key)
+            rsa_encrypted = base64.b64encode(rsa_cipher.encrypt(aes_encrypted.encode("utf-8"))).decode("utf-8")
             headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
             # --post request
-            (resp := self.post('https://odown.cc/api/video/cnSimpleExtract', json=rsa_encrypted, headers=headers, **request_overrides)).raise_for_status()
+            (resp := self.post('https://greenvideo.cc/api/video/cnSimpleExtract', json=rsa_encrypted, headers=headers, **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             # --sort by quality
@@ -70,7 +71,7 @@ class ODwonVideoClient(BaseVideoClient):
             if ext in ['txt']: raise PermissionError('The request to access rr5---sn-vgqsknld.googlevideo.com was denied.')
             try: cover_url = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and ((x.get('fileType') in {"image"}) or (x.get('quality') in {'封面'}))][0]['baseUrl']
             except Exception: cover_url = None
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=raw_data['data'].get('vid') or video_title, cover_url=cover_url))
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=safeextractfromdict(raw_data, ['data', 'vid'], None) or video_title, cover_url=cover_url))
             if audio_download_url and audio_download_url != 'NULL':
                 guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(url=audio_download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 video_info.update(dict(guess_audio_ext_result=guess_audio_ext_result))

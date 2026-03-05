@@ -4,6 +4,8 @@ videodl -i "https://www.youtube.com/watch?v=093JOWo1vqE" -g -a AnyFetcherVideoCl
 videodl -i "https://www.tiktok.com/@j4y273/video/7582553332242271510" -g -a BVVideoClient
 # BugPkVideoClient
 videodl -i "https://weibo.com/tv/show/1034:5272829806182433?mid=5272830083338918" -g -a BugPkVideoClient
+# GVVideoClient
+videodl -i "https://www.facebook.com/100083172190201/videos/1238024418444953" -g -a GVVideoClient
 # GVVIPVideoClient
 videodl -i "https://v.qq.com/x/cover/mzc00200ss1zz0x/r4101dsk6f5.html?cut_vid=p41012zzjzo&scene_id=3&start=1455" -g -a GVVIPVideoClient
 # IIILabVideoClient

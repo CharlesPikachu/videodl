@@ -59,7 +59,7 @@ class VideoFKVideoClient(BaseVideoClient):
         null_backup_title = yieldtimerelatedtitle(self.source)
         if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
         # try parse
-        video_infos, auto_filter_rr_for_youtube = [], True
+        video_infos, auto_filter_rr_for_youtube = [], False
         try:
             # --get request
             headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
@@ -86,7 +86,7 @@ class VideoFKVideoClient(BaseVideoClient):
                 guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(url=audio_download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 video_info.update(dict(guess_audio_ext_result=guess_audio_ext_result))
                 audio_ext = guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info['audio_ext']
-                if audio_ext in ['m4s']: audio_ext = 'm4a'
+                if audio_ext in ['m4s', 'mp4']: audio_ext = 'm4a'
                 video_info.update(dict(audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}')))
             video_infos.append(video_info)
         except Exception as err:

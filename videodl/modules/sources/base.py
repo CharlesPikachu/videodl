@@ -363,7 +363,7 @@ class BaseVideoClient():
         # CCTVVideoClient use specific downloader (highest-priority)
         if video_info.get('source') in ['CCTVVideoClient'] and video_info.get('hls_key') in ['hls_h5e_url']: return self._downloadcctv(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # requires merging videos and audios like some third-part video clients and bilibili (highest-priority)
-        if video_info.get('audio_download_url') and video_info.get('audio_download_url') != 'NULL' and video_info.get('audio_ext') in ['m4a', 'mp3', 'aac', 'weba', 'webm']: return self._naivedownloadvideoaudiothenmerge(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
+        if video_info.get('audio_download_url') and video_info.get('audio_download_url') != 'NULL' and video_info.get('audio_ext') in {'m4a', 'mp3', 'aac', 'weba', 'webm', 'mp4', 'acc', 'wav'}: return self._naivedownloadvideoaudiothenmerge(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # use ffmpeg to deal with m3u8 likes, auto set according to video_info cues, a naive judgement is applied (high-priority)
         if any((video_info.get('ext', '').lower() in {'m3u8', 'm3u', 'mpd'}, video_info.get('download_url', '').split('?', 1)[0].lower().endswith(('.m3u8', '.m3u', '.mpd')))):
             ext = video_info.get('ext') if video_info.get('ext') in ('mkv',) else 'mp4'

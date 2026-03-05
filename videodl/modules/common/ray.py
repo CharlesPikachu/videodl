@@ -54,9 +54,9 @@ class RayVideoClient(BaseVideoClient):
             video_info.update(dict(raw_data=raw_data))
             # --sort by quality
             data_items = raw_data["data"]["videoItemVoList"]
-            video_items: list[dict] = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and (x.get('fileType') in {"video"})]
+            video_items: list[dict] = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and ((x.get('fileType') in {"video"}) or (x.get('quality') not in {'音频', '封面'}))]
             video_items_sorted = sorted(video_items, key=lambda item: item.get("size", 0) or 0, reverse=True)
-            audio_items: list[dict] = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and (x.get('fileType') in {"audio"})]
+            audio_items: list[dict] = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and ((x.get('fileType') in {"audio"}) or (x.get('quality') in {'音频'}))]
             audio_items_sorted = sorted(audio_items, key=lambda item: item.get("size", 0) or 0, reverse=True)
             download_url, audio_download_url = video_items_sorted[0]['baseUrl'], video_items_sorted[0].get('audioUrl')
             if (not audio_download_url or audio_download_url == 'NULL') and audio_items_sorted: audio_download_url = audio_items_sorted[0].get('baseUrl')
@@ -68,14 +68,14 @@ class RayVideoClient(BaseVideoClient):
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             if ext in ['txt']: raise PermissionError('The request to access rr5---sn-vgqsknld.googlevideo.com was denied.')
-            try: cover_url = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and (x.get('fileType') in {"image"})][0]['baseUrl']
+            try: cover_url = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and ((x.get('fileType') in {"image"}) or (x.get('quality') in {'封面'}))][0]['baseUrl']
             except Exception: cover_url = None
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=raw_data['data'].get('vid') or video_title, cover_url=cover_url))
             if audio_download_url and audio_download_url != 'NULL':
                 guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(url=audio_download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 video_info.update(dict(guess_audio_ext_result=guess_audio_ext_result))
                 audio_ext = guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info['audio_ext']
-                if audio_ext in ['m4s']: audio_ext = 'm4a'
+                if audio_ext in ['m4s', 'mp4']: audio_ext = 'm4a'
                 video_info.update(dict(audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}')))
             video_infos.append(video_info)
         except Exception as err:

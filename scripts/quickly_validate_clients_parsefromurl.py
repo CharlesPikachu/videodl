@@ -417,6 +417,14 @@ VIDEODL_TEST_SAMPLES = {
         'https://v.douyin.com/iLYNG8vA/',
         'https://v.douyin.com/JdngHhh/',
     ],
+    'GVVideoClient': [
+        'https://www.youtube.com/watch?v=-xFD19QwpsE',
+        'https://www.xinpianchang.com/a11345150',
+        'https://www.facebook.com/100083172190201/videos/1238024418444953',
+        'https://www.instagram.com/reel/DVbPL2cgLrA/',
+        'https://www.bilibili.com/video/BV1S5PrzZE16/?spm_id_from=333.1007.tianma.1-1-1.click',
+        'https://www.dongchedi.com/video/7585761929667346968',
+    ],
 }
 
 
