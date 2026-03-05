@@ -42,37 +42,25 @@ class XMFlvVideoClient(BaseVideoClient):
         return data + b"\x00" * pad_len
     '''_generatekey'''
     def _generatekey(self, time_str: str, url: str) -> str:
-        encoded_url = urllib.parse.quote(url, safe="")
-        input_str = time_str + encoded_url
-        inner_hash_hex = hashlib.md5(input_str.encode("utf-8")).hexdigest()
+        inner_hash_hex = hashlib.md5((time_str + urllib.parse.quote(url, safe="")).encode("utf-8")).hexdigest()
         key_hash_hex = hashlib.md5(inner_hash_hex.encode("utf-8")).hexdigest()
-        key = key_hash_hex.encode("utf-8")
-        iv = b"OrSrAd8RtISPnooc"
-        data = inner_hash_hex.encode("utf-8")
-        cipher = AES.new(key, AES.MODE_CBC, iv)
-        ct = cipher.encrypt(self._zeropad(data, 16))
+        cipher = AES.new(key_hash_hex.encode("utf-8"), AES.MODE_CBC, b"OrSrAd8RtISPnooc")
+        ct = cipher.encrypt(self._zeropad(inner_hash_hex.encode("utf-8"), 16))
         return base64.b64encode(ct).decode("utf-8")
     '''_generatetoken'''
     def _generatetoken(self, key_str: str) -> str:
-        xor_key_proto = "m7EgOccP4xSeyjwQ"
-        xor_key = xor_key_proto.encode("utf-8")
-        input_buf = key_str.encode("utf-8")
-        length = len(input_buf)
-        padded_len = (length + 15) >> 4 << 4
-        buffer = bytearray(padded_len)
-        buffer[:length] = input_buf
+        xor_key = "m7EgOccP4xSeyjwQ".encode("utf-8")
+        input_buf = key_str.encode("utf-8"); length = len(input_buf); padded_len = (length + 15) >> 4 << 4
+        buffer = bytearray(padded_len); buffer[:length] = input_buf
         if padded_len > length: buffer[length] = 0x80
         output = bytearray(padded_len)
         for i in range(padded_len): output[i] = buffer[i] ^ xor_key[i % 16]
         return base64.b64encode(bytes(output)).decode("utf-8")
     '''_decryptresp'''
     def _decryptresp(self, encrypted_data: str) -> str:
-        key = b"4zYgSAsEAUS6YAud"
-        iv = b"ppa7qtR4McCIMCX4"
         ct = base64.b64decode(encrypted_data)
-        cipher = AES.new(key, AES.MODE_CBC, iv)
-        pt = cipher.decrypt(ct)
-        pt = unpad(pt, 16)
+        cipher = AES.new(b"4zYgSAsEAUS6YAud", AES.MODE_CBC, b"ppa7qtR4McCIMCX4")
+        pt = cipher.decrypt(ct); pt = unpad(pt, 16)
         return pt.decode("utf-8")
     '''parsefromurl'''
     @useparseheaderscookies
@@ -86,41 +74,29 @@ class XMFlvVideoClient(BaseVideoClient):
         video_infos = []
         try:
             # --fetch time and area
-            headers = copy.deepcopy(self.default_headers)
-            RandomIPGenerator().addrandomipv4toheaders(headers)
-            headers["accept"] = "*/*"
-            headers["origin"] = "https://jx.xmflv.com"
-            pre_resp = self.get(f"https://data.video.iqiyi.com/v.f4v?src=iqiyi.com", headers=headers, **request_overrides)
-            pre_resp.raise_for_status()
-            raw_data = resp2json(resp=pre_resp)
-            server_time, server_area = str(raw_data.get("time")), raw_data.get("t")
+            headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
+            headers["accept"] = "*/*"; headers["origin"] = "https://jx.xmflv.com"
+            (pre_resp := self.get(f"https://data.video.iqiyi.com/v.f4v?src=iqiyi.com", headers=headers, **request_overrides)).raise_for_status()
+            raw_data = resp2json(resp=pre_resp); server_time, server_area = str(raw_data.get("time")), raw_data.get("t")
             if not server_time or not server_area: raise RuntimeError("Failed to retrieve time or area from https://data.video.iqiyi.com/v.f4v?src=iqiyi.com")
             # --generate corresponding parameters
-            key = self._generatekey(server_time, url)
-            token = self._generatetoken(key)
+            key = self._generatekey(server_time, url); token = self._generatetoken(key)
             # --post to parse API
             data_json = {"ua": "0", "url": urllib.parse.quote(url, safe=""), "time": server_time, "key": key, "token": token, "area": server_area}
-            resp = self.post('https://202.189.8.170/Api.js', data=data_json, headers=headers, **request_overrides)
-            resp.raise_for_status()
+            (resp := self.post('https://202.189.8.170/Api.js', data=data_json, headers=headers, **request_overrides)).raise_for_status()
             raw_data['API.js'] = resp2json(resp=resp)
             # --decrypt response
-            decrypted_data = self._decryptresp(raw_data['API.js']['data'])
-            decrypted_data = json_repair.loads(decrypted_data)
+            decrypted_data = self._decryptresp(raw_data['API.js']['data']); decrypted_data = json_repair.loads(decrypted_data)
             raw_data['API.js']['decrypted_data'] = decrypted_data
             # --video title
             video_title = legalizestring(decrypted_data.get('name', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             if "解析失败啦" == video_title: raise Exception
             # --download url
-            download_url = decrypted_data['url']
-            video_info.update(dict(download_url=download_url))
+            download_url = decrypted_data['url']; video_info.update(dict(download_url=download_url))
             # --other infos
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(
-                url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies,
-            )
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(
-                title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=decrypted_data.get('pic')
-            ))
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=decrypted_data.get('pic')))
             video_infos.append(video_info)
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'

@@ -247,7 +247,8 @@ VIDEODL_TEST_SAMPLES = {
     'XMFlvVideoClient': [
         'https://www.iqiyi.com/v_16ne2x4z6zc.html',
         'https://v.youku.com/v_show/id_XNDU3MDY3NjQ3Mg==.html?s=e2b1cec58f1546cd97dc',
-        'https://v.qq.com/x/cover/mzc00200c1keuqc/y4101dz2uja.html?cut_vid=b41011l7r1s&scene_id=3&start=963'
+        'https://v.qq.com/x/cover/mzc00200t8ofhws/u41011qyvur.html',
+        'https://v.qq.com/x/cover/mzc00200c1keuqc/y4101dz2uja.html',
     ],
     'C56VideoClient': [
         'https://www.56.com/u11/v_MTk5NjI0OTIw.html',
