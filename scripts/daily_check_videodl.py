@@ -564,10 +564,7 @@ def runcheck(output_path: str):
     # save results
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
-    output_path_daily = os.path.join(os.path.dirname(output_path), f'videodl_{datetime.now().strftime("%Y-%m-%d")}.json')
-    with open(output_path_daily, "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, indent=2)
-    print(f"\nSaved test results to {output_path} and {output_path_daily}")
+    print(f"\nSaved test results to {output_path}")
     shutil.rmtree(WORK_DIR, ignore_errors=True)
 
 
