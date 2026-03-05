@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of quickly validating the effectiveness of videodl.parsefromurl
+    Implementation of Quickly Validating The Effectiveness Of "videodl.parsefromurl"
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):
@@ -321,10 +321,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.1905.com/vod/play/1287886.shtml',
     ],
     'VideoFKVideoClient': [
-        'https://www.youtube.com/watch?v=IBT0_3QUy98',
+        'https://www.bilibili.com/video/BV1jRADz8Eze/?spm_id_from=333.1007.tianma.1-2-2.click',
         'https://www.douyin.com/jingxuan?modal_id=7584054905644518690',
         'https://www.tiktok.com/@konbini/video/7556989514065939714?lang=en',
-        'https://www.facebook.com/facebook/videos/facebook-blue-never-looked-so-good-video-by-molchanovamuamusic-by-fausto-papetti/1185846950029459/'
+        'https://www.facebook.com/facebook/videos/facebook-blue-never-looked-so-good-video-by-molchanovamuamusic-by-fausto-papetti/1185846950029459/',
     ],
     'XCVTSVideoClient': [
         'https://v.douyin.com/irwsqD47/',

@@ -11,8 +11,8 @@ import re
 import html
 from bs4 import BeautifulSoup
 from ..sources import BaseVideoClient
-from ..utils.domains import platformfromurl
 from urllib.parse import parse_qs, urlparse
+from ..utils.domains import platformfromurl, obtainhostname, hostmatchessuffix
 from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, yieldtimerelatedtitle
 
 
@@ -56,7 +56,7 @@ class VgetVideoClient(BaseVideoClient):
         if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
         url = (lambda u: f"https://www.youtube.com/watch?v={parse_qs(urlparse(u).query, keep_blank_values=True)['v'][0]}" if u.startswith("https://www.youtube.com/watch?") else u)(url)
         # try parse
-        video_infos = []
+        video_infos, auto_filter_rr_for_youtube = [], True
         try:
             # --post requests
             resp = self.post("https://vget.xyz/dl", data={'url': url}, **request_overrides)
@@ -73,14 +73,15 @@ class VgetVideoClient(BaseVideoClient):
             video_title = (dd.get_text(strip=True) if (dt:=soup.find("dt", string=lambda s: s and "Title" in s)) and (dd:=dt.find_next_sibling("dd")) else None)
             video_title = legalizestring(video_title or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --sort and select the best
-            sorted_video_items = sorted([v for v in video_items if isinstance(v, dict) and (v.get('ext') not in {'mhtml', 'jpg', 'jpeg', 'png', 'gif', 'bmp'})], key=lambda x: (x["area"], self._extpriority(x["ext"], ["mp4", "webm", "m3u8"]), x["size_bytes"]), reverse=True)
+            sorted_video_items = sorted([v for v in video_items if isinstance(v, dict) and (v.get('ext') not in {'mhtml', 'jpg', 'jpeg', 'png', 'gif', 'bmp'})], key=lambda x: (x["area"], self._extpriority(x["ext"], ["m3u8", "webm", "mp4"]), x["size_bytes"]), reverse=True)
+            if platformfromurl(url).lower() in {'youtube'} and auto_filter_rr_for_youtube: sorted_video_items = [v for v in sorted_video_items if not hostmatchessuffix(obtainhostname(str(v.get('url'))), ["googlevideo.com"])]
             download_url = self._convertspecialdownloadurl(sorted_video_items[0]['url'])[0]
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             if 'playlist/m3u8' in download_url: guess_video_ext_result['ext'] = 'm3u8'
             video_info.update(dict(download_url=download_url))
             # --other infos
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            try: cover_url = [v for v in sorted_video_items if isinstance(v, dict) and (v.get('ext') in {'mhtml', 'jpg', 'jpeg', 'png', 'gif', 'bmp'})][0]['url']
+            try: cover_url = [v for v in video_items if isinstance(v, dict) and (v.get('ext') in {'mhtml', 'jpg', 'jpeg', 'png', 'gif', 'bmp'})][0]['url']
             except Exception: cover_url = None
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=cover_url))
             video_infos.append(video_info)

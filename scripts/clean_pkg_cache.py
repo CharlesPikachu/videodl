@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of removepycache
+    Implementation of Clean Package Cache
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):

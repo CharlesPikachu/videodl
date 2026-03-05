@@ -1,56 +1,58 @@
-# IIILabVideoClient
-videodl -i "https://www.le.com/ptv/vplay/77916175.html#vid=77916175" -g -a IIILabVideoClient
-# KedouVideoClient
-videodl -i "https://www.douyin.com/jingxuan?modal_id=7578412593719577899" -g -a KedouVideoClient
-# SnapAnyVideoClient
-videodl -i "https://www.youtube.com/watch?v=uZ8rxvAoFuc&list=RDuZ8rxvAoFuc&start_radio=1" -g -a SnapAnyVideoClient
-# GVVIPVideoClient
-videodl -i "https://v.qq.com/x/cover/mzc00200ss1zz0x/r4101dsk6f5.html?cut_vid=p41012zzjzo&scene_id=3&start=1455" -g -a GVVIPVideoClient
-# VgetVideoClient
-videodl -i "https://x.com/iluminatibot/status/1996651394963734976" -g -a VgetVideoClient
-# XMFlvVideoClient
-videodl -i "https://v.qq.com/x/cover/mzc00200tpgbo78/y4101ca2mcp.html" -g -a XMFlvVideoClient
-# QZXDPToolsVideoClient
-videodl -i "https://www.bilibili.com/video/BV1uymuBcE6D/?spm_id_from=333.1007.tianma.1-2-2.click" -g -a QZXDPToolsVideoClient
-# KuKuToolVideoClient
-videodl -i "https://www.bilibili.com/bangumi/play/ep2550182" -g -a KuKuToolVideoClient
-# LongZhuVideoClient
-videodl -i "https://www.bilibili.com/video/BV1DxCQBBE24/?spm_id_from=333.1007.tianma.2-2-5.click" -g -a LongZhuVideoClient
-# XiazaitoolVideoClient
-videodl -i "https://www.instagram.com/reel/DSO-KpuEqud/" -g -a XiazaitoolVideoClient
-# NoLogoVideoClient
-videodl -i "https://www.douyin.com/jingxuan?modal_id=7561075993822416185" -g -a NoLogoVideoClient
-# SnapWCVideoClient
-videodl -i "https://www.douyin.com/jingxuan?modal_id=7580605435187596559" -g -a SnapWCVideoClient
-# BugPkVideoClient
-videodl -i "https://www.kuaishou.com/short-video/3xvnepai44qi65m?authorId=3xxk837em5amm9u&streamSource=find&area=homexxbrilliant" -g -a BugPkVideoClient
-# ZanqianbaVideoClient
-videodl -i "https://www.toutiao.com/video/7585120439421108278/?log_from=33b1706a090018_1766131556972" -g -a ZanqianbaVideoClient
-# QingtingVideoClient
-videodl -i "https://www.kuaishou.com/short-video/3x5a3tcqjss9sgw?authorId=3xna23q7fq2jn4i&streamSource=brilliant&hotChannelId=00&area=brilliantxxcarefully" -g -a QingtingVideoClient
-# BVVideoClient
-videodl -i "https://www.tiktok.com/@j4y273/video/7582553332242271510" -g -a BVVideoClient
-# VideoFKVideoClient
-videodl -i "https://www.youtube.com/watch?v=CXuFh6YsyM4&list=RDCXuFh6YsyM4&start_radio=1" -g -a VideoFKVideoClient
-# XCVTSVideoClient
-videodl -i "https://v.kuaishou.com/8CU76w" -g -a XCVTSVideoClient
-# KIT9VideoClient
-videodl -i "https://show.meitu.com/detail?feed_id=6873229026351926275" -g -a KIT9VideoClient
-# XZDXVideoClient
-videodl -i "https://www.douyin.com/jingxuan?modal_id=7585277829261151542" -g -a XZDXVideoClient
-# PVVideoClient
-videodl -i "https://www.youtube.com/watch?v=lBNYpPmjH8M" -g -a PVVideoClient
-# MiZhiVideoClient
-videodl -i "https://www.douyin.com/jingxuan?modal_id=7592623211763718287" -g -a MiZhiVideoClient
-# RayVideoClient
-videodl -i "https://www.miguvideo.com/p/detail/759959727" -g -a RayVideoClient
-# SENJiexiVideoClient
-videodl -i "https://www.iqiyi.com/v_rmbopj0g60.html" -g -a SENJiexiVideoClient
-# LvlongVideoClient
-videodl -i "https://v.qq.com/x/cover/hcx1ffsjpj63xuj/e0024mhahej.html" -g -a LvlongVideoClient
-# ODwonVideoClient
-videodl -i "https://www.douyin.com/video/6982497745948921092" -g -a ODwonVideoClient
-# IM1907VideoClient
-videodl -i "https://www.mgtv.com/b/823245/24067596.html" -g -a IM1907VideoClient
 # AnyFetcherVideoClient
 videodl -i "https://www.youtube.com/watch?v=093JOWo1vqE" -g -a AnyFetcherVideoClient
+# BVVideoClient
+videodl -i "https://www.tiktok.com/@j4y273/video/7582553332242271510" -g -a BVVideoClient
+# BugPkVideoClient
+videodl -i "https://weibo.com/tv/show/1034:5272829806182433?mid=5272830083338918" -g -a BugPkVideoClient
+# GVVIPVideoClient
+videodl -i "https://v.qq.com/x/cover/mzc00200ss1zz0x/r4101dsk6f5.html?cut_vid=p41012zzjzo&scene_id=3&start=1455" -g -a GVVIPVideoClient
+# IIILabVideoClient
+videodl -i "https://www.le.com/ptv/vplay/77916175.html#vid=77916175" -g -a IIILabVideoClient
+# IM1907VideoClient
+videodl -i "https://www.mgtv.com/b/823245/24067596.html" -g -a IM1907VideoClient
+# KedouVideoClient
+videodl -i "https://www.bilibili.com/bangumi/play/ep371068" -g -a KedouVideoClient
+# KuKuToolVideoClient
+videodl -i "https://www.douyin.com/jingxuan?modal_id=7563478365211987259" -g -a KuKuToolVideoClient
+# KIT9VideoClient
+videodl -i "https://show.meitu.com/detail?feed_id=6873229026351926275" -g -a KIT9VideoClient
+# LongZhuVideoClient
+videodl -i "https://share.xiaochuankeji.cn/hybrid/share/post?pid=415655156" -g -a LongZhuVideoClient
+# LvlongVideoClient
+videodl -i "https://v.qq.com/x/cover/hcx1ffsjpj63xuj/e0024mhahej.html" -g -a LvlongVideoClient
+# MiZhiVideoClient
+videodl -i "https://v.6.cn/minivideo/7466460" -g -a MiZhiVideoClient
+# NoLogoVideoClient
+videodl -i "https://www.douyin.com/jingxuan?modal_id=7501640534811233594" -g -a NoLogoVideoClient
+# ODwonVideoClient
+videodl -i "https://www.xinpianchang.com/a11879902?from=articlePageOther" -g -a ODwonVideoClient
+# PVVideoClient
+videodl -i "https://www.youtube.com/watch?v=lBNYpPmjH8M" -g -a PVVideoClient
+# QingtingVideoClient
+videodl -i "https://www.douyin.com/jingxuan/theater?modal_id=7580778868509933947" -g -a QingtingVideoClient
+# QZXDPToolsVideoClient
+videodl -i "https://www.huya.com/video/play/1090411452.html" -g -a QZXDPToolsVideoClient
+# RayVideoClient
+videodl -i "https://www.youtube.com/watch?v=a0AyNzV3yk8" -g -a RayVideoClient
+# SnapAnyVideoClient
+videodl -i "https://www.youtube.com/watch?v=kSeevdvySHg" -g -a SnapAnyVideoClient
+# SnapWCVideoClient
+videodl -i "https://www.youtube.com/watch?v=8EA71rLoY5s" -g -a SnapWCVideoClient
+# SENJiexiVideoClient
+videodl -i "https://v.pptv.com/show/31nibfeVLuiclc2kI.html" -g -a SENJiexiVideoClient
+# VgetVideoClient
+videodl -i "https://x.com/iluminatibot/status/1996651394963734976" -g -a VgetVideoClient
+# VideoFKVideoClient
+videodl -i "https://www.facebook.com/facebook/videos/facebook-blue-never-looked-so-good-video-by-molchanovamuamusic-by-fausto-papetti/1185846950029459/" -g -a VideoFKVideoClient
+
+
+# XMFlvVideoClient
+videodl -i "https://v.qq.com/x/cover/mzc00200c1keuqc/y4101dz2uja.html?cut_vid=b41011l7r1s&scene_id=3&start=963" -g -a XMFlvVideoClient
+# XiazaitoolVideoClient
+videodl -i "https://www.instagram.com/reel/DSO-KpuEqud/" -g -a XiazaitoolVideoClient
+# ZanqianbaVideoClient
+videodl -i "https://www.toutiao.com/video/7585120439421108278/?log_from=33b1706a090018_1766131556972" -g -a ZanqianbaVideoClient
+# XCVTSVideoClient
+videodl -i "https://v.kuaishou.com/8CU76w" -g -a XCVTSVideoClient
+# XZDXVideoClient
+videodl -i "https://www.douyin.com/jingxuan?modal_id=7585277829261151542" -g -a XZDXVideoClient
