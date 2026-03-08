@@ -52,6 +52,8 @@ videodl -i "https://www.tiktok.com/@disneymusic/video/7589346194372037943?lang=e
 videodl -i "https://v.qq.com/x/cover/mzc00200c1keuqc/y4101dz2uja.html?cut_vid=b41011l7r1s&scene_id=3&start=963" -g -a XMFlvVideoClient
 # XCVTSVideoClient
 videodl -i "https://v.kuaishou.com/8CU76w" -g -a XCVTSVideoClient
+# XiaolvfangVideoClient
+videodl -i "https://weibo.com/tv/show/1034:5271766164242555?mid=5271766441395892" -g -a XiaolvfangVideoClient
 
 ########################################################## Maybe Invalid #########################################################
 # XZDXVideoClient

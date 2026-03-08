@@ -431,6 +431,15 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.dongchedi.com/video/7498933469267952137',
         'https://www.dongchedi.com/video/7589928965104517656',
     ],
+    'XiaolvfangVideoClient': [
+        'https://www.bilibili.com/video/BV17KZKBdEQ3',
+        'https://www.tiktok.com/@pet_statione/video/7579841364599328013?lang=en',
+        'https://www.douyin.com/jingxuan?modal_id=7612988083125980479',
+        'https://www.instagram.com/reel/DP39IRyAXRo/',
+        'https://www.kuaishou.com/short-video/3x48szncmg4xcqe?authorId=3x9w4thv6im6ne4&streamSource=samecity&area=homexxnearby',
+        'https://weibo.com/tv/show/1034:5271766164242555?mid=5271766441395892',
+        'https://m.oasis.weibo.cn/v1/h5/share?sid=4506676592820518',
+    ],
 }
 
 
