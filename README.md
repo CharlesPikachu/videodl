@@ -58,9 +58,9 @@
 
 # 🆕 What's New
 
+- 2026-03-09: Released videofetch v0.6.7 - added a general video parser; added support for downloading videos from beacon.tv; fixed the issue where videos on Weibo might fail to download due to possible anti-leech protection; and resolved some potential bugs.
 - 2026-03-06: Released videofetch v0.6.6 - fix a bug where audio tracks couldn’t be fetched on some platforms; add video parsing and downloading support for the Dongchedi (懂车帝) platform; and introduce an additional general-purpose video parsing platform.
 - 2026-03-05: Released videofetch v0.6.5 - we added cover metadata for the common video clients currently supported; we also fixed bugs affecting multiple general-purpose parsing platforms and unified the code style.
-- 2026-03-03: Released videofetch v0.6.4 - fixed the video download functionality across multiple platforms (including Tencent Video, iQIYI, and Xinpianchang), improved the return of cover-link information for each platform, and refactored/optimized parts of the codebase.
 
 
 # 🚀 Introduction
@@ -123,6 +123,7 @@ The video platforms currently supported for parsing are,
 |                                                        | ZhihuVideoClient                      | 知乎视频                           | ✔️        | ✔️       | [zhihu.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/zhihu.py)                 |
 |                                                        | ZuiyouVideoClient                     | 最右                               | ✔️        | ✔️       | [zuiyou.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/zuiyou.py)               |
 | **Overseas Platforms**                                 | ArteTVVideoClient                     | 德法公共电视网                     | ✔️        | ✔️       | [artetv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/artetv.py)               |
+|                                                        | BeaconVideoClient                     | BeaconTV                           | ✔️        | ✔️       | [beacon.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/beacon.py)               |
 |                                                        | CCCVideoClient                        | CCC视频 (黑客大会视频)             | ✔️        | ✔️       | [ccc.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/ccc.py)                     |
 |                                                        | FoxNewsVideoClient                    | 福克斯新闻                         | ✔️        | ✔️       | [foxnews.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/foxnews.py)             |
 |                                                        | PlusFIFAVideoClient                   | FIFA+平台 (国际足联+)              | ✔️        | ✔️       | [plusfifa.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/plusfifa.py)           |

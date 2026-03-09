@@ -33,6 +33,7 @@ from .meipai import MeipaiVideoClient
 from ..utils import BaseModuleBuilder
 from .wesing import WeSingVideoClient
 from .cctalk import CCtalkVideoClient
+from .beacon import BeaconVideoClient
 from .kugoumv import KugouMVVideoClient
 from .wittytv import WittyTVVideoClient
 from .open163 import Open163VideoClient
@@ -67,7 +68,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'SixRoomVideoClient': SixRoomVideoClient, 'WeSingVideoClient': WeSingVideoClient, 'XiguaVideoClient': XiguaVideoClient, 'TencentVideoClient': TencentVideoClient, 'GeniusVideoClient': GeniusVideoClient, 
         'CCtalkVideoClient': CCtalkVideoClient, 'RedditVideoClient': RedditVideoClient, 'IQiyiVideoClient': IQiyiVideoClient,   'WittyTVVideoClient': WittyTVVideoClient, 'YoukuVideoClient': YoukuVideoClient, 
         'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient, 'KugouMVVideoClient': KugouMVVideoClient, 'UnityVideoClient': UnityVideoClient, 
-        'KakaoVideoClient': KakaoVideoClient, 
+        'KakaoVideoClient': KakaoVideoClient, 'BeaconVideoClient': BeaconVideoClient,
     }
 
 

@@ -440,6 +440,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://weibo.com/tv/show/1034:5271766164242555?mid=5271766441395892',
         'https://m.oasis.weibo.cn/v1/h5/share?sid=4506676592820518',
     ],
+    'BeaconVideoClient': [
+        'https://beacon.tv/content/welcome-to-beacon',
+        'https://beacon.tv/content/draw-your-weapons-trailer',
+    ],
 }
 
 
