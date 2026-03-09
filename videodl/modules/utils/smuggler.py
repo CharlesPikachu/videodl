@@ -9,6 +9,7 @@ WeChat Official Account (微信公众号):
 import re
 import html
 import json
+import copy
 import requests
 from .misc import resp2json
 from urllib.parse import urlsplit, parse_qs, urljoin, urlencode
@@ -34,15 +35,13 @@ class BrightcoveSmuggler():
     '''parse'''
     @staticmethod
     def extract(player_url, request_overrides: dict = None):
-        request_overrides = request_overrides or {}
+        request_overrides = copy.deepcopy(request_overrides or {})
         session = requests.Session()
         account_id, player_id, video_id = BrightcoveSmuggler._parseplayerurl(player_url)
         policy_key = BrightcoveSmuggler._fetchpolicykey(session=session, player_url=player_url, request_overrides=request_overrides)
         api_url = f'https://edge.api.brightcove.com/playback/v1/accounts/{account_id}/videos/{video_id}'
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'Accept': f'application/json;pk={policy_key}', 'BCOV-Policy': policy_key, 'Origin': 'https://players.brightcove.net', 'Referer': player_url}
-        request_overrides.pop('headers')
-        resp = session.get(api_url, headers=headers, **request_overrides)
-        resp.raise_for_status()
+        request_overrides.pop('headers'); (resp := session.get(api_url, headers=headers, **request_overrides)).raise_for_status()
         data = resp2json(resp=resp)
         formats = []
         for s in data.get('sources', []):

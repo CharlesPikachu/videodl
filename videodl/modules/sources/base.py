@@ -353,7 +353,7 @@ class BaseVideoClient():
     @usedownloadheaderscookies
     def _download(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None):
         # init
-        request_overrides = request_overrides or {}
+        request_overrides = copy.deepcopy(request_overrides or {})
         # some formats maybe incorrect, auto correct
         if video_info.get('ext') in ['m4s']: video_info.update(dict(ext='mp4', file_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
         # not deal with video info with errors

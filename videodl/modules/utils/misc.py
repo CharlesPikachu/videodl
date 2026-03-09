@@ -8,6 +8,7 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import re
+import copy
 import time
 import html
 import emoji
@@ -360,7 +361,7 @@ class FileTypeSniffer:
     @staticmethod
     def getfileextensionfromurl(url: str, headers: dict = None, cookies: dict = None, request_overrides: dict = None, skip_urllib_parse: bool = False):
         # prepare
-        headers, cookies, request_overrides = headers or {}, cookies or {}, request_overrides or {}
+        headers, cookies, request_overrides = headers or {}, cookies or {}, copy.deepcopy(request_overrides or {})
         if 'cookies' not in request_overrides: request_overrides['cookies'] = cookies
         if 'headers' not in request_overrides: request_overrides['headers'] = headers
         outputs = {'ext': 'NULL', 'sniffer': 'NULL', 'ok': False}
