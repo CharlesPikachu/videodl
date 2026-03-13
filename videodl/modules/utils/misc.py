@@ -355,7 +355,7 @@ class FileTypeSniffer:
         "tta", "thd", "ul", "ult", "umx", "voc", "vgm", "vgz", "wav", "wave", "wax", "w64", "wma", "wve", "wv", "wvx", "xi", "xm", "8svx", "16svx", "669", "amf", "dmf", "far", "gbs", 
         "gym", "hes", "it", "mdl", "mpc2k", "nsa", "psf", "psf1", "psf2", "ssf", "miniusf", "usf", "2sf", "gsf", "qsf", "spu", "at3", "aa3", "at9", "3ga",
         # special
-        "m4s"
+        "m4s",
     )
     '''getfileextensionfromurl'''
     @staticmethod

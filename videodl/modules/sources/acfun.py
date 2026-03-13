@@ -19,12 +19,8 @@ class AcFunVideoClient(BaseVideoClient):
     source = 'AcFunVideoClient'
     def __init__(self, **kwargs):
         super(AcFunVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -38,8 +34,7 @@ class AcFunVideoClient(BaseVideoClient):
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
-            resp = self.get(url, **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(url, **request_overrides)).raise_for_status()
             raw_data = json_repair.loads(re.findall('window.pageInfo =(.*?);', resp.text)[0].split('=', 1)[-1].strip())
             video_info.update(dict(raw_data=raw_data))
             try: download_url = json_repair.loads(raw_data['currentVideoInfo']['ksPlayJsonHevc'])['adaptationSet'][0]['representation'][0]['url']
