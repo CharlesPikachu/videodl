@@ -79,10 +79,15 @@ class TBNUKVideoClient(BaseVideoClient):
         video_info = VideoInfo(source=self.source)
         if (not self.belongto(url=url)) or ("/live/" not in url.split("?")[0].split("#")[0].rstrip("/")): return [video_info]
         null_backup_title = yieldtimerelatedtitle(self.source)
+        headers = {
+            "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7", "accept-encoding": "gzip, deflate, br, zstd", "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+            "cache-control": "max-age=0", "priority": "u=0, i", "sec-ch-ua": '"Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145"', "sec-ch-ua-mobile": "?0", "sec-ch-ua-platform": '"Windows"', "sec-fetch-dest": "document", "sec-fetch-site": "none",
+            "sec-fetch-mode": "navigate", "sec-fetch-user": "?1", "upgrade-insecure-requests": "1", "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+        }
         # try parse
         try:
             vid = re.compile(r'https?://[^/]+/live/(\d+)(?=[/?#]|$)').search(url).group(1); stream_type = "live"
-            (resp := self.get(url, **request_overrides)).raise_for_status(); html_str = resp.text
+            (resp := self.get(url, headers=headers, **request_overrides)).raise_for_status(); html_str = resp.text
             (resp := self.post(TBNUKVideoClient.STREAM_URL.format(stream_type=stream_type, stream_id=vid), params={'key': TBNUKVideoClient.API_KEY, 'platform': 'chrome', 'url': url}, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp)))); response: dict = raw_data['response']
             assert (not response.get('drm')) and ("not found" not in str(response.get("error", "")).lower())
