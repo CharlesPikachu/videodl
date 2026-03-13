@@ -346,7 +346,7 @@ class FileTypeSniffer:
         "3g2", "3gp", "3gp2", "3gpp", "3gpp2", "amv", "apng", "asf", "avi", "avc", "avs", "avs2", "c2", "cdxl", "cgi", "cif", "dif", "dv", "f4p", "f4v", "flv", "gif", "gifv", "mng",
         "h261", "h263", "h264", "h265", "h26l", "hevc", "idf", "ism", "isma", "ismv", "j2k", "m2p", "m2ts", "m2v", "mts", "ts", "m4v", "mj2", "mjpeg", "mjpg", "mk3d", "mks", "mkv", 
         "mov", "mp4", "mp4v", "mpe", "mpeg", "mpg", "mpv", "mpo", "mvi", "mxf", "nsv", "obu", "ogg", "ogm", "ogv", "psp", "qcif", "rgb", "rm", "rmvb", "roq", "rrc", "svi", "v210", 
-        "vc1", "vob", "webm", "wmv", "yuv", "yuv10",
+        "vc1", "vob", "webm", "wmv", "yuv", "yuv10", "m3u",
         # audios
         "aac", "aax", "aaxc", "ac3", "adts", "aif", "aifc", "aiff", "alac", "amr", "ape", "au", "avr", "awb", "caf", "cda", "dff", "dfsf", "dsf", "dss", "dts", "dtshd", "ec3", "f32", 
         "f64", "flac", "gsm", "hca", "htk", "iff", "ima", "ircam", "kar", "kss", "la", "l16", "m15", "m3u8", "m4a", "m4b", "m4p", "m4r", "mat4", "mat5", "med", "midi", "mid", "mlp", 

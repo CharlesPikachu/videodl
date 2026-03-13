@@ -1,5 +1,7 @@
 # Development Log
 
+- 2026-03-13: Released videofetch v0.6.8 - added video parsing and downloading support for two new sites, namely, "watch.tbn.uk" and "www.abc.net.au"; optimized the implementation of "VideoInfo" data class to make IDE usage more convenient; fixed several known bugs.
+
 - 2026-03-09: Released videofetch v0.6.7 - added a general video parser; added support for downloading videos from beacon.tv; fixed the issue where videos on Weibo might fail to download due to possible anti-leech protection; and resolved some potential bugs.
 
 - 2026-03-06: Released videofetch v0.6.6 - fix a bug where audio tracks couldn’t be fetched on some platforms; add video parsing and downloading support for the Dongchedi (懂车帝) platform; and introduce an additional general-purpose video parsing platform.

@@ -20,8 +20,7 @@ class ABCVideoClient(BaseVideoClient):
     def __init__(self, **kwargs):
         super(ABCVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
-        self.default_download_headers = {
-        }
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''_parsefromurlwithabcie'''

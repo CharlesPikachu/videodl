@@ -12,6 +12,7 @@ from .base import BaseVideoClient
 from .mgtv import MGTVVideoClient
 from .cctv import CCTVVideoClient
 from .sohu import SohuVideoClient
+from .tbnuk import TBNUKVideoClient
 from .unity import UnityVideoClient
 from .acfun import AcFunVideoClient
 from .xigua import XiguaVideoClient
@@ -69,7 +70,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'SixRoomVideoClient': SixRoomVideoClient, 'WeSingVideoClient': WeSingVideoClient, 'XiguaVideoClient': XiguaVideoClient, 'TencentVideoClient': TencentVideoClient, 'GeniusVideoClient': GeniusVideoClient, 
         'CCtalkVideoClient': CCtalkVideoClient, 'RedditVideoClient': RedditVideoClient, 'IQiyiVideoClient': IQiyiVideoClient,   'WittyTVVideoClient': WittyTVVideoClient, 'YoukuVideoClient': YoukuVideoClient, 
         'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient, 'KugouMVVideoClient': KugouMVVideoClient, 'UnityVideoClient': UnityVideoClient, 
-        'KakaoVideoClient': KakaoVideoClient, 'BeaconVideoClient': BeaconVideoClient, 'ABCVideoClient': ABCVideoClient,
+        'KakaoVideoClient': KakaoVideoClient, 'BeaconVideoClient': BeaconVideoClient, 'ABCVideoClient': ABCVideoClient, 'TBNUKVideoClient': TBNUKVideoClient, 
     }
 
 

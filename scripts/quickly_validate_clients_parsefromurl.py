@@ -448,6 +448,13 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.abc.net.au/btn/classroom/wwi-centenary/10527914',
         'https://www.abc.net.au/news/2023-06-25/wagner-boss-orders-troops-back-to-bases-to-avoid-bloodshed/102520540',
     ],
+    'TBNUKVideoClient': [
+        "https://watch.tbn.uk/watch/replay/53253478",
+        "https://watch.tbn.uk/watch/vod/52157303/identity-and-belonging",
+        "https://watch.tbn.uk/shows/c171a631-ca92-4715-9df4-51567542481c/the-sessions-with-cynthia-garrett",
+        "https://watch.tbn.uk/shows/906eb770-23de-4fc7-a369-e87167a5256d/praise-uk",
+        "https://watch.tbn.uk/live/1197",
+    ],
 }
 
 
