@@ -3,7 +3,7 @@ rich
 prettytable
 click
 json_repair
-pathvalidate
+pathvalidate>=3.0.0
 platformdirs
 emoji
 bleach

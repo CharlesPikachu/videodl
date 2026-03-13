@@ -101,10 +101,8 @@ class BaseVideoClient():
     def _ensureuniquefilepath(self, file_path: str):
         same_name_file_idx, unique_file_path = 1, file_path
         while os.path.exists(unique_file_path):
-            directory, file_name = os.path.split(file_path)
-            file_name_without_ext, ext = os.path.splitext(file_name)
-            unique_file_path = os.path.join(directory, f"{file_name_without_ext} ({same_name_file_idx}){ext}")
-            same_name_file_idx += 1
+            directory, file_name = os.path.split(file_path); file_name_without_ext, ext = os.path.splitext(file_name)
+            unique_file_path = os.path.join(directory, f"{file_name_without_ext} ({same_name_file_idx}){ext}"); same_name_file_idx += 1
         return unique_file_path
     '''parsefromurl'''
     @useparseheaderscookies
