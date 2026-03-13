@@ -1,4 +1,5 @@
 '''initialize'''
+from .abc import ABCVideoClient
 from .wwe import WWEVideoClient
 from .ted import TedVideoClient
 from .ku6 import Ku6VideoClient
@@ -68,7 +69,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'SixRoomVideoClient': SixRoomVideoClient, 'WeSingVideoClient': WeSingVideoClient, 'XiguaVideoClient': XiguaVideoClient, 'TencentVideoClient': TencentVideoClient, 'GeniusVideoClient': GeniusVideoClient, 
         'CCtalkVideoClient': CCtalkVideoClient, 'RedditVideoClient': RedditVideoClient, 'IQiyiVideoClient': IQiyiVideoClient,   'WittyTVVideoClient': WittyTVVideoClient, 'YoukuVideoClient': YoukuVideoClient, 
         'CCTVVideoClient': CCTVVideoClient, 'SohuVideoClient': SohuVideoClient, 'EyepetizerVideoClient': EyepetizerVideoClient, 'KugouMVVideoClient': KugouMVVideoClient, 'UnityVideoClient': UnityVideoClient, 
-        'KakaoVideoClient': KakaoVideoClient, 'BeaconVideoClient': BeaconVideoClient,
+        'KakaoVideoClient': KakaoVideoClient, 'BeaconVideoClient': BeaconVideoClient, 'ABCVideoClient': ABCVideoClient,
     }
 
 

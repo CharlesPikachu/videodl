@@ -444,6 +444,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://beacon.tv/content/welcome-to-beacon',
         'https://beacon.tv/content/draw-your-weapons-trailer',
     ],
+    'ABCVideoClient': [
+        'https://www.abc.net.au/btn/classroom/wwi-centenary/10527914',
+        'https://www.abc.net.au/news/2023-06-25/wagner-boss-orders-troops-back-to-bases-to-avoid-bloodshed/102520540',
+    ],
 }
 
 
