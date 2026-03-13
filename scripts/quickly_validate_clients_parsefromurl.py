@@ -124,10 +124,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://weibo.com/tv/v/HApWK8FAc?fid=1034:4386795211940756',
     ],
     'RednoteVideoClient': [
-        'http://xhslink.com/o/7DegL4I0Sjy',
         'http://xhslink.com/o/A7MOvT2d4IM',
-        'http://xhslink.com/o/3hFb1CXputg',
-        'http://xhslink.com/o/69q4KGNdyG',
+        'http://xhslink.com/o/6us6UGep1Zw',
+        'http://xhslink.com/o/8t08X6dROt5',
+        'http://xhslink.com/o/1lB9dX0Vt2t',
     ],
     'CCTVVideoClient': [
         'https://v.cctv.com/2021/06/05/VIDEwn0n7VRJokIL7rBi2ink210605.shtml?spm=C90324.Pfdd0SYeqktv.Eri5TUDwaTXO.6',
