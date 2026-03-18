@@ -14,6 +14,7 @@ from .bugpk import BugPkVideoClient
 from .mizhi import MiZhiVideoClient
 from .xcvts import XCVTSVideoClient
 from .odown import ODwonVideoClient
+from .qwkuns import QwkunsVideoClient
 from .lvlong import LvlongVideoClient
 from .snapwc import SnapWCVideoClient
 from .nologo import NoLogoVideoClient
@@ -38,10 +39,10 @@ class CommonVideoClientBuilder(BaseModuleBuilder):
     REGISTERED_MODULES = {
         'IM1907VideoClient': IM1907VideoClient, 'XMFlvVideoClient': XMFlvVideoClient, 'SnapAnyVideoClient': SnapAnyVideoClient, 'GVVideoClient': GVVideoClient, 'IIILabVideoClient': IIILabVideoClient, 'VideoFKVideoClient': VideoFKVideoClient, 
         'RayVideoClient': RayVideoClient, 'SnapWCVideoClient': SnapWCVideoClient, 'VgetVideoClient': VgetVideoClient, 'SENJiexiVideoClient': SENJiexiVideoClient, 'AnyFetcherVideoClient': AnyFetcherVideoClient, 'PVVideoClient': PVVideoClient, 
-        'KedouVideoClient': KedouVideoClient, 'ODwonVideoClient': ODwonVideoClient, 'WoofVideoClient': WoofVideoClient, 'KuKuToolVideoClient': KuKuToolVideoClient, 'XiaolvfangVideoClient': XiaolvfangVideoClient, 'BVVideoClient': BVVideoClient, 
-        'KIT9VideoClient': KIT9VideoClient, 'MiZhiVideoClient': MiZhiVideoClient, 'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'BugPkVideoClient': BugPkVideoClient, 'NoLogoVideoClient': NoLogoVideoClient, 'QingtingVideoClient': QingtingVideoClient, 
-        'LvlongVideoClient': LvlongVideoClient, 'XCVTSVideoClient': XCVTSVideoClient, 'LongZhuVideoClient': LongZhuVideoClient, 'XiazaitoolVideoClient': XiazaitoolVideoClient, 'ZanqianbaVideoClient': ZanqianbaVideoClient, 'GVVIPVideoClient': GVVIPVideoClient, 
-        'XZDXVideoClient': XZDXVideoClient,
+        'KedouVideoClient': KedouVideoClient, 'ODwonVideoClient': ODwonVideoClient, 'WoofVideoClient': WoofVideoClient, 'KuKuToolVideoClient': KuKuToolVideoClient, 'QwkunsVideoClient': QwkunsVideoClient, 'XiaolvfangVideoClient': XiaolvfangVideoClient, 
+        'BVVideoClient': BVVideoClient, 'KIT9VideoClient': KIT9VideoClient, 'MiZhiVideoClient': MiZhiVideoClient, 'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'BugPkVideoClient': BugPkVideoClient, 'NoLogoVideoClient': NoLogoVideoClient, 
+        'QingtingVideoClient': QingtingVideoClient, 'LvlongVideoClient': LvlongVideoClient, 'XCVTSVideoClient': XCVTSVideoClient, 'LongZhuVideoClient': LongZhuVideoClient, 'XiazaitoolVideoClient': XiazaitoolVideoClient, 'ZanqianbaVideoClient': ZanqianbaVideoClient, 
+        'GVVIPVideoClient': GVVIPVideoClient, 'XZDXVideoClient': XZDXVideoClient,
     }
 
 

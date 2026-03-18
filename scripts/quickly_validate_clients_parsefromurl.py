@@ -461,6 +461,12 @@ VIDEODL_TEST_SAMPLES = {
         'https://bsky.app/profile/atrupar.com/post/3mhdmjwygsd2e',
         'https://www.dailymotion.com/video/xa26uyo',
     ],
+    'QwkunsVideoClient': [
+        'https://www.instagram.com/reel/DV6qXd0CVgB/',
+        'https://bsky.app/profile/atrupar.com/post/3mhdsmy4coo2p',
+        'https://www.tiktok.com/@marianpaulineflores/video/7617021651158387975',
+        'https://www.dailymotion.com/video/x9h93bs',
+    ],
 }
 
 
