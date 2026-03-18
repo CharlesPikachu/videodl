@@ -464,6 +464,12 @@ VIDEODL_TEST_SAMPLES = {
         "https://watch.tbn.uk/shows/906eb770-23de-4fc7-a369-e87167a5256d/praise-uk",
         "https://watch.tbn.uk/live/1197",
     ],
+    'WoofVideoClient': [
+        'https://www.facebook.com/100002636479572/videos/4346104705718791/?__so__=discover&__rv__=video_home_www_loe_popular_videos',
+        'https://www.tiktok.com/@hn0368/video/7613716757643152647',
+        'https://bsky.app/profile/atrupar.com/post/3mhdmjwygsd2e',
+        'https://www.dailymotion.com/video/xa26uyo',
+    ],
 }
 PARSE_SUPPLEMENT = {
     'Ku6VideoClient': {'name': 'Ku6VideoClient', 'display_name': 'Ku6VideoClient', 'success_count': 2, 'total_count': 2, 'success_rate': 1.0, 'status': 'ok', 'tests': [{'name': 'Ku6VideoClient', 'test_url': 'https://www.ku6.com/video/detail?id=McZoSe_hgG_jwzy7pQLqvMJ3IoI.', 'ok': True, 'err_msg': 'NULL', 'parse_result': {'source': 'Ku6VideoClient', 'download_url': 'https://rbv01.ku6.com/wifi/o_1f9dtdubn8l8154lddtcdtdusm', 'title': '看到泪崩！微视频百年风华', 'file_path': 'videodl_tmp_outputs\\Ku6VideoClient\\看到泪崩！微视频百年风华.mp4', 'ext': 'mp4', 'download_with_ffmpeg': False, 'err_msg': 'NULL', 'identifier': 'NULL', 'guess_video_ext_result': {'ext': 'mp4', 'sniffer': 'requests.head', 'ok': True}}}, {'name': 'Ku6VideoClient', 'test_url': 'https://www.ku6.com/video/detail?id=HE3lfhcp13Gd0qND4zfzXYQONMY.', 'ok': True, 'err_msg': 'NULL', 'parse_result': {'source': 'Ku6VideoClient', 'download_url': 'https://rbv01.ku6.com/wifi/o_1evr90gl2sdhjs4nn31bad1v3ue', 'title': '微视频｜领航新征程', 'file_path': 'videodl_tmp_outputs\\Ku6VideoClient\\微视频｜领航新征程.mp4', 'ext': 'mp4', 'download_with_ffmpeg': False, 'err_msg': 'NULL', 'identifier': 'NULL', 'guess_video_ext_result': {'ext': 'mp4', 'sniffer': 'requests.head', 'ok': True}}}]},

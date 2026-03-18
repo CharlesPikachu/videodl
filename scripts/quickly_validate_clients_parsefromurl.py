@@ -455,6 +455,12 @@ VIDEODL_TEST_SAMPLES = {
         "https://watch.tbn.uk/shows/906eb770-23de-4fc7-a369-e87167a5256d/praise-uk",
         "https://watch.tbn.uk/live/1197",
     ],
+    'WoofVideoClient': [
+        'https://www.facebook.com/100002636479572/videos/4346104705718791/?__so__=discover&__rv__=video_home_www_loe_popular_videos',
+        'https://www.tiktok.com/@hn0368/video/7613716757643152647',
+        'https://bsky.app/profile/atrupar.com/post/3mhdmjwygsd2e',
+        'https://www.dailymotion.com/video/xa26uyo',
+    ],
 }
 
 
