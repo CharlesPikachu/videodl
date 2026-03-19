@@ -40,8 +40,7 @@ class C56VideoClient(BaseVideoClient):
         # try parse
         try:
             vid = re.search(r'https?://(?:(?:www|player)\.)?56\.com/(?:.+?/)?(?:v_|(?:play_album.+-))(?P<textid>.+?)\.(?:html|swf)', url).group(1)
-            resp = self.get(url, **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(url, **request_overrides)).raise_for_status()
             soup = BeautifulSoup(resp.text, "html.parser")
             script_tag = soup.find("script", string=re.compile(r"var\s+videoInfo\s*="))
             script_text: str = script_tag.string

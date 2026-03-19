@@ -108,8 +108,7 @@ class SohuVideoClient(BaseVideoClient):
             vid = next((v for k in priority_keys for v in (to_int0(raw_data['data'].get(k, 0)),) if v and v != 0), 0)
             # --request again using new vid with higher video quality
             params = {'vid': vid, 'ver': '1', 'ssl': '1', 'uid': '17636986544987061902', 'pflag': 'pch5', 'prod': 'h5n', 'platform_source': 'pc'}
-            resp = self.get('https://hot.vrs.sohu.com/vrs_pc_play.action', params=params, **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get('https://hot.vrs.sohu.com/vrs_pc_play.action', params=params, **request_overrides)).raise_for_status()
             raw_data[f'{vid}_vrs_pc_play.action'] = resp2json(resp=resp)
             video_info.update(dict(raw_data=raw_data))
             mp4_palyurls, download_urls = raw_data[f'{vid}_vrs_pc_play.action']["data"]["mp4PlayUrl"], []

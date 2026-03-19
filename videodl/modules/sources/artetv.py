@@ -18,12 +18,8 @@ class ArteTVVideoClient(BaseVideoClient):
     source = 'ArteTVVideoClient'
     def __init__(self, **kwargs):
         super(ArteTVVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -34,17 +30,13 @@ class ArteTVVideoClient(BaseVideoClient):
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
         null_backup_title = yieldtimerelatedtitle(self.source)
-        quality_value_func = lambda stream: next((int(part) for part in stream.get("mainQuality", {}).get("label", "").split("p") if part.isdigit()), 0)
+        quality_value_func = lambda stream: next((int(part) for part in str(safeextractfromdict(stream, ['mainQuality', 'label'], '')).split("p") if part.isdigit()), 0)
         # try parse
         try:
-            vid = re.search(r"/videos/([^/]+)/", url).group(1)
-            lang = re.search(r"\.tv/([^/]+)/videos/", url).group(1)
-            headers = copy.deepcopy(self.default_headers)
-            headers.update({'Referer': url})
-            resp = self.get(f'https://api.arte.tv/api/player/v2/config/{lang}/{vid}', headers=headers, **request_overrides)
-            resp.raise_for_status()
-            raw_data = resp2json(resp=resp)
-            video_title = legalizestring(raw_data["data"]["attributes"]['metadata'].get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
+            vid = re.search(r"/videos/([^/]+)/", url).group(1); lang = re.search(r"\.tv/([^/]+)/videos/", url).group(1)
+            (headers := copy.deepcopy(self.default_headers)).update({'Referer': url})
+            (resp := self.get(f'https://api.arte.tv/api/player/v2/config/{lang}/{vid}', headers=headers, **request_overrides)).raise_for_status()
+            video_title = legalizestring(safeextractfromdict((raw_data := resp2json(resp=resp)), ["data", "attributes", "metadata", "title"], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             streams = raw_data["data"]["attributes"]['streams']
             sorted_streams: list[dict] = sorted(streams, key=quality_value_func, reverse=True)
             sorted_streams: list[dict] = [item for item in sorted_streams if item.get('url')]

@@ -35,10 +35,8 @@ class KuaishouVideoClient(BaseVideoClient):
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
-            resp = self.get(url, **request_overrides)
-            resp.raise_for_status()
-            resp.encoding = 'utf-8'
-            soup = BeautifulSoup(resp.text, 'lxml')
+            (resp := self.get(url, **request_overrides)).raise_for_status()
+            resp.encoding = 'utf-8'; soup = BeautifulSoup(resp.text, 'lxml')
             pattern = r'window\.__APOLLO_STATE__\s*=\s*(\{.*?\});'
             raw_data = json_repair.loads(re.search(pattern, str(soup), re.S).group(1))
             video_info.update(dict(raw_data=raw_data))

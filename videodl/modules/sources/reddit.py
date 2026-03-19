@@ -60,8 +60,7 @@ class RedditVideoClient(BaseVideoClient):
     def _fetchpostjson(self, url: str, request_overrides: dict = None) -> Any:
         request_overrides = request_overrides or {}
         api_url = url.rstrip("/") + "/.json"
-        resp = self.get(api_url, allow_redirects=True, **request_overrides)
-        resp.raise_for_status()
+        (resp := self.get(api_url, allow_redirects=True, **request_overrides)).raise_for_status()
         return resp2json(resp=resp)
     '''_extractmediainfo'''
     def _extractmediainfo(self, url: str, request_overrides: dict = None) -> RedditMediaInfo:

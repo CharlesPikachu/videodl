@@ -38,8 +38,7 @@ class WeishiVideoClient(BaseVideoClient):
             parsed_url = urlparse(url)
             if 'id' in parse_qs(parsed_url.query, keep_blank_values=True): vid = parse_qs(parsed_url.query, keep_blank_values=True)['id'][0]
             else: vid = parsed_url.path.strip('/').split('/')[-1]
-            resp = self.get(url, **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(url, **request_overrides)).raise_for_status()
             soup = BeautifulSoup(resp.text, "html.parser")
             script_tag = soup.find("script", string=re.compile(r"window\.Vise\.initState"))
             script_text = script_tag.string or script_tag.get_text()

@@ -39,11 +39,9 @@ class DuxiaoshiVideoClient(BaseVideoClient):
             parsed_url = urlparse(url)
             try: vid = parse_qs(parsed_url.query, keep_blank_values=True)['vid'][0]
             except: vid = parse_qs(parsed_url.query, keep_blank_values=True)['nid'][0]; vid = vid.replace('sv_', '')
-            resp = self.get(f"https://quanmin.hao222.com/wise/growth/api/sv/immerse?source=share-h5&pd=qm_share_mvideo&_format=json&vid={vid}", **request_overrides)
-            resp.raise_for_status()
-            raw_data = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
-            candidate_urls = raw_data["data"]["meta"]["video_info"]["clarityUrl"]
+            (resp := self.get(f"https://quanmin.hao222.com/wise/growth/api/sv/immerse?source=share-h5&pd=qm_share_mvideo&_format=json&vid={vid}", **request_overrides)).raise_for_status()
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
+            candidate_urls: list[dict] = raw_data["data"]["meta"]["video_info"]["clarityUrl"]
             candidate_urls = [u for u in candidate_urls if u.get('url')]
             download_url = sorted(candidate_urls, key=quality_key_func, reverse=True)[0]['url']
             video_info.update(dict(download_url=download_url))

@@ -42,8 +42,7 @@ class WittyTVVideoClient(BaseVideoClient):
     '''_getbearertoken'''
     def _getbearertoken(self, request_overrides: dict = None):
         request_overrides = request_overrides or {}
-        resp = self.post(WittyTVVideoClient.LOGIN_URL, json={'client_id': 'client_id', 'appName': 'embed//mediasetplay-embed'}, **request_overrides)
-        resp.raise_for_status()
+        (resp := self.post(WittyTVVideoClient.LOGIN_URL, json={'client_id': 'client_id', 'appName': 'embed//mediasetplay-embed'}, **request_overrides)).raise_for_status()
         device_id = resp2json(resp=resp)["response"]["beToken"]
         return device_id
     '''parsefromurl'''
@@ -58,23 +57,19 @@ class WittyTVVideoClient(BaseVideoClient):
         # try parse
         video_infos = []
         try:
-            resp = self.get(url, **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(url, **request_overrides)).raise_for_status()
             content_id, raw_data = re.search(r'guIDcurrentGlobal\s*=\s*"([^"]+)"', resp.text).group(1), {}
-            resp = self.get(WittyTVVideoClient.PROGRAM_URL.format(guid=content_id), **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(WittyTVVideoClient.PROGRAM_URL.format(guid=content_id), **request_overrides)).raise_for_status()
             raw_data['PROGRAM_URL_RESPONSE'] = resp2json(resp=resp)
             program = raw_data['PROGRAM_URL_RESPONSE'].get("mediasetprogram$brandTitle", None) or raw_data['PROGRAM_URL_RESPONSE'].get("mediasetprogram$auditelBrandName", None) or raw_data['PROGRAM_URL_RESPONSE'].get("mediasetprogram$tvLinearSeasonTitle", None)
             if not program: video_title = legalizestring(raw_data['PROGRAM_URL_RESPONSE'].get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             else: video_title = legalizestring(f"{program}-{raw_data['PROGRAM_URL_RESPONSE'].get('title') or null_backup_title}", replace_null_string=null_backup_title).removesuffix('.')
-            resp = self.post(WittyTVVideoClient.PLAYBACK_URL, json={'contentId': content_id, 'streamType': 'VOD'}, headers={'Authorization': f'Bearer {self.BEARER_TOKEN}'})
-            resp.raise_for_status()
+            (resp := self.post(WittyTVVideoClient.PLAYBACK_URL, json={'contentId': content_id, 'streamType': 'VOD'}, headers={'Authorization': f'Bearer {self.BEARER_TOKEN}'})).raise_for_status()
             raw_data['PLAYBACK_URL_RESPONSE'] = resp2json(resp=resp)
             media_selector: dict = raw_data['PLAYBACK_URL_RESPONSE']["response"]["mediaSelector"]
             manifest = media_selector.pop("url")
             media_selector["auth"] = self.BEARER_TOKEN
-            resp = self.get(f"{manifest}?{urlencode(media_selector)}", headers={'Accept': 'application/json, text/plain, */*', 'Origin': WittyTVVideoClient.MEDIASET_URL, 'Referer': WittyTVVideoClient.MEDIASET_URL})
-            resp.raise_for_status()
+            (resp := self.get(f"{manifest}?{urlencode(media_selector)}", headers={'Accept': 'application/json, text/plain, */*', 'Origin': WittyTVVideoClient.MEDIASET_URL, 'Referer': WittyTVVideoClient.MEDIASET_URL})).raise_for_status()
             raw_data['MANIFEST_URL_RESPONSE'] = resp.text
             matches = re.findall(r'<video\s*src="([^"]+)"', raw_data['MANIFEST_URL_RESPONSE'])
             download_url: str = [m for m in matches if ".mpd" in m][0]

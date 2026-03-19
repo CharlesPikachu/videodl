@@ -37,13 +37,10 @@ class CCCVideoClient(BaseVideoClient):
         # try parse
         try:
             display_id = single_video_pattern.match(url).group('id')
-            resp = self.get(url, **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(url, **request_overrides)).raise_for_status()
             event_id = re.search(r"\bdata-id\s*=\s*(['\"])(\d+)\1", resp.text, flags=re.IGNORECASE).group(2)
-            resp = self.get(f'https://media.ccc.de/public/events/{event_id}', **request_overrides)
-            resp.raise_for_status()
-            raw_data = resp2json(resp)
-            video_info.update(dict(raw_data=raw_data))
+            (resp := self.get(f'https://media.ccc.de/public/events/{event_id}', **request_overrides)).raise_for_status()
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp))))
             video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             fmt_rank = lambda rec: {"video/mp4": 2, "video/webm": 1}.get(rec.get("mime_type", ""), 0)
             quality_key = lambda rec: ((1 if rec.get("high_quality") else 0), ((rec.get("width") or 0) * (rec.get("height") or 0)), (rec.get("width") or 0), (rec.get("height") or 0), fmt_rank(rec))

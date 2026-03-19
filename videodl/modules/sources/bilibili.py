@@ -40,17 +40,14 @@ class BilibiliVideoClient(BaseVideoClient):
         # try parse
         video_infos = []
         try:
-            parsed_url = urlparse(url)
-            part_id = parse_qs(parsed_url.query, keep_blank_values=True).get('p', None)
+            part_id = parse_qs(urlparse(url).query, keep_blank_values=True).get('p', None)
             if part_id and isinstance(part_id, list): part_id = int(part_id[0]) if part_id and str(part_id[0]).lstrip("+-").isdigit() else None
             else: part_id = None
             if prefix.upper() in ['BV']:
-                resp = self.get(f"https://api.bilibili.com/x/web-interface/view?bvid=BV{video_id}", **request_overrides)
-                resp.raise_for_status()
+                (resp := self.get(f"https://api.bilibili.com/x/web-interface/view?bvid=BV{video_id}", **request_overrides)).raise_for_status()
                 raw_data = resp2json(resp=resp)
             elif prefix.upper() in ['AV']:
-                resp = self.get(f"https://api.bilibili.com/x/web-interface/view?aid={video_id}", **request_overrides)
-                resp.raise_for_status()
+                (resp := self.get(f"https://api.bilibili.com/x/web-interface/view?aid={video_id}", **request_overrides)).raise_for_status()
                 raw_data = resp2json(resp=resp)
                 video_id = raw_data['data']['bvid']
             for page_idx, page in enumerate(raw_data['data']["pages"]):
@@ -92,10 +89,8 @@ class BilibiliVideoClient(BaseVideoClient):
         # try parse
         video_infos = []
         try:
-            resp = self.get('https://api.bilibili.com/pgc/view/web/season', params={'ep_id': episode_id}, **request_overrides)
-            resp.raise_for_status()
-            raw_data = resp2json(resp=resp)
-            result_episodes = safeextractfromdict(raw_data, ['result', 'episodes'], [])
+            (resp := self.get('https://api.bilibili.com/pgc/view/web/season', params={'ep_id': episode_id}, **request_overrides)).raise_for_status()
+            result_episodes = safeextractfromdict((raw_data := resp2json(resp=resp)), ['result', 'episodes'], [])
             for item in safeextractfromdict(raw_data, ['result', 'section'], []): result_episodes += item.get('episodes', [])
             for _, page in enumerate(result_episodes):
                 if str(page['ep_id']) != episode_id: continue
@@ -145,10 +140,8 @@ class BilibiliVideoClient(BaseVideoClient):
         # try parse
         video_infos = []
         try:
-            resp = self.get('https://api.bilibili.com/pgc/web/season/section', params={'season_id': ss_id}, **request_overrides)
-            resp.raise_for_status()
-            raw_data = resp2json(resp=resp)
-            result_episodes = safeextractfromdict(raw_data, ['result', 'main_section', 'episodes'], [])
+            (resp := self.get('https://api.bilibili.com/pgc/web/season/section', params={'season_id': ss_id}, **request_overrides)).raise_for_status()
+            result_episodes = safeextractfromdict((raw_data := resp2json(resp=resp)), ['result', 'main_section', 'episodes'], [])
             for item in safeextractfromdict(raw_data, ['result', 'section'], []): result_episodes += item.get('episodes', [])
             for _, page in enumerate(result_episodes):
                 episode_id = page['id']
@@ -199,8 +192,7 @@ class BilibiliVideoClient(BaseVideoClient):
         # try parse
         video_infos = []
         try:
-            resp = self.get(f"https://api.bilibili.com/pugv/view/web/season?ep_id={episode_id}", **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(f"https://api.bilibili.com/pugv/view/web/season?ep_id={episode_id}", **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)
             for _, page in enumerate(raw_data['data']['episodes']):
                 if str(page['id']) != episode_id: continue

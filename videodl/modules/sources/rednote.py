@@ -39,8 +39,7 @@ class RednoteVideoClient(BaseVideoClient):
         try:
             if url.startswith('http://xhslink.com'): url = self.get(url, allow_redirects=True, **request_overrides).url
             vid = urlparse(url).path.strip('/').split('/')[-1]
-            resp = self.get(url, **request_overrides)
-            resp.raise_for_status()
+            (resp := self.get(url, **request_overrides)).raise_for_status()
             raw_data = json_repair.loads(re.findall(r"window\.__INITIAL_STATE__\s*=\s*(.*?)</script></body></html>", resp.text)[0])
             video_info.update(dict(raw_data=raw_data))
             download_url = searchdictbykey(raw_data, "masterUrl")

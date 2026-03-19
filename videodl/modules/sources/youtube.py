@@ -32,8 +32,7 @@ class YouTubeVideoClient(BaseVideoClient):
         null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
-            parsed_url = urlparse(url)
-            vid = parse_qs(parsed_url.query, keep_blank_values=True)['v'][0]
+            vid = parse_qs(urlparse(url).query, keep_blank_values=True)['v'][0]
             yt = YouTube(video_id=vid)
             raw_data = yt.vid_info
             video_info.update(dict(raw_data=raw_data))

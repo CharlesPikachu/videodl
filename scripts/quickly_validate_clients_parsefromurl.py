@@ -63,7 +63,8 @@ VIDEODL_TEST_SAMPLES = {
     ],
     'BaiduTiebaVideoClient': [
         'https://tieba.baidu.com/p/7280373361',
-        'https://tieba.baidu.com/p/10253039554'
+        'https://tieba.baidu.com/p/10253039554',
+        'https://tieba.baidu.com/p/10564767653',
     ],
     'MGTVVideoClient': [
         'https://www.mgtv.com/l/100026064/19868457.html?fpa=1684&fpos=&lastp=ch_home&cpid=5',

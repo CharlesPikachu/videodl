@@ -34,8 +34,7 @@ class PearVideoClient(BaseVideoClient):
         null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
-            parsed_url = urlparse(url)
-            video_id = parsed_url.path.split('/')[-1].replace("video_", "")
+            video_id = urlparse(url).path.split('/')[-1].replace("video_", "")
             headers = copy.deepcopy(self.default_headers)
             headers['Referer'] = f"https://www.pearvideo.com/detail_{video_id}"
             (resp := self.get(f"https://www.pearvideo.com/videoStatus.jsp?contId={video_id}&mrd={random.random()}", headers=headers, **request_overrides)).raise_for_status()

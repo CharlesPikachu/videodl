@@ -31,8 +31,7 @@ class ZuiyouVideoClient(BaseVideoClient):
         null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
-            parsed_url = urlparse(url)
-            vid = parse_qs(parsed_url.query, keep_blank_values=True)['pid'][0]
+            vid = parse_qs(urlparse(url).query, keep_blank_values=True)['pid'][0]
             data = {"h_av": "5.2.13.011", "pid": int(vid)}
             (resp := self.post(f"https://share.xiaochuankeji.cn/planck/share/post/detail_h5", json=data, **request_overrides)).raise_for_status()
             raw_data = resp2json(resp=resp)

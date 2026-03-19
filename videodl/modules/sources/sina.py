@@ -55,10 +55,8 @@ class SinaVideoClient(BaseVideoClient):
                         try: video_id = re.search(p, resp.text, flags=re.DOTALL).group(1); break
                         except: continue
             # --obtain raw_data
-            resp = self.get('http://s.video.sina.com.cn/video/h5play', params={'video_id': video_id}, **request_overrides)
-            resp.raise_for_status()
-            raw_data = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
+            (resp := self.get('http://s.video.sina.com.cn/video/h5play', params={'video_id': video_id}, **request_overrides)).raise_for_status()
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             # --parse raw data
             video_data, formats = raw_data['data'], []
             for quality_id, quality in safeextractfromdict(video_data, ['videos', 'mp4'], {}).items():

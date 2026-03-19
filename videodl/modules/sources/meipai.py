@@ -55,10 +55,8 @@ class MeipaiVideoClient(BaseVideoClient):
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
-            resp = self.get(url, **request_overrides)
-            resp.raise_for_status()
-            raw_data = resp.text
-            video_info.update(dict(raw_data=raw_data))
+            (resp := self.get(url, **request_overrides)).raise_for_status()
+            video_info.update(dict(raw_data=(raw_data := resp.text)))
             resp_selector = Selector(raw_data)
             download_url_bs64 = resp_selector.css("#shareMediaBtn::attr(data-video)").get(default="")
             download_url = self._decodedownloadurl(download_url_bs64=download_url_bs64)

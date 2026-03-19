@@ -36,13 +36,10 @@ class WWEVideoClient(BaseVideoClient):
         null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
-            resp = self.get(url, **request_overrides)
-            resp.raise_for_status()
-            soup = BeautifulSoup(resp.text, "html.parser")
-            tag = soup.select_one('script[type="application/json"][data-drupal-selector="drupal-settings-json"]')
+            (resp := self.get(url, **request_overrides)).raise_for_status()
+            tag = BeautifulSoup(resp.text, "html.parser").select_one('script[type="application/json"][data-drupal-selector="drupal-settings-json"]')
             if not tag or not tag.string: raise Exception
-            raw_data = json_repair.loads(tag.string)
-            video_info.update(dict(raw_data=raw_data))
+            video_info.update(dict(raw_data=(raw_data := json_repair.loads(tag.string))))
             vid = raw_data['WWEVideoLanding']['initialVideoId']
             download_url = raw_data['WWEVideoLanding']['initialVideo']['playlist'][0]['file']
             if not download_url.startswith('https'): download_url = f'https:{download_url}'
