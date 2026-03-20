@@ -26,10 +26,8 @@ class ArteTVVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(download_with_ffmpeg=True, source=self.source), yieldtimerelatedtitle(self.source)
         quality_value_func = lambda stream: next((int(part) for part in str(safeextractfromdict(stream, ['mainQuality', 'label'], '')).split("p") if part.isdigit()), 0)
         # try parse
         try:
@@ -37,8 +35,7 @@ class ArteTVVideoClient(BaseVideoClient):
             (headers := copy.deepcopy(self.default_headers)).update({'Referer': url})
             (resp := self.get(f'https://api.arte.tv/api/player/v2/config/{lang}/{vid}', headers=headers, **request_overrides)).raise_for_status()
             video_title = legalizestring(safeextractfromdict((raw_data := resp2json(resp=resp)), ["data", "attributes", "metadata", "title"], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-            streams = raw_data["data"]["attributes"]['streams']
-            sorted_streams: list[dict] = sorted(streams, key=quality_value_func, reverse=True)
+            sorted_streams: list[dict] = sorted(raw_data["data"]["attributes"]['streams'], key=quality_value_func, reverse=True)
             sorted_streams: list[dict] = [item for item in sorted_streams if item.get('url')]
             video_info.update(dict(download_url=(download_url := sorted_streams[0]['url'])))
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
@@ -48,10 +45,8 @@ class ArteTVVideoClient(BaseVideoClient):
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list[str] | set[str] = None):

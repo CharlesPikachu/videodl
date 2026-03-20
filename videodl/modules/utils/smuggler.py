@@ -72,14 +72,12 @@ class BrightcoveSmuggler():
     @staticmethod
     def _fetchpolicykey(session: requests.Session, player_url: str, request_overrides: dict = None):
         request_overrides = request_overrides or {}
-        resp = session.get(player_url, **request_overrides)
-        resp.raise_for_status()
+        (resp := session.get(player_url, **request_overrides)).raise_for_status()
         html_text = resp.text
         policy_key = BrightcoveSmuggler._extractpolicykeyfromhtml(html_text)
         if policy_key: return policy_key
         m = re.search(r'<script[^>]+src="([^"]*index(?:\.min)?\.js[^"]*)"[^>]*>', html_text, flags=re.IGNORECASE)
         js_url = urljoin(player_url, html.unescape(m.group(1)))
-        js_resp = session.get(js_url, **request_overrides)
-        js_resp.raise_for_status()
+        (js_resp := session.get(js_url, **request_overrides)).raise_for_status()
         policy_key = BrightcoveSmuggler._extractpolicykeyfromhtml(js_resp.text)
         return policy_key

@@ -27,18 +27,15 @@ class AcFunVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(download_with_ffmpeg=True, source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(download_with_ffmpeg=True, source=self.source), yieldtimerelatedtitle(self.source)
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
             (resp := self.get(url, **request_overrides)).raise_for_status()
-            raw_data = json_repair.loads(str(re.findall('window.pageInfo =(.*?);', resp.text)[0]).split('=', 1)[-1].strip())
-            video_info.update(dict(raw_data=raw_data))
+            video_info.update(dict(raw_data=(raw_data := json_repair.loads(str(re.findall('window.pageInfo =(.*?);', resp.text)[0]).split('=', 1)[-1].strip()))))
             try: download_url = json_repair.loads(raw_data['currentVideoInfo']['ksPlayJsonHevc'])['adaptationSet'][0]['representation'][0]['url']
-            except: download_url = json_repair.loads(raw_data['currentVideoInfo']['ksPlayJson'])['adaptationSet'][0]['representation'][0]['url']
+            except Exception: download_url = json_repair.loads(raw_data['currentVideoInfo']['ksPlayJson'])['adaptationSet'][0]['representation'][0]['url']
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             cover_url = searchdictbykey(raw_data, 'coverUrl'); cover_url = cover_url[0] if cover_url and isinstance(cover_url, list) else None
@@ -47,10 +44,8 @@ class AcFunVideoClient(BaseVideoClient):
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
             video_info.update(dict(err_msg=err_msg))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list[str] | set[str] = None):
