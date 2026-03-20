@@ -22,12 +22,8 @@ class KugouMVVideoClient(BaseVideoClient):
     UUID = uuid.uuid4().hex
     def __init__(self, **kwargs):
         super(KugouMVVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''_calcsignature'''
@@ -54,8 +50,7 @@ class KugouMVVideoClient(BaseVideoClient):
             params = {'srcappid': '2919', 'clientver': '1000', 'clienttime': str(int(time.time() * 1000)), 'mid': KugouMVVideoClient.UUID, 'uuid': KugouMVVideoClient.UUID, 'dfid': '1u0Qpt0FTdFC2BtwCF2hRvQ1', 'appid': '1014', 'id': vid}
             params['signature'] = self._calcsignature(params=params)
             (resp := self.get(f"https://wwwapi.kugou.com/play/mv", params=params, **request_overrides)).raise_for_status()
-            raw_data = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             play_info = [(k, v) for k, v in dict(raw_data['data']['play']).items() if (v['downurl'] or v['backupdownurl'][0]) and (str(v['downurl']).startswith('http') or str(v['backupdownurl'][0]).startswith('http'))]
             play_info = sorted(play_info, key=lambda item: int(float((item[1]["filesize"]))), reverse=True)
             download_url = play_info[0][1]['downurl'] or play_info[0][1]['backupdownurl']

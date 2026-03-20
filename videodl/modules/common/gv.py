@@ -33,7 +33,7 @@ class GVVideoClient(BaseVideoClient):
         self._initsession()
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = None):
+    def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
         request_overrides = request_overrides or {}
         video_info = VideoInfo(source=self.source, enable_nm3u8dlre=False, download_with_ffmpeg=True) if BaseVideoClient.belongto(url, {"ted.com", "xinpianchang.com", "ifeng.com"}) else VideoInfo(source=self.source, enable_nm3u8dlre=True)
@@ -52,8 +52,7 @@ class GVVideoClient(BaseVideoClient):
             headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
             # --post request
             (resp := self.post('https://greenvideo.cc/api/video/cnSimpleExtract', json=rsa_encrypted, headers=headers, **request_overrides)).raise_for_status()
-            raw_data = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             # --sort by quality
             data_items = raw_data["data"]["videoItemVoList"]
             video_items: list[dict] = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and ((x.get('fileType') in {"video"}) or (x.get('quality') not in {'音频', '封面'}))]
@@ -65,7 +64,7 @@ class GVVideoClient(BaseVideoClient):
             video_info.update(dict(download_url=download_url))
             if audio_download_url and audio_download_url != 'NULL': video_info.update(dict(audio_download_url=audio_download_url))
             # --video title
-            video_title = legalizestring(raw_data['data'].get('displayTitle', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
+            video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'displayTitle'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']

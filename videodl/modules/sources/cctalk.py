@@ -42,9 +42,8 @@ class CCtalkVideoClient(BaseVideoClient):
             # --fetch video ids
             parsed_url = urlparse(url)
             try: sid = parse_qs(parsed_url.query, keep_blank_values=True)['sid'][0]
-            except: sid = None
-            if not sid:
-                video_ids = [parsed_url.path.strip('/').split('/')[-1]]
+            except Exception: sid = None
+            if not sid: video_ids = [parsed_url.path.strip('/').split('/')[-1]]
             else:
                 try: (resp := self.get(f'https://www.cctalk.com/webapi/content/v1.2/series/all_lesson_list?_timestamp={int(time.time() * 1000)}&seriesId={sid}&showStudyTime=true', **request_overrides)).raise_for_status(); video_ids = [lesson['contentId'] for lesson in resp2json(resp=resp)['data']['items']]
                 except Exception: video_ids = [parsed_url.path.strip('/').split('/')[-1]]
@@ -56,9 +55,8 @@ class CCtalkVideoClient(BaseVideoClient):
                 raw_data = resp2json(resp=resp)
                 download_url = safeextractfromdict(raw_data, ['data', 'videoUrl'], '')
                 if not download_url or not download_url.startswith('http'): continue
-                video_info_page.update(dict(raw_data=raw_data))
-                video_info_page.update(dict(download_url=download_url))
-                video_title = raw_data['data'].get('videoName', null_backup_title)
+                video_info_page.update(dict(raw_data=raw_data)); video_info_page.update(dict(download_url=download_url))
+                video_title = safeextractfromdict(raw_data, ['data', 'videoName'], None) or null_backup_title
                 root_video_title = safeextractfromdict(raw_data['data'], ['seriesInfo', 'seriesName'], '')
                 if root_video_title and len(video_ids) > 1: video_title = f"{root_video_title}-ep{len(video_infos)+1}-{video_title}"
                 elif len(video_ids) > 1: video_title = f"ep{len(video_infos)+1}-{video_title}"

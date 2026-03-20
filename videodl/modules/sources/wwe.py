@@ -18,12 +18,8 @@ class WWEVideoClient(BaseVideoClient):
     source = 'WWEVideoClient'
     def __init__(self, **kwargs):
         super(WWEVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -40,8 +36,7 @@ class WWEVideoClient(BaseVideoClient):
             tag = BeautifulSoup(resp.text, "html.parser").select_one('script[type="application/json"][data-drupal-selector="drupal-settings-json"]')
             if not tag or not tag.string: raise Exception
             video_info.update(dict(raw_data=(raw_data := json_repair.loads(tag.string))))
-            vid = raw_data['WWEVideoLanding']['initialVideoId']
-            download_url = raw_data['WWEVideoLanding']['initialVideo']['playlist'][0]['file']
+            vid = raw_data['WWEVideoLanding']['initialVideoId']; download_url = raw_data['WWEVideoLanding']['initialVideo']['playlist'][0]['file']
             if not download_url.startswith('https'): download_url = f'https:{download_url}'
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(raw_data['WWEVideoLanding']['initialVideo']['playlist'][0].get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')

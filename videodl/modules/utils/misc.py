@@ -21,11 +21,11 @@ import functools
 import json_repair
 import unicodedata
 from pathlib import Path
-from typing import Optional
 from datetime import datetime
 from bs4 import BeautifulSoup
 from contextlib import suppress
 from .importutils import optionalimport
+from typing import Optional, TYPE_CHECKING
 from pathvalidate import sanitize_filename
 from urllib.parse import urlparse, urlsplit
 
@@ -106,13 +106,10 @@ def decodehtml(resp: requests.Response) -> str:
 '''extracttitlefromurl'''
 def extracttitlefromurl(url: str, *, timeout: float = 10.0, headers: dict = None, cookies: dict = None, request_overrides: dict = None) -> Optional[str]:
     request_overrides, headers, cookies = request_overrides or {}, headers or {}, cookies or {}
-    resp = requests.get(url, headers=headers, timeout=timeout, cookies=cookies, allow_redirects=True, **request_overrides)
-    resp.raise_for_status()
-    text = decodehtml(resp)
-    soup = BeautifulSoup(text, "html.parser")
+    (resp := requests.get(url, headers=headers, timeout=timeout, cookies=cookies, allow_redirects=True, **request_overrides)).raise_for_status()
+    soup = BeautifulSoup(decodehtml(resp), "html.parser")
     for css, attr in [('meta[property="og:title"]', "content"), ('meta[name="twitter:title"]', "content"), ("title", None), ("h1", None)]:
-        el = soup.select_one(css)
-        if not el: continue
+        if not (el := soup.select_one(css)): continue
         t: str = (el.get(attr) if attr else el.get_text(" ", strip=True)) or ""
         t: str = html.unescape(re.sub(r"\s+", " ", t)).strip(" -|\u2013\u2014")
         if t: return t
@@ -133,10 +130,8 @@ def legalizestring(string: str, fit_gbk: bool = True, max_len: int = 255, fit_ut
         if new_string == string: break
         string = new_string
     # bleach.clean
-    try:
-        string = BeautifulSoup(string, "lxml").get_text(separator="")
-    except:
-        string = bleach.clean(string, tags=[], attributes={}, strip=True)
+    try: string = BeautifulSoup(string, "lxml").get_text(separator="")
+    except: string = bleach.clean(string, tags=[], attributes={}, strip=True)
     # unicodedata.normalize
     string = unicodedata.normalize("NFC", string)
     # emoji.replace_emoji
@@ -189,6 +184,7 @@ def byte2mb(size: int):
 '''resp2json'''
 def resp2json(resp: requests.Response):
     curl_cffi = optionalimport('curl_cffi')
+    if TYPE_CHECKING: import curl_cffi as curl_cffi
     valid_resp_object = (requests.Response, curl_cffi.requests.Response) if curl_cffi else requests.Response
     if not isinstance(resp, valid_resp_object): return {}
     try: result = resp.json()
@@ -305,23 +301,37 @@ def yieldtimerelatedtitle(source: str):
     return f'{source}_null_{date_str}'
 
 
-'''requestsproxytoplaywright'''
-def requestsproxytoplaywright(proxy: dict | str, *, prefer: tuple = ("https", "http", "all"), bypass: str = None):
+'''requestsproxytodrissionpage'''
+def requestsproxytodrissionpage(proxy: dict | str, *, prefer: tuple = ("https", "http", "all"), mode: str = "session", strip_auth_for_chromium: bool = False):
+    def normalizeone(s: str) -> str | None:
+        if (not s) or (not isinstance(s, str)) or (not (s := s.strip())): return None
+        if "://" not in s: s = "http://" + s
+        scheme = "socks5" if (u := urlsplit(s)).scheme == "socks5h" else u.scheme
+        if not (host := u.hostname) or (port := u.port) is None: raise ValueError(f"Invalid proxy (need host:port): {s!r}")
+        host, auth = f"[{host}]" if ":" in host else host, ""
+        if u.username: auth = f"{u.username}:{u.password}@" if u.password is not None else f"{u.username}@"
+        return f"{scheme}://{auth}{host}:{port}"
     if not proxy: return None
-    s = (proxy if isinstance(proxy, str) else next((proxy.get(k) for k in prefer if proxy.get(k)), None) or next(iter(proxy.values()), None))
-    if not s or not isinstance(s, str): return None
-    s = s.strip()
-    if "://" not in s: s = "http://" + s
-    u = urlsplit(s)
-    scheme = ("socks5" if u.scheme == "socks5h" else u.scheme)
-    host, port = u.hostname, u.port
-    if not host or port is None: raise ValueError(f"Invalid proxy (need host:port): {s!r}")
-    host = f"[{host}]" if ":" in host else host
-    out = {"server": f"{scheme}://{host}:{port}"}
-    if u.username: out["username"] = u.username
-    if u.password: out["password"] = u.password
-    if bypass: out["bypass"] = bypass
-    return out
+    if mode == "chromium":
+        s = proxy if isinstance(proxy, str) else (next((proxy.get(k) for k in prefer if proxy.get(k)), None) or next(iter(proxy.values()), None))
+        if not (s := normalizeone(s)): return None
+        if (u := urlsplit(s)).username or u.password:
+            if not strip_auth_for_chromium: raise ValueError("DrissionPage ChromiumOptions.set_proxy() does not support proxy auth (username/password).")
+            host = f"[{u.hostname}]" if ":" in (u.hostname or "") else u.hostname
+            return f"{u.scheme}://{host}:{u.port}"
+        return s
+    if mode == "session":
+        if isinstance(proxy, str): s = normalizeone(proxy); return {"http": s, "https": s} if s else None
+        if not isinstance(proxy, dict): return None
+        out = {}
+        if proxy.get("http"): out["http"] = normalizeone(proxy["http"])
+        if proxy.get("https"): out["https"] = normalizeone(proxy["https"])
+        if (all_proxy := proxy.get("all")): all_proxy = normalizeone(all_proxy); out.setdefault("http", all_proxy); out.setdefault("https", all_proxy)
+        if not out:
+            s = normalizeone(s) if (s := next((proxy.get(k) for k in prefer if proxy.get(k)), None)) else None
+            if s: out = {"http": s, "https": s}
+        return out or None
+    raise ValueError("mode must be 'session' or 'chromium'")
 
 
 '''SpinWithBackoff'''

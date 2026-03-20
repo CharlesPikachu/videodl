@@ -33,11 +33,8 @@ class YouTubeVideoClient(BaseVideoClient):
         # try parse
         try:
             vid = parse_qs(urlparse(url).query, keep_blank_values=True)['v'][0]
-            yt = YouTube(video_id=vid)
-            raw_data = yt.vid_info
-            video_info.update(dict(raw_data=raw_data))
-            download_url = yt.streams.gethighestresolution()
-            video_info.update(dict(download_url=download_url))
+            yt = YouTube(video_id=vid); video_info.update(dict(raw_data=(raw_data := yt.vid_info)))
+            download_url = yt.streams.gethighestresolution(); video_info.update(dict(download_url=download_url))
             video_title = legalizestring(yt.title, replace_null_string=null_backup_title).removesuffix('.')
             try: cover_url = raw_data['videoDetails']['thumbnail']['thumbnails'][-1]['url']
             except Exception: cover_url = None

@@ -41,8 +41,7 @@ class Ku6VideoClient(BaseVideoClient):
             if vid and isinstance(vid, list): vid = vid[0]
             else: vid = None
             (resp := self.get(url, **request_overrides)).raise_for_status()
-            raw_data = resp.text
-            video_info.update(dict(raw_data=raw_data))
+            video_info.update(dict(raw_data=(raw_data := resp.text)))
             pattern = r'this\.src\(\s*\{.*?src\s*:\s*["\']([^"\']+)["\']'
             download_url = re.search(pattern, raw_data, re.S).group(1) or re.findall(r'src: "(https://.*?)"', raw_data)[0]
             video_info.update(dict(download_url=download_url))
@@ -51,8 +50,7 @@ class Ku6VideoClient(BaseVideoClient):
             video_title = legalizestring(title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            cover_url = re.search(r'"poster":\s*"(.*?)"', raw_data)
-            if cover_url: cover_url = cover_url.group(1)
+            if (cover_url := re.search(r'"poster":\s*"(.*?)"', raw_data)): cover_url = cover_url.group(1)
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid if vid else video_title, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'

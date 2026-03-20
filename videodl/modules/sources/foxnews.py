@@ -34,11 +34,9 @@ class FoxNewsVideoClient(BaseVideoClient):
             re_patterns = [r'https?://(?:www\.)?foxnews\.com/video/(?P<id>\d+)', r'https?://video\.(?:insider\.)?fox(?:news|business)\.com/v/(?:video-embed\.html\?video_id=)?(?P<id>\d+)']
             video_id = next((m.group('id') for p in re_patterns if (m := re.match(p, url)) and 'id' in m.groupdict()), None)
             (resp := self.get(f'https://api.foxnews.com/v3/video-player/{video_id}?callback=uid_{video_id}', **request_overrides)).raise_for_status()
-            raw_data = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             download_url = searchdictbykey(raw_data, 'media-content')[0][0]['@attributes']['url']
-            video_info.update(dict(download_url=download_url))
-            video_title = searchdictbykey(raw_data, 'media-title')
+            video_info.update(dict(download_url=download_url)); video_title = searchdictbykey(raw_data, 'media-title')
             video_title = legalizestring(video_title[0] if video_title else null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']

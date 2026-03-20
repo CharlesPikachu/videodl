@@ -12,7 +12,7 @@ import json
 import copy
 from .base import BaseVideoClient
 from urllib.parse import urlparse
-from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
 
 
 '''PipigaoxiaoVideoClient'''
@@ -43,7 +43,7 @@ class PipigaoxiaoVideoClient(BaseVideoClient):
             video_info.update(dict(raw_data=(raw_data := resp2json(resp))))
             download_url = next((v for k in ['url', 'urlwm', 'h5url'] if (v := raw_data['data']['post']['videos'][str(raw_data['data']['post']['imgs'][0]['id'])].get(k, ''))), '')
             video_info.update(dict(download_url=download_url))
-            video_title = legalizestring(raw_data['data']['post'].get('content', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
+            video_title = legalizestring(safeextractfromdict(raw_data['data']['post'], ['content'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             try: cover_url = f"http://file.ippzone.com/img/frame/id/{list(raw_data['data']['post']['videos'].keys())[0]}"

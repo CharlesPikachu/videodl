@@ -34,18 +34,12 @@ class GeniusVideoClient(BaseVideoClient):
         # try parse
         try:
             m = re.compile(r'https?://(?:www\.)?genius\.com/(?:videos|(?P<article>a))/(?P<id>[^?/#]+)').match(url)
-            video_title = m.group("id")
-            (resp := self.get(url, **request_overrides)).raise_for_status()
-            resp.encoding = 'utf-8'
+            video_title = m.group("id"); (resp := self.get(url, **request_overrides)).raise_for_status(); resp.encoding = 'utf-8'
             m = re.search(r'["\']brightcove_video_id["\']\s*[:,]\s*(?:\[\s*)?["\'](\d{6,})["\']', resp.text, flags=re.DOTALL)
             if not m: m = re.search(r'"provider"\s*:\s*"brightcove"[^}]*?"provider_id"\s*:\s*"(\d{6,})"', resp.text, flags=re.DOTALL)
             if not m: m = re.search(r'brightcove_video_id[^0-9]+(\d{6,})', resp.text, flags=re.DOTALL)
-            video_id = m.group(1)
-            pattern = r"var\s+APP_CONFIG\s*=\s*JSON\.parse\('(?P<json>.*?)'\);"
-            m = re.search(pattern, resp.text, re.DOTALL)
-            app_config = m.group("json")
-            app_config = bytes(app_config, "utf-8").decode("unicode_escape")
-            app_config = json_repair.loads(app_config)
+            video_id = m.group(1); pattern = r"var\s+APP_CONFIG\s*=\s*JSON\.parse\('(?P<json>.*?)'\);"; m = re.search(pattern, resp.text, re.DOTALL)
+            app_config = m.group("json"); app_config = bytes(app_config, "utf-8").decode("unicode_escape"); app_config = json_repair.loads(app_config)
             account_id = app_config.get('brightcove_account_id', '4863540648001')
             keys = ["brightcove_standard_web_player_id", "brightcove_standard_no_autoplay_web_player_id", "brightcove_modal_web_player_id", "brightcove_song_story_web_player_id"]
             player_id = next((pid for key in keys if (pid := searchdictbykey(app_config, key))), None)
@@ -55,10 +49,8 @@ class GeniusVideoClient(BaseVideoClient):
             request_overrides = copy.deepcopy(request_overrides)
             if 'headers' not in request_overrides: request_overrides['headers'] = copy.deepcopy(self.default_headers)
             if 'cookies' not in request_overrides: request_overrides['cookies'] = copy.deepcopy(self.default_cookies)
-            raw_data = BrightcoveSmuggler.extract(player_url=player_url, request_overrides=request_overrides)
-            video_info.update(dict(raw_data=raw_data))
-            download_url = raw_data['formats'][0]['url']
-            video_info.update(dict(download_url=download_url))
+            raw_data = BrightcoveSmuggler.extract(player_url=player_url, request_overrides=request_overrides); video_info.update(dict(raw_data=raw_data))
+            download_url = raw_data['formats'][0]['url']; video_info.update(dict(download_url=download_url))
             video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']

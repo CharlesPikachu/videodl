@@ -3,7 +3,7 @@
 #### Environment Requirements
 
 - Operating system: Linux, macOS, or Windows.
-- Python version: Python 3.9+ with requirements in [videodl requirements.txt](https://github.com/CharlesPikachu/videodl/blob/master/requirements.txt).
+- Python version: Python 3.10+ with requirements in [videodl requirements.txt](https://github.com/CharlesPikachu/videodl/blob/master/requirements.txt).
 
 #### Installation Instructions
 

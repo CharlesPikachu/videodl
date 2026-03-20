@@ -34,17 +34,14 @@ class UnityVideoClient(BaseVideoClient):
         # try parse
         video_infos = []
         try:
-            (resp := self.get(url, **request_overrides)).raise_for_status()
-            resp.encoding = 'utf-8'
-            soup = BeautifulSoup(resp.text, "lxml")
-            script_tag = soup.find("script", id="__NEXT_DATA__", type="application/json")
-            raw_data = json_repair.loads(script_tag.string)
-            video_info.update(dict(raw_data=raw_data))
+            (resp := self.get(url, **request_overrides)).raise_for_status(); resp.encoding = 'utf-8'
+            script_tag = BeautifulSoup(resp.text, "lxml").find("script", id="__NEXT_DATA__", type="application/json")
+            video_info.update(dict(raw_data=(raw_data := json_repair.loads(script_tag.string))))
             tutorial: dict = safeextractfromdict(raw_data, ['props', 'pageProps', 'tutorial'], {})
-            tutorial_title, sections, videos, uniq = tutorial.get("title", "").strip(), tutorial.get("sections", []), [], set()
+            tutorial_title, sections, videos, uniq = str(tutorial.get("title", "")).strip(), tutorial.get("sections", []), [], set()
             for section in sections:
                 if not isinstance(section, dict): continue
-                section_title, body = section.get("title", "").strip(), section.get("body", []) or []
+                section_title, body = str(section.get("title", "")).strip(), section.get("body", []) or []
                 for block in body:
                     if not isinstance(block, dict): continue
                     if block.get("_type") not in ("learn-gcpVideoBlock",): continue
@@ -54,12 +51,10 @@ class UnityVideoClient(BaseVideoClient):
                     if section_title and tutorial_title: title = f"{tutorial_title}-ep{len(videos)+1}-{section_title}"
                     else: title = f'ep{len(videos)+1}-' + (section_title or tutorial_title or "Unity Learn Video")
                     if url in uniq: continue
-                    uniq.add(url)
-                    videos.append({"title": title, "url": url})
+                    uniq.add(url); videos.append({"title": title, "url": url})
             cover_url = safeextractfromdict(raw_data, ['props', 'pageProps', 'content', 'coverImageURL'], None)
             for v in videos:
-                video_info_page = copy.deepcopy(video_info)
-                video_info_page.update(dict(download_url=v['url']))
+                (video_info_page := copy.deepcopy(video_info)).update(dict(download_url=v['url']))
                 video_title = legalizestring(v['title'], replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=v['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info_page['ext']

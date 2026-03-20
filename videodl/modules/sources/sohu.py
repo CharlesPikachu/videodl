@@ -18,12 +18,8 @@ class SohuVideoClient(BaseVideoClient):
     source = 'SohuVideoClient'
     def __init__(self, **kwargs):
         super(SohuVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''_parsefromurlwithmytv'''
@@ -49,8 +45,7 @@ class SohuVideoClient(BaseVideoClient):
             vid = next((v for q in qualities if (v := safeextractfromdict(raw_data, ['data', q], ''))), '')
             # --request again using new vid with higher video quality
             (resp := self.get(f'http://my.tv.sohu.com/play/videonew.do?vid={vid}&referer=http://my.tv.sohu.com', **request_overrides)).raise_for_status()
-            raw_data[f'{vid}_videonew.do'] = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
+            raw_data[f'{vid}_videonew.do'] = resp2json(resp=resp); video_info.update(dict(raw_data=raw_data))
             mp4_palyurls, download_urls = raw_data[f'{vid}_videonew.do']["data"]["mp4PlayUrl"], []
             download_urls.extend(("https:" + u) if u.startswith("//") else u for u in mp4_palyurls if u)
             # --some download urls need parse twice

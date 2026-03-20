@@ -13,6 +13,12 @@ from videodl.modules import VideoClientBuilder, BaseVideoClient
 
 '''constants'''
 VIDEODL_TEST_SAMPLES = {
+    'WebMediaGrabber': [
+        'https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/video',
+        'https://download.samplelib.com/mp4/sample-5s.mp4',
+        'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+        'https://www.w3schools.com/html/html5_video.asp',
+    ],
     'AcFunVideoClient': [
         'https://www.acfun.cn/v/ac29566205', 
         'https://www.acfun.cn/v/ac47998293', 
@@ -104,9 +110,12 @@ VIDEODL_TEST_SAMPLES = {
         'https://share.xiaochuankeji.cn/hybrid/share/post?pid=413455067'
     ],
     'XinpianchangVideoClient': [
-        'https://www.xinpianchang.com/a13536060?from=IndexPick&part=%E7%BC%96%E8%BE%91%E7%B2%BE%E9%80%89&index=1',
-        'https://www.xinpianchang.com/a13419465?from=ArticleList', 
-        'https://www.xinpianchang.com/a11879903?searchKw=%E5%8F%A3%E8%85%94%E7%A7%91%E6%99%AE',
+        'https://www.xinpianchang.com/a13626197',
+        'https://www.xinpianchang.com/a13536060',
+        'https://www.xinpianchang.com/a13419465',
+        'https://www.xinpianchang.com/a11879903',
+        'https://stock.xinpianchang.com/footage/details/FpS51ArjiWww7g.html',
+        'https://stock.xinpianchang.com/footage/details/EbL20T4Nee9ZOq.html',
     ],
     'WeSingVideoClient': [
         'https://kg.qq.com/node/user/bb132c338e/song/play-edLkcwAsRj?s=bCyoDlbCUhcjXbkQ&shareuid=&topsource=znxvljkwehoit_rqojkwehfguioqef_fnajkgfb&g_f=',

@@ -19,12 +19,8 @@ class DouyinVideoClient(BaseVideoClient):
     ROUTER_DATA_RE = re.compile(r"window\._ROUTER_DATA\s*=\s*(.*?)</script>", re.S | re.I)
     def __init__(self, **kwargs):
         super(DouyinVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -37,15 +33,13 @@ class DouyinVideoClient(BaseVideoClient):
         null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
-            (resp := self.get(url, allow_redirects=False, **request_overrides)).raise_for_status()
-            location = resp.headers.get("Location")
+            (resp := self.get(url, allow_redirects=False, **request_overrides)).raise_for_status(); location = resp.headers.get("Location")
             if not location: (resp := self.get(url, allow_redirects=True, **request_overrides)).raise_for_status(); location = resp.url
             vid = re.search(r"\d+", location).group(0)
             (resp := self.get(f"https://www.iesdouyin.com/share/video/{vid}", **request_overrides)).raise_for_status()
             raw_data = DouyinVideoClient.ROUTER_DATA_RE.search(resp.text).group(1).strip().rstrip("; \n\r\t")
             if not raw_data.startswith("{"): raw_data = raw_data[raw_data.find("{"):].rstrip("; \n\r\t") if raw_data.find("{") != -1 else raw_data
-            raw_data = json_repair.loads(raw_data)
-            video_info.update(dict(raw_data=raw_data))
+            video_info.update(dict(raw_data=(raw_data := json_repair.loads(raw_data))))
             video_detail = safeextractfromdict(raw_data, ['loaderData', 'video_(id)/page', 'videoInfoRes', 'item_list', 0], {})
             download_url = f"http://www.iesdouyin.com/aweme/v1/play/?video_id={video_detail['video']['play_addr']['uri']}&ratio=1080p&line=0"
             video_info.update(dict(download_url=download_url))

@@ -21,12 +21,8 @@ class C56VideoClient(BaseVideoClient):
     def __init__(self, **kwargs):
         super(C56VideoClient, self).__init__(**kwargs)
         self.sohu_parser = SohuVideoClient(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -41,12 +37,9 @@ class C56VideoClient(BaseVideoClient):
         try:
             vid = re.search(r'https?://(?:(?:www|player)\.)?56\.com/(?:.+?/)?(?:v_|(?:play_album.+-))(?P<textid>.+?)\.(?:html|swf)', url).group(1)
             (resp := self.get(url, **request_overrides)).raise_for_status()
-            soup = BeautifulSoup(resp.text, "html.parser")
-            script_tag = soup.find("script", string=re.compile(r"var\s+videoInfo\s*="))
-            script_text: str = script_tag.string
-            m = re.search(r"var\s+videoInfo\s*=\s*({.*?});", script_text, re.S)
-            raw_data = json_repair.loads(m.group(1))
-            sohu_video_url = raw_data['sohu']['video_url']
+            script_tag = BeautifulSoup(resp.text, "lxml").find("script", string=re.compile(r"var\s+videoInfo\s*="))
+            script_text: str = script_tag.string; m = re.search(r"var\s+videoInfo\s*=\s*({.*?});", script_text, re.S)
+            raw_data = json_repair.loads(m.group(1)); sohu_video_url = raw_data['sohu']['video_url']
             video_info: VideoInfo = self.sohu_parser.parsefromurl(sohu_video_url, request_overrides=request_overrides)
             assert len(video_info) == 1
             video_info = video_info[0]

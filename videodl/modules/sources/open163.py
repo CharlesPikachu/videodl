@@ -38,11 +38,9 @@ class Open163VideoClient(BaseVideoClient):
         # try parse
         video_infos = []
         try:
-            parsed_url = urlparse(url)
-            pid = parse_qs(parsed_url.query, keep_blank_values=True)['pid'][0]
+            pid = parse_qs(urlparse(url).query, keep_blank_values=True)['pid'][0]
             (resp := self.get(f"https://c.open.163.com/open/mob/movie/list.do?plid={pid}", **request_overrides)).raise_for_status()
-            raw_data = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             root_video_title = safeextractfromdict(raw_data, ['data', 'title'], None)
             for _, item in enumerate(raw_data['data']['videoList']):
                 if not isinstance(item, dict): continue
@@ -56,8 +54,7 @@ class Open163VideoClient(BaseVideoClient):
                         streams.append({"proto": proto, "level": level, "url": url, "size": size, "rank": quality_rank[level]})
                 streams_sorted: list[dict] = sorted(streams, key=lambda s: (s["rank"], s["size"]), reverse=True)
                 streams_sorted: list[dict] = [item for item in streams_sorted if item.get('url')]
-                download_url = streams_sorted[0]['url']
-                video_info_page.update(dict(download_url=download_url))
+                download_url = streams_sorted[0]['url']; video_info_page.update(dict(download_url=download_url))
                 video_title = item.get('title', null_backup_title)
                 if root_video_title and len(raw_data['data']['videoList']) > 1: video_title = f"{root_video_title}-ep{len(video_infos)+1}-{video_title}"
                 elif len(raw_data['data']['videoList']) > 1: video_title = f"ep{len(video_infos)+1}-{video_title}"

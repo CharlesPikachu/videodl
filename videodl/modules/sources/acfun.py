@@ -35,14 +35,13 @@ class AcFunVideoClient(BaseVideoClient):
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
             (resp := self.get(url, **request_overrides)).raise_for_status()
-            raw_data = json_repair.loads(re.findall('window.pageInfo =(.*?);', resp.text)[0].split('=', 1)[-1].strip())
+            raw_data = json_repair.loads(str(re.findall('window.pageInfo =(.*?);', resp.text)[0]).split('=', 1)[-1].strip())
             video_info.update(dict(raw_data=raw_data))
             try: download_url = json_repair.loads(raw_data['currentVideoInfo']['ksPlayJsonHevc'])['adaptationSet'][0]['representation'][0]['url']
             except: download_url = json_repair.loads(raw_data['currentVideoInfo']['ksPlayJson'])['adaptationSet'][0]['representation'][0]['url']
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            cover_url = searchdictbykey(raw_data, 'coverUrl')
-            cover_url = cover_url[0] if cover_url and isinstance(cover_url, list) else None
+            cover_url = searchdictbykey(raw_data, 'coverUrl'); cover_url = cover_url[0] if cover_url and isinstance(cover_url, list) else None
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info["ext"]}'), identifier=vid, cover_url=cover_url))
         except Exception as err:
             err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'

@@ -35,8 +35,7 @@ class BeaconVideoClient(BaseVideoClient):
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
             (resp := self.get(url, **request_overrides)).raise_for_status()
-            raw_data = json_repair.loads(BeautifulSoup(resp.text, "lxml").select_one("script#__NEXT_DATA__").string)
-            video_info.update(dict(raw_data=raw_data))
+            video_info.update(dict(raw_data=(raw_data := json_repair.loads(BeautifulSoup(resp.text, "lxml").select_one("script#__NEXT_DATA__").string))))
             content_data = safeextractfromdict(raw_data, ('props', 'pageProps', '__APOLLO_STATE__')); video_data = searchdictbykey(content_data, 'contentVideo')[0]
             (resp := self.get(searchdictbykey(video_data, 'playlistUrl')[0], **request_overrides)).raise_for_status()
             raw_data['playlist_result'] = resp2json(resp=resp)

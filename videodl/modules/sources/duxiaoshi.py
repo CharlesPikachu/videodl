@@ -17,12 +17,8 @@ class DuxiaoshiVideoClient(BaseVideoClient):
     source = 'DuxiaoshiVideoClient'
     def __init__(self, **kwargs):
         super(DuxiaoshiVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -36,15 +32,13 @@ class DuxiaoshiVideoClient(BaseVideoClient):
         quality_key_func = lambda item: ((w := int(item.get("width", 0))) * (h := int(item.get("height", 0))), float(item.get("videoBps", 0)), float(item.get("videoSize", 0)))
         # try parse
         try:
-            parsed_url = urlparse(url)
-            try: vid = parse_qs(parsed_url.query, keep_blank_values=True)['vid'][0]
-            except: vid = parse_qs(parsed_url.query, keep_blank_values=True)['nid'][0]; vid = vid.replace('sv_', '')
+            try: vid = parse_qs(urlparse(url).query, keep_blank_values=True)['vid'][0]
+            except: vid = parse_qs(urlparse(url).query, keep_blank_values=True)['nid'][0]; vid = vid.replace('sv_', '')
             (resp := self.get(f"https://quanmin.hao222.com/wise/growth/api/sv/immerse?source=share-h5&pd=qm_share_mvideo&_format=json&vid={vid}", **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             candidate_urls: list[dict] = raw_data["data"]["meta"]["video_info"]["clarityUrl"]
             candidate_urls = [u for u in candidate_urls if u.get('url')]
-            download_url = sorted(candidate_urls, key=quality_key_func, reverse=True)[0]['url']
-            video_info.update(dict(download_url=download_url))
+            download_url = sorted(candidate_urls, key=quality_key_func, reverse=True)[0]['url']; video_info.update(dict(download_url=download_url))
             video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'meta', 'title'], "") or safeextractfromdict(raw_data, ['data', 'shareInfo', 'title'], "") or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']

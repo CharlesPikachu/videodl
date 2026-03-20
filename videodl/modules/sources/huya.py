@@ -34,14 +34,12 @@ class HuyaVideoClient(BaseVideoClient):
         try:
             vid = re.search(r"\/(\d+).html", url).group(1)
             (resp := self.get(f"https://liveapi.huya.com/moment/getMomentContent?videoId={vid}", **request_overrides)).raise_for_status()
-            raw_data = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             candidate_urls = raw_data["data"]["moment"]["videoInfo"]['definitions']
             candidate_urls = [u for u in candidate_urls if isinstance(u, dict) and (u.get('url') or u.get('m3u8'))]
             candidate_urls = sorted(candidate_urls, key=quality_key_func, reverse=True)
-            download_url = candidate_urls[0].get('url') or candidate_urls[0].get('m3u8')
-            video_info.update(dict(download_url=download_url))
-            video_title = legalizestring(raw_data["data"]["moment"]["videoInfo"].get('videoTitle', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
+            download_url = candidate_urls[0].get('url') or candidate_urls[0].get('m3u8'); video_info.update(dict(download_url=download_url))
+            video_title = legalizestring(safeextractfromdict(raw_data["data"]["moment"]["videoInfo"], ['videoTitle'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             cover_url = safeextractfromdict(raw_data, ['data', 'moment', 'videoInfo', 'videoCover'], None)

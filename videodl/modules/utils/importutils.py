@@ -9,10 +9,11 @@ WeChat Official Account (微信公众号):
 import sys
 import warnings
 import importlib
+from types import ModuleType
 
 
 '''optionalimport'''
-def optionalimport(name: str, show_warning: bool = False):
+def optionalimport(name: str, show_warning: bool = False) -> ModuleType | None:
     if name in sys.modules: return sys.modules[name]
     try:
         return importlib.import_module(name)
@@ -25,7 +26,7 @@ def optionalimport(name: str, show_warning: bool = False):
 
 
 '''optionalimportfrom'''
-def optionalimportfrom(module: str, attr: str, show_warning: bool = False):
+def optionalimportfrom(module: str, attr: str, show_warning: bool = False) -> ModuleType | None:
     try:
         mod = sys.modules.get(module) or importlib.import_module(module)
         return (getattr(mod, attr) if hasattr(mod, attr) else importlib.import_module(f"{module}.{attr}"))

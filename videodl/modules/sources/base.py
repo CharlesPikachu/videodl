@@ -19,6 +19,7 @@ import subprocess
 from pathlib import Path
 from rich.text import Text
 from rich.progress import Task
+from typing import TYPE_CHECKING
 from fake_useragent import UserAgent
 from platformdirs import user_log_dir
 from pathvalidate import sanitize_filepath
@@ -83,11 +84,13 @@ class BaseVideoClient():
         self._initsession()
         # proxied_session_client
         freeproxy = optionalimportfrom('freeproxy', 'freeproxy')
+        if TYPE_CHECKING: from freeproxy import freeproxy as freeproxy
         (default_freeproxy_settings := dict(disable_print=True, proxy_sources=['ProxiflyProxiedSession'], max_tries=20, init_proxied_session_cfg={})).update(self.freeproxy_settings)
         self.proxied_session_client = freeproxy.ProxiedSessionClient(**default_freeproxy_settings) if auto_set_proxies else None
     '''_listccimpersonates'''
     def _listccimpersonates(self):
         curl_cffi = optionalimport('curl_cffi')
+        if TYPE_CHECKING: import curl_cffi as curl_cffi
         root = Path(curl_cffi.__file__).resolve().parent
         exts = {".py", ".so", ".pyd", ".dll", ".dylib"}
         pat = re.compile(rb"\b(?:chrome|edge|safari|firefox|tor)(?:\d+[a-z_]*|_android|_ios)?\b")
@@ -95,6 +98,7 @@ class BaseVideoClient():
     '''_initsession'''
     def _initsession(self):
         curl_cffi = optionalimport('curl_cffi')
+        if TYPE_CHECKING: import curl_cffi as curl_cffi
         self.session = requests.Session() if not self.enable_curl_cffi else curl_cffi.requests.Session()
         self.session.headers = self.default_headers
     '''_ensureuniquefilepath'''

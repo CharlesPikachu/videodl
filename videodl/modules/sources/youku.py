@@ -42,25 +42,19 @@ class YoukuVideoClient(BaseVideoClient):
         null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
-            parsed_url = urlparse(url)
-            try: vid = parse_qs(parsed_url.query, keep_blank_values=True)['vid'][0]
-            except: vid = parsed_url.path.strip('/').split('/')[-1].removesuffix('.html').removeprefix('id_')
+            try: vid = parse_qs(urlparse(url).query, keep_blank_values=True)['vid'][0]
+            except: vid = urlparse(url).path.strip('/').split('/')[-1].removesuffix('.html').removeprefix('id_')
             (resp := self.get('https://log.mmstat.com/eg.js', **request_overrides)).raise_for_status()
             etag = resp.headers.get('ETag') or resp.headers.get('etag')
             cna = etag.strip('"')
             params = {'vid': vid, 'ccode': '0564', 'client_ip': '192.168.1.1', 'utid': cna, 'client_ts': int(time.time())} # [0564, 0566, 0568]
             self.default_headers.update({'Referer': url})
             (resp := self.get(f'https://ups.youku.com/ups/get.json', params=params, **request_overrides)).raise_for_status()
-            raw_data = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
-            video_data = raw_data.get('data') or {}
-            video_urls = [{
-                'url': stream.get('m3u8_url'), 'filesize': int(stream.get('size', 0) or 0), 'width': int(stream.get('width', 0) or 0), 'height': int(stream.get('height', 0) or 0)
-            } for stream in video_data.get('stream', []) if stream.get('channel_type') != 'tail']
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)))); video_data = raw_data.get('data') or {}
+            video_urls = [{'url': stream.get('m3u8_url'), 'filesize': int(stream.get('size', 0) or 0), 'width': int(stream.get('width', 0) or 0), 'height': int(stream.get('height', 0) or 0)} for stream in video_data.get('stream', []) if isinstance(stream, dict) and stream.get('channel_type') != 'tail']
             video_urls_sorted = sorted(video_urls, key=lambda f: (f.get('height') or 0, f.get('width') or 0, f.get('filesize') or 0), reverse=True)
             video_urls_sorted = [v for v in video_urls_sorted if v.get('url')]
-            download_url = video_urls_sorted[0]['url']
-            video_info.update(dict(download_url=download_url))
+            video_info.update(dict(download_url=(download_url := video_urls_sorted[0]['url'])))
             video_title = legalizestring(safeextractfromdict(video_data, ['video', 'title'], null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']

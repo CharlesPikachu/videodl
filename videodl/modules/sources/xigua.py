@@ -33,15 +33,12 @@ class XiguaVideoClient(BaseVideoClient):
         null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
-            parsed_url = urlparse(url)
-            vid = parsed_url.path.strip('/').split('/')[-1]
+            vid = urlparse(url).path.strip('/').split('/')[-1]
             (resp := self.get(f"https://m.ixigua.com/douyin/share/video/{vid}?aweme_type=107&schema_type=1&utm_source=copy&utm_campaign=client_share&utm_medium=android&app=aweme", **request_overrides)).raise_for_status()
             raw_data = re.findall(r"window\._ROUTER_DATA\s*=\s*(.*?)</script>", resp.text)[0]
-            raw_data = json_repair.loads(raw_data)
-            video_info.update(dict(raw_data=raw_data))
-            download_url = raw_data["loaderData"]["video_(id)/page"]['videoInfoRes']["item_list"][0]["video"]["play_addr"]["url_list"][0]
-            video_info.update(dict(download_url=download_url))
-            video_title = legalizestring(raw_data["loaderData"]["video_(id)/page"]['videoInfoRes']["item_list"][0].get('desc', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
+            video_info.update(dict(raw_data=(raw_data := json_repair.loads(raw_data))))
+            video_info.update(dict(download_url=(download_url := raw_data["loaderData"]["video_(id)/page"]['videoInfoRes']["item_list"][0]["video"]["play_addr"]["url_list"][0])))
+            video_title = legalizestring(safeextractfromdict(raw_data["loaderData"]["video_(id)/page"]['videoInfoRes']["item_list"][0], ['desc'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             cover_url = safeextractfromdict(raw_data, ['loaderData', 'video_(id)/page', 'videoInfoRes', 'item_list', 0, 'video', 'cover', 'url_list', 0], None)

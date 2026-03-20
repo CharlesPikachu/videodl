@@ -36,11 +36,9 @@ class HaokanVideoClient(BaseVideoClient):
         null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
-            parsed_url = urlparse(url)
-            vid = parse_qs(parsed_url.query, keep_blank_values=True)['vid'][0]
+            vid = parse_qs(urlparse(url).query, keep_blank_values=True)['vid'][0]
             (resp := self.get(f"https://haokan.baidu.com/v?_format=json&vid={vid}", **request_overrides)).raise_for_status()
-            raw_data = resp.json()
-            video_info.update(dict(raw_data=raw_data))
+            video_info.update(dict(raw_data=(raw_data := resp.json())))
             download_url = next((r.get('url', '') for r in sorted(raw_data["data"]["apiData"]["curVideoMeta"]["clarityUrl"], key=lambda x: float(x.get("videoSize", 0)), reverse=True) if r.get('url', '')), '')
             if not download_url: download_url = raw_data["data"]["apiData"]["curVideoMeta"]['playurl']
             video_info.update(dict(download_url=download_url))

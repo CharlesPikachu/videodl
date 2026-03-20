@@ -33,15 +33,12 @@ class WeSingVideoClient(BaseVideoClient):
         null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
-            parsed_url = urlparse(url)
-            vid = parse_qs(parsed_url.query, keep_blank_values=True)['s'][0]
+            vid = parse_qs(urlparse(url).query, keep_blank_values=True)['s'][0]
             (resp := self.get(f"https://kg.qq.com/node/play?s={vid}", **request_overrides)).raise_for_status()
             raw_data = re.search(r"window.__DATA__ = (.*?); </script>", resp.text).group(1).strip()
-            raw_data = json_repair.loads(raw_data)
-            video_info.update(dict(raw_data=raw_data))
-            download_url = raw_data["detail"]["playurl_video"]
-            video_info.update(dict(download_url=download_url))
-            video_title = legalizestring(raw_data["detail"].get('song_name', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
+            video_info.update(dict(raw_data=(raw_data := json_repair.loads(raw_data))))
+            video_info.update(dict(download_url=(download_url := raw_data["detail"]["playurl_video"])))
+            video_title = legalizestring(safeextractfromdict(raw_data, ['detail', 'song_name'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             cover_url = safeextractfromdict(raw_data, ['detail', 'cover'], None)

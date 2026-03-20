@@ -33,8 +33,7 @@ class PipixVideoClient(BaseVideoClient):
         try:
             item_id = re.findall(r'item/(\d+)', url)[0]
             (resp := self.get(f"https://api.pipix.com/bds/cell/cell_comment/?offset=0&cell_type=1&api_version=1&cell_id={item_id}&ac=wifi&channel=huawei_1319_64&aid=1319&app_name=super", **request_overrides)).raise_for_status()
-            raw_data = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             data: dict = raw_data["data"]["cell_comments"][0]["comment_info"]["item"]
             author_id, download_url = data["author"]["id"], ""
             download_url = next((u for c in data.get("comments", []) if c.get("item", {}).get("author", {}).get("id") == author_id and (u := (((c.get("item", {}).get("video", {}).get("video_high", {}).get("url_list") or [{}])[0]).get("url")))), None)

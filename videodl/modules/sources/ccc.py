@@ -17,12 +17,8 @@ class CCCVideoClient(BaseVideoClient):
     source = 'CCCVideoClient'
     def __init__(self, **kwargs):
         super(CCCVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''_parsefromurlsinglevideo'''
@@ -44,8 +40,7 @@ class CCCVideoClient(BaseVideoClient):
             video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             fmt_rank = lambda rec: {"video/mp4": 2, "video/webm": 1}.get(rec.get("mime_type", ""), 0)
             quality_key = lambda rec: ((1 if rec.get("high_quality") else 0), ((rec.get("width") or 0) * (rec.get("height") or 0)), (rec.get("width") or 0), (rec.get("height") or 0), fmt_rank(rec))
-            videos = [r for r in raw_data["recordings"] if isvideo_func(r)]
-            videos_sorted = sorted(videos, key=quality_key, reverse=True)
+            videos = [r for r in raw_data["recordings"] if isvideo_func(r)]; videos_sorted = sorted(videos, key=quality_key, reverse=True)
             video_info.update(dict(download_url=videos_sorted[0]['recording_url']))
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=videos_sorted[0]['recording_url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
@@ -66,17 +61,13 @@ class CCCVideoClient(BaseVideoClient):
         video_info = VideoInfo(source=self.source)
         if not self.belongto(url=url): return [video_info]
         # play list or single video match
-        play_list_pattern = re.compile(r'https?://(?:www\.)?media\.ccc\.de/c/(?P<id>[^/?#&]+)')
-        m = play_list_pattern.match(url)
+        m = re.compile(r'https?://(?:www\.)?media\.ccc\.de/c/(?P<id>[^/?#&]+)').match(url)
         # try parse
         if not m: return self._parsefromurlsinglevideo(url, request_overrides=request_overrides)
         video_infos = []
         try:
-            playlist_id = m.group('id')
-            resp = self.get('https://media.ccc.de/public/conferences/' + playlist_id, **request_overrides)
-            resp.raise_for_status()
-            raw_data = resp2json(resp=resp)
-            for event in raw_data['events']:
+            (resp := self.get('https://media.ccc.de/public/conferences/' + m.group('id'), **request_overrides)).raise_for_status()
+            for event in resp2json(resp=resp)['events']:
                 if not isinstance(event, dict) or not event.get('frontend_link'): continue
                 video_info = self._parsefromurlsinglevideo(event['frontend_link'], request_overrides=request_overrides)
                 if not video_info: continue

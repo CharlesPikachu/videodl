@@ -20,12 +20,8 @@ class MeipaiVideoClient(BaseVideoClient):
     source = 'MeipaiVideoClient'
     def __init__(self, **kwargs):
         super(MeipaiVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''_decodedownloadurl'''
@@ -55,12 +51,9 @@ class MeipaiVideoClient(BaseVideoClient):
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
-            (resp := self.get(url, **request_overrides)).raise_for_status()
-            video_info.update(dict(raw_data=(raw_data := resp.text)))
-            resp_selector = Selector(raw_data)
-            download_url_bs64 = resp_selector.css("#shareMediaBtn::attr(data-video)").get(default="")
-            download_url = self._decodedownloadurl(download_url_bs64=download_url_bs64)
-            video_info.update(dict(download_url=download_url))
+            (resp := self.get(url, **request_overrides)).raise_for_status(); video_info.update(dict(raw_data=(raw_data := resp.text)))
+            resp_selector = Selector(raw_data); download_url_bs64 = resp_selector.css("#shareMediaBtn::attr(data-video)").get(default="")
+            download_url = self._decodedownloadurl(download_url_bs64=download_url_bs64); video_info.update(dict(download_url=download_url))
             video_title = legalizestring(urllib.parse.unquote(resp_selector.css("#shareMediaBtn::attr(data-title)").get(default="").strip(), encoding="utf-8") or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']

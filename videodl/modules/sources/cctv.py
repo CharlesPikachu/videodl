@@ -47,7 +47,7 @@ class CCTVVideoClient(BaseVideoClient):
             (resp := self.get('https://vdn.apps.cntv.cn/api/getHttpVideoInfo.do', params=params, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             # --parse urls
-            manifest, download_urls = raw_data.get('manifest'), []
+            manifest, download_urls = raw_data.get('manifest') or {}, []
             hls_candidates = ['hls_h5e_url', 'hls_url']
             for hls_key in hls_candidates:
                 if raw_data.get(hls_key) or manifest.get(hls_key): download_urls.append([hls_key, raw_data.get(hls_key) or manifest.get(hls_key)])

@@ -35,15 +35,11 @@ class XuexiCNVideoClient(BaseVideoClient):
         # try parse
         video_infos = []
         try:
-            parsed_url = urlparse(url)
-            vid = parse_qs(parsed_url.query, keep_blank_values=True)['id'][0]
+            vid = parse_qs(urlparse(url).query, keep_blank_values=True)['id'][0]
             (resp := self.get(f"https://boot-source.xuexi.cn/data/app/{vid}.js?callback=callback&_st={int(time.time() * 1000)}", **request_overrides)).raise_for_status()
-            raw_data = resp.text.removeprefix('callback(').removesuffix(')')
-            raw_data = json_repair.loads(raw_data)
-            video_info.update(dict(raw_data=raw_data))
-            root_video_title = raw_data.get('title', "")
+            video_info.update(dict(raw_data=(raw_data := json_repair.loads(resp.text.removeprefix('callback(').removesuffix(')')))))
             # --iter to parse
-            sub_items = raw_data['sub_items']
+            root_video_title = raw_data.get('title', ""); sub_items = raw_data['sub_items']
             for sub_item in sub_items:
                 if not isinstance(sub_item, dict): continue
                 video_info_page = copy.deepcopy(video_info)

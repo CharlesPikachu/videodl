@@ -17,12 +17,8 @@ class SixRoomVideoClient(BaseVideoClient):
     source = 'SixRoomVideoClient'
     def __init__(self, **kwargs):
         super(SixRoomVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
-        self.default_download_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"}
+        self.default_download_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -39,10 +35,8 @@ class SixRoomVideoClient(BaseVideoClient):
             if 'vid' in parse_qs(parsed_url.query, keep_blank_values=True): vid = parse_qs(parsed_url.query, keep_blank_values=True)['vid'][0]
             else: vid = parsed_url.path.strip('/').split('/')[-1]
             (resp := self.get(f"https://v.6.cn/coop/mobile/index.php?padapi=minivideo-watchVideo.php&av=3.0&encpass=&logiuid=&isnew=1&from=0&vid={vid}", **request_overrides)).raise_for_status()
-            raw_data = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
-            download_url = raw_data['content']['playurl']
-            video_info.update(dict(download_url=download_url))
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
+            video_info.update(dict(download_url=(download_url := raw_data['content']['playurl'])))
             video_title = legalizestring(raw_data["content"].get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']

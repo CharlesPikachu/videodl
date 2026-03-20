@@ -37,15 +37,11 @@ class KakaoVideoClient(BaseVideoClient):
         null_backup_title = yieldtimerelatedtitle(self.source)
         # try parse
         try:
-            parsed_url = urlparse(url)
-            vid = parsed_url.path.strip('/').split('/')[-1]
+            vid = urlparse(url).path.strip('/').split('/')[-1]
             params = {'player': 'monet_html5', 'referer': url, 'uuid': '', 'service': 'kakao_tv', 'section': '', 'dteType': 'PC', 'fields': ','.join(['-*', 'tid', 'clipLink', 'displayTitle', 'clip', 'title', 'description', 'channelId', 'createTime', 'duration', 'playCount', 'likeCount', 'commentCount', 'tagList', 'channel', 'name', 'clipChapterThumbnailList', 'thumbnailUrl', 'timeInSec', 'isDefault', 'videoOutputList', 'width', 'height', 'kbps', 'profile', 'label']),}
             (resp := self.get(f'http://tv.kakao.com/api/v1/ft/playmeta/cliplink/{vid}/', params=params, **request_overrides)).raise_for_status()
-            raw_data = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
-            clip_link: dict = raw_data['clipLink']
-            clip: dict = clip_link['clip']
-            video_output_list = clip.get('videoOutputList') or []
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
+            clip_link: dict = raw_data['clipLink']; clip: dict = clip_link['clip']; video_output_list = clip.get('videoOutputList') or []
             video_output_list = sorted(video_output_list, key=lambda s: (s["width"] * s["height"], s["kbps"]), reverse=True)
             for fmt in video_output_list:
                 if not isinstance(fmt, dict): continue

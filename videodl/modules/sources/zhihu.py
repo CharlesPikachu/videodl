@@ -32,16 +32,13 @@ class ZhihuVideoClient(BaseVideoClient):
         quality_score_func = lambda info: ((info.get("width") or 0) * (info.get("height") or 0), (info.get("bitrate") or 0.0), (info.get("size") or 0))
         # try parse
         try:
-            parsed_url = urlparse(url)
-            vid = parsed_url.path.strip('/').split('/')[-1]
+            vid = urlparse(url).path.strip('/').split('/')[-1]
             (resp := self.get(f'https://www.zhihu.com/api/v4/zvideos/{vid}', **request_overrides)).raise_for_status()
-            raw_data = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
-            playlist = raw_data["video"]["playlist"]
-            sorted_playlist = sorted(playlist.items(), key=lambda kv: quality_score_func(kv[1]), reverse=True)
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
+            playlist: dict = raw_data["video"]["playlist"]
+            sorted_playlist: list[tuple[dict]] = sorted(playlist.items(), key=lambda kv: quality_score_func(kv[1]), reverse=True)
             sorted_playlist = [s for s in sorted_playlist if s[1].get('url')]
-            download_url = sorted_playlist[0][1]['url']
-            video_info.update(dict(download_url=download_url))
+            download_url = sorted_playlist[0][1]['url']; video_info.update(dict(download_url=download_url))
             video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
