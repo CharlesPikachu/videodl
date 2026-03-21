@@ -27,10 +27,8 @@ class GeniusVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
         # try parse
         try:
             m = re.compile(r'https?://(?:www\.)?genius\.com/(?:videos|(?P<article>a))/(?P<id>[^?/#]+)').match(url)
@@ -42,11 +40,9 @@ class GeniusVideoClient(BaseVideoClient):
             app_config = m.group("json"); app_config = bytes(app_config, "utf-8").decode("unicode_escape"); app_config = json_repair.loads(app_config)
             account_id = app_config.get('brightcove_account_id', '4863540648001')
             keys = ["brightcove_standard_web_player_id", "brightcove_standard_no_autoplay_web_player_id", "brightcove_modal_web_player_id", "brightcove_song_story_web_player_id"]
-            player_id = next((pid for key in keys if (pid := searchdictbykey(app_config, key))), None)
-            player_id = player_id[0] if player_id else "S1ZcmcOC1x"
+            player_id = player_id[0] if (player_id := next((pid for key in keys if (pid := searchdictbykey(app_config, key))), None)) else "S1ZcmcOC1x"
             player_url = f"https://players.brightcove.net/{account_id}/{player_id}_default/index.html?videoId={video_id}"
-            player_url = BrightcoveSmuggler.smuggleurl(player_url, {'referrer': url})
-            request_overrides = copy.deepcopy(request_overrides)
+            player_url = BrightcoveSmuggler.smuggleurl(player_url, {'referrer': url}); request_overrides = copy.deepcopy(request_overrides)
             if 'headers' not in request_overrides: request_overrides['headers'] = copy.deepcopy(self.default_headers)
             if 'cookies' not in request_overrides: request_overrides['cookies'] = copy.deepcopy(self.default_cookies)
             raw_data = BrightcoveSmuggler.extract(player_url=player_url, request_overrides=request_overrides); video_info.update(dict(raw_data=raw_data))
@@ -54,16 +50,12 @@ class GeniusVideoClient(BaseVideoClient):
             video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            cover_url = safeextractfromdict(raw_data, ['raw', 'poster'], None)
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_id, cover_url=cover_url))
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_id, cover_url=safeextractfromdict(raw_data, ['raw', 'poster'], None)))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list[str] | set[str] = None):

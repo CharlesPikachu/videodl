@@ -10,7 +10,7 @@ import os
 from .base import BaseVideoClient
 from ..utils.youtubeutils import YouTube
 from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, safeextractfromdict, VideoInfo
 
 
 '''YouTubeVideoClient'''
@@ -26,27 +26,21 @@ class YouTubeVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
         # try parse
         try:
             vid = parse_qs(urlparse(url).query, keep_blank_values=True)['v'][0]
             yt = YouTube(video_id=vid); video_info.update(dict(raw_data=(raw_data := yt.vid_info)))
             download_url = yt.streams.gethighestresolution(); video_info.update(dict(download_url=download_url))
             video_title = legalizestring(yt.title, replace_null_string=null_backup_title).removesuffix('.')
-            try: cover_url = raw_data['videoDetails']['thumbnail']['thumbnails'][-1]['url']
-            except Exception: cover_url = None
+            cover_url = safeextractfromdict(raw_data, ['videoDetails', 'thumbnail', 'thumbnails', -1, 'url'], None)
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', identifier=vid, cover_url=cover_url))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list[str] | set[str] = None):

@@ -24,10 +24,8 @@ class CCCVideoClient(BaseVideoClient):
     '''_parsefromurlsinglevideo'''
     def _parsefromurlsinglevideo(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
         single_video_pattern = re.compile(r'https?://(?:www\.)?media\.ccc\.de/v/(?P<id>[^/?#&]+)')
         isvideo_func = lambda rec: isinstance(rec.get("mime_type"), str) and rec["mime_type"].startswith("video/")
         # try parse
@@ -46,39 +44,29 @@ class CCCVideoClient(BaseVideoClient):
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f'{display_id}-{event_id}', cover_url=raw_data.get('poster_url')))
         except Exception as err:
-            err_msg = f'{self.source}._parsefromurlsinglevideo >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlsinglevideo >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, video_infos = request_overrides or {}, VideoInfo(source=self.source), []
         # play list or single video match
         m = re.compile(r'https?://(?:www\.)?media\.ccc\.de/c/(?P<id>[^/?#&]+)').match(url)
         # try parse
         if not m: return self._parsefromurlsinglevideo(url, request_overrides=request_overrides)
-        video_infos = []
         try:
             (resp := self.get('https://media.ccc.de/public/conferences/' + m.group('id'), **request_overrides)).raise_for_status()
             for event in resp2json(resp=resp)['events']:
                 if not isinstance(event, dict) or not event.get('frontend_link'): continue
-                video_info = self._parsefromurlsinglevideo(event['frontend_link'], request_overrides=request_overrides)
-                if not video_info: continue
-                video_info = video_info[0]
-                if (video_info.get("download_url") or "").upper() in ("", "NULL"): continue
-                video_info.update(dict(title=f"ep{len(video_infos)+1}-{video_info.title}", file_path=os.path.join(self.work_dir, self.source, f'ep{len(video_infos)+1}-{video_info.title}.{video_info.ext}')))
-                video_infos.append(video_info)
+                if not (video_info := self._parsefromurlsinglevideo(event['frontend_link'], request_overrides=request_overrides)): continue
+                if ((video_info := video_info[0]).get("download_url") or "").upper() in ("", "NULL", "None"): continue
+                video_info.update(dict(title=f"ep{len(video_infos)+1}-{video_info.title}", file_path=os.path.join(self.work_dir, self.source, f'ep{len(video_infos)+1}-{video_info.title}.{video_info.ext}'))); video_infos.append(video_info)
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
-            video_infos.append(video_info)
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return video_infos

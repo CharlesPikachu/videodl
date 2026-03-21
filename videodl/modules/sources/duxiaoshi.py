@@ -25,15 +25,13 @@ class DuxiaoshiVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
-        quality_key_func = lambda item: ((w := int(item.get("width", 0))) * (h := int(item.get("height", 0))), float(item.get("videoBps", 0)), float(item.get("videoSize", 0)))
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
+        quality_key_func = lambda item: (int(item.get("width", 0)) * int(item.get("height", 0)), float(item.get("videoBps", 0)), float(item.get("videoSize", 0)))
         # try parse
         try:
             try: vid = parse_qs(urlparse(url).query, keep_blank_values=True)['vid'][0]
-            except: vid = parse_qs(urlparse(url).query, keep_blank_values=True)['nid'][0]; vid = vid.replace('sv_', '')
+            except: vid = parse_qs(urlparse(url).query, keep_blank_values=True)['nid'][0]; vid = vid.removeprefix('sv_')
             (resp := self.get(f"https://quanmin.hao222.com/wise/growth/api/sv/immerse?source=share-h5&pd=qm_share_mvideo&_format=json&vid={vid}", **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             candidate_urls: list[dict] = raw_data["data"]["meta"]["video_info"]["clarityUrl"]
@@ -45,13 +43,10 @@ class DuxiaoshiVideoClient(BaseVideoClient):
             cover_url = safeextractfromdict(raw_data, ['data', 'meta', 'image'], None)
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list[str] | set[str] = None):

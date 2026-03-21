@@ -16,7 +16,7 @@ import hashlib
 from .base import BaseVideoClient
 from urllib.parse import urlencode, quote
 from ..utils.domains import IQIYI_SUFFIXES
-from ..utils import legalizestring, useparseheaderscookies, resp2json, touchdir, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, touchdir, yieldtimerelatedtitle, safeextractfromdict, VideoInfo
 
 
 '''IQiyiVideoClient'''
@@ -72,13 +72,11 @@ class IQiyiVideoClient(BaseVideoClient):
             image_url = safeextractfromdict(raw_data, ['data', 'base_data', 'image_url'], None)
             info = {'image_url': image_url, 'url': url, 'referrer': url, 'title': data['base_data']['title'], 'year': data['base_data']['current_video_year'], 'cover_id': data['base_data']['qipu_id'], 'type': IQiyiVideoClient.VideoTypes.MOVIE if data['base_data']['album_source_type'] == '-1' else IQiyiVideoClient.VideoTypes.TV}
             vi: dict = {'V': tvid, 'E': 1, 'defns': {}, 'url': url, 'referrer': url}; info['normal_ids'] = [vi]; info['episode_all'] = 1
-            data = safeextractfromdict(data, ['template', 'tabs', 0, 'blocks', 2, 'data', 'data'], None)
-            if not data: return info
+            if not (data := safeextractfromdict(data, ['template', 'tabs', 0, 'blocks', 2, 'data', 'data'], None)): return info
             if isinstance(data, dict):
                 info['normal_ids'] = [{'V': vi['qipu_id'], 'E': ep, 'defns': {}, 'title': vi.get('subtitle') or vi.get('title'), 'url': vi.get('page_url') or ''} for ep, vi in enumerate(data['videos'], start=1)]
             else:
-                videos = [vd['videos'] for vd in data if vd['videos'] and not isinstance(vd['videos'], str)]
-                if not videos: return info
+                if not (videos := [vd['videos'] for vd in data if vd['videos'] and not isinstance(vd['videos'], str)]): return info
                 videos, ep, normal_ids = videos[0], 1, []
                 if isinstance(videos, dict): vis = [vi for part, vi_lst in sorted(videos['feature_paged'].items(), key=lambda x: int(x[0].split('-')[0])) for vi in vi_lst]
                 else: vis = [vi for vd in sorted(videos, key=lambda x: int(x['title'].split('-')[0])) for vi in vd['data']]
@@ -106,31 +104,24 @@ class IQiyiVideoClient(BaseVideoClient):
         except Exception: pass
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = None):
+    def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source, enable_nm3u8dlre=True)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
-        device_id = self._generatedeviceid()
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source, enable_nm3u8dlre=True), yieldtimerelatedtitle(self.source)
+        device_id, video_infos = self._generatedeviceid(), []
         # try parse
-        video_infos = []
         try:
             raw_data = self._getvideocoverinfo(url, device_id=device_id, request_overrides=request_overrides)
             for normal_id in raw_data['normal_ids']:
                 self._updatevideodwnldinfo(normal_id, device_id=device_id, request_overrides=request_overrides)
-                download_url = os.path.join(self.work_dir, self.source, f'{normal_id["V"]}.m3u8')
-                touchdir(os.path.dirname(download_url))
+                touchdir(os.path.dirname((download_url := os.path.join(self.work_dir, self.source, f'{normal_id["V"]}.m3u8'))))
                 with open(download_url, 'w') as fp: fp.write(normal_id['highest_defns_original'])
                 (video_info_page := copy.deepcopy(video_info)).update(raw_data=raw_data, download_url=download_url)
                 video_title = legalizestring(normal_id['title'] or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
                 video_title = f'ep{len(video_infos)+1}-{video_title}' if len(raw_data['normal_ids']) > 1 else video_title
-                video_info_page.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.m3u8'), ext='mp4', identifier=normal_id["V"], cover_url=raw_data.get('image_url')))
-                video_infos.append(video_info_page)
+                video_info_page.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.m3u8'), ext='mp4', identifier=normal_id["V"], cover_url=raw_data.get('image_url'))); video_infos.append(video_info_page)
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
-            video_infos.append(video_info)
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return video_infos

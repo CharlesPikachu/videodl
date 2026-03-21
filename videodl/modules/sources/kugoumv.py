@@ -40,10 +40,8 @@ class KugouMVVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
@@ -54,8 +52,7 @@ class KugouMVVideoClient(BaseVideoClient):
             play_info = [(k, v) for k, v in dict(raw_data['data']['play']).items() if (v['downurl'] or v['backupdownurl'][0]) and (str(v['downurl']).startswith('http') or str(v['backupdownurl'][0]).startswith('http'))]
             play_info = sorted(play_info, key=lambda item: int(float((item[1]["filesize"]))), reverse=True)
             download_url = play_info[0][1]['downurl'] or play_info[0][1]['backupdownurl']
-            if download_url and isinstance(download_url, list): download_url = download_url[0]
-            video_info.update(dict(download_url=download_url))
+            video_info.update(dict(download_url=(download_url := download_url[0] if download_url and isinstance(download_url, list) else download_url)))
             video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'info', 'base', 'mv_name'], None), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
@@ -63,13 +60,10 @@ class KugouMVVideoClient(BaseVideoClient):
             if cover_url and '{size}' in cover_url: cover_url = cover_url.replace('{size}', '480')
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list[str] | set[str] = None):

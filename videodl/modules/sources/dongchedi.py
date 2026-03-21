@@ -37,10 +37,8 @@ class DongchediVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def _parsefromurlusingdrissionpage(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides, url = request_overrides or {}, self._converttomobileurl(url)
-        video_info, download_urls = VideoInfo(source=self.source), []
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        url, request_overrides, video_info, null_backup_title, download_urls = self._converttomobileurl(url), request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source), []
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
@@ -65,13 +63,10 @@ class DongchediVideoClient(BaseVideoClient):
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
-            err_msg = f'{self.source}._parsefromurlusingdrissionpage >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlusingdrissionpage >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):

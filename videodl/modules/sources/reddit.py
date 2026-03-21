@@ -73,30 +73,19 @@ class RedditVideoClient(BaseVideoClient):
         for cp in cplist:
             if not isinstance(cp, dict): continue
             sm = cp.get("secure_media") or cp.get("media") or {}
-            rv = sm.get("reddit_video")
-            if rv: reddit_video = rv; break
+            if (rv := sm.get("reddit_video")): reddit_video = rv; break
         # secure_media/media
-        if not reddit_video:
-            sm = data.get("secure_media") or data.get("media") or {}
-            reddit_video: dict = sm.get("reddit_video")
+        if not reddit_video: sm = data.get("secure_media") or data.get("media") or {}; reddit_video: dict = sm.get("reddit_video")
         # multi videos perhaps
         hls_url = dash_url = fallback_url = video_id = None
         media_metadata, playlist_items = data.get("media_metadata") or {}, []
         if not reddit_video and media_metadata:
             for mid, meta in media_metadata.items():
-                if not isinstance(meta, dict): continue
-                if meta.get("e") != "RedditVideo": continue
-                hls, dash = meta.get("hlsUrl"), meta.get("dashUrl")
-                playlist_items.append({"id": mid, "hls_url": hls, "dash_url": dash})
-        is_playlist = bool(playlist_items)
+                if (not isinstance(meta, dict)) or (meta.get("e") != "RedditVideo"): continue
+                playlist_items.append({"id": mid, "hls_url": meta.get("hlsUrl"), "dash_url": meta.get("dashUrl")})
         # reddit_video
-        if reddit_video:
-            fallback_url, hls_url, dash_url, duration = reddit_video.get("fallback_url"), reddit_video.get("hls_url"), reddit_video.get("dash_url"), reddit_video.get("duration")
-            if fallback_url:
-                m = re.search(r"https?://v\.redd\.it/([^/?#&]+)", fallback_url)
-                if m: video_id = m.group(1)
-        elif is_playlist:
-            video_id = None
+        if reddit_video: fallback_url, hls_url, dash_url, duration = reddit_video.get("fallback_url"), reddit_video.get("hls_url"), reddit_video.get("dash_url"), reddit_video.get("duration"); fallback_url and (m := re.search(r"https?://v\.redd\.it/([^/?#&]+)", fallback_url)) and (video_id := m.group(1))
+        elif (is_playlist := bool(playlist_items)): video_id = None
         # return
         return RedditMediaInfo(cover_url=cover_url, post_id=post_id, display_id=display_id, title=title, alt_title=alt_title, subreddit=subreddit, author=author, over_18=over_18, duration=duration, video_id=video_id, hls_url=hls_url, dash_url=dash_url, fallback_url=fallback_url, is_playlist=is_playlist, playlist_items=playlist_items or None)
     '''_augmenthlsquery'''
@@ -104,57 +93,40 @@ class RedditVideoClient(BaseVideoClient):
         if not url: return url
         parsed = urllib.parse.urlparse(url)
         qs = dict(urllib.parse.parse_qsl(parsed.query, keep_blank_values=True))
-        f = qs.get("f")
-        if f:
-            if "subsAll" not in f: f = f + ",subsAll"
-        else:
-            f = "hd,subsAll"
-        qs["f"] = f
+        qs["f"] = f = (f if "subsAll" in f else f + ",subsAll") if (f := qs.get("f")) else "hd,subsAll"
         new_query = urllib.parse.urlencode(qs)
         return urllib.parse.urlunparse(parsed._replace(query=new_query))
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = None):
+    def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title, video_infos = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source), []
         # try parse
-        video_infos = []
         try:
             media = self._extractmediainfo(url, request_overrides=request_overrides)
             if not media.hls_url and not media.dash_url and not media.is_playlist:
                 post_js = self._fetchpostjson(url, request_overrides=request_overrides)
-                data: dict = post_js[0]["data"]["children"][0]["data"]
-                final_url = data.get("url")
+                data: dict = post_js[0]["data"]["children"][0]["data"]; final_url = data.get("url")
                 raise RuntimeError(f'The video in this post is not hosted on Reddit; it is an external link: {final_url}')
             if media.is_playlist and media.playlist_items:
                 for _, item in enumerate(media.playlist_items, 1):
-                    hls_url, dash_url, vid = item.get("hls_url"), item.get("dash_url"), item["id"]
-                    if hls_url: hls_url = self._augmenthlsquery(hls_url)
-                    elif dash_url: hls_url = dash_url
-                    if not hls_url: continue
+                    hls_url, dash_url, vid = (self._augmenthlsquery(hls_url) if (hls_url := item.get("hls_url")) else dash_url if (dash_url := item.get("dash_url")) else hls_url), (dash_url if 'dash_url' in locals() else item.get("dash_url")), item["id"]
+                    if (not hls_url) or (not str(hls_url).startswith('http')): continue
                     video_title = legalizestring(f'ep{len(video_infos)+1}-{media.title or null_backup_title}', replace_null_string=null_backup_title).removesuffix('.')
                     guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=hls_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                     ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-                    video_info_page = copy.deepcopy(video_info)
-                    video_info_page.update(dict(raw_data=item, download_url=hls_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, enable_nm3u8dlre=True, cover_url=media.cover_url))
-                    video_infos.append(video_info_page)
+                    (video_info_page := copy.deepcopy(video_info)).update(dict(raw_data=item, download_url=hls_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, enable_nm3u8dlre=True, cover_url=media.cover_url)); video_infos.append(video_info_page)
             else:
-                download_url = media.hls_url or media.dash_url
-                if download_url: download_url = self._augmenthlsquery(download_url)
+                if (download_url := media.hls_url or media.dash_url): download_url = self._augmenthlsquery(download_url)
                 elif media.fallback_url: download_url = media.fallback_url
                 else: raise Exception
                 video_title = legalizestring(media.title or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-                video_info.update(dict(raw_data=asdict(media), download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=media.post_id or media.display_id or video_title, enable_nm3u8dlre=True, cover_url=media.cover_url))
-                video_infos.append(video_info)
+                video_info.update(dict(raw_data=asdict(media), download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=media.post_id or media.display_id or video_title, enable_nm3u8dlre=True, cover_url=media.cover_url)); video_infos.append(video_info)
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
-            video_infos.append(video_info)
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return video_infos

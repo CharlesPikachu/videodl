@@ -36,20 +36,16 @@ class YoukuVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source, download_with_ffmpeg=True)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source, download_with_ffmpeg=True), yieldtimerelatedtitle(self.source)
         # try parse
         try:
             try: vid = parse_qs(urlparse(url).query, keep_blank_values=True)['vid'][0]
             except: vid = urlparse(url).path.strip('/').split('/')[-1].removesuffix('.html').removeprefix('id_')
             (resp := self.get('https://log.mmstat.com/eg.js', **request_overrides)).raise_for_status()
-            etag = resp.headers.get('ETag') or resp.headers.get('etag')
-            cna = etag.strip('"')
-            params = {'vid': vid, 'ccode': '0564', 'client_ip': '192.168.1.1', 'utid': cna, 'client_ts': int(time.time())} # [0564, 0566, 0568]
-            self.default_headers.update({'Referer': url})
-            (resp := self.get(f'https://ups.youku.com/ups/get.json', params=params, **request_overrides)).raise_for_status()
+            params = {'vid': vid, 'ccode': '0564', 'client_ip': '192.168.1.1', 'utid': (resp.headers.get('ETag') or resp.headers.get('etag')).strip('"'), 'client_ts': int(time.time())} # [0564, 0566, 0568]
+            (headers := dict(self.default_headers)).update({'Referer': url})
+            (resp := self.get(f'https://ups.youku.com/ups/get.json', params=params, headers=headers, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)))); video_data = raw_data.get('data') or {}
             video_urls = [{'url': stream.get('m3u8_url'), 'filesize': int(stream.get('size', 0) or 0), 'width': int(stream.get('width', 0) or 0), 'height': int(stream.get('height', 0) or 0)} for stream in video_data.get('stream', []) if isinstance(stream, dict) and stream.get('channel_type') != 'tail']
             video_urls_sorted = sorted(video_urls, key=lambda f: (f.get('height') or 0, f.get('width') or 0, f.get('filesize') or 0), reverse=True)
@@ -61,13 +57,10 @@ class YoukuVideoClient(BaseVideoClient):
             cover_url = safeextractfromdict(raw_data, ['data', 'video', 'logo'], None) or safeextractfromdict(raw_data, ['data', 'preview', 'thumb_hd', 0], None)
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list[str] | set[str] = None):

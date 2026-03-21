@@ -26,14 +26,11 @@ class XuexiCNVideoClient(BaseVideoClient):
         self._initsession()
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = None):
+    def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title, video_infos = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source), []
         # try parse
-        video_infos = []
         try:
             vid = parse_qs(urlparse(url).query, keep_blank_values=True)['id'][0]
             (resp := self.get(f"https://boot-source.xuexi.cn/data/app/{vid}.js?callback=callback&_st={int(time.time() * 1000)}", **request_overrides)).raise_for_status()
@@ -42,25 +39,18 @@ class XuexiCNVideoClient(BaseVideoClient):
             root_video_title = raw_data.get('title', ""); sub_items = raw_data['sub_items']
             for sub_item in sub_items:
                 if not isinstance(sub_item, dict): continue
-                video_info_page = copy.deepcopy(video_info)
                 video_storage_info: list[dict] = sub_item["videos"][0]["video_storage_info"]
                 sorted_video_storage_info: list[dict] = sorted(video_storage_info, key=lambda v: (v.get("width", 0) * v.get("height", 0), v.get("bitrate", 0)), reverse=True)
                 sorted_video_storage_info: list[dict] = [item for item in sorted_video_storage_info if item.get('normal')]
-                download_url = sorted_video_storage_info[0]['normal']
-                video_info_page.update(dict(download_url=download_url))
-                video_title = sub_item.get('title', null_backup_title)
-                if root_video_title and len(sub_items) > 1: video_title = f"ep{len(video_infos)+1}-{root_video_title}-{video_title}"
-                elif len(sub_items) > 1: video_title = f"ep{len(video_infos)+1}-{video_title}"
+                (video_info_page := copy.deepcopy(video_info)).update(dict(download_url=(download_url := sorted_video_storage_info[0]['normal'])))
+                video_title = (lambda t: f"ep{len(video_infos)+1}-{root_video_title}-{t}" if root_video_title and len(sub_items) > 1 else f"ep{len(video_infos)+1}-{t}" if len(sub_items) > 1 else t)(sub_item.get('title', null_backup_title))
                 video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
                 cover_url = safeextractfromdict(sub_item, ['videos', 0, 'thumbnails', 0, 'data', 0, 'url'], None)
-                video_info_page.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f"{vid}-{sub_item['sn']}", cover_url=cover_url))
-                video_infos.append(video_info_page)
+                video_info_page.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f"{vid}-{sub_item['sn']}", cover_url=cover_url)); video_infos.append(video_info_page)
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
-            video_infos.append(video_info)
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return video_infos

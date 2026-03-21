@@ -25,10 +25,8 @@ class FoxNewsVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source, enable_nm3u8dlre=True)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source, enable_nm3u8dlre=True), yieldtimerelatedtitle(self.source)
         # try parse
         try:
             re_patterns = [r'https?://(?:www\.)?foxnews\.com/video/(?P<id>\d+)', r'https?://video\.(?:insider\.)?fox(?:news|business)\.com/v/(?:video-embed\.html\?video_id=)?(?P<id>\d+)']
@@ -43,13 +41,10 @@ class FoxNewsVideoClient(BaseVideoClient):
             cover_url = safeextractfromdict(raw_data, ['channel', 'item', 'media-group', 'media-thumbnail', '@attributes', 'url'], None)
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_id, cover_url=cover_url))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list[str] | set[str] = None):

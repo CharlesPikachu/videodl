@@ -13,7 +13,7 @@ from contextlib import suppress
 from .base import BaseVideoClient
 from ..utils import initcdm, closecdm
 from urllib.parse import urlparse, urlencode, urlunparse
-from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, resp2json, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, resp2json, safeextractfromdict, VideoInfo
 
 
 '''WittyTVVideoClient'''
@@ -43,15 +43,12 @@ class WittyTVVideoClient(BaseVideoClient):
         return device_id
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = None):
+    def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source, ext='mp4', download_with_ffmpeg=True, enable_nm3u8dlre=True)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title, video_infos = request_overrides or {}, VideoInfo(source=self.source, ext='mp4', download_with_ffmpeg=True, enable_nm3u8dlre=True), yieldtimerelatedtitle(self.source), []
         if self.BEARER_TOKEN is None: self.BEARER_TOKEN = self._getbearertoken()
         # try parse
-        video_infos = []
         try:
             (resp := self.get(url, **request_overrides)).raise_for_status()
             content_id, raw_data = re.search(r'guIDcurrentGlobal\s*=\s*"([^"]+)"', resp.text).group(1), {}
@@ -76,14 +73,10 @@ class WittyTVVideoClient(BaseVideoClient):
             (licence := self.post(WittyTVVideoClient.LICENSE_URL, data=challenge, params={'releasePid': release_pid, 'account': WittyTVVideoClient.ACCOUNT_URL.format(a_id=account), 'schema': '1.0', 'token': self.BEARER_TOKEN})).raise_for_status()
             raw_data['LICENSE_URL_RESPONSE'] = licence.content; video_info.update(dict(raw_data=raw_data))
             key = list(set(closecdm(cdm, cdm_session_id, licence.content)))[0]
-            try: cover_url = raw_data['PROGRAM_URL_RESPONSE']['thumbnails']['image_horizontal_cover-704x396']['url']
-            except Exception: cover_url = None
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info.ext}'), identifier=content_id, nm3u8dlre_settings={'key': key}, cover_url=cover_url))
-            video_infos.append(video_info)
+            cover_url = safeextractfromdict(raw_data, ['PROGRAM_URL_RESPONSE', 'thumbnails', 'image_horizontal_cover-704x396', 'url'], None)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info.ext}'), identifier=content_id, nm3u8dlre_settings={'key': key}, cover_url=cover_url)); video_infos.append(video_info)
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
-            video_infos.append(video_info)
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return video_infos

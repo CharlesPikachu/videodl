@@ -24,24 +24,20 @@ class SohuVideoClient(BaseVideoClient):
         self._initsession()
     '''_parsefromurlwithmytv'''
     @useparseheaderscookies
-    def _parsefromurlwithmytv(self, url: str, request_overrides: dict = None):
+    def _parsefromurlwithmytv(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
         # try parse
         try:
             # --obtain vid
-            (resp := self.get(url, **request_overrides)).raise_for_status()
-            soup = BeautifulSoup(resp.text, 'html.parser')
+            (resp := self.get(url, **request_overrides)).raise_for_status(); soup = BeautifulSoup(resp.text, 'html.parser')
             script_tag, vid = soup.find("script", string=lambda t: t and "var vid" in t), None
             if script_tag: m = re.search(r'var\s+vid\s*=\s*"(\d+)"', script_tag.get_text()) or re.search(r"var\s+vid\s*=\s*'(\d+)'", script_tag.get_text()); vid = m.group(1) if m else None
             if vid is None: li = soup.find("li", attrs={"data-vid": True}); vid = li["data-vid"].strip()
             # --request for the first time to obtain new vid
             (resp := self.get(f'http://my.tv.sohu.com/play/videonew.do?vid={vid}&referer=http://my.tv.sohu.com', **request_overrides)).raise_for_status()
-            raw_data = resp2json(resp=resp)
-            qualities = ['norVid', 'highVid', 'superVid', 'oriVid'][::-1]
+            raw_data = resp2json(resp=resp); qualities = ['norVid', 'highVid', 'superVid', 'oriVid'][::-1]
             vid = next((v for q in qualities if (v := safeextractfromdict(raw_data, ['data', q], ''))), '')
             # --request again using new vid with higher video quality
             (resp := self.get(f'http://my.tv.sohu.com/play/videonew.do?vid={vid}&referer=http://my.tv.sohu.com', **request_overrides)).raise_for_status()
@@ -69,34 +65,27 @@ class SohuVideoClient(BaseVideoClient):
                     for url in download_urls: fp.write(f"{url}\n")
                 video_info.update(dict(download_url=ffmpeg_target_file_path, download_with_ffmpeg=True))
         except Exception as err:
-            err_msg = f'{self.source}._parsefromurlwithmytv >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithmytv >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''_parsefromurlwithhotvrs'''
     @useparseheaderscookies
-    def _parsefromurlwithhotvrs(self, url: str, request_overrides: dict = None):
+    def _parsefromurlwithhotvrs(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
         # try parse
         try:
             # --obtain vid
-            (resp := self.get(url, **request_overrides)).raise_for_status()
-            soup = BeautifulSoup(resp.text, 'html.parser')
+            (resp := self.get(url, **request_overrides)).raise_for_status(); soup = BeautifulSoup(resp.text, 'html.parser')
             script_tag, vid = soup.find("script", string=lambda t: t and "var vid" in t), None
             if script_tag: m = re.search(r'var\s+vid\s*=\s*"(\d+)"', script_tag.get_text()) or re.search(r"var\s+vid\s*=\s*'(\d+)'", script_tag.get_text()); vid = m.group(1) if m else None
             if vid is None: li = soup.find("li", attrs={"data-vid": True}); vid = li["data-vid"].strip()
             # --video raw data
             params = {'vid': vid, 'ver': '1', 'ssl': '1', 'uid': '17636986544987061902', 'pflag': 'pch5', 'prod': 'h5n', 'platform_source': 'pc'}
             (resp := self.get('https://hot.vrs.sohu.com/vrs_pc_play.action', params=params, **request_overrides)).raise_for_status()
-            raw_data = resp2json(resp=resp)
-            if not (raw_data.get('data') and isinstance(raw_data['data'], dict)): return [video_info]
+            if not ((raw_data := resp2json(resp=resp)).get('data') and isinstance(raw_data['data'], dict)): return [video_info]
             # --parse
             priority_keys = ["relativeId", "norVid", "highVid", "superVid", "oriVid", "h2644kVid", "h265norVid", "h265highVid", "h265superVid", "h265oriVid", "h2654mVid", "h2654kVid", "norVid_ns", "highVid_ns", "superVid_ns", "oriVid_ns", "p1080HdrVid", "p1080Hdr265Vid", "p1080HdrVid_ns", "p1080Hdr265Vid_ns", "tvVer35_vid", "tvVer36_vid", "tvVer34_vid", "tvVer284_vid", "tvVer285_vid", "tvVer260_vid", "tvVer262_vid", "tvVer264_vid", "tvVer266_vid", "tvVer301_vid", "tvVer302_vid", "tvVer303_vid", "tvVer304_vid", "tvVer306_vid", "tvVer307_vid", "tvVer321_vid", "tvVer322_vid", "tvVer323_vid", "tvVer324_vid", "tvVer326_vid", "tvVer327_vid"][::-1]
             to_int0 = lambda x: (int(x) if isinstance(x, str) and x.strip().lstrip('+-').isdigit() else (0 if isinstance(x, str) else x))
@@ -104,8 +93,7 @@ class SohuVideoClient(BaseVideoClient):
             # --request again using new vid with higher video quality
             params = {'vid': vid, 'ver': '1', 'ssl': '1', 'uid': '17636986544987061902', 'pflag': 'pch5', 'prod': 'h5n', 'platform_source': 'pc'}
             (resp := self.get('https://hot.vrs.sohu.com/vrs_pc_play.action', params=params, **request_overrides)).raise_for_status()
-            raw_data[f'{vid}_vrs_pc_play.action'] = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
+            raw_data[f'{vid}_vrs_pc_play.action'] = resp2json(resp=resp); video_info.update(dict(raw_data=raw_data))
             mp4_palyurls, download_urls = raw_data[f'{vid}_vrs_pc_play.action']["data"]["mp4PlayUrl"], []
             download_urls.extend(("https:" + u) if u.startswith("//") else u for u in mp4_palyurls if u)
             # --some download urls need parse twice
@@ -116,7 +104,7 @@ class SohuVideoClient(BaseVideoClient):
                 if download_url: parsed_download_urls.append(download_url)
             if parsed_download_urls: download_urls = parsed_download_urls
             # --construct other video info
-            video_title = legalizestring(raw_data["data"].get('tvName', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
+            video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'tvName'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             cover_url = safeextractfromdict(raw_data, ['data', 'coverImg'], None)
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', vid=vid, identifier=vid, cover_url=cover_url))
             # --if multiple video split
@@ -129,13 +117,10 @@ class SohuVideoClient(BaseVideoClient):
                     for url in download_urls: fp.write(f"{url}\n")
                 video_info.update(dict(download_url=ffmpeg_target_file_path, download_with_ffmpeg=True))
         except Exception as err:
-            err_msg = f'{self.source}._parsefromurlwithhotvrs >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithhotvrs >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):

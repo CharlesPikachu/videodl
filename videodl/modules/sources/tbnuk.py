@@ -38,10 +38,8 @@ class TBNUKVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def _parsefromurlwithwatch(self, url: str, request_overrides: dict = None) -> list["VideoInfo"]:
         # prepare
-        request_overrides = request_overrides or {}; self._setapiinfo(request_overrides=request_overrides)
-        video_info = VideoInfo(source=self.source)
-        if (not self.belongto(url=url)) or (("/watch/vod/" not in url.split("?")[0].split("#")[0].rstrip("/")) and ("/watch/replay/" not in url.split("?")[0].split("#")[0].rstrip("/"))): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if (not self.belongto(url=url)) or (("/watch/vod/" not in url.split("?")[0].split("#")[0].rstrip("/")) and ("/watch/replay/" not in url.split("?")[0].split("#")[0].rstrip("/"))): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source); self._setapiinfo(request_overrides=request_overrides)
         headers = {
             "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7", "accept-encoding": "gzip, deflate, br, zstd", "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
             "cache-control": "max-age=0", "priority": "u=0, i", "sec-ch-ua": '"Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145"', "sec-ch-ua-mobile": "?0", "sec-ch-ua-platform": '"Windows"', "sec-fetch-dest": "document", "sec-fetch-site": "none",
@@ -64,21 +62,16 @@ class TBNUKVideoClient(BaseVideoClient):
             cover_url = next((meta.get('content') for meta in BeautifulSoup(html_str, 'lxml').find_all('meta', property='og:image') if meta.get('content')), "")
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''_parsefromurlwithlive'''
     @useparseheaderscookies
     def _parsefromurlwithlive(self, url: str, request_overrides: dict = None) -> list["VideoInfo"]:
         # prepare
-        request_overrides = request_overrides or {}; self._setapiinfo(request_overrides=request_overrides)
-        video_info = VideoInfo(source=self.source)
-        if (not self.belongto(url=url)) or ("/live/" not in url.split("?")[0].split("#")[0].rstrip("/")): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if (not self.belongto(url=url)) or ("/live/" not in url.split("?")[0].split("#")[0].rstrip("/")): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source); self._setapiinfo(request_overrides=request_overrides)
         headers = {
             "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7", "accept-encoding": "gzip, deflate, br, zstd", "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
             "cache-control": "max-age=0", "priority": "u=0, i", "sec-ch-ua": '"Not:A-Brand";v="99", "Google Chrome";v="145", "Chromium";v="145"', "sec-ch-ua-mobile": "?0", "sec-ch-ua-platform": '"Windows"', "sec-fetch-dest": "document", "sec-fetch-site": "none",
@@ -100,23 +93,17 @@ class TBNUKVideoClient(BaseVideoClient):
             cover_url = next((meta.get('content') for meta in BeautifulSoup(html_str, 'lxml').find_all('meta', property='og:image') if meta.get('content')), "")
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''_parsefromurlwithshows'''
     @useparseheaderscookies
     def _parsefromurlwithshows(self, url: str, request_overrides: dict = None) -> list["VideoInfo"]:
         # prepare
-        request_overrides = request_overrides or {}; self._setapiinfo(request_overrides=request_overrides)
-        video_info = VideoInfo(source=self.source)
-        if (not self.belongto(url=url)) or ("/shows/" not in url.split("?")[0].split("#")[0].rstrip("/")): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if (not self.belongto(url=url)) or ("/shows/" not in url.split("?")[0].split("#")[0].rstrip("/")): return []
+        request_overrides, video_info, null_backup_title, video_infos = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source), []; self._setapiinfo(request_overrides=request_overrides)
         # try parse
-        video_infos = []
         try:
             (resp := self.get(url, **request_overrides)).raise_for_status()
             try: collection_title = re.findall(r'"af_content"[^:]*:[^"]*"([^"]+)"', resp.text)[0]; assert len(collection_title) > 0
@@ -132,9 +119,7 @@ class TBNUKVideoClient(BaseVideoClient):
                 video_info.title = legalizestring(f'{collection_title} - EP{episode_index} - {episode_title}', replace_null_string=null_backup_title)
                 if video_info.download_url and str(video_info.download_url).startswith('http'): video_infos.append(video_info)
         except Exception as err:
-            err_msg = f'{self.source}._parsefromcommonurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
-            video_infos.append(video_info)
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromcommonurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return video_infos

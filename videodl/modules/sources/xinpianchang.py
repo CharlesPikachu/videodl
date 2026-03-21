@@ -29,10 +29,8 @@ class XinpianchangVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def _parsefromurlwithwww(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source, download_with_ffmpeg=True)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source, download_with_ffmpeg=True), yieldtimerelatedtitle(self.source)
         # try parse
         try:
             (resp := self.get(url, headers={'Referer': url}, **request_overrides)).raise_for_status()
@@ -52,20 +50,15 @@ class XinpianchangVideoClient(BaseVideoClient):
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=safeextractfromdict(raw_data[f'media/{vid}'], ['data', 'cover'], None)))
         except Exception as err:
-            err_msg = f'{self.source}._parsefromurlwithwww >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithwww >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''_parsefromurlwithstock'''
     def _parsefromurlwithstock(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
@@ -84,13 +77,10 @@ class XinpianchangVideoClient(BaseVideoClient):
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=result['cover']))
         except Exception as err:
-            err_msg = f'{self.source}._parsefromurlwithstock >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithstock >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):

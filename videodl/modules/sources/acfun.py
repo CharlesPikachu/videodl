@@ -41,8 +41,7 @@ class AcFunVideoClient(BaseVideoClient):
             cover_url = searchdictbykey(raw_data, 'coverUrl'); cover_url = cover_url[0] if cover_url and isinstance(cover_url, list) else None
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info["ext"]}'), identifier=vid, cover_url=cover_url))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return [video_info]

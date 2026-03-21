@@ -28,10 +28,8 @@ class WeiboVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def _parsefromurlwithmweibo(self, url: str, request_overrides: dict = None):
         # init
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
         get_resolution_score_func = lambda url: (lambda m: int(m.group(1)) * int(m.group(2)) if m else 0)(re.search(r"template=(\d+)x(\d+)", url))
         # try parse
         try:
@@ -48,21 +46,16 @@ class WeiboVideoClient(BaseVideoClient):
             cover_url = safeextractfromdict(raw_data, ['data', 'page_info', 'page_pic', 'url'], None)
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
-            err_msg = f'{self.source}._parsefromurlwithmweibo >>> {vid} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithmweibo >>> {vid} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''_parsefromurlwithh5videoweibo'''
     @useparseheaderscookies
     def _parsefromurlwithh5videoweibo(self, url: str, request_overrides: dict = None):
         # init
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
         quality_from_key_func = lambda k: (lambda m: int(m.group(1)) if m else 0)(re.search(r"(\d+)P", k))
         # try parse
         try:
@@ -82,13 +75,10 @@ class WeiboVideoClient(BaseVideoClient):
             if cover_url and not cover_url.startswith('http'): cover_url = "https:" + cover_url
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
-            err_msg = f'{self.source}._parsefromurlwithh5videoweibo >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithh5videoweibo >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):

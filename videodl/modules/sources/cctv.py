@@ -29,46 +29,37 @@ class CCTVVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
+        md5 = lambda value: hashlib.md5(value.encode('utf-8')).hexdigest()
         # try parse
         try:
             # --fetch raw data
             (resp := self.get(url, **request_overrides)).raise_for_status()
             rules = [r'var\s+guid\s*=\s*["\']([\da-fA-F]+)', r'videoCenterId(?:["\']\s*,|:)\s*["\']([\da-fA-F]+)', r'changePlayer\s*\(\s*["\']([\da-fA-F]+)', r'load[Vv]ideo\s*\(\s*["\']([\da-fA-F]+)', r'var\s+initMyAray\s*=\s*["\']([\da-fA-F]+)', r'var\s+ids\s*=\s*\[["\']([\da-fA-F]+)']
-            for rule in rules:
-                try: pid = re.findall(rule, resp.text)[0]; break
-                except: continue
-            md5 = lambda value: hashlib.md5(value.encode('utf-8')).hexdigest()
+            pid = next((m[0] for rule in rules if (m := re.findall(rule, resp.text))), None)
             params = {'pid': pid, 'client': 'flash', 'im': '0', 'tsp': str(int(time.time())), 'vn': '2049', 'vc': None, 'uid': '826D8646DEBBFD97A82D23CAE45A55BE', 'wlan': ''}
             params['vc'] = md5((params['tsp'] + params['vn'] + "47899B86370B879139C08EA3B5E88267" + params['uid']))
             (resp := self.get('https://vdn.apps.cntv.cn/api/getHttpVideoInfo.do', params=params, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             # --parse urls
-            manifest, download_urls = raw_data.get('manifest') or {}, []
-            hls_candidates = ['hls_h5e_url', 'hls_url']
+            manifest, download_urls, hls_candidates = raw_data.get('manifest') or {}, [], ['hls_h5e_url', 'hls_url']
             for hls_key in hls_candidates:
                 if raw_data.get(hls_key) or manifest.get(hls_key): download_urls.append([hls_key, raw_data.get(hls_key) or manifest.get(hls_key)])
-            hls_key, download_url = download_urls[0]
-            (resp := self.get(download_url, **request_overrides)).raise_for_status()
+            hls_key, download_url = download_urls[0]; (resp := self.get(download_url, **request_overrides)).raise_for_status()
             download_url = HLSBestParser(f"{urlsplit(str(download_url)).scheme}://{urlsplit(str(download_url)).netloc}/").best(resp.text)['uri']
             video_info.update(dict(download_url=download_url, hls_key=hls_key))
             # --create video info's extra entries
             video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            if hls_key in ['hls_h5e_url']: ext = 'mp4' # manually correct for js decrypt
+            if hls_key in ['hls_h5e_url']: ext = 'mp4' # manually correct for js decrypt, do not change it
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=pid, cover_url=raw_data.get('image')))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list[str] | set[str] = None):

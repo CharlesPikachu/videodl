@@ -351,8 +351,7 @@ class TencentVQQVideoClient(BaseVideoClient):
     def _updatevideocoverinfo(self, cover_info, r_text, url_type, request_overrides: dict = None):
         update_from_eplist_func = lambda normal_ids, ep_list, vid2idx: [normal_ids[vid2idx[epv['vid']]].__setitem__('E', int(epv['title'])) for epv in ep_list]
         align_eps_func = lambda normal_ids, start, stop, shift: [normal_ids[i].__setitem__('E', normal_ids[i]['E'] + shift) for i in range(start, stop)]
-        conf_info = self._getallloadedinfo(r_text)[0]
-        if not conf_info: return
+        if not (conf_info := self._getallloadedinfo(r_text)[0]): return
         year = safeextractfromdict(conf_info, ['introduction', 'introData', 'list', 0, 'item_params', 'year'], None) or safeextractfromdict(conf_info, ['introduction', 'introData', 'list', 0, 'item_params', 'show_year'], None) or safeextractfromdict(conf_info, ['introductionData', 'introductionData', 'year'], None)
         if year and (not cover_info['year'] or cover_info['year'] != year): cover_info['year'] = year
         current_cid, current_vid = conf_info['globalStore']['currentCid'], conf_info['globalStore']['currentVid']
@@ -409,12 +408,9 @@ class TencentVQQVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source, enable_nm3u8dlre=True)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title, video_infos = request_overrides or {}, VideoInfo(source=self.source, enable_nm3u8dlre=True), yieldtimerelatedtitle(self.source), []
         # try parse
-        video_infos = []
         try:
             basic_info = self._getvideocoverinfo(videourl=url, request_overrides=request_overrides)
             video_title = legalizestring(basic_info['title'] or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
@@ -425,12 +421,9 @@ class TencentVQQVideoClient(BaseVideoClient):
                 raw_data['download_info'] = {'format_name': format_name, 'ext': ext, 'urls': urls}
                 download_url = os.path.join(self.work_dir, self.source, f"{raw_data['cover_id']}-{normal_id['V']}.m3u8")
                 writevodm3u8fortencent(segments=urls, out_path=download_url, pick="best", strategy="global_host", probe_timeout=3.0, samples_per_host=2, probe_workers=16, probe_method="head_then_range_get")
-                video_info_page.update(dict(raw_data=raw_data, download_url=download_url, title=f'ep{len(video_infos)+1}-{video_title}' if len(basic_info['normal_ids']) > 1 else video_title, file_path=os.path.join(self.work_dir, self.source, f'ep{len(video_infos)+1}-{video_title}' if len(basic_info['normal_ids']) > 1 else video_title), ext=ext, identifier=f"{raw_data['cover_id']}-{normal_id['V']}", enable_nm3u8dlre=True, cover_url=raw_data.get('image_url')))
-                video_infos.append(video_info_page)
+                video_info_page.update(dict(raw_data=raw_data, download_url=download_url, title=f'ep{len(video_infos)+1}-{video_title}' if len(basic_info['normal_ids']) > 1 else video_title, file_path=os.path.join(self.work_dir, self.source, f'ep{len(video_infos)+1}-{video_title}' if len(basic_info['normal_ids']) > 1 else video_title), ext=ext, identifier=f"{raw_data['cover_id']}-{normal_id['V']}", enable_nm3u8dlre=True, cover_url=raw_data.get('image_url'))); video_infos.append(video_info_page)
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
-            video_infos.append(video_info)
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return video_infos
@@ -663,67 +656,49 @@ class TencentVideoClient(BaseVideoClient):
         return {'id': series_id, 'type': 'playlist', 'title': TencentVideoClient.getcleantitle(traverseobj(webpage_metadata, ('coverInfo', 'title')) or TencentVideoClient.ogsearchtitle(webpage)), 'description': traverseobj(webpage_metadata, ('coverInfo', 'description')) or TencentVideoClient.ogsearchdescription(webpage), 'entries': episode_urls}
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = None):
+    def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source, enable_nm3u8dlre=True)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title, video_infos = request_overrides or {}, VideoInfo(source=self.source, enable_nm3u8dlre=True), yieldtimerelatedtitle(self.source), []
         # try parse
-        video_infos = []
         try:
             if re.match(r'https?://v\.qq\.com' + r'/x/(?:page|cover/(?P<series_id>\w+))/(?P<id>\w+)', url) or re.match(r'https?://v\.qq\.com' + r'/x/cover/(?P<id>\w+)\.html/?(?:[?#]|$)', url):
                 try:
                     video_infos: list[dict] = self.vqq_video_client.parsefromurl(url, request_overrides)
                     if any(((info.get("download_url") or "").upper() not in ("", "NULL")) for info in (video_infos or [])): return video_infos
-                except: pass
-                video_infos = []
-                raw_data = self._vqqextractvideo(url, request_overrides=request_overrides)
-                formats: list[dict] = raw_data['formats']
-                formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
+                except Exception: video_infos = []
+                video_infos = []; raw_data = self._vqqextractvideo(url, request_overrides=request_overrides)
+                formats: list[dict] = raw_data['formats']; formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
                 download_url, video_title = formats[0]['url'], legalizestring(raw_data.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                video_info.update(dict(raw_data=raw_data, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=raw_data['id'], enable_nm3u8dlre=True, cover_url=raw_data.get('thumbnail')))
-                video_infos.append(video_info)
+                video_info.update(dict(raw_data=raw_data, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=raw_data['id'], enable_nm3u8dlre=True, cover_url=raw_data.get('thumbnail'))); video_infos.append(video_info)
             elif re.match(r'https?://(?:www\.)?wetv\.vip/(?:[^?#]+/)?play' + r'/(?P<series_id>\w+)(?:-[^?#]+)?/(?P<id>\w+)(?:-[^?#]+)?', url):
                 raw_data = self._wetvextractepisode(url, request_overrides=request_overrides)
-                formats: list[dict] = raw_data['formats']
-                formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
+                formats: list[dict] = raw_data['formats']; formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
                 download_url, video_title = formats[0]['url'], legalizestring(raw_data.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                video_info.update(dict(raw_data=raw_data, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=raw_data['id'], enable_nm3u8dlre=True, cover_url=raw_data.get('thumbnail')))
-                video_infos.append(video_info)
+                video_info.update(dict(raw_data=raw_data, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=raw_data['id'], enable_nm3u8dlre=True, cover_url=raw_data.get('thumbnail'))); video_infos.append(video_info)
             elif re.match(r'https?://(?:www\.)?wetv\.vip/(?:[^?#]+/)?play' + r'/(?P<id>\w+)(?:-[^/?#]+)?/?(?:[?#]|$)', url):
                 raw_data = self._wetvextractseries(url, request_overrides=request_overrides)
-                entries: list = raw_data.get('entries')
-                if not entries: return [video_info]
+                if not (entries := raw_data.get('entries')): return [video_info]
                 for entry in entries:
                     raw_data_item = self._wetvextractepisode(entry, request_overrides=request_overrides)
-                    formats: list[dict] = raw_data_item['formats']
-                    formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
+                    formats: list[dict] = raw_data_item['formats']; formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
                     download_url, video_title = formats[0]['url'], legalizestring(raw_data_item.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                    (video_info_item := copy.deepcopy(video_info)).update(dict(raw_data=raw_data_item, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=f"{raw_data['id']}-{raw_data_item['id']}", enable_nm3u8dlre=True, cover_url=raw_data_item.get('thumbnail')))
-                    video_infos.append(video_info_item)
+                    (video_info_item := copy.deepcopy(video_info)).update(dict(raw_data=raw_data_item, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=f"{raw_data['id']}-{raw_data_item['id']}", enable_nm3u8dlre=True, cover_url=raw_data_item.get('thumbnail'))); video_infos.append(video_info_item)
             elif re.match(r'https?://(?:www\.)?iflix\.com/(?:[^?#]+/)?play' + r'/(?P<series_id>\w+)(?:-[^?#]+)?/(?P<id>\w+)(?:-[^?#]+)?', url):
                 raw_data = self._iflixextractepisode(url, request_overrides=request_overrides)
-                formats: list[dict] = raw_data['formats']
-                formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
+                formats: list[dict] = raw_data['formats']; formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
                 download_url, video_title = formats[0]['url'], legalizestring(raw_data.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                video_info.update(dict(raw_data=raw_data, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=raw_data['id'], enable_nm3u8dlre=True, cover_url=raw_data.get('thumbnail')))
-                video_infos.append(video_info)
+                video_info.update(dict(raw_data=raw_data, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=raw_data['id'], enable_nm3u8dlre=True, cover_url=raw_data.get('thumbnail'))); video_infos.append(video_info)
             elif re.match(r'https?://(?:www\.)?iflix\.com/(?:[^?#]+/)?play' + r'/(?P<id>\w+)(?:-[^/?#]+)?/?(?:[?#]|$)', url):
                 raw_data = self._iflixextractseries(url, request_overrides=request_overrides)
-                entries: list = raw_data.get('entries')
-                if not entries: return [video_info]
+                if not (entries := raw_data.get('entries')): return [video_info]
                 for entry in entries:
                     raw_data_item = self._iflixextractepisode(entry, request_overrides=request_overrides)
-                    formats: list[dict] = raw_data_item['formats']
-                    formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
+                    formats: list[dict] = raw_data_item['formats']; formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
                     download_url, video_title = formats[0]['url'], legalizestring(raw_data_item.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                    (video_info_item := copy.deepcopy(video_info)).update(dict(raw_data=raw_data_item, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=f"{raw_data['id']}-{raw_data_item['id']}", enable_nm3u8dlre=True, cover_url=raw_data_item.get('thumbnail')))
-                    video_infos.append(video_info_item)
+                    (video_info_item := copy.deepcopy(video_info)).update(dict(raw_data=raw_data_item, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=f"{raw_data['id']}-{raw_data_item['id']}", enable_nm3u8dlre=True, cover_url=raw_data_item.get('thumbnail'))); video_infos.append(video_info_item)
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
-            video_infos.append(video_info)
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return video_infos

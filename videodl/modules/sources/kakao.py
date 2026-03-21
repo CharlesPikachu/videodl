@@ -17,9 +17,7 @@ class KakaoVideoClient(BaseVideoClient):
     source = 'KakaoVideoClient'
     def __init__(self, **kwargs):
         super(KakaoVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36',
-        }
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
         self.default_download_headers = {
             "accept": "*/*", "accept-encoding": "identity;q=1, *;q=0", "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7", "priority": "i", "range": "bytes=0-", "referer": "https://tv.kakao.com/", "sec-ch-ua": "\"Google Chrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"", "sec-ch-ua-mobile": "?0", "sec-fetch-mode": "no-cors", "sec-fetch-dest": "video",
             "cookie": "_T_ANO=cNZr9QAT2YddO2sd+iJCNsGtgrea4e5nNXRNVqkD4yryMoL4sOFTVwCgslL/krmUENF9erMo+wOhM3WZTcCpcj+2Rd7VOht4kvkWDuAlefWeLe4thR28cIeMnJnRG/FbOkHTNckveq6/LpAs1+A0sA38MedLQdS1Qrw1N+AIKTLOB+RYiVnfDB/sHmI06KmDMIsgxg+0c0mw2RxfnZU00reIa9O6ZF5lDukQzC27m2hiuSHr8YHfSGP68yyRtztEnqDGVtP8NLFExa2XOVEsmAB4IYp1BtQndUdvR80iqNFb5eS5+AUxpRKrmPENMKQyI1zIOszAa1IvwxruwEq7+g==",
@@ -31,10 +29,8 @@ class KakaoVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
@@ -45,8 +41,7 @@ class KakaoVideoClient(BaseVideoClient):
             video_output_list = sorted(video_output_list, key=lambda s: (s["width"] * s["height"], s["kbps"]), reverse=True)
             for fmt in video_output_list:
                 if not isinstance(fmt, dict): continue
-                profile_name = fmt.get('profile')
-                if not profile_name or profile_name == 'AUDIO': continue
+                if not (profile_name := fmt.get('profile')) or profile_name == 'AUDIO': continue
                 params.update({'profile': profile_name, 'fields': '-*,code,message,url'})
                 try: (resp := self.get(f'https://tv.kakao.com/katz/v1/ft/cliplink/{vid}/readyNplay?', params=params, **request_overrides)).raise_for_status()
                 except Exception: continue
@@ -60,13 +55,10 @@ class KakaoVideoClient(BaseVideoClient):
             cover_url = safeextractfromdict(raw_data, ['clipLink', 'clip', 'thumbnailUrl'], None)
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list[str] | set[str] = None):

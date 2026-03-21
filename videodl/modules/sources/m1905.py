@@ -127,8 +127,8 @@ class M1905VideoClient(BaseVideoClient):
         for defn in ([preferred_defn] + [defn for defn in M1905VideoClient.M1905_DEFINITION['free'] if defn != preferred_defn]):
             host = safeextractfromdict(data, ['quality', defn, 'host'], None); sign = safeextractfromdict(data, ['sign', defn, 'sign'], None); path = safeextractfromdict(data, ['path', defn, 'path'], None)
             if not (host and path): continue
-            if sign: playlist_m3u8 = (host + sign + path).replace('\\', '')
-            elif 'sign=' in path: playlist_m3u8 = (host + path).replace('\\', '')
+            if sign: playlist_m3u8 = str(host + sign + path).replace('\\', '')
+            elif 'sign=' in path: playlist_m3u8 = str(host + path).replace('\\', '')
             else: continue
             vi["defns"] = [{M1905VideoClient.M1905_DEFN_MAP_I2S['free'][defn]: playlist_m3u8}]
     '''_updatevideodwnldinfohd'''
@@ -139,9 +139,8 @@ class M1905VideoClient(BaseVideoClient):
         if not data or not isinstance(data, dict): return
         defn = M1905VideoClient.M1905_DEFN_MAP_S2I['vip']["uhd"]
         for defn in ([defn] if safeextractfromdict(data, ['path', defn], None) else M1905VideoClient.M1905_DEFINITION['vip']):
-            path: str = safeextractfromdict(data, ['path', defn], None)
-            if not path: continue
-            playlist_m3u8 = path.replace('\\', '')
+            if not (path := safeextractfromdict(data, ['path', defn], None)): continue
+            playlist_m3u8 = str(path).replace('\\', '')
             vi["defns"] = [{M1905VideoClient.M1905_DEFN_MAP_I2S['vip'][defn]: playlist_m3u8}]
     '''_updatevideodwnldinfo'''
     def _updatevideodwnldinfo(self, vi, request_overrides: dict = None):
@@ -152,12 +151,9 @@ class M1905VideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source, enable_nm3u8dlre=True)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title, video_infos = request_overrides or {}, VideoInfo(source=self.source, enable_nm3u8dlre=True), yieldtimerelatedtitle(self.source), []
         # try parse
-        video_infos = []
         try:
             raw_data = self._getvideocoverinfo(url, request_overrides=request_overrides)
             for normal_id in raw_data['normal_ids']:
@@ -166,12 +162,9 @@ class M1905VideoClient(BaseVideoClient):
                 (video_info_page := copy.deepcopy(video_info)).update(raw_data=raw_data, download_url=download_url)
                 video_title = legalizestring(raw_data['title'] or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
                 video_title = f'ep{len(video_infos)+1}-{video_title}' if len(raw_data['normal_ids']) > 1 else video_title
-                video_info_page.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.m3u8'), ext='mp4', identifier=normal_id["V"], cover_url=raw_data.get('image_url')))
-                video_infos.append(video_info_page)
+                video_info_page.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.m3u8'), ext='mp4', identifier=normal_id["V"], cover_url=raw_data.get('image_url'))); video_infos.append(video_info_page)
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
-            video_infos.append(video_info)
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return video_infos

@@ -28,10 +28,8 @@ class WeishiVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
-        video_info = VideoInfo(source=self.source)
-        if not self.belongto(url=url): return [video_info]
-        null_backup_title = yieldtimerelatedtitle(self.source)
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
         quality_score_func = lambda spec: (spec.get("videoQuality") or 0, (spec.get("width") or 0) * (spec.get("height") or 0), spec.get("fps") or 0, int(spec.get("size") or 0))
         # try parse
         try:
@@ -45,23 +43,17 @@ class WeishiVideoClient(BaseVideoClient):
             spec_list: list[dict] = list(video_spec_urls.values()); spec_list = [s for s in spec_list if s.get('url')]
             spec_list_sorted: list[dict] = sorted(spec_list, key=quality_score_func, reverse=True)
             spec_list_sorted: list[dict] = [item for item in spec_list_sorted if item.get('url')]
-            if len(spec_list_sorted) > 0: download_url = spec_list_sorted[0]['url']
-            else: download_url = raw_data["feedsList"][0]['videoUrl']
-            video_info.update(dict(download_url=download_url))
+            video_info.update(dict(download_url=(download_url := spec_list_sorted[0]['url'] if len(spec_list_sorted) > 0 else raw_data["feedsList"][0]['videoUrl'])))
             video_title = legalizestring(safeextractfromdict(raw_data, ['feedsList', 0, 'feedDesc'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            try: cover_url = raw_data['feedsList'][0]['images'][0]['url']
-            except Exception: cover_url = None
+            cover_url = safeextractfromdict(raw_data, ['feedsList', 0, 'images', 0, 'url'], None)
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
-        # construct video infos
-        video_infos = [video_info]
         # return
-        return video_infos
+        return [video_info]
     '''belongto'''
     @staticmethod
     def belongto(url: str, valid_domains: list[str] | set[str] = None):
