@@ -27,22 +27,18 @@ class KIT9VideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
-        request_overrides = request_overrides or {}
+        request_overrides, null_backup_title, video_infos = request_overrides or {}, yieldtimerelatedtitle(self.source), []
         video_info = VideoInfo(source=self.source, enable_nm3u8dlre=False, download_with_ffmpeg=True) if BaseVideoClient.belongto(url, {"ted.com", "xinpianchang.com", "ifeng.com"}) else VideoInfo(source=self.source, enable_nm3u8dlre=True)
-        null_backup_title = yieldtimerelatedtitle(self.source)
         if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
         if platformfromurl(url) in {'weibo'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://weibo.com/'}))
         # try parse
-        video_infos = []
         try:
             # --get request
-            headers = copy.deepcopy(self.default_headers)
-            RandomIPGenerator().addrandomipv4toheaders(headers)
+            headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
             (resp := self.get(f'https://apis.kit9.cn/api/aggregate_videos/api.php?link={url}', headers=headers, **request_overrides)).raise_for_status()
-            raw_data = resp2json(resp=resp)
-            video_info.update(dict(raw_data=raw_data))
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             # --video title
-            video_title = legalizestring(raw_data['data'].get('video_title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
+            video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'video_title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --download url
             video_link = raw_data['data']['video_link']
             if isinstance(video_link, dict): video_link = dict(sorted(video_link.items(), key=lambda kv: (int((re.search(r'(\d{3,4})(?=\s*p\b)', str(kv[0]).lower()) or re.search(r'(\d{3,4})', str(kv[0])) or re.search(r'(.*)', '0')).group(1)) if re.search(r'(\d{3,4})(?=\s*p\b)|(\d{3,4})', str(kv[0]).lower()) else -1, str(kv[0])))); video_info.update(dict(download_url=list(video_link.values())[-1]))
@@ -50,12 +46,9 @@ class KIT9VideoClient(BaseVideoClient):
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=video_info.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=safeextractfromdict(raw_data, ['data', 'video_cover'], None)))
-            video_infos.append(video_info)
+            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=safeextractfromdict(raw_data, ['data', 'video_cover'], None))); video_infos.append(video_info)
         except Exception as err:
-            err_msg = f'{self.source}.parsefromurl >>> {url} (Error: {err})'
-            video_info.update(dict(err_msg=err_msg))
-            video_infos.append(video_info)
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return video_infos

@@ -85,9 +85,9 @@ class RedditVideoClient(BaseVideoClient):
                 playlist_items.append({"id": mid, "hls_url": meta.get("hlsUrl"), "dash_url": meta.get("dashUrl")})
         # reddit_video
         if reddit_video: fallback_url, hls_url, dash_url, duration = reddit_video.get("fallback_url"), reddit_video.get("hls_url"), reddit_video.get("dash_url"), reddit_video.get("duration"); fallback_url and (m := re.search(r"https?://v\.redd\.it/([^/?#&]+)", fallback_url)) and (video_id := m.group(1))
-        elif (is_playlist := bool(playlist_items)): video_id = None
+        elif bool(playlist_items): video_id = None
         # return
-        return RedditMediaInfo(cover_url=cover_url, post_id=post_id, display_id=display_id, title=title, alt_title=alt_title, subreddit=subreddit, author=author, over_18=over_18, duration=duration, video_id=video_id, hls_url=hls_url, dash_url=dash_url, fallback_url=fallback_url, is_playlist=is_playlist, playlist_items=playlist_items or None)
+        return RedditMediaInfo(cover_url=cover_url, post_id=post_id, display_id=display_id, title=title, alt_title=alt_title, subreddit=subreddit, author=author, over_18=over_18, duration=duration, video_id=video_id, hls_url=hls_url, dash_url=dash_url, fallback_url=fallback_url, is_playlist=bool(playlist_items), playlist_items=playlist_items or None)
     '''_augmenthlsquery'''
     def _augmenthlsquery(self, url: str) -> str:
         if not url: return url
