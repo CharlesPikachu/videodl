@@ -59,11 +59,11 @@ class KuaishouVideoClient(BaseVideoClient):
         # prepare
         if not self.belongto(url=url): return []
         request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
-        co_hook_func = lambda co: (co.set_argument('--disable-blink-features=AutomationControlled'), co.set_argument('--mute-audio'), co)[-1]
+        def co_hook_func(co): co.set_argument('--disable-blink-features=AutomationControlled'); co.set_argument('--mute-audio'); co.set_local_port = lambda *args, **kwargs: co; return co
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
-            page = DrissionPageUtils.initsmartbrowser(headless=True, requests_headers=None, requests_proxies=(request_overrides.get('proxies') or self._autosetproxies()), requests_cookies=(request_overrides.get('cookies') or self.default_cookies), co_hook_func=co_hook_func)
+            page = DrissionPageUtils.initsmartbrowser(headless=True, requests_headers=(request_overrides.get('headers') or self.default_headers), requests_proxies=(request_overrides.get('proxies') or self._autosetproxies()), requests_cookies=(request_overrides.get('cookies') or self.default_cookies), co_hook_func=co_hook_func)
             page.get(url); video_ele = page.ele('tag:video', timeout=10); download_url = video_ele.attr('src'); poster_ele = page.ele('xpath://*[@poster]', timeout=2)
             cover_url = poster_ele.attr('poster') if poster_ele and poster_ele.attr('poster') else None
             if (not cover_url) and (bg_ele := page.ele('.backimg-area', timeout=2)) and (style := bg_ele.attr('style')) and (match := re.search(r'url\([\'"]?(.*?)[\'"]?\)', style)): cover_url = match.group(1).replace('&amp;', '&')
