@@ -17,7 +17,7 @@ from dataclasses import dataclass
 from .sources import BaseVideoClient
 from urllib.parse import urljoin, urlparse, unquote
 from typing import Dict, Iterable, List, Optional, Set, Tuple
-from .utils import VideoInfo, useparseheaderscookies, requestsproxytodrissionpage
+from .utils import VideoInfo, DrissionPageUtils, useparseheaderscookies, requestsproxytodrissionpage
 
 
 '''Candidate'''
@@ -181,17 +181,14 @@ class WebMediaGrabber(BaseVideoClient):
         except requests.RequestException: return None
     '''buildbrowserpage'''
     def buildbrowserpage(self, request_overrides: Optional[dict] = None):
-        from DrissionPage import ChromiumOptions, ChromiumPage
+        from DrissionPage import ChromiumOptions
         headers, cookies, other_kwargs = self.prepareheaderscookies(request_overrides=request_overrides)
-        (co := ChromiumOptions()).headless(self.browser_headless).auto_port(); co.set_load_mode(self.browser_load_mode)
-        co.set_timeouts(base=self.browser_timeout_sec, page_load=self.browser_timeout_sec, script=self.browser_timeout_sec)
-        co.ignore_certificate_errors(True); co.set_user_agent(headers.get("User-Agent", "") or headers.get("user-agent", ""))
-        if (proxy_str := requestsproxytodrissionpage((other_kwargs.get('proxies') or self._autosetproxies()), mode="chromium", strip_auth_for_chromium=False)): co.set_proxy(proxy_str)
-        if self.browser_disable_images: co.no_imgs(True)
-        if self.browser_path: co.set_browser_path(self.browser_path)
-        page = ChromiumPage(co); (extra_headers := dict(headers)).pop("User-Agent", None); extra_headers.pop("user-agent", None)
-        if extra_headers: page.set.headers(extra_headers)
-        if cookies: page.set.cookies(cookies)
+        def co_hook_func(co: ChromiumOptions, browser_headless: bool, browser_load_mode: str, browser_timeout_sec: int, browser_disable_images: bool, browser_path: str):
+            co.headless(browser_headless); co.set_load_mode(browser_load_mode); co.ignore_certificate_errors(True); co.no_imgs(browser_disable_images)
+            co.set_timeouts(base=browser_timeout_sec, page_load=browser_timeout_sec, script=browser_timeout_sec)
+            if browser_path: co.set_browser_path(browser_path)
+        co_hook_func_args = dict(browser_headless=self.browser_headless, browser_load_mode=self.browser_load_mode, browser_timeout_sec=self.browser_timeout_sec, browser_disable_images=self.browser_disable_images, browser_path=self.browser_path)
+        page = DrissionPageUtils.initsmartbrowser(headless=True, requests_headers=None, requests_proxies=(other_kwargs.get('proxies') or self._autosetproxies()), requests_cookies=cookies, co_hook_func=co_hook_func, co_hook_func_args=co_hook_func_args)
         return page
     '''closebrowserpage'''
     def closebrowserpage(self, page) -> None:
