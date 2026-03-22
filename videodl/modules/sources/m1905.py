@@ -149,7 +149,7 @@ class M1905VideoClient(BaseVideoClient):
         else: raise RuntimeError(f"Couldn't download the VIP video from {vi['url']}. Please configure M1905VideoClient VIP cookies first.")
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = None):
+    def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
         if not self.belongto(url=url): return []
         request_overrides, video_info, null_backup_title, video_infos = request_overrides or {}, VideoInfo(source=self.source, enable_nm3u8dlre=True), yieldtimerelatedtitle(self.source), []
