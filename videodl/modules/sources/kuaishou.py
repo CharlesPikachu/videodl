@@ -12,7 +12,7 @@ import json_repair
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, searchdictbykey, safeextractfromdict, FileTypeSniffer, VideoInfo, DrissionPageUtils
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, searchdictbykey, FileTypeSniffer, VideoInfo, DrissionPageUtils
 
 
 '''KuaishouVideoClient'''
@@ -59,23 +59,20 @@ class KuaishouVideoClient(BaseVideoClient):
         # prepare
         if not self.belongto(url=url): return []
         request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
+        co_hook_func = lambda co: (co.set_argument('--disable-blink-features=AutomationControlled'), co.set_argument('--mute-audio'), co)[-1]
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
-            page = DrissionPageUtils.initsmartbrowser(headless=True, requests_headers={"user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"}, requests_proxies=(request_overrides.get('proxies') or self._autosetproxies()), requests_cookies=(request_overrides.get('cookies') or self.default_cookies))
-            page.set.window.size(390, 844); page.get(url=url); page.ele('xpath://script[contains(text(), "window.INIT_STATE")]', timeout=10); html_content = page.html; page.quit()
-            t = next((s.get_text() for s in BeautifulSoup(html_content, "html.parser").find_all("script") if "window.INIT_STATE" in s.get_text()), "")
-            i = t.find("window.INIT_STATE"); s = t.find("{", i); d = q = e = 0
-            q_, e_, d_ = [q], [e], [d]; _j = next((j for j, ch in enumerate(t[s:], s) if not (((e_.__setitem__(0, (not e_[0] and ch == "\\")), q_.__setitem__(0, not (q_[0] and not e_[0] and ch == '"')), True)[-1]) if q_[0] else ((q_.__setitem__(0, 1), False)[-1]) if ch == '"' else ((d_.__setitem__(0, d_[0] + 1), False)[-1]) if ch == '{' else ((d_.__setitem__(0, d_[0] - 1), False)[-1]) if ch == '}' else False) and d_[0] == 0 and j >= s), None); raw_data = json_repair.loads(t[s:_j+1]) if _j is not None else raw_data; q, e, d = q_[0], e_[0], d_[0]
-            video_info.update(dict(raw_data=raw_data)); formats = sorted(searchdictbykey(raw_data, 'adaptationSet')[0][0]['representation'], key=lambda x: (x.get('height', 0) * x.get('width', 0), x.get('fileSize', 0)), reverse=True)
-            formats = [f for f in formats if isinstance(f, dict) and (f.get('url') or f.get('backupUrl'))]
-            download_url = formats[0]['url'] or formats[0]['backupUrl']; download_url = download_url[0] if isinstance(download_url, list) else download_url
-            video_title = searchdictbykey(raw_data, 'caption') or null_backup_title; video_title = video_title[0] if isinstance(video_title, list) else video_title
-            video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.'); video_info.update(dict(download_url=download_url))
+            page = DrissionPageUtils.initsmartbrowser(headless=True, requests_headers=None, requests_proxies=(request_overrides.get('proxies') or self._autosetproxies()), requests_cookies=(request_overrides.get('cookies') or self.default_cookies), co_hook_func=co_hook_func)
+            page.get(url); video_ele = page.ele('tag:video', timeout=10); download_url = video_ele.attr('src'); poster_ele = page.ele('xpath://*[@poster]', timeout=2)
+            cover_url = poster_ele.attr('poster') if poster_ele and poster_ele.attr('poster') else None
+            if (not cover_url) and (bg_ele := page.ele('.backimg-area', timeout=2)) and (style := bg_ele.attr('style')) and (match := re.search(r'url\([\'"]?(.*?)[\'"]?\)', style)): cover_url = match.group(1).replace('&amp;', '&')
+            if not cover_url and (state_data := page.run_js('return window.__INITIAL_STATE__ || null;')) and (m := re.search(r"'poster': '([^']*)'", str(state_data))): cover_url = m.group(1)
+            title_ele = page.ele('.video-info-title', timeout=2); video_title = title_ele.text if title_ele else page.title.replace(' - 快手', '').strip()
+            video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.'); raw_data = page.html; page.quit()
+            video_info.update(dict(raw_data=raw_data, download_url=download_url))
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            cover_url = searchdictbykey(raw_data, 'coverUrls') or searchdictbykey(raw_data, 'webpCoverUrls')
-            if cover_url: cover_url = safeextractfromdict(cover_url[0], [0, 'url'], None)
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlusingdrissionpage >>> {url} (Error: {err})')))

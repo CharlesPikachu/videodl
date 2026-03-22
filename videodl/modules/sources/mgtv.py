@@ -31,7 +31,7 @@ class MGTVVideoClient(BaseVideoClient):
     '''_getcookies'''
     def _getcookies(self, request_overrides: dict = None):
         request_overrides = request_overrides or {}
-        page = DrissionPageUtils.initsmartbrowser(headless=True, requests_headers=(request_overrides.get('headers') or self.default_headers or {}), requests_proxies=(request_overrides.get('proxies') or self._autosetproxies()), requests_cookies=(request_overrides.get('cookies') or self.default_cookies))
+        page = DrissionPageUtils.initsmartbrowser(headless=True, requests_headers=None, requests_proxies=(request_overrides.get('proxies') or self._autosetproxies()), requests_cookies=(request_overrides.get('cookies') or self.default_cookies))
         page.get(url="https://www.mgtv.com/b/790878/23777554.html?fpa=1217&fpos=&lastp=ch_home")
         page.ele('xpath://script[contains(text(), "window.__NUXT__")]')
         cookies = DrissionPageUtils.getcookiesdict(page=page); page.quit()

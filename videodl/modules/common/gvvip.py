@@ -26,7 +26,7 @@ class GVVIPVideoClient(BaseVideoClient):
     '''_visithomepage'''
     def _visithomepage(self, homepage: str = 'https://greenvideo.cc/video/vip', request_overrides: dict = None):
         request_overrides = request_overrides or {}
-        page = DrissionPageUtils.initsmartbrowser(headless=True, requests_headers={"user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"}, requests_proxies=(request_overrides.get('proxies') or self._autosetproxies()), requests_cookies=(request_overrides.get('cookies') or self.default_cookies))
+        page = DrissionPageUtils.initsmartbrowser(headless=True, requests_headers=None, requests_proxies=(request_overrides.get('proxies') or self._autosetproxies()), requests_cookies=(request_overrides.get('cookies') or self.default_cookies))
         page.set.timeouts(page_load=60); page.get(homepage); page.wait(2); page.quit()
     '''parsefromurl'''
     @useparseheaderscookies

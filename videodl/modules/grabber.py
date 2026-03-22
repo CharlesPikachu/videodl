@@ -109,27 +109,20 @@ class WebMediaGrabber(BaseVideoClient):
             if not normalized_url or normalized_url in seen: continue
             seen.add(normalized_url); out.append(Candidate(normalized_url, cand.source, cand.content_type))
         return out
-    '''splitrequestoverrides'''
-    def splitrequestoverrides(self, request_overrides: Optional[dict]) -> Tuple[Dict, Dict, Dict]:
-        overrides = dict(request_overrides or {})
-        extra_headers = dict(overrides.pop("headers", {}) or {})
-        extra_cookies = dict(overrides.pop("cookies", {}) or {})
-        overrides.setdefault("timeout", self.request_timeout)
-        return extra_headers, extra_cookies, overrides
-    '''mergeheaderscookies'''
-    def mergeheaderscookies(self, request_overrides: Optional[dict] = None, referer: Optional[str] = None) -> Tuple[Dict, Dict, Dict]:
-        extra_headers, extra_cookies, other_kwargs = self.splitrequestoverrides(request_overrides)
-        (headers := dict(self.default_headers)).update(extra_headers); cookies = {}
+    '''prepareheaderscookies'''
+    def prepareheaderscookies(self, request_overrides: Optional[dict] = None, referer: Optional[str] = None) -> Tuple[Dict, Dict, Dict]:
+        request_overrides = dict(request_overrides or {})
+        headers = dict(request_overrides.pop("headers", {}) or self.default_headers)
+        cookies = dict(request_overrides.pop("cookies", {}) or self.default_cookies)
+        request_overrides.setdefault("timeout", self.request_timeout)
         if referer: headers.setdefault("Referer", referer)
-        if isinstance(getattr(self, "default_cookies", None), dict): cookies.update(self.default_cookies)
-        cookies.update(extra_cookies)
-        return headers, cookies, other_kwargs
+        return headers, cookies, request_overrides
     '''isprobablydirectmedia'''
     def isprobablydirectmedia(self, url: str, request_overrides: Optional[dict] = None) -> Tuple[bool, Optional[str]]:
         # naive test
         if not (url := self.safestripurl(url)): return False, None
         if (cached := self._direct_media_cache.get(url)) is not None: return cached
-        headers, cookies, other_kwargs = self.mergeheaderscookies(request_overrides=request_overrides); ext = self.guessextfromurl(url)
+        headers, cookies, other_kwargs = self.prepareheaderscookies(request_overrides=request_overrides); ext = self.guessextfromurl(url)
         if ext and ext != ".m3u8": result = (True, None); self._direct_media_cache[url] = result; return result
         if ext == ".m3u8": result = (True, "application/vnd.apple.mpegurl"); self._direct_media_cache[url] = result; return result
         # head test
@@ -183,13 +176,13 @@ class WebMediaGrabber(BaseVideoClient):
         return self.dedup(out)
     '''fetchhtmlrequests'''
     def fetchhtmlrequests(self, url: str, request_overrides: Optional[dict] = None) -> Optional[str]:
-        headers, cookies, other_kwargs = self.mergeheaderscookies(request_overrides=request_overrides)
+        headers, cookies, other_kwargs = self.prepareheaderscookies(request_overrides=request_overrides)
         try: (resp := self.get(url, headers=headers, cookies=cookies, allow_redirects=True, **other_kwargs)).raise_for_status(); return resp.text
         except requests.RequestException: return None
     '''buildbrowserpage'''
     def buildbrowserpage(self, request_overrides: Optional[dict] = None):
         from DrissionPage import ChromiumOptions, ChromiumPage
-        headers, cookies, other_kwargs = self.mergeheaderscookies(request_overrides=request_overrides)
+        headers, cookies, other_kwargs = self.prepareheaderscookies(request_overrides=request_overrides)
         (co := ChromiumOptions()).headless(self.browser_headless).auto_port(); co.set_load_mode(self.browser_load_mode)
         co.set_timeouts(base=self.browser_timeout_sec, page_load=self.browser_timeout_sec, script=self.browser_timeout_sec)
         co.ignore_certificate_errors(True); co.set_user_agent(headers.get("User-Agent", "") or headers.get("user-agent", ""))

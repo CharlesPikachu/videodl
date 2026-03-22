@@ -10,6 +10,7 @@ import os
 import sys
 import stat
 import time
+import socket
 import shutil
 import zipfile
 import platform
@@ -19,7 +20,7 @@ from .io import FileLock
 from pathlib import Path
 from .importutils import optionalimportfrom
 from .misc import requestsproxytodrissionpage
-from typing import Optional, Tuple, TYPE_CHECKING
+from typing import Optional, Tuple, Callable, TYPE_CHECKING
 
 
 '''ChromiumDownloaderUtils'''
@@ -138,23 +139,37 @@ class DrissionPageUtils():
     ChromiumPage = optionalimportfrom("DrissionPage", "ChromiumPage")
     ChromiumOptions = optionalimportfrom("DrissionPage", "ChromiumOptions")
     if TYPE_CHECKING: from DrissionPage import ChromiumPage as ChromiumPage, ChromiumOptions as ChromiumOptions
+    '''pickportforpagelaunch'''
+    @staticmethod
+    def pickportforpagelaunch(co, host='127.0.0.1', retries=5, delay=0.05):
+        if TYPE_CHECKING: from DrissionPage import ChromiumOptions; assert isinstance(co, ChromiumOptions)
+        for _ in range(retries):
+            (sock := socket.socket(socket.AF_INET, socket.SOCK_STREAM)).bind((host, 0))
+            port = sock.getsockname()[1]
+            try: co.set_local_port(port); sock.close(); page = DrissionPageUtils.ChromiumPage(co); return port, page
+            except Exception:
+                try: sock.close(); time.sleep(delay)
+                except Exception: pass
+        raise RuntimeError('Fail to pick port for DrissionPage launch')
     '''buildoptions'''
     @staticmethod
     def buildoptions(headless: bool = True, browser_path: str = None):
-        (co := DrissionPageUtils.ChromiumOptions()).headless(headless).auto_port()
+        (co := DrissionPageUtils.ChromiumOptions()).headless(headless)
         if browser_path: co.set_browser_path(browser_path)
         return co
     '''trylaunchbrowser'''
     @staticmethod
-    def trylaunchbrowser(headless: bool = True, browser_path: str = None, requests_headers: dict = None, requests_proxies: dict = None, requests_cookies: dict = None):
-        requests_headers, requests_proxies, requests_cookies = requests_headers or {}, requests_proxies or {}, requests_cookies or {}
+    def trylaunchbrowser(headless: bool = True, browser_path: str = None, requests_headers: dict = None, requests_proxies: dict = None, requests_cookies: dict = None, co_hook_func: Callable = None, page_hook_func: Callable = None):
+        requests_headers, requests_proxies, requests_cookies = dict(requests_headers or {}), dict(requests_proxies or {}), dict(requests_cookies or {})
         co = DrissionPageUtils.buildoptions(headless=headless, browser_path=browser_path)
         if (proxy_str := requestsproxytodrissionpage(requests_proxies, mode="chromium", strip_auth_for_chromium=False)): co.set_proxy(proxy_str)
-        if requests_headers.get("User-Agent") or requests_headers.get("user-agent"): co.set_user_agent(requests_headers.get("User-Agent") or requests_headers.get("user-agent"))
-        page = DrissionPageUtils.ChromiumPage(co); (extra_headers := dict(requests_headers)).pop("User-Agent", None); extra_headers.pop("user-agent", None)
-        if extra_headers: page.set.headers(extra_headers)
+        if (user_agent := requests_headers.pop('User-Agent', None) or requests_headers.pop('user-agent', None)): co.set_user_agent(user_agent=user_agent)
+        if co_hook_func and callable(co_hook_func): co = co_hook_func(co)
+        port, page = DrissionPageUtils.pickportforpagelaunch(co=co)
+        if requests_headers: page.set.headers(requests_headers)
         if requests_cookies: page.set.cookies(requests_cookies)
-        return page
+        if page_hook_func and callable(page_hook_func): page = page_hook_func(page)
+        return port, page
     '''isvalidbrowserpath'''
     @staticmethod
     def isvalidbrowserpath(path: str) -> bool:
@@ -181,23 +196,23 @@ class DrissionPageUtils():
         return str(best_path)
     '''initsmartbrowser'''
     @staticmethod
-    def initsmartbrowser(headless: bool = True, target_dir: Optional[str] = None, channel: str = "Stable", requests_headers: dict = None, requests_proxies: dict = None, requests_cookies: dict = None):
+    def initsmartbrowser(headless: bool = True, target_dir: Optional[str] = None, channel: str = "Stable", requests_headers: dict = None, requests_proxies: dict = None, requests_cookies: dict = None, co_hook_func: Callable = None, page_hook_func: Callable = None):
         errors, requests_headers, requests_proxies, requests_cookies = [], requests_headers or {}, requests_proxies or {}, requests_cookies or {}
-        try: return DrissionPageUtils.trylaunchbrowser(headless=headless, requests_headers=requests_headers, requests_proxies=requests_proxies, requests_cookies=requests_cookies)
+        try: return DrissionPageUtils.trylaunchbrowser(headless=headless, requests_headers=requests_headers, requests_proxies=requests_proxies, requests_cookies=requests_cookies, co_hook_func=co_hook_func, page_hook_func=page_hook_func)[-1]
         except Exception as err: errors.append(f"[system] {repr(err)}")
         local_chrome = DrissionPageUtils.getlocalembeddedchrome(target_dir=target_dir)
         if local_chrome:
-            try: return DrissionPageUtils.trylaunchbrowser(headless=headless, browser_path=local_chrome, requests_headers=requests_headers, requests_proxies=requests_proxies, requests_cookies=requests_cookies)
+            try: return DrissionPageUtils.trylaunchbrowser(headless=headless, browser_path=local_chrome, requests_headers=requests_headers, requests_proxies=requests_proxies, requests_cookies=requests_cookies, co_hook_func=co_hook_func, page_hook_func=page_hook_func)[-1]
             except Exception as err: errors.append(f"[local] {repr(err)}")
         try:
             chrome_path = ChromiumDownloaderUtils.autodownloadchrome(target_dir=target_dir, channel=channel)
             if not DrissionPageUtils.isvalidbrowserpath(chrome_path): raise RuntimeError(f"Invalid Chrome Path: {chrome_path}")
-            return DrissionPageUtils.trylaunchbrowser(headless=headless, browser_path=chrome_path, requests_headers=requests_headers, requests_proxies=requests_proxies, requests_cookies=requests_cookies)
+            return DrissionPageUtils.trylaunchbrowser(headless=headless, browser_path=chrome_path, requests_headers=requests_headers, requests_proxies=requests_proxies, requests_cookies=requests_cookies, co_hook_func=co_hook_func, page_hook_func=page_hook_func)[-1]
         except Exception as err: errors.append(f"[download] {repr(err)}")
         raise RuntimeError("\n".join(errors))
     '''getcookiesdict'''
     @staticmethod
     def getcookiesdict(page):
-        assert isinstance(page, DrissionPageUtils.ChromiumPage)
+        if TYPE_CHECKING: from DrissionPage import ChromiumPage; assert isinstance(page, ChromiumPage)
         try: return page.cookies().as_dict()
         except TypeError: return page.cookies(as_dict=True) 
