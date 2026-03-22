@@ -42,7 +42,7 @@ class DongchediVideoClient(BaseVideoClient):
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
-            page = DrissionPageUtils.initsmartbrowser(headless=True, requests_headers=None, requests_proxies=(request_overrides.get('proxies') or self._autosetproxies()), requests_cookies=(request_overrides.get('cookies') or self.default_cookies))
+            page = DrissionPageUtils.initsmartbrowser(headless=True, requests_headers={"user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"}, requests_proxies=(request_overrides.get('proxies') or self._autosetproxies()), requests_cookies=(request_overrides.get('cookies') or self.default_cookies))
             page.set.window.size(390, 844); page.listen.start('vod.bytedanceapi.com'); page.get(url)
             try: page.ele('tag:body', timeout=2).click()
             except Exception: pass

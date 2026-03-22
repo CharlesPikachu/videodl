@@ -12,10 +12,10 @@ import click
 import json_repair
 if __name__ == '__main__':
     from __init__ import __version__
-    from modules import BuildVideoClient, BuildCommonVideoClient, LoggerHandle, VideoClientBuilder, CommonVideoClientBuilder, WebMediaGrabber, printfullline
+    from modules import BuildVideoClient, BuildCommonVideoClient, LoggerHandle, VideoClientBuilder, CommonVideoClientBuilder, WebMediaGrabber, BaseVideoClient, VideoInfo, printfullline
 else:
     from .__init__ import __version__
-    from .modules import BuildVideoClient, BuildCommonVideoClient, LoggerHandle, VideoClientBuilder, CommonVideoClientBuilder, WebMediaGrabber, printfullline
+    from .modules import BuildVideoClient, BuildCommonVideoClient, LoggerHandle, VideoClientBuilder, CommonVideoClientBuilder, WebMediaGrabber, BaseVideoClient, VideoInfo, printfullline
 
 
 '''BASIC_INFO'''
@@ -33,10 +33,9 @@ Video Save Path:
 class VideoClient():
     def __init__(self, allowed_video_sources: list = None, init_video_clients_cfg: dict = None, clients_threadings: dict = None, requests_overrides: dict = None, apply_common_video_clients_only: bool = False):
         # init
-        self.logger_handle = LoggerHandle()
+        self.logger_handle = LoggerHandle(); allowed_video_sources = list(set(allowed_video_sources))
         if not allowed_video_sources: allowed_video_sources = list(VideoClientBuilder.REGISTERED_MODULES.keys()) + list(CommonVideoClientBuilder.REGISTERED_MODULES.keys())
-        allowed_video_sources = list(set(allowed_video_sources))
-        allowed_video_sources = sorted(allowed_video_sources, key={v:i for i,v in enumerate(list(VideoClientBuilder.REGISTERED_MODULES.keys()) + list(CommonVideoClientBuilder.REGISTERED_MODULES.keys()))}.get)
+        allowed_video_sources = sorted(allowed_video_sources, key={v: i for i, v in enumerate(list(VideoClientBuilder.REGISTERED_MODULES.keys()) + list(CommonVideoClientBuilder.REGISTERED_MODULES.keys()))}.get)
         if apply_common_video_clients_only: allowed_video_sources = [s for s in allowed_video_sources if s in CommonVideoClientBuilder.REGISTERED_MODULES]
         init_video_clients_cfg, clients_threadings, requests_overrides = init_video_clients_cfg or {}, clients_threadings or {}, requests_overrides or {}
         # instance video_clients (lazy instance to speed up parsing)
@@ -47,8 +46,7 @@ class VideoClient():
         self.video_clients, self.work_dirs = dict(), dict()
         for vc_name in allowed_video_sources:
             if vc_name not in VideoClientBuilder.REGISTERED_MODULES: continue
-            per_default_video_client_cfg = copy.deepcopy(default_video_client_cfg)
-            per_default_video_client_cfg['type'] = vc_name
+            (per_default_video_client_cfg := copy.deepcopy(default_video_client_cfg))['type'] = vc_name
             if vc_name in init_video_clients_cfg: per_default_video_client_cfg.update(init_video_clients_cfg[vc_name])
             self.work_dirs[vc_name] = per_default_video_client_cfg['work_dir']
             self.video_clients[vc_name] = {'cfg': per_default_video_client_cfg, 'cls': VideoClientBuilder.REGISTERED_MODULES[vc_name]}
@@ -56,8 +54,7 @@ class VideoClient():
         self.common_video_clients = dict()
         for cvc_name in allowed_video_sources:
             if cvc_name not in CommonVideoClientBuilder.REGISTERED_MODULES: continue
-            per_default_video_client_cfg = copy.deepcopy(default_video_client_cfg)
-            per_default_video_client_cfg['type'] = cvc_name
+            (per_default_video_client_cfg := copy.deepcopy(default_video_client_cfg))['type'] = cvc_name
             if cvc_name in init_video_clients_cfg: per_default_video_client_cfg.update(init_video_clients_cfg[cvc_name])
             self.work_dirs[cvc_name] = per_default_video_client_cfg['work_dir']
             self.common_video_clients[cvc_name] = {'cfg': per_default_video_client_cfg, 'cls': CommonVideoClientBuilder.REGISTERED_MODULES[cvc_name]}
@@ -86,31 +83,30 @@ class VideoClient():
             self.download(video_infos=video_infos)
     '''parsefromurl'''
     def parsefromurl(self, url: str):
-        video_infos = []
+        video_infos: list[VideoInfo] = []
         # direct media link
-        if self.web_media_grabber.isprobablydirectmedia(url, self.requests_overrides.get(self.web_media_grabber.source, {}))[0]:
-            return self.web_media_grabber.parsefromurl(url, self.requests_overrides.get(self.web_media_grabber.source, {}))
+        if self.web_media_grabber.isprobablydirectmedia(url, self.requests_overrides.get(self.web_media_grabber.source, {}))[0]: return self.web_media_grabber.parsefromurl(url, self.requests_overrides.get(self.web_media_grabber.source, {}))
         # platform-specific clients
         if not self.apply_common_video_clients_only:
             for vc_name in list(self.video_clients.keys()):
-                video_client = self.video_clients[vc_name]
-                if isinstance(video_client, dict): is_belongto_this_vc = video_client['cls'].belongto(url)
-                else: is_belongto_this_vc = video_client.belongto(url)
-                if is_belongto_this_vc:
-                    if isinstance(video_client, dict): self.video_clients[vc_name] = BuildVideoClient(module_cfg=video_client['cfg'])
-                    try:
-                        video_infos = self.video_clients[vc_name].parsefromurl(url, request_overrides=self.requests_overrides.get(vc_name, {}))
-                        if any(((info.get("download_url") or "") not in ("", "NULL")) for info in (video_infos or [])): break
-                    except:
-                        video_infos = []
-        # generic parsers
-        if not any(((info.get("download_url") or "") not in ("", "NULL")) for info in (video_infos or [])):
-            for cvc_name in list(self.common_video_clients.keys()):
-                common_video_client = self.common_video_clients[cvc_name]
-                if isinstance(common_video_client, dict): self.common_video_clients[cvc_name] = BuildCommonVideoClient(module_cfg=common_video_client['cfg'])
+                video_client: BaseVideoClient | dict[str, BaseVideoClient] = self.video_clients[vc_name]
+                if not (video_client['cls'].belongto(url) if isinstance(video_client, dict) else video_client.belongto(url)): continue
+                if isinstance(video_client, dict): self.video_clients[vc_name] = BuildVideoClient(module_cfg=video_client['cfg'])
+                video_client: BaseVideoClient | dict[str, BaseVideoClient] = self.video_clients[vc_name]
                 try:
-                    video_infos = self.common_video_clients[cvc_name].parsefromurl(url, request_overrides=self.requests_overrides.get(cvc_name, {}))
-                    if any(((info.get("download_url") or "") not in ("", "NULL")) for info in (video_infos or [])): break
+                    video_infos = video_client.parsefromurl(url, request_overrides=self.requests_overrides.get(vc_name, {}))
+                    if any(((info.get("download_url") or "") not in ("", "NULL", "None")) for info in (video_infos or [])): break
+                except:
+                    video_infos = []
+        # generic parsers
+        if not any(((info.get("download_url") or "") not in ("", "NULL", "None")) for info in (video_infos or [])):
+            for cvc_name in list(self.common_video_clients.keys()):
+                common_video_client: BaseVideoClient | dict[str, BaseVideoClient] = self.common_video_clients[cvc_name]
+                if isinstance(common_video_client, dict): self.common_video_clients[cvc_name] = BuildCommonVideoClient(module_cfg=common_video_client['cfg'])
+                common_video_client: BaseVideoClient | dict[str, BaseVideoClient] = self.common_video_clients[cvc_name]
+                try:
+                    video_infos = common_video_client.parsefromurl(url, request_overrides=self.requests_overrides.get(cvc_name, {}))
+                    if any(((info.get("download_url") or "") not in ("", "NULL", "None")) for info in (video_infos or [])): break
                 except:
                     video_infos = []
         # no results found, try web_media_grabber
@@ -119,35 +115,30 @@ class VideoClient():
         return video_infos
     '''download'''
     def download(self, video_infos):
-        classified_video_infos = {}
+        classified_video_infos: dict[str, list] = {}
         for video_info in video_infos:
-            if video_info['source'] in classified_video_infos:
-                classified_video_infos[video_info['source']].append(video_info)
-            else:
-                classified_video_infos[video_info['source']] = [video_info]
+            if video_info['source'] in classified_video_infos: classified_video_infos[video_info['source']].append(video_info)
+            else: classified_video_infos[video_info['source']] = [video_info]
         for source, source_video_infos in classified_video_infos.items():
-            if source in (self.web_media_grabber.source,):
-                self.web_media_grabber.download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}))
+            if source in (self.web_media_grabber.source,): self.web_media_grabber.download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}))
             elif source in self.video_clients:
                 if isinstance(self.video_clients[source], dict): self.video_clients[source] = BuildVideoClient(module_cfg=self.video_clients[source]['cfg'])
-                self.video_clients[source].download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}))
+                video_client: BaseVideoClient | dict[str, BaseVideoClient] = self.video_clients[source]
+                video_client.download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}))
             else:
                 if isinstance(self.common_video_clients[source], dict): self.common_video_clients[source] = BuildCommonVideoClient(module_cfg=self.common_video_clients[source]['cfg'])
-                self.common_video_clients[source].download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}))
+                common_video_client: BaseVideoClient | dict[str, BaseVideoClient] = self.common_video_clients[source]
+                common_video_client.download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}))
     '''processinputs'''
     def processinputs(self, input_tip='', prefix: str = '\n', restart_ui: str = 'startparseurlcmdui'):
         # accept user inputs
         user_input = input(prefix + input_tip)
         # quit
-        if user_input.lower() == 'q':
-            self.logger_handle.info('Goodbye — thanks for using videodl; come back anytime!')
-            sys.exit()
+        if user_input.lower() == 'q': self.logger_handle.info('Goodbye — thanks for using videodl; come back anytime!'); sys.exit()
         # restart
-        elif user_input.lower() == 'r':
-            getattr(self, restart_ui)()
+        elif user_input.lower() == 'r': getattr(self, restart_ui)()
         # common inputs
-        else:
-            return user_input
+        else: return user_input
     '''str'''
     def __str__(self):
         return 'Welcome to use videodl!\nYou can visit https://github.com/CharlesPikachu/videodl for more details.'
@@ -178,23 +169,12 @@ def VideoClientCMD(index_url: str, allowed_video_sources: str, init_video_client
     # load settings
     safe_load_func = lambda s: (json_repair.loads(s) or {}) if s else {}
     allowed_video_sources = [s.strip() for s in allowed_video_sources.strip().split(',')] if allowed_video_sources else []
-    init_video_clients_cfg = safe_load_func(init_video_clients_cfg)
-    requests_overrides = safe_load_func(requests_overrides)
-    clients_threadings = safe_load_func(clients_threadings)
+    init_video_clients_cfg = safe_load_func(init_video_clients_cfg); requests_overrides = safe_load_func(requests_overrides); clients_threadings = safe_load_func(clients_threadings)
     # instance video client
-    video_client = VideoClient(
-        allowed_video_sources=allowed_video_sources, init_video_clients_cfg=init_video_clients_cfg, clients_threadings=clients_threadings, 
-        requests_overrides=requests_overrides, apply_common_video_clients_only=apply_common_video_clients_only,
-    )
+    video_client = VideoClient(allowed_video_sources=allowed_video_sources, init_video_clients_cfg=init_video_clients_cfg, clients_threadings=clients_threadings, requests_overrides=requests_overrides, apply_common_video_clients_only=apply_common_video_clients_only)
     # switch according to keyword
-    if index_url is None:
-        video_client.startparseurlcmdui()
-    else:
-        print(video_client)
-        # --parse
-        video_infos = video_client.parsefromurl(url=index_url)
-        # --download
-        video_client.download(video_infos=video_infos)
+    if index_url is None: video_client.startparseurlcmdui()
+    else: print(video_client); video_client.download(video_infos=video_client.parsefromurl(url=index_url))
 
 
 '''tests'''

@@ -103,7 +103,7 @@ class BaseVideoClient():
         return unique_file_path
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = None):
+    def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         raise NotImplementedError('not be implemented')
     '''_search'''
     @usesearchheaderscookies
