@@ -45,7 +45,7 @@ class VgetVideoClient(BaseVideoClient):
         except ValueError: return -len(prefer_ext_order)
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = None):
+    def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
         request_overrides, null_backup_title, video_infos, auto_filter_rr_for_youtube = request_overrides or {}, yieldtimerelatedtitle(self.source), [], False
         video_info = VideoInfo(source=self.source, enable_nm3u8dlre=False, download_with_ffmpeg=True) if BaseVideoClient.belongto(url, {"ted.com", "xinpianchang.com", "ifeng.com"}) else VideoInfo(source=self.source, enable_nm3u8dlre=True)
