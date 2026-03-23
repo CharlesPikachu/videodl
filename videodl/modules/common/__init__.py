@@ -41,7 +41,7 @@ class CommonVideoClientBuilder(BaseModuleBuilder):
         'RayVideoClient': RayVideoClient, 'SnapWCVideoClient': SnapWCVideoClient, 'VgetVideoClient': VgetVideoClient, 'SENJiexiVideoClient': SENJiexiVideoClient, 'AnyFetcherVideoClient': AnyFetcherVideoClient, 'PVVideoClient': PVVideoClient, 
         'KedouVideoClient': KedouVideoClient, 'ODwonVideoClient': ODwonVideoClient, 'KuKuToolVideoClient': KuKuToolVideoClient, 'XiaolvfangVideoClient': XiaolvfangVideoClient, 'BVVideoClient': BVVideoClient, 'QwkunsVideoClient': QwkunsVideoClient, 
         'WoofVideoClient': WoofVideoClient, 'KIT9VideoClient': KIT9VideoClient, 'MiZhiVideoClient': MiZhiVideoClient, 'QZXDPToolsVideoClient': QZXDPToolsVideoClient, 'BugPkVideoClient': BugPkVideoClient, 'NoLogoVideoClient': NoLogoVideoClient, 
-        'QingtingVideoClient': QingtingVideoClient, 'LvlongVideoClient': LvlongVideoClient, 'XCVTSVideoClient': XCVTSVideoClient, 'GVVIPVideoClient': GVVIPVideoClient, 'LongZhuVideoClient': LongZhuVideoClient, 'XZDXVideoClient': XZDXVideoClient,
+        'QingtingVideoClient': QingtingVideoClient, 'XCVTSVideoClient': XCVTSVideoClient, 'GVVIPVideoClient': GVVIPVideoClient, 'LongZhuVideoClient': LongZhuVideoClient, 'XZDXVideoClient': XZDXVideoClient, 'LvlongVideoClient': LvlongVideoClient, 
         'XiazaitoolVideoClient': XiazaitoolVideoClient, 'ZanqianbaVideoClient': ZanqianbaVideoClient, 
     }
 
