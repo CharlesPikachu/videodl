@@ -24,10 +24,11 @@ from pathlib import Path
 from datetime import datetime
 from bs4 import BeautifulSoup
 from contextlib import suppress
+from urllib.parse import urlparse
+from http.cookies import SimpleCookie
 from .importutils import optionalimport
 from typing import Optional, TYPE_CHECKING
 from pathvalidate import sanitize_filename
-from urllib.parse import urlparse, urlsplit
 
 
 '''naivedetermineext'''
@@ -76,7 +77,7 @@ def naivecleanhtml(text):
 def cookies2dict(cookies: str | dict = None):
     if not cookies: cookies = {}
     if isinstance(cookies, dict): return cookies
-    if isinstance(cookies, str): return dict(item.split("=", 1) for item in cookies.split("; "))
+    if isinstance(cookies, str): (c := SimpleCookie()).load(cookies); return {k: morsel.value for k, morsel in c.items()}
     raise TypeError(f'cookies type is "{type(cookies)}", expect cookies to "str" or "dict" or "None".')
 
 
@@ -84,7 +85,7 @@ def cookies2dict(cookies: str | dict = None):
 def cookies2string(cookies: str | dict = None):
     if not cookies: cookies = ""
     if isinstance(cookies, str): return cookies
-    if isinstance(cookies, dict): return "; ".join(f"{k}={v}" for k, v in cookies.items())
+    if isinstance(cookies, dict): return (lambda c: ([c.__setitem__(k, "" if v is None else str(v)) for k, v in cookies.items()], "; ".join(m.OutputString() for m in c.values()))[1])(SimpleCookie())
     raise TypeError(f'cookies type is "{type(cookies)}", expect cookies to "str" or "dict" or "None".')
 
 
@@ -299,39 +300,6 @@ def yieldtimerelatedtitle(source: str):
     dt = datetime.fromtimestamp(time.time())
     date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
     return f'{source}_null_{date_str}'
-
-
-'''requestsproxytodrissionpage'''
-def requestsproxytodrissionpage(proxy: dict | str, *, prefer: tuple = ("https", "http", "all"), mode: str = "session", strip_auth_for_chromium: bool = False):
-    def normalizeone(s: str) -> str | None:
-        if (not s) or (not isinstance(s, str)) or (not (s := s.strip())): return None
-        if "://" not in s: s = "http://" + s
-        scheme = "socks5" if (u := urlsplit(s)).scheme == "socks5h" else u.scheme
-        if not (host := u.hostname) or (port := u.port) is None: raise ValueError(f"Invalid proxy (need host:port): {s!r}")
-        host, auth = f"[{host}]" if ":" in host else host, ""
-        if u.username: auth = f"{u.username}:{u.password}@" if u.password is not None else f"{u.username}@"
-        return f"{scheme}://{auth}{host}:{port}"
-    if not proxy: return None
-    if mode == "chromium":
-        s = proxy if isinstance(proxy, str) else (next((proxy.get(k) for k in prefer if proxy.get(k)), None) or next(iter(proxy.values()), None))
-        if not (s := normalizeone(s)): return None
-        if (u := urlsplit(s)).username or u.password:
-            if not strip_auth_for_chromium: raise ValueError("DrissionPage ChromiumOptions.set_proxy() does not support proxy auth (username/password).")
-            host = f"[{u.hostname}]" if ":" in (u.hostname or "") else u.hostname
-            return f"{u.scheme}://{host}:{u.port}"
-        return s
-    if mode == "session":
-        if isinstance(proxy, str): s = normalizeone(proxy); return {"http": s, "https": s} if s else None
-        if not isinstance(proxy, dict): return None
-        out = {}
-        if proxy.get("http"): out["http"] = normalizeone(proxy["http"])
-        if proxy.get("https"): out["https"] = normalizeone(proxy["https"])
-        if (all_proxy := proxy.get("all")): all_proxy = normalizeone(all_proxy); out.setdefault("http", all_proxy); out.setdefault("https", all_proxy)
-        if not out:
-            s = normalizeone(s) if (s := next((proxy.get(k) for k in prefer if proxy.get(k)), None)) else None
-            if s: out = {"http": s, "https": s}
-        return out or None
-    raise ValueError("mode must be 'session' or 'chromium'")
 
 
 '''SpinWithBackoff'''

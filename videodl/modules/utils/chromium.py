@@ -19,8 +19,8 @@ import requests
 from uuid import uuid4
 from .io import FileLock
 from pathlib import Path
+from urllib.parse import urlsplit
 from .importutils import optionalimportfrom
-from .misc import requestsproxytodrissionpage
 from typing import Optional, Tuple, Callable, TYPE_CHECKING
 
 
@@ -217,7 +217,7 @@ class DrissionPageUtils():
     def trylaunchbrowser(headless: bool = True, browser_path: str = None, requests_headers: dict = None, requests_proxies: dict = None, requests_cookies: dict = None, co_hook_func: Callable = None, co_hook_func_args: dict = None, page_hook_func: Callable = None, page_hook_func_args: dict = None):
         requests_headers, requests_proxies, requests_cookies, co_hook_func_args, page_hook_func_args = dict(requests_headers or {}), dict(requests_proxies or {}), dict(requests_cookies or {}), dict(co_hook_func_args or {}), dict(page_hook_func_args or {})
         co = DrissionPageUtils.buildoptions(headless=headless, browser_path=browser_path)
-        if (proxy_str := requestsproxytodrissionpage(requests_proxies, mode="chromium", strip_auth_for_chromium=False)): co.set_proxy(proxy_str)
+        if (proxy_str := DrissionPageUtils.requestsproxytodrissionpage(requests_proxies, mode="chromium", strip_auth_for_chromium=False)): co.set_proxy(proxy_str)
         if (user_agent := requests_headers.pop('User-Agent', None) or requests_headers.pop('user-agent', None)): co.set_user_agent(user_agent=user_agent)
         if co_hook_func and callable(co_hook_func): co = co_hook_func(co, **co_hook_func_args)
         DrissionPageUtils.safeautoport(co)
@@ -284,3 +284,35 @@ class DrissionPageUtils():
     def clearcache():
         dp_temp_dir = os.path.join(tempfile.gettempdir(), 'DrissionPage', 'autoPortData')
         if os.path.exists(dp_temp_dir): shutil.rmtree(dp_temp_dir, ignore_errors=True)
+    '''requestsproxytodrissionpage'''
+    @staticmethod
+    def requestsproxytodrissionpage(proxy: dict | str, *, prefer: tuple = ("https", "http", "all"), mode: str = "session", strip_auth_for_chromium: bool = False):
+        def normalizeone(s: str) -> str | None:
+            if (not s) or (not isinstance(s, str)) or (not (s := s.strip())): return None
+            if "://" not in s: s = "http://" + s
+            scheme = "socks5" if (u := urlsplit(s)).scheme == "socks5h" else u.scheme
+            if not (host := u.hostname) or (port := u.port) is None: raise ValueError(f"Invalid proxy (need host:port): {s!r}")
+            host, auth = f"[{host}]" if ":" in host else host, ""
+            if u.username: auth = f"{u.username}:{u.password}@" if u.password is not None else f"{u.username}@"
+            return f"{scheme}://{auth}{host}:{port}"
+        if not proxy: return None
+        if mode == "chromium":
+            s = proxy if isinstance(proxy, str) else (next((proxy.get(k) for k in prefer if proxy.get(k)), None) or next(iter(proxy.values()), None))
+            if not (s := normalizeone(s)): return None
+            if (u := urlsplit(s)).username or u.password:
+                if not strip_auth_for_chromium: raise ValueError("DrissionPage ChromiumOptions.set_proxy() does not support proxy auth (username/password).")
+                host = f"[{u.hostname}]" if ":" in (u.hostname or "") else u.hostname
+                return f"{u.scheme}://{host}:{u.port}"
+            return s
+        if mode == "session":
+            if isinstance(proxy, str): s = normalizeone(proxy); return {"http": s, "https": s} if s else None
+            if not isinstance(proxy, dict): return None
+            out = {}
+            if proxy.get("http"): out["http"] = normalizeone(proxy["http"])
+            if proxy.get("https"): out["https"] = normalizeone(proxy["https"])
+            if (all_proxy := proxy.get("all")): all_proxy = normalizeone(all_proxy); out.setdefault("http", all_proxy); out.setdefault("https", all_proxy)
+            if not out:
+                s = normalizeone(s) if (s := next((proxy.get(k) for k in prefer if proxy.get(k)), None)) else None
+                if s: out = {"http": s, "https": s}
+            return out or None
+        raise ValueError("mode must be 'session' or 'chromium'")
