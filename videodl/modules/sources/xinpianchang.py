@@ -63,7 +63,7 @@ class XinpianchangVideoClient(BaseVideoClient):
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
             page = DrissionPageUtils.initsmartbrowser(headless=True, requests_headers=None, requests_proxies=(request_overrides.get('proxies') or self._autosetproxies()), requests_cookies=(request_overrides.get('cookies') or self.default_cookies))
-            page.get(url=url); page.wait.eles_loaded('tag:video', timeout=15); video_info.update(dict(raw_data=page.html)); page.quit()
+            page.get(url=url); page.wait.eles_loaded('tag:video', timeout=15); video_info.update(dict(raw_data=page.html)); DrissionPageUtils.quitpage(page=page)
             soup, result = BeautifulSoup(video_info.raw_data, 'lxml'), {"title": None, "cover": None, "video_url": None}
             if (h1_tag := soup.find('h1')): result['title'] = h1_tag.get_text(strip=True)
             if not result['title']: (og_title := soup.find('meta', property='og:title')) and result.__setitem__('title', og_title.get('content'))

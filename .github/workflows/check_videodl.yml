@@ -24,6 +24,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+      
+      - name: Install Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
 
       - name: Install dependencies
         run: |

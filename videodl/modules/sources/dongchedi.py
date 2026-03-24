@@ -52,7 +52,7 @@ class DongchediVideoClient(BaseVideoClient):
                 play_info_list.sort(key=lambda x: x.get('Bitrate', 0), reverse=True)
                 for play_info in play_info_list:
                     if isinstance(play_info, dict) and (main_url := play_info.get('MainPlayUrl')) and main_url not in download_urls: download_urls.append(main_url); break
-            page.listen.stop(); html_content = page.html; page.quit(); download_url = download_urls[0]
+            page.listen.stop(); html_content = page.html; DrissionPageUtils.quitpage(page=page); download_url = download_urls[0]
             soup = BeautifulSoup(html_content, 'lxml'); script_tag = soup.find('script', id='__NEXT_DATA__')
             raw_data = json_repair.loads(script_tag.string); raw_data['drissionpage_download_urls'] = download_urls
             video_info.update(dict(raw_data=raw_data, download_url=download_url)); video_title, cover_url = null_backup_title, None

@@ -59,7 +59,7 @@ class KuaishouVideoClient(BaseVideoClient):
         # prepare
         if not self.belongto(url=url): return []
         request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
-        def co_hook_func(co): co.set_argument('--disable-blink-features=AutomationControlled'); co.set_argument('--mute-audio'); co.set_local_port = lambda *args, **kwargs: co; return co
+        def co_hook_func(co): co.set_argument('--disable-blink-features=AutomationControlled'); co.set_argument('--mute-audio'); co.auto_port = lambda *args, **kwargs: co; return co
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]

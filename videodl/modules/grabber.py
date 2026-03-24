@@ -17,7 +17,7 @@ from dataclasses import dataclass
 from .sources import BaseVideoClient
 from urllib.parse import urljoin, urlparse, unquote
 from typing import Dict, Iterable, List, Optional, Set, Tuple
-from .utils import VideoInfo, DrissionPageUtils, useparseheaderscookies, requestsproxytodrissionpage
+from .utils import VideoInfo, DrissionPageUtils, useparseheaderscookies
 
 
 '''Candidate'''
@@ -190,12 +190,6 @@ class WebMediaGrabber(BaseVideoClient):
         co_hook_func_args = dict(browser_headless=self.browser_headless, browser_load_mode=self.browser_load_mode, browser_timeout_sec=self.browser_timeout_sec, browser_disable_images=self.browser_disable_images, browser_path=self.browser_path)
         page = DrissionPageUtils.initsmartbrowser(headless=True, requests_headers=None, requests_proxies=(other_kwargs.get('proxies') or self._autosetproxies()), requests_cookies=cookies, co_hook_func=co_hook_func, co_hook_func_args=co_hook_func_args)
         return page
-    '''closebrowserpage'''
-    def closebrowserpage(self, page) -> None:
-        for method_name in ("quit", "close"):
-            try:
-                if callable((method := getattr(page, method_name, None))): method(); return
-            except Exception: pass
     '''autoscroll'''
     def autoscroll(self, page) -> None:
         from DrissionPage import ChromiumPage; assert isinstance(page, ChromiumPage)
@@ -250,7 +244,7 @@ class WebMediaGrabber(BaseVideoClient):
         finally:
             try: page.listen.stop()
             except Exception: pass
-            self.closebrowserpage(page)
+            DrissionPageUtils.quitpage(page)
         return html, self.dedup(captured)
     '''parsefromurl'''
     @useparseheaderscookies

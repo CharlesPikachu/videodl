@@ -26,7 +26,7 @@ class GVVIPVideoClient(BaseVideoClient):
     def _visithomepage(self, homepage: str = 'https://greenvideo.cc/video/vip', request_overrides: dict = None):
         request_overrides = request_overrides or {}
         page = DrissionPageUtils.initsmartbrowser(headless=True, requests_headers=None, requests_proxies=(request_overrides.get('proxies') or self._autosetproxies()), requests_cookies=(request_overrides.get('cookies') or self.default_cookies))
-        page.set.timeouts(page_load=60); page.get(homepage); page.wait(2); page.quit()
+        page.set.timeouts(page_load=60); page.get(homepage); page.wait(2); DrissionPageUtils.quitpage(page=page)
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
