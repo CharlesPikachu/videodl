@@ -1,6 +1,6 @@
 '''
 Function:
-    Implementation of YouTubeMusicClient Utils (Refer To https://pytubefix.readthedocs.io/en/latest/index.html)
+    Implementation of YouTubeVideoClient Utils (Refer To https://pytubefix.readthedocs.io/en/latest/index.html)
 Author:
     Zhenchao Jin
 WeChat Official Account (微信公众号):

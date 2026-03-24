@@ -35,31 +35,22 @@ class XMFlvVideoClient(BaseVideoClient):
         }
         self.default_headers = self.default_parse_headers
         self._initsession()
-    '''_zeropad'''
-    def _zeropad(self, data: bytes, block_size: int = 16) -> bytes:
-        if (pad_len := (-len(data)) % block_size) == 0: return data
-        return data + b"\x00" * pad_len
     '''_generatekey'''
     def _generatekey(self, time_str: str, url: str) -> str:
-        inner_hash_hex = hashlib.md5((time_str + urllib.parse.quote(url, safe="")).encode("utf-8")).hexdigest()
-        key_hash_hex = hashlib.md5(inner_hash_hex.encode("utf-8")).hexdigest()
-        cipher = AES.new(key_hash_hex.encode("utf-8"), AES.MODE_CBC, b"OrSrAd8RtISPnooc")
-        ct = cipher.encrypt(self._zeropad(inner_hash_hex.encode("utf-8"), 16))
-        return base64.b64encode(ct).decode("utf-8")
-    '''_generatetoken'''
-    def _generatetoken(self, key_str: str) -> str:
-        xor_key = "m7EgOccP4xSeyjwQ".encode("utf-8"); input_buf = key_str.encode("utf-8"); length = len(input_buf)
-        padded_len = (length + 15) >> 4 << 4; buffer = bytearray(padded_len); buffer[:length] = input_buf
-        if padded_len > length: buffer[length] = 0x80
-        output = bytearray(padded_len)
-        for i in range(padded_len): output[i] = buffer[i] ^ xor_key[i % 16]
-        return base64.b64encode(bytes(output)).decode("utf-8")
+        return hashlib.md5((str(time_str) + url).encode('utf-8')).hexdigest()
+    '''_generatesign'''
+    def _generatesign(self, key_str: str) -> str:
+        aes_key = hashlib.md5(key_str.encode('utf-8')).hexdigest().encode('utf-8'); aes_iv = b'fUU9eRmkYzsgbkEK'; text_bytes = key_str.encode('utf-8')
+        if (pad_len := 16 - (len(text_bytes) % 16)) != 16: text_bytes += b'\x00' * pad_len
+        cipher = AES.new(aes_key, AES.MODE_CBC, aes_iv); encrypted_bytes = cipher.encrypt(text_bytes)
+        return base64.b64encode(encrypted_bytes).decode('utf-8')
     '''_decryptresp'''
-    def _decryptresp(self, encrypted_data: str) -> str:
-        ct = base64.b64decode(encrypted_data)
-        cipher = AES.new(b"4zYgSAsEAUS6YAud", AES.MODE_CBC, b"ppa7qtR4McCIMCX4")
-        pt = cipher.decrypt(ct); pt = unpad(pt, 16)
-        return pt.decode("utf-8")
+    def _decryptresp(self, encrypted_data: str, key: str, iv: str) -> dict:
+        encrypted_bytes = base64.b64decode(encrypted_data)
+        cipher = AES.new(key.encode('utf-8'), AES.MODE_CBC, iv.encode('utf-8'))
+        decrypted_bytes = unpad(cipher.decrypt(encrypted_bytes), AES.block_size)
+        decrypted_str = decrypted_bytes.decode('utf-8')
+        return {k: (v.replace('\\/', '/') if isinstance(v, str) else v) for k, v in json_repair.loads(decrypted_str).items()}
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
@@ -76,12 +67,12 @@ class XMFlvVideoClient(BaseVideoClient):
             raw_data = resp2json(resp=pre_resp); server_time, server_area = str(raw_data.get("time")), raw_data.get("t")
             if not server_time or not server_area: raise RuntimeError("Failed to retrieve time or area from https://data.video.iqiyi.com/v.f4v?src=iqiyi.com")
             # --generate corresponding parameters
-            key = self._generatekey(server_time, url); token = self._generatetoken(key)
+            key = self._generatekey(server_time, urllib.parse.quote(url, safe="")); sign = self._generatesign(key)
             # --post to parse API
-            data_json = {"ua": "0", "url": urllib.parse.quote(url, safe=""), "time": server_time, "key": key, "token": token, "area": server_area}
-            (resp := self.post('https://202.189.8.170/Api.js', data=data_json, headers=headers, **request_overrides)).raise_for_status(); raw_data['API.js'] = resp2json(resp=resp)
+            data_json = {"tm": server_time, "url": urllib.parse.quote(url, safe=""), "key": key, "sign": sign}
+            (resp := self.post('https://api.hls.one:4433/Api', data=data_json, headers=headers, **request_overrides)).raise_for_status(); raw_data['API_resp'] = resp2json(resp=resp)
             # --decrypt response
-            decrypted_data = self._decryptresp(raw_data['API.js']['data']); decrypted_data = json_repair.loads(decrypted_data); raw_data['API.js']['decrypted_data'] = decrypted_data
+            decrypted_data = self._decryptresp(raw_data['API_resp']['data'], raw_data['API_resp']['key'], raw_data['API_resp']['iv']); raw_data['API_decrypt_resp'] = decrypted_data
             # --video title
             video_title = legalizestring(decrypted_data.get('name', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             if "解析失败啦" == video_title: raise Exception(f'Fail to parse {url}')

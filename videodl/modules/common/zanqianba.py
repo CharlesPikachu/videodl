@@ -23,7 +23,7 @@ class ZanqianbaVideoClient(BaseVideoClient):
     source = 'ZanqianbaVideoClient'
     def __init__(self, **kwargs):
         super(ZanqianbaVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36", 'Cookie': 'tokens=3b1cc73dae3d0c57794a73d2a1b82ea5'}
+        self.default_parse_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36", 'Cookie': 'tokens=d888654718b5305e3c35be4c4a5b34cc; jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo5NDkwNjcsImV4cCI6MTgwODcyMzY5OSwiaWF0IjoxNzcyNzIzNjk5fQ.PpIXnwUJND9lr1Xg6uV98XfNzssS0bk3pt7i6_WlvbU; tokens=d888654718b5305e3c35be4c4a5b34cc; tokens=d888654718b5305e3c35be4c4a5b34cc'}
         self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
