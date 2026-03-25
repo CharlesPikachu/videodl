@@ -1,5 +1,7 @@
 # Development Log
 
+- 2026-03-25: Released videofetch v0.7.1 - added a universal video parsing API; enhanced the robustness of certain code segments; more comprehensive and flexible requirements.
+
 - 2026-03-23: Released videofetch v0.7.0 - removed Playwright-related dependencies and replaced them with DrissionPage; improved support for parsing and downloading videos from platforms such as Xinpianchang and Kuaishou; added multiple general-purpose video parsers and downloaders; fixed several known bugs.
 
 - 2026-03-13: Released videofetch v0.6.8 - added video parsing and downloading support for two new sites, namely, "watch.tbn.uk" and "www.abc.net.au"; optimized the implementation of "VideoInfo" data class to make IDE usage more convenient; fixed several known bugs.

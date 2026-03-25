@@ -58,9 +58,9 @@
 
 # 🆕 What's New
 
+- 2026-03-25: Released videofetch v0.7.1 - added a universal video parsing API; enhanced the robustness of certain code segments; more comprehensive and flexible requirements.
 - 2026-03-23: Released videofetch v0.7.0 - removed Playwright-related dependencies and replaced them with DrissionPage; improved support for parsing and downloading videos from platforms such as Xinpianchang and Kuaishou; added multiple general-purpose video parsers and downloaders; fixed several known bugs.
 - 2026-03-13: Released videofetch v0.6.8 - added video parsing and downloading support for two new sites, namely, "watch.tbn.uk" and "www.abc.net.au"; optimized the implementation of "VideoInfo" data class to make IDE usage more convenient; fixed several known bugs.
-- 2026-03-09: Released videofetch v0.6.7 - added a general video parser; added support for downloading videos from beacon.tv; fixed the issue where videos on Weibo might fail to download due to possible anti-leech protection; and resolved some potential bugs.
 
 
 # 🚀 Introduction
@@ -166,6 +166,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [SnapAnyVideoClient](https://snapany.com/zh)                      | [SnapAny万能解析](https://snapany.com/zh)                               |   ✔️     |   ✔️     | [snapany.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/snapany.py)       |
 | [SnapWCVideoClient](https://snapwc.com/zh)                        | [SnapWC视频解析](https://snapwc.com/zh)                                 |   ✔️     |   ✔️     | [snapwc.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/snapwc.py)         |
 | [SENJiexiVideoClient](https://jiexi.789jiexi.icu:4433/)           | [789视频解析](https://jiexi.789jiexi.icu:4433/)                         |   ✔️     |   ✔️     | [senjiexi.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/senjiexi.py)     |
+| [SpapiVideoClient](https://api.spapi.cn/)                         | [短视频-去水印解析下载](https://api.spapi.cn/)                          |   ✔️     |   ✔️     | [spapi.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/spapi.py)           |
 | [VgetVideoClient](https://vget.xyz/)                              | [Vget视频解析](https://vget.xyz/)                                       |   ✔️     |   ✔️     | [vget.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/vget.py)             |
 | [VideoFKVideoClient](https://www.videofk.com/)                    | [免费短视频下载器](https://www.videofk.com/)                            |   ✔️     |   ✔️     | [videofk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/videofk.py)       |
 | [WoofVideoClient](https://dl.woof.monster/)                       | [Woof视频解析 (基于Cobalt)](https://dl.woof.monster/)                   |   ✔️     |   ✔️     | [woof.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/woof.py)             |
@@ -333,6 +334,7 @@ videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL" -g -a KIT9VideoClient
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL" -g -a QZXDPToolsVideoClient
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL" -g -a NoLogoVideoClient
+videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL" -g -a SpapiVideoClient
 # Examples
 videodl -i "https://www.douyin.com/jingxuan?modal_id=7569541184671974899" -g -a SnapAnyVideoClient
 videodl -i "https://www.tiktok.com/@pet_statione/video/7579841364599328013?lang=en" -g -a SnapAnyVideoClient
