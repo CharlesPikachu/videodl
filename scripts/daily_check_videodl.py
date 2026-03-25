@@ -79,7 +79,7 @@ VIDEODL_TEST_SAMPLES = {
     'BaiduTiebaVideoClient': [
         'https://tieba.baidu.com/p/7280373361',
         'https://tieba.baidu.com/p/10253039554',
-        'https://tieba.baidu.com/p/10564767653',
+        'https://tieba.baidu.com/p/10196228633',
     ],
     'MGTVVideoClient': [
         'https://www.mgtv.com/l/100026064/19868457.html?fpa=1684&fpos=&lastp=ch_home&cpid=5',
@@ -100,7 +100,8 @@ VIDEODL_TEST_SAMPLES = {
     ],
     'MeipaiVideoClient': [
         'http://www.meipai.com/media/6995325250108940314',
-        'http://www.meipai.com/media/6983711035636086653'
+        'http://www.meipai.com/media/6983711035636086653',
+        'https://www.meipai.com/media/6977515645069710577',
     ],
     'DuxiaoshiVideoClient': [
         'http://quanmin.baidu.com/sv?source=share-h5&pd=qm_share_search&vid=12474281128791424380', 
