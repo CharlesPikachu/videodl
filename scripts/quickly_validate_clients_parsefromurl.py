@@ -482,6 +482,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.kuaishou.com/short-video/3xnpsz4qp2hgy9k?authorId=3xvs4y8pb2ki74g&streamSource=samecity&area=homexxnearby',
         'https://www.bilibili.com/video/BV1D5Q6BdEAM/',
     ],
+    'JXM3U8VideoClient': [
+        'https://v.youku.com/v_show/id_XMzAzMDkyMjUyOA==.html',
+        'https://v.qq.com/x/cover/mzc00200rx67svy/q410050ws4m.html',
+        'https://www.iqiyi.com/v_xkt6z3z798.html',
+    ],
 }
 
 
