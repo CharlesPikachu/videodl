@@ -66,7 +66,7 @@ class WittyTVVideoClient(BaseVideoClient):
             download_url: str = [m for m in matches if ".mpd" in m][0]
             parsed_url = urlparse(download_url); path_parts = parsed_url.path.split("/"); suffix_parts = path_parts[-1].split("_")[1:]
             for resolution in WittyTVVideoClient.RES_PRIORITY:
-                with suppress(Exception): candidate_url = urlunparse(parsed_url._replace(path="/".join([*path_parts[:-1], "_".join([resolution, *suffix_parts])]))); response = self.get(f"{candidate_url}?formats={media_selector['formats']}", **request_overrides); assert 200 <= response.status_code < 300; pssh = min(re.findall(r"<cenc:pssh>(.+?)</cenc:pssh>", response.text), key=len, default=None); result = (candidate_url, str(pssh) if pssh else None); break
+                with suppress(Exception): candidate_url = urlunparse(parsed_url._replace(path="/".join([*path_parts[:-1], "_".join([resolution, *suffix_parts])]))); (resp := self.get(f"{candidate_url}?formats={media_selector['formats']}", **request_overrides)).raise_for_status(); pssh = min(re.findall(r"<cenc:pssh>(.+?)</cenc:pssh>", resp.text), key=len, default=None); result = (candidate_url, str(pssh) if pssh else None); break
             download_url, pssh_value = result; video_info.update(dict(download_url=download_url))
             release_pid, account = re.search(r"\|pid=(.*?)\|", raw_data['MANIFEST_URL_RESPONSE']).group(1), re.search(r"aid=(.*?)\|", raw_data['MANIFEST_URL_RESPONSE']).group(1)
             cdm, cdm_session_id, challenge = initcdm(pssh_value, WittyTVVideoClient.CDM_WVD_FILE_PATH)

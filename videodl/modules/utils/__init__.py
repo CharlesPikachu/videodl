@@ -1,10 +1,10 @@
 '''initialize'''
 from .data import VideoInfo
 from .ip import RandomIPGenerator
-from .cdm import initcdm, closecdm
 from .aes import AESAlgorithmWrapper
 from .smuggler import BrightcoveSmuggler
 from .modulebuilder import BaseModuleBuilder
+from .cdm import initcdm, closecdm, SearchPsshValueUtils
 from .io import touchdir, generateuniquetmppath, FileLock
 from .importutils import optionalimport, optionalimportfrom
 from .chromium import ChromiumDownloaderUtils, DrissionPageUtils

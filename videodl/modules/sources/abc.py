@@ -45,7 +45,7 @@ class ABCVideoClient(BaseVideoClient):
             cover_url = safeextractfromdict(head_tags, [0, 'image'], None) if (head_tags := searchdictbykey(raw_data, 'headTagsSocialPrepared')) else None
             video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
-            video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithabcie >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return [video_info]
