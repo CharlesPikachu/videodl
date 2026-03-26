@@ -487,6 +487,15 @@ VIDEODL_TEST_SAMPLES = {
         'https://v.qq.com/x/cover/mzc00200rx67svy/q410050ws4m.html',
         'https://www.iqiyi.com/v_xkt6z3z798.html',
     ],
+    'PlayerPLVideoClient': [
+        "https://player.pl/filmy-online/1800-gramow,169874",
+        "https://player.pl/filmy-online/podatek-od-milosci,106758",
+        "https://player.pl/programy-online/power-couple-odcinki,29479/odcinek-3,S01E03,198875",
+        "https://player.pl/strefa-sport/motocyklicznie-odcinki,120/odcinek-4,S03E04,2063",
+        "https://player.pl/strefa-sport/krolowie-driftu-odcinki,118/odcinek-3,S01E03,2013",
+        "https://player.pl/seriale-online/pulapka-odcinki,13643", # 13 videos
+        "https://player.pl/programy-online/one-night-squad-odcinki,31426", # 10 videos
+    ],
 }
 
 

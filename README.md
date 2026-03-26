@@ -58,9 +58,9 @@
 
 # 🆕 What's New
 
+- 2026-03-27: Released videofetch v0.7.2 - added a new general-purpose video parsing interface; added support for video parsing and downloading from the player.pl site; fixed some potential bugs.
 - 2026-03-25: Released videofetch v0.7.1 - added a universal video parsing API; enhanced the robustness of certain code segments; more comprehensive and flexible requirements.
 - 2026-03-23: Released videofetch v0.7.0 - removed Playwright-related dependencies and replaced them with DrissionPage; improved support for parsing and downloading videos from platforms such as Xinpianchang and Kuaishou; added multiple general-purpose video parsers and downloaders; fixed several known bugs.
-- 2026-03-13: Released videofetch v0.6.8 - added video parsing and downloading support for two new sites, namely, "watch.tbn.uk" and "www.abc.net.au"; optimized the implementation of "VideoInfo" data class to make IDE usage more convenient; fixed several known bugs.
 
 
 # 🚀 Introduction
@@ -127,9 +127,10 @@ The video platforms currently supported for parsing are,
 |                                                        | BeaconVideoClient                     | BeaconTV                           | ✔️        | ✔️       | [beacon.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/beacon.py)               |
 |                                                        | CCCVideoClient                        | CCC视频 (黑客大会视频)             | ✔️        | ✔️       | [ccc.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/ccc.py)                     |
 |                                                        | FoxNewsVideoClient                    | 福克斯新闻                         | ✔️        | ✔️       | [foxnews.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/foxnews.py)             |
-|                                                        | PlusFIFAVideoClient                   | FIFA+平台 (国际足联+)              | ✔️        | ✔️       | [plusfifa.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/plusfifa.py)           |
 |                                                        | GeniusVideoClient                     | Rap Genius (嘻哈百科)              | ✔️        | ✔️       | [genius.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/genius.py)               |
 |                                                        | KakaoVideoClient                      | KakaoTV                            | ✔️        | ✔️       | [kakao.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/kakao.py)                 |
+|                                                        | PlusFIFAVideoClient                   | FIFA+平台 (国际足联+)              | ✔️        | ✔️       | [plusfifa.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/plusfifa.py)           |
+|                                                        | PlayerPLVideoClient                   | Player.pl (波兰流行视频点播站)     | ✔️        | ✔️       | [playerpl.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/playerpl.py)           |
 |                                                        | RedditVideoClient                     | 红迪网                             | ✔️        | ✔️       | [reddit.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/reddit.py)               |
 |                                                        | TBNUKVideoClient                      | 英国三一电视台点播网站             | ✔️        | ✔️       | [tbnuk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/tbnuk.py)                 |
 |                                                        | TedVideoClient                        | TED视频                            | ✔️        | ✔️       | [ted.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/ted.py)                     |

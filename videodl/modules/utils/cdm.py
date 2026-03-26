@@ -54,14 +54,19 @@ class SearchPsshValueUtils():
     '''getpsshfromdefaultkid'''
     @staticmethod
     def getpsshfromdefaultkid(manifest_content: str, xml_node: str = "cenc:default_KID", default_kid: str = None):
-        if default_kid is None: default_kid = re.search(fr'{xml_node}="([a-fA-F0-9-]+)"', manifest_content).group(1).replace('-', '')
-        pssh = f'000000387073736800000000edef8ba979d64acea3c827dcd51d21ed000000181210{default_kid}48e3dc959b06'
-        return base64.b64encode(bytes.fromhex(pssh)).decode()
+        try:
+            if default_kid is None: default_kid = re.search(fr'{xml_node}="([a-fA-F0-9-]+)"', manifest_content).group(1).replace('-', '')
+            pssh = f'000000387073736800000000edef8ba979d64acea3c827dcd51d21ed000000181210{default_kid}48e3dc959b06'
+            return base64.b64encode(bytes.fromhex(pssh)).decode()
+        except Exception:
+            return None
     '''getpsshfromcencpssh'''
     @staticmethod
     def getpsshfromcencpssh(manifest_content: str, xml_node: str = "cenc:pssh"):
-        return str(min(re.findall(fr'<[^<>]*{xml_node}[^<>]*>(.*?)</[^<>]*{xml_node}[^<>]*>', manifest_content), key=len))
+        try: return str(min(re.findall(fr'<[^<>]*{xml_node}[^<>]*>(.*?)</[^<>]*{xml_node}[^<>]*>', manifest_content), key=len))
+        except Exception: return None
     '''getpsshfromplayready'''
     @staticmethod
     def getpsshfromplayready(manifest_content: str):
-        return str(min(re.findall(fr'<ProtectionHeader[^<>"]*"[^<>"]*{SearchPsshValueUtils.PLAYREADY_SCHEME_ID}[^<>"]*"[^<>]*>(.*?)</ProtectionHeader>', manifest_content, re.DOTALL | re.IGNORECASE), key=len))
+        try: return str(min(re.findall(fr'<ProtectionHeader[^<>"]*"[^<>"]*{SearchPsshValueUtils.PLAYREADY_SCHEME_ID}[^<>"]*"[^<>]*>(.*?)</ProtectionHeader>', manifest_content, re.DOTALL | re.IGNORECASE), key=len))
+        except Exception: return None

@@ -65,7 +65,7 @@ class PlusFIFAVideoClient(BaseVideoClient):
             download_url = (temp_man[0] if temp_man else manifest[0])['url']; video_info.update(dict(download_url=download_url))
             pssh_value = str(min(re.findall(r'<cenc:pssh\b[^>]*>(.*?)</cenc:pssh>', self.get(download_url, **request_overrides).content.decode()), key=len))
             cdm, cdm_session_id, challenge = initcdm(pssh_value, PlusFIFAVideoClient.CDM_WVD_FILE_PATH)
-            (licence := self.post(PlusFIFAVideoClient.LICENSE_URL.format(session_id=session_id), data=challenge)).raise_for_status()
+            (licence := self.post(PlusFIFAVideoClient.LICENSE_URL.format(session_id=session_id), data=challenge, **request_overrides)).raise_for_status()
             raw_data['LICENSE_URL_RESPONSE'] = licence.content; video_info.update(dict(raw_data=raw_data))
             key = list(set(closecdm(cdm, cdm_session_id, licence.content)))[0]
             cover_url = safeextractfromdict(raw_data, ['CONTENTS_URL_RESPONSE', 'backdropUrl'], None)

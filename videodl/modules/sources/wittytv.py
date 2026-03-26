@@ -57,11 +57,11 @@ class WittyTVVideoClient(BaseVideoClient):
             program = raw_data['PROGRAM_URL_RESPONSE'].get("mediasetprogram$brandTitle", None) or raw_data['PROGRAM_URL_RESPONSE'].get("mediasetprogram$auditelBrandName", None) or raw_data['PROGRAM_URL_RESPONSE'].get("mediasetprogram$tvLinearSeasonTitle", None)
             if not program: video_title = legalizestring(raw_data['PROGRAM_URL_RESPONSE'].get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             else: video_title = legalizestring(f"{program}-{raw_data['PROGRAM_URL_RESPONSE'].get('title') or null_backup_title}", replace_null_string=null_backup_title).removesuffix('.')
-            (resp := self.post(WittyTVVideoClient.PLAYBACK_URL, json={'contentId': content_id, 'streamType': 'VOD'}, headers={'Authorization': f'Bearer {self.BEARER_TOKEN}'})).raise_for_status()
+            (resp := self.post(WittyTVVideoClient.PLAYBACK_URL, json={'contentId': content_id, 'streamType': 'VOD'}, headers={'Authorization': f'Bearer {self.BEARER_TOKEN}'}, **request_overrides)).raise_for_status()
             raw_data['PLAYBACK_URL_RESPONSE'] = resp2json(resp=resp)
             media_selector: dict = raw_data['PLAYBACK_URL_RESPONSE']["response"]["mediaSelector"]
             manifest = media_selector.pop("url"); media_selector["auth"] = self.BEARER_TOKEN
-            (resp := self.get(f"{manifest}?{urlencode(media_selector)}", headers={'Accept': 'application/json, text/plain, */*', 'Origin': WittyTVVideoClient.MEDIASET_URL, 'Referer': WittyTVVideoClient.MEDIASET_URL})).raise_for_status()
+            (resp := self.get(f"{manifest}?{urlencode(media_selector)}", headers={'Accept': 'application/json, text/plain, */*', 'Origin': WittyTVVideoClient.MEDIASET_URL, 'Referer': WittyTVVideoClient.MEDIASET_URL}, **request_overrides)).raise_for_status()
             raw_data['MANIFEST_URL_RESPONSE'] = resp.text; matches = re.findall(r'<video\s*src="([^"]+)"', raw_data['MANIFEST_URL_RESPONSE'])
             download_url: str = [m for m in matches if ".mpd" in m][0]
             parsed_url = urlparse(download_url); path_parts = parsed_url.path.split("/"); suffix_parts = path_parts[-1].split("_")[1:]
@@ -70,7 +70,7 @@ class WittyTVVideoClient(BaseVideoClient):
             download_url, pssh_value = result; video_info.update(dict(download_url=download_url))
             release_pid, account = re.search(r"\|pid=(.*?)\|", raw_data['MANIFEST_URL_RESPONSE']).group(1), re.search(r"aid=(.*?)\|", raw_data['MANIFEST_URL_RESPONSE']).group(1)
             cdm, cdm_session_id, challenge = initcdm(pssh_value, WittyTVVideoClient.CDM_WVD_FILE_PATH)
-            (licence := self.post(WittyTVVideoClient.LICENSE_URL, data=challenge, params={'releasePid': release_pid, 'account': WittyTVVideoClient.ACCOUNT_URL.format(a_id=account), 'schema': '1.0', 'token': self.BEARER_TOKEN})).raise_for_status()
+            (licence := self.post(WittyTVVideoClient.LICENSE_URL, data=challenge, params={'releasePid': release_pid, 'account': WittyTVVideoClient.ACCOUNT_URL.format(a_id=account), 'schema': '1.0', 'token': self.BEARER_TOKEN}, **request_overrides)).raise_for_status()
             raw_data['LICENSE_URL_RESPONSE'] = licence.content; video_info.update(dict(raw_data=raw_data))
             key = list(set(closecdm(cdm, cdm_session_id, licence.content)))[0]
             cover_url = safeextractfromdict(raw_data, ['PROGRAM_URL_RESPONSE', 'thumbnails', 'image_horizontal_cover-704x396', 'url'], None)
