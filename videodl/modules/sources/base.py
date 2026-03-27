@@ -18,14 +18,13 @@ import requests
 import subprocess
 from pathlib import Path
 from rich.text import Text
-from rich.progress import Task
 from typing import TYPE_CHECKING
 from fake_useragent import UserAgent
 from platformdirs import user_log_dir
 from pathvalidate import sanitize_filepath
 from ..utils.domains import obtainhostname, hostmatchessuffix
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from rich.progress import Progress, TextColumn, BarColumn, DownloadColumn, TransferSpeedColumn, TimeRemainingColumn, TimeElapsedColumn, ProgressColumn
+from rich.progress import Progress, TextColumn, BarColumn, DownloadColumn, TransferSpeedColumn, TimeRemainingColumn, TimeElapsedColumn, ProgressColumn, Task
 from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, cookies2dict, generateuniquetmppath, shortenpathsinvideoinfos, optionalimport, optionalimportfrom, LoggerHandle, VideoInfo
 
 
