@@ -41,7 +41,7 @@ class ABCVideoClient(BaseVideoClient):
             video_info.update(dict(download_url=(download_url := [r for r in renditions if r.get('url') and str(r.get('url')).startswith('http')][0]['url'])))
             video_title = legalizestring(safeextractfromdict(head_tags, [0, 'title'], None) if (head_tags := searchdictbykey(raw_data, 'headTagsSocialPrepared')) else null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             cover_url = safeextractfromdict(head_tags, [0, 'image'], None) if (head_tags := searchdictbykey(raw_data, 'headTagsSocialPrepared')) else None
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
@@ -54,7 +54,7 @@ class ABCVideoClient(BaseVideoClient):
     def parsefromurl(self, url: str, request_overrides: dict = None):
         for parser in [self._parsefromurlwithabcie]:
             video_infos = parser(url, request_overrides)
-            if any(((info.get("download_url") or "").upper() not in ("", "NULL")) for info in (video_infos or [])): break
+            if any(video_info.with_valid_download_url for video_info in (video_infos or [])): break
         return video_infos
     '''belongto'''
     @staticmethod

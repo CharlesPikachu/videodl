@@ -211,6 +211,18 @@ def usesearchheaderscookies(func):
     return wrapper
 
 
+'''hashablesth'''
+def hashablesth(obj):
+    return tuple((k, hashablesth(v)) for k, v in sorted(obj.items())) if isinstance(obj, dict) else tuple(hashablesth(x) for x in obj) if isinstance(obj, list) else tuple(sorted(hashablesth(x) for x in obj)) if isinstance(obj, set) else obj
+
+
+'''dedupkeeporder'''
+def dedupkeeporder(seq):
+    seen, out = set(), []
+    for item in seq: (seen.add(key), out.append(item)) if (key := hashablesth(item)) not in seen else None
+    return out
+
+
 '''searchdictbykey'''
 def searchdictbykey(obj, target_key: str | list | tuple | set) -> list:
     results, target_key = [], [target_key] if isinstance(target_key, str) else target_key
@@ -218,7 +230,7 @@ def searchdictbykey(obj, target_key: str | list | tuple | set) -> list:
         for k, v in obj.items(): results += ([v] if k in target_key else []) + searchdictbykey(v, target_key)
     elif isinstance(obj, list):
         for item in obj: results.extend(searchdictbykey(item, target_key))
-    return list(dict.fromkeys(results))
+    return dedupkeeporder(results)
 
 
 '''safeextractfromdict'''
