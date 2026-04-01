@@ -21,7 +21,7 @@ from bs4 import BeautifulSoup
 from .base import BaseVideoClient
 from urllib.parse import urlencode, urljoin
 from ..utils.domains import TENCENT_SUFFIXES
-from ..utils import naivejstojson, legalizestring, intornone, useparseheaderscookies, safeextractfromdict, writevodm3u8fortencent, yieldtimerelatedtitle, naivedetermineext, naiveparsem3u8formats, traverseobj, floatornone, VideoInfo, AESAlgorithmWrapper, SpinWithBackoff
+from ..utils import naivejstojson, legalizestring, intornone, useparseheaderscookies, safeextractfromdict, yieldtimerelatedtitle, naivedetermineext, traverseobj, floatornone, VideoInfo, AESAlgorithmWrapper, SpinWithBackoff, TencentHLSHelper
 
 
 '''TencentVQQVideoClient: https://github.com/Jesseatgao/movie-downloader/blob/master/mdl/sites/vqq.py'''
@@ -420,8 +420,8 @@ class TencentVQQVideoClient(BaseVideoClient):
                 if not format_name: continue
                 raw_data['download_info'] = {'format_name': format_name, 'ext': ext, 'urls': urls}
                 download_url = os.path.join(self.work_dir, self.source, f"{raw_data['cover_id']}-{normal_id['V']}.m3u8")
-                writevodm3u8fortencent(segments=urls, out_path=download_url, pick="best", strategy="global_host", probe_timeout=3.0, samples_per_host=2, probe_workers=16, probe_method="head_then_range_get")
-                video_info_page.update(dict(raw_data=raw_data, download_url=download_url, title=f'ep{len(video_infos)+1}-{video_title}' if len(basic_info['normal_ids']) > 1 else video_title, file_path=os.path.join(self.work_dir, self.source, f'ep{len(video_infos)+1}-{video_title}' if len(basic_info['normal_ids']) > 1 else video_title), ext=ext, identifier=f"{raw_data['cover_id']}-{normal_id['V']}", enable_nm3u8dlre=True, cover_url=raw_data.get('image_url'))); video_infos.append(video_info_page)
+                TencentHLSHelper.writevodm3u8(segments=urls, out_path=download_url, pick="best", strategy="global_host", probe_timeout=3.0, samples_per_host=2, probe_workers=16, probe_method="head_then_range_get")
+                video_info_page.update(dict(raw_data=raw_data, download_url=download_url, title=f'ep{len(video_infos)+1}-{video_title}' if len(basic_info['normal_ids']) > 1 else video_title, save_path=os.path.join(self.work_dir, self.source, f'ep{len(video_infos)+1}-{video_title}' if len(basic_info['normal_ids']) > 1 else video_title), ext=ext, identifier=f"{raw_data['cover_id']}-{normal_id['V']}", enable_nm3u8dlre=True, cover_url=raw_data.get('image_url'))); video_infos.append(video_info_page)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
@@ -553,7 +553,7 @@ class TencentVideoClient(BaseVideoClient):
         for video_fmt in video_response.get('ul', {}).get('ui', []):
             url = video_fmt.get('url', ''); hls_info = video_fmt.get('hls')
             if hls_info or naivedetermineext(url) == 'm3u8':
-                fmts, subs = naiveparsem3u8formats(url + (hls_info.get('pt', '') if isinstance(hls_info, dict) else '')); formats.extend(fmts)
+                fmts, subs = TencentHLSHelper.naiveparsem3u8formats(url + (hls_info.get('pt', '') if isinstance(hls_info, dict) else '')); formats.extend(fmts)
                 for lang, sub_list in subs.items(): subtitles.setdefault(lang, []).extend(sub_list)
             else:
                 fn = video_response.get('fn', ''); fvkey = video_response.get('fvkey', '')
@@ -670,12 +670,12 @@ class TencentVideoClient(BaseVideoClient):
                 video_infos = []; raw_data = self._vqqextractvideo(url, request_overrides=request_overrides)
                 formats: list[dict] = raw_data['formats']; formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
                 download_url, video_title = formats[0]['url'], legalizestring(raw_data.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                video_info.update(dict(raw_data=raw_data, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=raw_data['id'], enable_nm3u8dlre=True, cover_url=raw_data.get('thumbnail'))); video_infos.append(video_info)
+                video_info.update(dict(raw_data=raw_data, download_url=download_url, title=video_title, save_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=raw_data['id'], enable_nm3u8dlre=True, cover_url=raw_data.get('thumbnail'))); video_infos.append(video_info)
             elif re.match(r'https?://(?:www\.)?wetv\.vip/(?:[^?#]+/)?play' + r'/(?P<series_id>\w+)(?:-[^?#]+)?/(?P<id>\w+)(?:-[^?#]+)?', url):
                 raw_data = self._wetvextractepisode(url, request_overrides=request_overrides)
                 formats: list[dict] = raw_data['formats']; formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
                 download_url, video_title = formats[0]['url'], legalizestring(raw_data.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                video_info.update(dict(raw_data=raw_data, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=raw_data['id'], enable_nm3u8dlre=True, cover_url=raw_data.get('thumbnail'))); video_infos.append(video_info)
+                video_info.update(dict(raw_data=raw_data, download_url=download_url, title=video_title, save_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=raw_data['id'], enable_nm3u8dlre=True, cover_url=raw_data.get('thumbnail'))); video_infos.append(video_info)
             elif re.match(r'https?://(?:www\.)?wetv\.vip/(?:[^?#]+/)?play' + r'/(?P<id>\w+)(?:-[^/?#]+)?/?(?:[?#]|$)', url):
                 raw_data = self._wetvextractseries(url, request_overrides=request_overrides)
                 if not (entries := raw_data.get('entries')): return [video_info]
@@ -683,12 +683,12 @@ class TencentVideoClient(BaseVideoClient):
                     raw_data_item = self._wetvextractepisode(entry, request_overrides=request_overrides)
                     formats: list[dict] = raw_data_item['formats']; formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
                     download_url, video_title = formats[0]['url'], legalizestring(raw_data_item.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                    (video_info_item := copy.deepcopy(video_info)).update(dict(raw_data=raw_data_item, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=f"{raw_data['id']}-{raw_data_item['id']}", enable_nm3u8dlre=True, cover_url=raw_data_item.get('thumbnail'))); video_infos.append(video_info_item)
+                    (video_info_item := copy.deepcopy(video_info)).update(dict(raw_data=raw_data_item, download_url=download_url, title=video_title, save_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=f"{raw_data['id']}-{raw_data_item['id']}", enable_nm3u8dlre=True, cover_url=raw_data_item.get('thumbnail'))); video_infos.append(video_info_item)
             elif re.match(r'https?://(?:www\.)?iflix\.com/(?:[^?#]+/)?play' + r'/(?P<series_id>\w+)(?:-[^?#]+)?/(?P<id>\w+)(?:-[^?#]+)?', url):
                 raw_data = self._iflixextractepisode(url, request_overrides=request_overrides)
                 formats: list[dict] = raw_data['formats']; formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
                 download_url, video_title = formats[0]['url'], legalizestring(raw_data.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                video_info.update(dict(raw_data=raw_data, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=raw_data['id'], enable_nm3u8dlre=True, cover_url=raw_data.get('thumbnail'))); video_infos.append(video_info)
+                video_info.update(dict(raw_data=raw_data, download_url=download_url, title=video_title, save_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=raw_data['id'], enable_nm3u8dlre=True, cover_url=raw_data.get('thumbnail'))); video_infos.append(video_info)
             elif re.match(r'https?://(?:www\.)?iflix\.com/(?:[^?#]+/)?play' + r'/(?P<id>\w+)(?:-[^/?#]+)?/?(?:[?#]|$)', url):
                 raw_data = self._iflixextractseries(url, request_overrides=request_overrides)
                 if not (entries := raw_data.get('entries')): return [video_info]
@@ -696,7 +696,7 @@ class TencentVideoClient(BaseVideoClient):
                     raw_data_item = self._iflixextractepisode(entry, request_overrides=request_overrides)
                     formats: list[dict] = raw_data_item['formats']; formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)
                     download_url, video_title = formats[0]['url'], legalizestring(raw_data_item.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                    (video_info_item := copy.deepcopy(video_info)).update(dict(raw_data=raw_data_item, download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=f"{raw_data['id']}-{raw_data_item['id']}", enable_nm3u8dlre=True, cover_url=raw_data_item.get('thumbnail'))); video_infos.append(video_info_item)
+                    (video_info_item := copy.deepcopy(video_info)).update(dict(raw_data=raw_data_item, download_url=download_url, title=video_title, save_path=os.path.join(self.work_dir, self.source, video_title), ext='mp4', identifier=f"{raw_data['id']}-{raw_data_item['id']}", enable_nm3u8dlre=True, cover_url=raw_data_item.get('thumbnail'))); video_infos.append(video_info_item)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

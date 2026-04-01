@@ -48,7 +48,7 @@ class TedVideoClient(BaseVideoClient):
             video_title = safeextractfromdict(raw_data["props"]["pageProps"]["videoData"], ['title'], None) or null_backup_title
             video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
             cover_url = safeextractfromdict(raw_data, ['props', 'pageProps', 'videoData', 'primaryImageSet', 0, 'url'], None)
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

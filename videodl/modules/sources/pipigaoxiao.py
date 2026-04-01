@@ -34,7 +34,7 @@ class PipigaoxiaoVideoClient(BaseVideoClient):
         try:
             pattern = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', re.S)
             url = re.findall(pattern, url)[0]; headers = copy.deepcopy(self.default_headers); headers['Referer'] = url
-            try: mid, pid = re.findall('mid=(\d+)', url, re.S)[0], re.findall('pid=(\d+)', url, re.S)[0]
+            try: mid, pid = re.findall(r'mid=(\d+)', url, re.S)[0], re.findall(r'pid=(\d+)', url, re.S)[0]
             except: mid, pid = '', urlparse(url).path.replace("/pp/post/", "")
             data = {'mid': int(mid) if mid else 'null', 'pid': int(pid), 'type': 'post'}
             (resp := self.post('https://h5.ippzone.com/ppapi/share/fetch_content', data=json.dumps(data), headers=headers, **request_overrides)).raise_for_status()
@@ -46,7 +46,7 @@ class PipigaoxiaoVideoClient(BaseVideoClient):
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             try: cover_url = f"http://file.ippzone.com/img/frame/id/{list(raw_data['data']['post']['videos'].keys())[0]}"
             except Exception: cover_url = None
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=pid, cover_url=cover_url))
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=pid, cover_url=cover_url))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

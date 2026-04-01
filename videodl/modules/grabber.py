@@ -99,7 +99,7 @@ class WebMediaGrabber(BaseVideoClient):
     def buildvideoinfos(self, candidates: Iterable[Candidate], referer: Optional[str] = None) -> List[VideoInfo]:
         video_infos: List[VideoInfo] = []; default_download_headers = dict(self.default_download_headers)
         if referer: default_download_headers.update({'referer': referer})
-        for cand in candidates: video_infos.append(VideoInfo(source=self.source, download_url=cand.url, title=(file_name := self.hashedfilename(cand.url)), identifier=file_name, file_path=os.path.join(self.work_dir, self.source, file_name), default_download_headers=default_download_headers))
+        for cand in candidates: video_infos.append(VideoInfo(source=self.source, download_url=cand.url, title=(file_name := self.hashedfilename(cand.url)), identifier=file_name, save_path=os.path.join(self.work_dir, self.source, file_name), default_download_headers=default_download_headers))
         return video_infos
     '''dedup'''
     def dedup(self, cands: Iterable[Candidate]) -> List[Candidate]:

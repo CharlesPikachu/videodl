@@ -72,7 +72,7 @@ class SinaVideoClient(BaseVideoClient):
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(video_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             cover_url = safeextractfromdict(raw_data, ['data', 'image'], None)
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', identifier=video_id, cover_url=cover_url))
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', identifier=video_id, cover_url=cover_url))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

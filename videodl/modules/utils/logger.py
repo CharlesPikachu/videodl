@@ -20,56 +20,24 @@ COLORS = {'red': '\033[31m', 'green': '\033[32m', 'yellow': '\033[33m', 'blue': 
 
 '''LoggerHandle'''
 class LoggerHandle():
-    appname = 'videodl'
-    appauthor = 'zcjin'
+    appname, appauthor = 'videodl', 'zcjin'
     def __init__(self):
         # set up log dir
-        log_dir = user_log_dir(appname=self.appname, appauthor=self.appauthor)
-        os.makedirs(log_dir, exist_ok=True)
-        log_file_path = os.path.join(log_dir, "videodl.log")
-        self.log_file_path = log_file_path
+        os.makedirs((log_dir := user_log_dir(appname=self.appname, appauthor=self.appauthor)), exist_ok=True)
+        self.log_file_path = os.path.join(log_dir, "videodl.log")
         # config logging
-        logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", handlers=[logging.FileHandler(log_file_path, encoding="utf-8"), logging.StreamHandler()])
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", handlers=[logging.FileHandler(self.log_file_path, encoding="utf-8"), logging.StreamHandler()])
     '''log'''
     @staticmethod
-    def log(level, message):
-        message = str(message)
-        logger = logging.getLogger(LoggerHandle.appname)
-        logger.log(level, message)
+    def log(level, message): logging.getLogger(LoggerHandle.appname).log(level, str(message))
     '''debug'''
-    def debug(self, message, disable_print=False):
-        message = str(message)
-        if disable_print:
-            fp = open(self.log_file_path, 'a', encoding='utf-8')
-            fp.write(message + '\n')
-        else:
-            LoggerHandle.log(logging.DEBUG, message)
+    def debug(self, message, disable_print=False): message = str(message); open(self.log_file_path, 'a', encoding='utf-8').write(message + '\n') if disable_print else LoggerHandle.log(logging.DEBUG, message)
     '''info'''
-    def info(self, message, disable_print=False):
-        message = str(message)
-        if disable_print:
-            fp = open(self.log_file_path, 'a', encoding='utf-8')
-            fp.write(message + '\n')
-        else:
-            LoggerHandle.log(logging.INFO, message)
+    def info(self, message, disable_print=False): message = str(message); open(self.log_file_path, 'a', encoding='utf-8').write(message + '\n') if disable_print else LoggerHandle.log(logging.INFO, message)
     '''warning'''
-    def warning(self, message, disable_print=False):
-        message = str(message)
-        if disable_print:
-            fp = open(self.log_file_path, 'a', encoding='utf-8')
-            fp.write(message + '\n')
-        else:
-            if '\033[31m' not in message: message = colorize(message, 'red')
-            LoggerHandle.log(logging.WARNING, message)
+    def warning(self, message, disable_print=False): message = str(message); open(self.log_file_path, 'a', encoding='utf-8').write(message + '\n') if disable_print else LoggerHandle.log(logging.WARNING, message if '\033[31m' in message else (message := colorize(message, 'red')))
     '''error'''
-    def error(self, message, disable_print=False):
-        message = str(message)
-        if disable_print:
-            fp = open(self.log_file_path, 'a', encoding='utf-8')
-            fp.write(message + '\n')
-        else:
-            if '\033[31m' not in message: message = colorize(message, 'red')
-            LoggerHandle.log(logging.ERROR, message)
+    def error(self, message, disable_print=False): message = str(message); open(self.log_file_path, 'a', encoding='utf-8').write(message + '\n') if disable_print else LoggerHandle.log(logging.ERROR, message if '\033[31m' in message else (message := colorize(message, 'red')))
 
 
 '''printtable'''

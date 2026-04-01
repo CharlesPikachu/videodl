@@ -54,7 +54,7 @@ class SohuVideoClient(BaseVideoClient):
             # --construct other video info
             video_title = legalizestring(raw_data["data"].get('tvName', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             cover_url = safeextractfromdict(raw_data, ['data', 'coverImg'], None)
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', vid=vid, identifier=vid, cover_url=cover_url))
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', vid=vid, identifier=vid, cover_url=cover_url))
             # --if multiple video split
             if len(download_urls) == 1:
                 video_info.update(dict(download_url=download_urls[0]))
@@ -106,7 +106,7 @@ class SohuVideoClient(BaseVideoClient):
             # --construct other video info
             video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'tvName'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             cover_url = safeextractfromdict(raw_data, ['data', 'coverImg'], None)
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', vid=vid, identifier=vid, cover_url=cover_url))
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', vid=vid, identifier=vid, cover_url=cover_url))
             # --if multiple video split
             if len(download_urls) == 1:
                 video_info.update(dict(download_url=download_urls[0]))

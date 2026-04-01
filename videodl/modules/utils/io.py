@@ -17,7 +17,7 @@ msvcrt = __import__("msvcrt") if os.name == "nt" else None
 
 
 '''touchdir'''
-def touchdir(directory, exist_ok=True, mode=511, auto_sanitize=True):
+def touchdir(directory, exist_ok: bool = True, mode: int = 511, auto_sanitize: bool = True):
     if auto_sanitize: directory = sanitize_filepath(directory)
     return os.makedirs(directory, exist_ok=exist_ok, mode=mode)
 

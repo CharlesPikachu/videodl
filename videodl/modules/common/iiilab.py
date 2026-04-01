@@ -32,8 +32,8 @@ class IIILabVideoClient(BaseVideoClient):
         # prepare
         request_overrides, null_backup_title, video_infos = request_overrides or {}, yieldtimerelatedtitle(self.source), []
         video_info = VideoInfo(source=self.source, enable_nm3u8dlre=False, download_with_ffmpeg=True) if BaseVideoClient.belongto(url, {"ted.com", "xinpianchang.com", "ifeng.com"}) else VideoInfo(source=self.source, enable_nm3u8dlre=True)
-        if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
-        if platformfromurl(url) in {'weibo'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://weibo.com/'}))
+        if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers=self.BILIBILI_REFERENCE_HEADERS, default_audio_download_headers=self.BILIBILI_REFERENCE_HEADERS))
+        if platformfromurl(url) in {'weibo'}: video_info.update(dict(default_download_headers=self.WEIBO_REFERENCE_HEADERS, default_audio_download_headers=self.WEIBO_REFERENCE_HEADERS))
         # try parse
         try:
             # --encrypt post data
@@ -48,7 +48,7 @@ class IIILabVideoClient(BaseVideoClient):
             # --extract download urls
             video_medias: list[dict] = [item for item in raw_data['medias'] if item['media_type'] in ('video',)]
             audio_medias: list[dict] = [item for item in raw_data['medias'] if item['media_type'] in ('audio',)]
-            if video_medias and isinstance(video_medias, list): video_medias: dict = video_medias[0]
+            video_medias: dict = video_medias[0] if video_medias else video_medias
             if 'formats' in video_medias:
                 formats = sorted(video_medias["formats"], key=lambda item: tuple(int(m.group()) if (m := re.search(r"\d+", str(item.get(k)))) else 0 for k in ("quality", "video_size")), reverse=True)
                 formats: list[dict] = [fmt for fmt in formats if fmt.get('video_url')]
@@ -59,16 +59,16 @@ class IIILabVideoClient(BaseVideoClient):
                 audio_download_url = audio_medias[0].get('resource_url') or audio_medias[0].get('preview_url') if audio_medias else ""
             # --deal with special download urls
             video_info.update(dict(download_url=(download_url := self._convertspecialdownloadurl(download_url)[0])))
-            if audio_download_url and (audio_download_url not in {'NULL', 'None'}): video_info.update(dict(audio_download_url=audio_download_url))
+            if audio_download_url and str(audio_download_url).startswith('http'): video_info.update(dict(audio_download_url=audio_download_url))
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             cover_url = raw_data.get('preview_url') or safeextractfromdict(raw_data, ['medias', 0, 'preview_url'], None)
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=cover_url))
-            if audio_download_url and (audio_download_url not in {'NULL', 'None'}):
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=cover_url))
+            if audio_download_url and str(audio_download_url).startswith('http'):
                 video_info.update(dict(guess_audio_ext_result=(guess_audio_ext_result := FileTypeSniffer.getfileextensionfromurl(url=audio_download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies))))
                 if (audio_ext := guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info['audio_ext']) in {'m4s', 'mp4'}: audio_ext = 'm4a'
-                video_info.update(dict(audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}')))
+                video_info.update(dict(audio_ext=audio_ext, audio_save_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}')))
             video_infos.append(video_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)

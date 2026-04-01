@@ -40,8 +40,8 @@ from .xiazaitool import XiazaitoolVideoClient
 class CommonVideoClientBuilder(BaseModuleBuilder):
     REGISTERED_MODULES = {
         'SnapAnyVideoClient': SnapAnyVideoClient,         'GVVideoClient': GVVideoClient,             'IM1907VideoClient': IM1907VideoClient,           'XMFlvVideoClient': XMFlvVideoClient,
-        'IIILabVideoClient': IIILabVideoClient,           'VideoFKVideoClient': VideoFKVideoClient,   'RayVideoClient': RayVideoClient,                 'JXM3U8VideoClient': JXM3U8VideoClient,
-        'SENJiexiVideoClient': SENJiexiVideoClient,       'SnapWCVideoClient': SnapWCVideoClient,     'VgetVideoClient': VgetVideoClient,               'AnyFetcherVideoClient': AnyFetcherVideoClient,
+        'IIILabVideoClient': IIILabVideoClient,           'RayVideoClient': RayVideoClient,           'SnapWCVideoClient': SnapWCVideoClient,           'VideoFKVideoClient': VideoFKVideoClient,
+        'SENJiexiVideoClient': SENJiexiVideoClient,       'JXM3U8VideoClient': JXM3U8VideoClient,     'VgetVideoClient': VgetVideoClient,               'AnyFetcherVideoClient': AnyFetcherVideoClient,
         'PVVideoClient': PVVideoClient,                   'KedouVideoClient': KedouVideoClient,       'ODwonVideoClient': ODwonVideoClient,             'KuKuToolVideoClient': KuKuToolVideoClient,
         'SpapiVideoClient': SpapiVideoClient,             'QwkunsVideoClient': QwkunsVideoClient,     'XiaolvfangVideoClient': XiaolvfangVideoClient,   'BVVideoClient': BVVideoClient,
         'WoofVideoClient': WoofVideoClient,               'KIT9VideoClient': KIT9VideoClient,         'MiZhiVideoClient': MiZhiVideoClient,             'QZXDPToolsVideoClient': QZXDPToolsVideoClient,

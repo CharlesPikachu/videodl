@@ -47,7 +47,7 @@ class BilibiliVideoClient(BaseVideoClient):
                 video_title = legalizestring(video_title or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 if (ext := guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_page_info['ext']) in {'m4s'}: ext = 'mp4'
-                video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f"{video_id}-{page['cid']}", cover_url=safeextractfromdict(page, ['first_frame'], None) or safeextractfromdict(page_raw_data['x/web-interface/view'], ['data', 'pic'], None))); video_infos.append(video_page_info)
+                video_page_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f"{video_id}-{page['cid']}", cover_url=safeextractfromdict(page, ['first_frame'], None) or safeextractfromdict(page_raw_data['x/web-interface/view'], ['data', 'pic'], None))); video_infos.append(video_page_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromcommonurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
@@ -78,14 +78,14 @@ class BilibiliVideoClient(BaseVideoClient):
                 video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 if (ext := guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_page_info['ext']) in ['m4s']: ext = 'mp4'
-                video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=episode_id, cover_url=safeextractfromdict(page, ['cover'], None)))
+                video_page_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=episode_id, cover_url=safeextractfromdict(page, ['cover'], None)))
                 audio_formats = [{'url': item.get('baseUrl') or item.get('base_url') or item.get('url'), 'filesize': item.get('size') or 0} for item in safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'dolby', 'audio'], []) + safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'audio'], [])]
                 audio_formats: list[dict] = sorted(audio_formats, key=lambda x: x["filesize"], reverse=True)
                 audio_formats: list[dict] = [item for item in audio_formats if item.get('url')]
                 if len(audio_formats) == 0: video_infos.append(video_page_info); continue
                 guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 if (audio_ext := guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info['audio_ext']) in ['m4s']: audio_ext = 'm4a'
-                video_page_info.update(dict(audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}'))); video_infos.append(video_page_info)
+                video_page_info.update(dict(audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_save_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}'))); video_infos.append(video_page_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefrombangumiepurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
@@ -116,14 +116,14 @@ class BilibiliVideoClient(BaseVideoClient):
                 video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 if (ext := guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_page_info['ext']) in ['m4s']: ext = 'mp4'
-                video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=page['id'], cover_url=safeextractfromdict(page, ['cover'], None)))
+                video_page_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=page['id'], cover_url=safeextractfromdict(page, ['cover'], None)))
                 audio_formats = [{'url': item.get('baseUrl') or item.get('base_url') or item.get('url'), 'filesize': item.get('size') or 0} for item in safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'dolby', 'audio'], []) + safeextractfromdict(page_raw_data, ['result', 'video_info', 'dash', 'audio'], [])]
                 audio_formats: list[dict] = sorted(audio_formats, key=lambda x: x["filesize"], reverse=True)
                 audio_formats: list[dict] = [item for item in audio_formats if item.get('url')]
                 if len(audio_formats) == 0: video_infos.append(video_page_info); continue
                 guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 if (audio_ext := guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info['audio_ext']) in ['m4s']: audio_ext = 'm4a'
-                video_page_info.update(dict(audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}'))); video_infos.append(video_page_info)
+                video_page_info.update(dict(audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_save_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}'))); video_infos.append(video_page_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefrombangumissurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
@@ -152,14 +152,14 @@ class BilibiliVideoClient(BaseVideoClient):
                 video_title = legalizestring(page.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 if (ext := guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_page_info['ext']) in ['m4s']: ext = 'mp4'
-                video_page_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=episode_id, cover_url=safeextractfromdict(page, ['cover'], None)))
+                video_page_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=episode_id, cover_url=safeextractfromdict(page, ['cover'], None)))
                 audio_formats = [{'url': item.get('baseUrl') or item.get('base_url') or item.get('url'), 'filesize': item.get('size') or 0} for item in safeextractfromdict(page_raw_data, ['data', 'dash', 'audio'], [])]
                 audio_formats: list[dict] = sorted(audio_formats, key=lambda x: x["filesize"], reverse=True)
                 audio_formats: list[dict] = [item for item in audio_formats if item.get('url')]
                 if len(audio_formats) == 0: video_infos.append(video_page_info); continue
                 guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 if (audio_ext := guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info['audio_ext']) in ['m4s']: audio_ext = 'm4a'
-                video_page_info.update(dict(audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}'))); video_infos.append(video_page_info)
+                video_page_info.update(dict(audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_save_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}'))); video_infos.append(video_page_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromcheeseepurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

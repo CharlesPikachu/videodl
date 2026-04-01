@@ -11,6 +11,7 @@ import re
 import copy
 from pathlib import Path
 from .base import BaseVideoClient
+from ..utils.cmd import DownloadWithNM3U8DLRECommand
 from ..utils import initcdm, closecdm, SearchPsshValueUtils
 from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, resp2json, safeextractfromdict, VideoInfo
 
@@ -67,9 +68,9 @@ class PlayerPLVideoClient(BaseVideoClient):
                 (licence_resp := self.post(license_url, data=challenge, **request_overrides)).raise_for_status()
                 raw_data['LICENSE_URL_RESPONSE'] = licence_resp.content; video_info.update(dict(raw_data=raw_data))
                 key = list(set(closecdm(cdm, cdm_session_id, licence_resp.content)))[0]
-            video_info.update(dict(download_url=manifest_url, nm3u8dlre_settings=({'key': key} if key else None)))
+            video_info.update(dict(download_url=manifest_url, nm3u8dlre_settings=DownloadWithNM3U8DLRECommand.addkeyafterretry(key_value=key)))
             cover_url = safeextractfromdict(raw_data, ['play_details', 'movie', 'info', 'media', 'thumbnail_big'], None) or safeextractfromdict(raw_data, ['play_details', 'movie', 'info', 'media', 'poster'], None)
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info.ext}'), identifier=item_id, cover_url=cover_url)); video_infos.append(video_info)
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info.ext}'), identifier=item_id, cover_url=cover_url)); video_infos.append(video_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlsinglevideo >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
@@ -93,7 +94,7 @@ class PlayerPLVideoClient(BaseVideoClient):
                     video_info_eps = self._parsefromurlsinglevideo(episode["shareUrl"], request_overrides=request_overrides)
                     if any(((info.get("download_url") or "").upper() in ("", "NULL")) for info in (video_info_eps or [])): continue
                     video_info_eps[0].raw_data['ROOT'] = raw_data_eps; video_info_eps[0].title = f"S{season_idx+1}E{episode_idx+1} {video_info_eps[0].title}"
-                    video_info_eps[0].file_path=os.path.join(self.work_dir, self.source, f'{video_info_eps[0].title}.{video_info_eps[0].ext}'); video_infos.extend(video_info_eps)
+                    video_info_eps[0].save_path = os.path.join(self.work_dir, self.source, f'{video_info_eps[0].title}.{video_info_eps[0].ext}'); video_infos.extend(video_info_eps)
         else:
             video_infos = self._parsefromurlsinglevideo(url=url, request_overrides=request_overrides)
         return video_infos

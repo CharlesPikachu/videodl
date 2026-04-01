@@ -46,7 +46,7 @@ class MGTVVideoClient(BaseVideoClient):
         try:
             # --basic information
             vid = urlparse(url).path.strip('/').split('/')[-1]; pno, did = '1030', 'e6e13014-393b-43e7-b6be-2323e4960939'
-            tk2 = bytes(f'did={did}|pno={pno}|ver=0.3.0301|clit={int(time.time())}'.encode()); tk2 = base64.b64encode(tk2).decode().replace('/\+/g', '_').replace('/\//g', '~').replace('/=/g', '-'); tk2 = list(' '.join(tk2).split()); tk2.reverse()
+            tk2 = bytes(f'did={did}|pno={pno}|ver=0.3.0301|clit={int(time.time())}'.encode()); tk2 = base64.b64encode(tk2).decode().replace('+', '_').replace('/', '~').replace('=', '-'); tk2 = list(' '.join(tk2).split()); tk2.reverse()
             params = {'did': did, 'suuid': uuid.uuid4(), 'cxid': '', 'tk2': ''.join(tk2), 'type': 'pch5', 'video_id': vid, '_support': '10000000', 'auth_mode': '', 'src': '', 'abroad': ''}
             (resp := self.get('https://pcweb.api.mgtv.com/player/video', params=params, **request_overrides)).raise_for_status(); raw_data = resp2json(resp=resp)
             # --sources
@@ -65,7 +65,7 @@ class MGTVVideoClient(BaseVideoClient):
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
             cover_url = safeextractfromdict(raw_data, ['data', 'info', 'thumb'], None)
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

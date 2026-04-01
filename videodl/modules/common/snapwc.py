@@ -7,16 +7,20 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
+import uuid
 import copy
 import json
 import base64
+import requests
+import datetime
+from urllib.parse import urlparse
 from ..utils import RandomIPGenerator
 from ..sources import BaseVideoClient
 from ..utils.domains import platformfromurl
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.asymmetric import rsa, padding as asympad
 from cryptography.hazmat.primitives import hashes, padding as sympad, serialization
-from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
+from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, cookies2string
 
 
 '''SnapWCVideoClient'''
@@ -33,7 +37,11 @@ class SnapWCVideoClient(BaseVideoClient):
     -----END PUBLIC KEY-----"""
     def __init__(self, **kwargs):
         super(SnapWCVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36", "Content-Type": "application/json", "X-Locale": "en", "Origin": "https://snapwc.com", "Referer": "https://snapwc.com/"}
+        self.default_parse_headers = {
+            'accept': '*/*', 'accept-encoding': 'gzip, deflate, br, zstd', 'accept-language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7', 'content-type': 'application/json', 'origin': 'https://snapwc.com', 'sec-fetch-site': 'same-site',
+            'priority': 'u=1, i', 'referer': 'https://snapwc.com/', 'sec-ch-ua': '"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"', 'sec-ch-ua-mobile': '?0', 'sec-ch-ua-platform': '"Windows"', 'x-locale': 'zh-CN',
+            'sec-fetch-dest': 'empty', 'sec-fetch-mode': 'cors', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36',
+        }
         self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
@@ -72,16 +80,25 @@ class SnapWCVideoClient(BaseVideoClient):
         # prepare
         request_overrides, null_backup_title, video_infos = request_overrides or {}, yieldtimerelatedtitle(self.source), []
         video_info = VideoInfo(source=self.source, enable_nm3u8dlre=False, download_with_ffmpeg=True) if BaseVideoClient.belongto(url, {"ted.com", "xinpianchang.com", "ifeng.com"}) else VideoInfo(source=self.source, enable_nm3u8dlre=True)
-        if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}))
-        if platformfromurl(url) in {'weibo'}: video_info.update(dict(default_download_headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36', 'Referer': 'https://weibo.com/'}))
+        if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers=self.BILIBILI_REFERENCE_HEADERS, default_audio_download_headers=self.BILIBILI_REFERENCE_HEADERS))
+        if platformfromurl(url) in {'weibo'}: video_info.update(dict(default_download_headers=self.WEIBO_REFERENCE_HEADERS, default_audio_download_headers=self.WEIBO_REFERENCE_HEADERS))
         sortbysizedesc_func = lambda items: sorted(items, key=lambda x: (1 if int(x.get("size") or 0) == 0 else 0, -int(x.get("size") or 0)))
         # try parse
         try:
-            # --init
+            # -- init cookies
+            self.post('https://api.snapwc.com/api.visitor/init', json={}, **request_overrides)
+            self.default_headers['cookie'] = cookies2string(requests.utils.dict_from_cookiejar(self.session.cookies))
+            self.default_parse_headers['cookie'] = cookies2string(requests.utils.dict_from_cookiejar(self.session.cookies))
+            headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
+            page_session_id, client_timestamp = str(uuid.uuid4()), datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+            base_event_data = {"page_session_id": page_session_id, "client_timestamp": client_timestamp, "page_path": "/zh", "page_search": "", "page_hash": "", "referrer_host": "", "has_visitor_id": True}
+            self.post('https://api.snapwc.com/api.event/log', headers=headers, json={"name": "frontend_visitor_init_reused", "data": base_event_data, "channel": "frontend_debug"}, **request_overrides)
+            (event2_data := copy.deepcopy(base_event_data)).update({"platform": "homepage", "url_present": True, "url_host": urlparse(url).hostname or "", "url_protocol": urlparse(url).scheme or "", "url_pathname": urlparse(url).path or ""})
+            self.post('https://api.snapwc.com/api.event/log', headers=headers, json={"name": "frontend_parse_submit_started", "data": event2_data, "channel": "frontend_debug"}, **request_overrides)
+            self.post('https://api.snapwc.com/api.captcha/is_required', headers=headers, json={"scenario": "parser", "data": {"url": url}}, **request_overrides)
+            # --post request
             client_priv_pem, client_pub_pem = self._genclientkeypair1024()
             req_body = self._encryptrequest({"url": url}, self.SERVER_PUBLIC_PEM, client_pub_pem)
-            # --post request
-            headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
             (resp := self.post(f'https://api.snapwc.com/api.parser/parse', headers=headers, json=req_body, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := self._decryptresponse(resp2json(resp=resp), client_priv_pem))))
             # --video title
@@ -92,15 +109,15 @@ class SnapWCVideoClient(BaseVideoClient):
             else: raw_data["muxed"] = sortbysizedesc_func(raw_data["muxed"]); download_url, audio_download_url = raw_data["muxed"][0]['url'], 'NULL'
             # --deal with special download urls
             video_info.update(dict(download_url=(download_url := self._convertspecialdownloadurl(download_url)[0])))
-            if audio_download_url and (audio_download_url not in {'NULL', 'None'}): video_info.update(dict(audio_download_url=audio_download_url))
+            if audio_download_url and str(audio_download_url).startswith('http'): video_info.update(dict(audio_download_url=audio_download_url))
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=raw_data.get('cover')))
-            if audio_download_url and (audio_download_url not in {'NULL', 'None'}):
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=raw_data.get('cover')))
+            if audio_download_url and str(audio_download_url).startswith('http'):
                 video_info.update(dict(guess_audio_ext_result=(guess_audio_ext_result := FileTypeSniffer.getfileextensionfromurl(url=audio_download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies))))
                 if (audio_ext := guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info['audio_ext']) in {'m4s', 'mp4'}: audio_ext = 'm4a'
-                video_info.update(dict(audio_ext=audio_ext, audio_file_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}')))
+                video_info.update(dict(audio_ext=audio_ext, audio_save_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}')))
             video_infos.append(video_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)

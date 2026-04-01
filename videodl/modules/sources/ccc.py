@@ -42,7 +42,7 @@ class CCCVideoClient(BaseVideoClient):
             video_info.update(dict(download_url=videos_sorted[0]['recording_url']))
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=videos_sorted[0]['recording_url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f'{display_id}-{event_id}', cover_url=raw_data.get('poster_url')))
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f'{display_id}-{event_id}', cover_url=raw_data.get('poster_url')))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlsinglevideo >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
@@ -64,7 +64,7 @@ class CCCVideoClient(BaseVideoClient):
                 if not isinstance(event, dict) or not event.get('frontend_link'): continue
                 if not (video_info := self._parsefromurlsinglevideo(event['frontend_link'], request_overrides=request_overrides)): continue
                 if ((video_info := video_info[0]).get("download_url") or "").upper() in ("", "NULL", "None"): continue
-                video_info.update(dict(title=f"ep{len(video_infos)+1}-{video_info.title}", file_path=os.path.join(self.work_dir, self.source, f'ep{len(video_infos)+1}-{video_info.title}.{video_info.ext}'))); video_infos.append(video_info)
+                video_info.update(dict(title=f"ep{len(video_infos)+1}-{video_info.title}", save_path=os.path.join(self.work_dir, self.source, f'ep{len(video_infos)+1}-{video_info.title}.{video_info.ext}'))); video_infos.append(video_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

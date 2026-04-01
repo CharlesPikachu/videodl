@@ -116,7 +116,7 @@ class RedditVideoClient(BaseVideoClient):
                     video_title = legalizestring(f'ep{len(video_infos)+1}-{media.title or null_backup_title}', replace_null_string=null_backup_title).removesuffix('.')
                     guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=hls_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                     ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-                    (video_info_page := copy.deepcopy(video_info)).update(dict(raw_data=item, download_url=hls_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, enable_nm3u8dlre=True, cover_url=media.cover_url)); video_infos.append(video_info_page)
+                    (video_info_page := copy.deepcopy(video_info)).update(dict(raw_data=item, download_url=hls_url, title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, enable_nm3u8dlre=True, cover_url=media.cover_url)); video_infos.append(video_info_page)
             else:
                 if (download_url := media.hls_url or media.dash_url): download_url = self._augmenthlsquery(download_url)
                 elif media.fallback_url: download_url = media.fallback_url
@@ -124,7 +124,7 @@ class RedditVideoClient(BaseVideoClient):
                 video_title = legalizestring(media.title or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-                video_info.update(dict(raw_data=asdict(media), download_url=download_url, title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=media.post_id or media.display_id or video_title, enable_nm3u8dlre=True, cover_url=media.cover_url)); video_infos.append(video_info)
+                video_info.update(dict(raw_data=asdict(media), download_url=download_url, title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=media.post_id or media.display_id or video_title, enable_nm3u8dlre=True, cover_url=media.cover_url)); video_infos.append(video_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

@@ -95,18 +95,18 @@ class VideoClient():
                 video_client: BaseVideoClient | dict[str, BaseVideoClient] = self.video_clients[vc_name]
                 try:
                     video_infos = video_client.parsefromurl(url, request_overrides=self.requests_overrides.get(vc_name, {}))
-                    if any(((info.get("download_url") or "") not in ("", "NULL", "None")) for info in (video_infos or [])): break
+                    if any(video_info.with_valid_download_url for video_info in (video_infos or [])): break
                 except:
                     video_infos = []
         # generic parsers
-        if not any(((info.get("download_url") or "") not in ("", "NULL", "None")) for info in (video_infos or [])):
+        if not any(video_info.with_valid_download_url for video_info in (video_infos or [])):
             for cvc_name in list(self.common_video_clients.keys()):
                 common_video_client: BaseVideoClient | dict[str, BaseVideoClient] = self.common_video_clients[cvc_name]
                 if isinstance(common_video_client, dict): self.common_video_clients[cvc_name] = BuildCommonVideoClient(module_cfg=common_video_client['cfg'])
                 common_video_client: BaseVideoClient | dict[str, BaseVideoClient] = self.common_video_clients[cvc_name]
                 try:
                     video_infos = common_video_client.parsefromurl(url, request_overrides=self.requests_overrides.get(cvc_name, {}))
-                    if any(((info.get("download_url") or "") not in ("", "NULL", "None")) for info in (video_infos or [])): break
+                    if any(video_info.with_valid_download_url for video_info in (video_infos or [])): break
                 except:
                     video_infos = []
         # no results found, try web_media_grabber
@@ -114,11 +114,11 @@ class VideoClient():
         # return
         return video_infos
     '''download'''
-    def download(self, video_infos):
+    def download(self, video_infos: list[VideoInfo]):
         classified_video_infos: dict[str, list] = {}
         for video_info in video_infos:
-            if video_info['source'] in classified_video_infos: classified_video_infos[video_info['source']].append(video_info)
-            else: classified_video_infos[video_info['source']] = [video_info]
+            if video_info.source in classified_video_infos: classified_video_infos[video_info.source].append(video_info)
+            else: classified_video_infos[video_info.source] = [video_info]
         for source, source_video_infos in classified_video_infos.items():
             if source in (self.web_media_grabber.source,): self.web_media_grabber.download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}))
             elif source in self.video_clients:
@@ -147,24 +147,12 @@ class VideoClient():
 '''VideoClientCMD'''
 @click.command()
 @click.version_option(version=__version__)
-@click.option(
-    '-i', '--index-url', '--index_url', default=None, help='URL of the video to download. If not specified, videodl will start in terminal mode.', type=str, show_default=True,
-)
-@click.option(
-    '-a', '--allowed-video-sources', '--allowed_video_sources', default=None, help='Platforms to search. Separate multiple platforms with "," (e.g., "AcFunVideoClient,PipixVideoClient"). If not specified, videodl will search all supported platforms globally and use the first one that can download the video url.', type=str, show_default=True,
-)
-@click.option(
-    '-c', '--init-video-clients-cfg', '--init_video_clients_cfg', default=None, help='Config such as `work_dir` for each video client as a JSON string.', type=str, show_default=True,
-)
-@click.option(
-    '-r', '--requests-overrides', '--requests_overrides', default=None, help='Requests.get kwargs such as `headers` and `proxies` for each video client as a JSON string.', type=str, show_default=True,
-)
-@click.option(
-    '-t', '--clients-threadings', '--clients_threadings', default=None, help='Number of threads used for each video client as a JSON string.', type=str, show_default=True,
-)
-@click.option(
-    '-g', '--apply-common-video-clients-only', '--apply_common_video_clients_only', is_flag=True, default=False, help='Only apply common video clients.', show_default=True,
-)
+@click.option('-i', '--index-url', '--index_url', default=None, help='URL of the video to download. If not specified, videodl will start in terminal mode.', type=str, show_default=True)
+@click.option('-a', '--allowed-video-sources', '--allowed_video_sources', default=None, help='Platforms to search. Separate multiple platforms with "," (e.g., "AcFunVideoClient,PipixVideoClient"). If not specified, videodl will search all supported platforms globally and use the first one that can download the video url.', type=str, show_default=True)
+@click.option('-c', '--init-video-clients-cfg', '--init_video_clients_cfg', default=None, help='Config such as `work_dir` for each video client as a JSON string.', type=str, show_default=True)
+@click.option('-r', '--requests-overrides', '--requests_overrides', default=None, help='Requests.get kwargs such as `headers` and `proxies` for each video client as a JSON string.', type=str, show_default=True)
+@click.option('-t', '--clients-threadings', '--clients_threadings', default=None, help='Number of threads used for each video client as a JSON string.', type=str, show_default=True)
+@click.option('-g', '--apply-common-video-clients-only', '--apply_common_video_clients_only', is_flag=True, default=False, help='Only apply common video clients.', show_default=True)
 def VideoClientCMD(index_url: str, allowed_video_sources: str, init_video_clients_cfg: str, requests_overrides: str, clients_threadings: str, apply_common_video_clients_only: bool):
     # load settings
     safe_load_func = lambda s: (json_repair.loads(s) or {}) if s else {}

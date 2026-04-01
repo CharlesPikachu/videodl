@@ -8,10 +8,7 @@ WeChat Official Account (微信公众号):
 '''
 import math
 import base64
-try:
-    from Cryptodome import Cipher as Cryptodome
-except ImportError:
-    Cryptodome = None
+from Cryptodome.Cipher import AES
 
 
 '''settings'''
@@ -138,9 +135,7 @@ class AESAlgorithmWrapper:
         data, rcon_iteration, key_size_bytes = data[:], 1, len(data)
         expanded_key_size_bytes = (key_size_bytes // 4 + 7) * BLOCK_SIZE_BYTES
         while len(data) < expanded_key_size_bytes:
-            temp = data[-4:]
-            temp = AESAlgorithmWrapper.keyschedulecore(temp, rcon_iteration)
-            rcon_iteration += 1
+            temp = AESAlgorithmWrapper.keyschedulecore(data[-4:], rcon_iteration); rcon_iteration += 1
             data += AESAlgorithmWrapper.xor(temp, data[-key_size_bytes: 4 - key_size_bytes])
             for _ in range(3): temp = data[-4:]; data += AESAlgorithmWrapper.xor(temp, data[-key_size_bytes: 4 - key_size_bytes])
             if key_size_bytes == 32: temp = data[-4:]; temp = AESAlgorithmWrapper.subbytes(temp); data += AESAlgorithmWrapper.xor(temp, data[-key_size_bytes: 4 - key_size_bytes])
@@ -158,9 +153,7 @@ class AESAlgorithmWrapper:
         PADDING_BYTE = {'pkcs7': padding_size, 'iso7816': 0x0, 'whitespace': 0x20, 'zero': 0x0}
         if padding_size < 0: raise ValueError('Block size exceeded')
         elif padding_mode not in PADDING_BYTE: raise NotImplementedError(f'Padding mode {padding_mode} is not implemented')
-        if padding_mode == 'iso7816' and padding_size:
-            block = [*block, 0x80]
-            padding_size -= 1
+        if padding_mode == 'iso7816' and padding_size: block = [*block, 0x80]; padding_size -= 1
         return block + [PADDING_BYTE[padding_mode]] * padding_size
     '''blockproduct'''
     @staticmethod
@@ -170,8 +163,7 @@ class AESAlgorithmWrapper:
         for i in block_x:
             for bit in range(7, -1, -1):
                 if i & (1 << bit): block_z = AESAlgorithmWrapper.xor(block_z, block_v)
-                do_xor = block_v[-1] & 1
-                block_v = AESAlgorithmWrapper.shiftblock(block_v)
+                do_xor = block_v[-1] & 1; block_v = AESAlgorithmWrapper.shiftblock(block_v)
                 if do_xor: block_v = AESAlgorithmWrapper.xor(block_v, block_r)
         return block_z
     '''ghash'''
@@ -189,8 +181,7 @@ class AESAlgorithmWrapper:
         rounds = len(expanded_key) // BLOCK_SIZE_BYTES - 1
         data = AESAlgorithmWrapper.xor(data, expanded_key[:BLOCK_SIZE_BYTES])
         for i in range(1, rounds + 1):
-            data = AESAlgorithmWrapper.subbytes(data)
-            data = AESAlgorithmWrapper.shiftrows(data)
+            data = AESAlgorithmWrapper.subbytes(data); data = AESAlgorithmWrapper.shiftrows(data)
             if i != rounds: data = list(AESAlgorithmWrapper.itermixcolumns(data, MIX_COLUMN_MATRIX))
             data = AESAlgorithmWrapper.xor(data, expanded_key[i * BLOCK_SIZE_BYTES: (i + 1) * BLOCK_SIZE_BYTES])
         return data
@@ -201,37 +192,30 @@ class AESAlgorithmWrapper:
         for i in range(rounds, 0, -1):
             data = AESAlgorithmWrapper.xor(data, expanded_key[i * BLOCK_SIZE_BYTES: (i + 1) * BLOCK_SIZE_BYTES])
             if i != rounds: data = list(AESAlgorithmWrapper.itermixcolumns(data, MIX_COLUMN_MATRIX_INV))
-            data = AESAlgorithmWrapper.shiftrowsinv(data)
-            data = AESAlgorithmWrapper.subbytesinv(data)
+            data = AESAlgorithmWrapper.shiftrowsinv(data); data = AESAlgorithmWrapper.subbytesinv(data)
         return AESAlgorithmWrapper.xor(data, expanded_key[:BLOCK_SIZE_BYTES])
     '''aesdecrypttext'''
     @staticmethod
-    def aesdecrypttext(data, password, key_size_bytes):
+    def aesdecrypttext(data, password: str, key_size_bytes: int):
         NONCE_LENGTH_BYTES = 8
-        data = list(base64.b64decode(data))
-        password = list(password.encode())
+        data, password = list(base64.b64decode(data)), list(password.encode())
         key = password[:key_size_bytes] + [0] * (key_size_bytes - len(password))
         key = AESAlgorithmWrapper.aesencrypt(key[:BLOCK_SIZE_BYTES], AESAlgorithmWrapper.keyexpansion(key)) * (key_size_bytes // BLOCK_SIZE_BYTES)
-        nonce = data[:NONCE_LENGTH_BYTES]
-        cipher = data[NONCE_LENGTH_BYTES:]
+        nonce, cipher = data[:NONCE_LENGTH_BYTES], data[NONCE_LENGTH_BYTES:]
         decrypted_data = AESAlgorithmWrapper.aesctrdecrypt(cipher, key, nonce + [0] * (BLOCK_SIZE_BYTES - NONCE_LENGTH_BYTES))
         return bytes(decrypted_data)
     '''aesecbencrypt'''
     @staticmethod
-    def aesecbencrypt(data, key, iv=None):
-        expanded_key = AESAlgorithmWrapper.keyexpansion(key)
-        block_count = math.ceil(len(data) / BLOCK_SIZE_BYTES)
-        encrypted_data = []
+    def aesecbencrypt(data, key, iv: str = None):
+        expanded_key, block_count, encrypted_data = AESAlgorithmWrapper.keyexpansion(key), math.ceil(len(data) / BLOCK_SIZE_BYTES), []
         for i in range(block_count):
             block = data[i * BLOCK_SIZE_BYTES: (i + 1) * BLOCK_SIZE_BYTES]
             encrypted_data += AESAlgorithmWrapper.aesencrypt(AESAlgorithmWrapper.pkcs7padding(block), expanded_key)
         return encrypted_data
     '''aesecbdecrypt'''
     @staticmethod
-    def aesecbdecrypt(data, key, iv=None):
-        expanded_key = AESAlgorithmWrapper.keyexpansion(key)
-        block_count = math.ceil(len(data) / BLOCK_SIZE_BYTES)
-        encrypted_data = []
+    def aesecbdecrypt(data, key, iv: str = None):
+        expanded_key, block_count, encrypted_data = AESAlgorithmWrapper.keyexpansion(key), math.ceil(len(data) / BLOCK_SIZE_BYTES), []
         for i in range(block_count):
             block = data[i * BLOCK_SIZE_BYTES: (i + 1) * BLOCK_SIZE_BYTES]
             encrypted_data += AESAlgorithmWrapper.aesdecrypt(block, expanded_key)
@@ -239,10 +223,7 @@ class AESAlgorithmWrapper:
     '''aesctrencrypt'''
     @staticmethod
     def aesctrencrypt(data, key, iv):
-        expanded_key = AESAlgorithmWrapper.keyexpansion(key)
-        block_count = math.ceil(len(data) / BLOCK_SIZE_BYTES)
-        counter = AESAlgorithmWrapper.itervector(iv)
-        encrypted_data = []
+        expanded_key, block_count, counter, encrypted_data = AESAlgorithmWrapper.keyexpansion(key), math.ceil(len(data) / BLOCK_SIZE_BYTES), AESAlgorithmWrapper.itervector(iv), []
         for i in range(block_count):
             counter_block = next(counter)
             block = data[i * BLOCK_SIZE_BYTES: (i + 1) * BLOCK_SIZE_BYTES]
@@ -258,12 +239,8 @@ class AESAlgorithmWrapper:
     @staticmethod
     def aesgcmdecryptandverify(data, key, tag, nonce):
         hash_subkey = AESAlgorithmWrapper.aesencrypt([0] * BLOCK_SIZE_BYTES, AESAlgorithmWrapper.keyexpansion(key))
-        if len(nonce) == 12:
-            j0 = [*nonce, 0, 0, 0, 1]
-        else:
-            fill = (BLOCK_SIZE_BYTES - (len(nonce) % BLOCK_SIZE_BYTES)) % BLOCK_SIZE_BYTES + 8
-            ghash_in = nonce + [0] * fill + list((8 * len(nonce)).to_bytes(8, 'big'))
-            j0 = AESAlgorithmWrapper.ghash(hash_subkey, ghash_in)
+        if len(nonce) == 12: j0 = [*nonce, 0, 0, 0, 1]
+        else: fill = (BLOCK_SIZE_BYTES - (len(nonce) % BLOCK_SIZE_BYTES)) % BLOCK_SIZE_BYTES + 8; ghash_in = nonce + [0] * fill + list((8 * len(nonce)).to_bytes(8, 'big')); j0 = AESAlgorithmWrapper.ghash(hash_subkey, ghash_in)
         iv_ctr = AESAlgorithmWrapper.inc(j0)
         decrypted_data = AESAlgorithmWrapper.aesctrdecrypt(data, key, iv_ctr + [0] * (BLOCK_SIZE_BYTES - len(iv_ctr)))
         pad_len = (BLOCK_SIZE_BYTES - (len(data) % BLOCK_SIZE_BYTES)) % BLOCK_SIZE_BYTES
@@ -273,16 +250,13 @@ class AESAlgorithmWrapper:
     '''aescbcencrypt'''
     @staticmethod
     def aescbcencrypt(data, key, iv, *, padding_mode='pkcs7'):
-        expanded_key = AESAlgorithmWrapper.keyexpansion(key)
-        block_count = math.ceil(len(data) / BLOCK_SIZE_BYTES)
-        encrypted_data, previous_cipher_block = [], iv
+        expanded_key, block_count, encrypted_data, previous_cipher_block = AESAlgorithmWrapper.keyexpansion(key), math.ceil(len(data) / BLOCK_SIZE_BYTES), [], iv
         for i in range(block_count):
             block = data[i * BLOCK_SIZE_BYTES: (i + 1) * BLOCK_SIZE_BYTES]
             block = AESAlgorithmWrapper.padblock(block, padding_mode)
             mixed_block = AESAlgorithmWrapper.xor(block, previous_cipher_block)
             encrypted_block = AESAlgorithmWrapper.aesencrypt(mixed_block, expanded_key)
-            encrypted_data += encrypted_block
-            previous_cipher_block = encrypted_block
+            encrypted_data += encrypted_block; previous_cipher_block = encrypted_block
         return encrypted_data
     '''aescbcencryptbytes'''
     @staticmethod
@@ -291,10 +265,7 @@ class AESAlgorithmWrapper:
     '''aescbcdecrypt'''
     @staticmethod
     def aescbcdecrypt(data, key, iv):
-        expanded_key = AESAlgorithmWrapper.keyexpansion(key)
-        block_count = math.ceil(len(data) / BLOCK_SIZE_BYTES)
-        decrypted_data = []
-        previous_cipher_block = iv
+        expanded_key, block_count, decrypted_data, previous_cipher_block = AESAlgorithmWrapper.keyexpansion(key), math.ceil(len(data) / BLOCK_SIZE_BYTES), [], iv
         for i in range(block_count):
             block = data[i * BLOCK_SIZE_BYTES: (i + 1) * BLOCK_SIZE_BYTES]
             block += [0] * (BLOCK_SIZE_BYTES - len(block))
@@ -305,10 +276,10 @@ class AESAlgorithmWrapper:
     '''aescbcdecryptbytes'''
     @staticmethod
     def aescbcdecryptbytes(data, key, iv):
-        try: return Cryptodome.AES.new(key, Cryptodome.AES.MODE_CBC, iv).decrypt(data)
+        try: return AES.new(key, AES.MODE_CBC, iv).decrypt(data)
         except: return bytes(AESAlgorithmWrapper.aescbcdecrypt(*map(list, (data, key, iv))))
     '''aesgcmdecryptandverifybytes'''
     @staticmethod
     def aesgcmdecryptandverifybytes(data, key, tag, nonce):
-        try: return Cryptodome.AES.new(key, Cryptodome.AES.MODE_GCM, nonce).decrypt_and_verify(data, tag)
+        try: return AES.new(key, AES.MODE_GCM, nonce).decrypt_and_verify(data, tag)
         except: return bytes(AESAlgorithmWrapper.aesgcmdecryptandverify(*map(list, (data, key, tag, nonce))))

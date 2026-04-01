@@ -12,6 +12,7 @@ from pathlib import Path
 from .base import BaseVideoClient
 from ..utils import initcdm, closecdm
 from urllib.parse import urlparse, parse_qs
+from ..utils.cmd import DownloadWithNM3U8DLRECommand
 from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, resp2json, safeextractfromdict, VideoInfo
 
 
@@ -47,7 +48,7 @@ class PlusFIFAVideoClient(BaseVideoClient):
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
         if not self.belongto(url=url): return []
-        request_overrides, video_info, null_backup_title, raw_data = request_overrides or {}, VideoInfo(source=self.source, ext='mkv', download_with_ffmpeg=True, enable_nm3u8dlre=True, nm3u8dlre_settings={'key': None}), yieldtimerelatedtitle(self.source), {}
+        request_overrides, video_info, null_backup_title, raw_data = request_overrides or {}, VideoInfo(source=self.source, ext='mkv', download_with_ffmpeg=True, enable_nm3u8dlre=True), yieldtimerelatedtitle(self.source), {}
         if PlusFIFAVideoClient.DEVICE_ID is None: PlusFIFAVideoClient.DEVICE_ID = self._getdeviceid(request_overrides=request_overrides)
         # try parse
         try:
@@ -69,7 +70,7 @@ class PlusFIFAVideoClient(BaseVideoClient):
             raw_data['LICENSE_URL_RESPONSE'] = licence.content; video_info.update(dict(raw_data=raw_data))
             key = list(set(closecdm(cdm, cdm_session_id, licence.content)))[0]
             cover_url = safeextractfromdict(raw_data, ['CONTENTS_URL_RESPONSE', 'backdropUrl'], None)
-            video_info.update(dict(title=video_title, file_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info.ext}'), identifier=video_id, nm3u8dlre_settings={'key': key}, cover_url=cover_url))
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info.ext}'), identifier=video_id, nm3u8dlre_settings=DownloadWithNM3U8DLRECommand.addkeyafterretry(key_value=key), cover_url=cover_url))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
