@@ -12,6 +12,8 @@ videodl -i "https://v.qq.com/x/cover/mzc00200ss1zz0x/r4101dsk6f5.html?cut_vid=p4
 videodl -i "https://www.le.com/ptv/vplay/77916175.html#vid=77916175" -g -a IIILabVideoClient
 # IM1907VideoClient
 videodl -i "https://www.mgtv.com/b/823245/24067596.html" -g -a IM1907VideoClient
+# JXM3U8VideoClient
+videodl -i "https://www.iqiyi.com/v_xkt6z3z798.html" -g -a JXM3U8VideoClient
 # KedouVideoClient
 videodl -i "https://www.bilibili.com/bangumi/play/ep371068" -g -a KedouVideoClient
 # KuKuToolVideoClient
@@ -34,6 +36,8 @@ videodl -i "https://www.youtube.com/watch?v=lBNYpPmjH8M" -g -a PVVideoClient
 videodl -i "https://www.douyin.com/jingxuan/theater?modal_id=7580778868509933947" -g -a QingtingVideoClient
 # QZXDPToolsVideoClient
 videodl -i "https://www.huya.com/video/play/1090411452.html" -g -a QZXDPToolsVideoClient
+# QwkunsVideoClient
+videodl -i "https://www.dailymotion.com/video/x9h93bs" -g -a QwkunsVideoClient
 # RayVideoClient
 videodl -i "https://www.youtube.com/watch?v=a0AyNzV3yk8" -g -a RayVideoClient
 # SnapAnyVideoClient
@@ -42,10 +46,14 @@ videodl -i "https://www.youtube.com/watch?v=kSeevdvySHg" -g -a SnapAnyVideoClien
 videodl -i "https://www.youtube.com/watch?v=8EA71rLoY5s" -g -a SnapWCVideoClient
 # SENJiexiVideoClient
 videodl -i "https://v.pptv.com/show/31nibfeVLuiclc2kI.html" -g -a SENJiexiVideoClient
+# SpapiVideoClient
+videodl -i "https://www.bilibili.com/video/BV1D5Q6BdEAM/" -g -a SpapiVideoClient
 # VgetVideoClient
 videodl -i "https://x.com/iluminatibot/status/1996651394963734976" -g -a VgetVideoClient
 # VideoFKVideoClient
 videodl -i "https://www.facebook.com/facebook/videos/facebook-blue-never-looked-so-good-video-by-molchanovamuamusic-by-fausto-papetti/1185846950029459/" -g -a VideoFKVideoClient
+# WoofVideoClient
+videodl -i "https://www.instagram.com/reel/DWAGcteCVar/" -g -a WoofVideoClient
 # XiazaitoolVideoClient
 videodl -i "https://www.tiktok.com/@disneymusic/video/7589346194372037943?lang=en" -g -a XiazaitoolVideoClient
 # XMFlvVideoClient
