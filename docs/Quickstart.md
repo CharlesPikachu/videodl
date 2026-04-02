@@ -1,15 +1,85 @@
 # Quick Start
 
-After a successful installation, you can run the snippet below,
+This guide shows the fastest ways to use videodl from the command line and from Python.
 
-```python
-from videodl import videodl
+videodl supports two common workflows:
 
-video_client = videodl.VideoClient()
-video_client.startparseurlcmdui()
+1. Parse and download in one step
+2. Parse first, inspect the result, then download
+
+#### Quick Use Videodl from Command Line
+
+(1) Download a video from a URL
+
+```bash
+videodl -i "https://www.acfun.cn/v/ac36491489"
 ```
 
-Or just run `videodl -i "URL"` (maybe `videodl --help` to show usage information) from the terminal,
+If videodl can find a matching client, it will parse the URL and start downloading automatically.
+
+The demonstration is as follows,
+
+<div align="center">
+  <img src="https://github.com/CharlesPikachu/videodl/raw/master/docs/screenshot.gif" width="600"/>
+</div>
+<br />
+
+(2) Start interactive mode
+
+If `-i` is not provided, videodl starts in terminal mode:
+
+```bash
+videodl
+```
+
+Then enter a video URL when prompted. In interactive mode:
+
+- enter `q` to quit
+- enter `r` to restart the UI
+
+
+(3) Restrict parsing to specific clients
+
+If the URL belongs to a known platform, specifying the client is usually faster.
+
+```bash
+videodl -i "https://www.acfun.cn/v/ac36491489" -a "AcFunVideoClient"
+```
+
+You can also provide multiple clients:
+
+```bash
+videodl -i "URL" -a "AcFunVideoClient,BilibiliVideoClient"
+```
+
+(4) Use only common / generic parsers
+
+```bash
+videodl -i "URL" -g
+```
+
+This is equivalent to `apply_common_video_clients_only=True` in Python.
+
+(5) Set client config from the command line
+
+Some options are passed as JSON strings.
+
+Example: change the output directory for one client:
+
+```bash
+videodl -i "https://www.acfun.cn/v/ac36491489" \
+  -a "AcFunVideoClient" \
+  -c '{"AcFunVideoClient": {"work_dir": "downloads"}}'
+```
+
+Example: pass custom headers or proxies:
+
+```bash
+videodl -i "URL" \
+  -r '{"AcFunVideoClient": {"headers": {"User-Agent": "Mozilla/5.0"}, "proxies": {"http": "http://127.0.0.1:7890", "https": "http://127.0.0.1:7890"}}}'
+```
+
+(6) CLI options
 
 ```bash
 Usage: videodl [OPTIONS]
@@ -41,13 +111,6 @@ Options:
                                   Only apply common video clients.
   --help                          Show this message and exit.
 ```
-
-The demonstration is as follows,
-
-<div align="center">
-  <img src="https://github.com/CharlesPikachu/videodl/raw/master/docs/screenshot.gif" width="600"/>
-</div>
-<br />
 
 #### Recommended Parsing Commands for Common Streaming Platforms
 
@@ -130,169 +193,261 @@ The main difference typically comes down to the maximum resolution and overall o
 If video quality matters to you, feel free to try a few different parsers and compare the results. 
 And if you discover anything useful, you’re welcome to share your findings in the repo’s [Discussions section](https://github.com/CharlesPikachu/videodl/discussions).
 
-#### Parsing and Downloading as Separate Steps
+#### Quick Use Videodl from Python
 
-If you just want to parse a video link and retrieve information about the video, you can do it like this,
-
-```python
-from videodl import videodl
-
-# set allowed_video_sources to select the clients used for parsing the URL.
-video_client = videodl.VideoClient(allowed_video_sources=['YoukuVideoClient'])
-# parse from url
-video_infos = video_client.parsefromurl("https://v.youku.com/v_show/id_XNDUxOTc1NDg4MA==.html")
-# print parse results
-print(video_infos)
-```
-
-The output of this code looks like,
-
-```python
-[
-  {
-    "source": "YoukuVideoClient",
-    "raw_data": {},
-    "download_url": "http://pl-ali.youku.com/playlist/m3u8?vid=XNDUxOTc1NDg4MA%3D%3D&type=mp4hd2v3&ups_client_netip=725c13c1&utid=Mu3nIfZs0CsCAXJcE8F2Zepy&ccode=0564&psid=9f0ebc4bd03a063e9f543b0f1142b2c041346&duration=2205&expire=18000&drm_type=1&drm_device=0&drm_default=1&dyt=0&ups_ts=1767964466&onOff=0&encr=0&ups_key=c0632ee975ef2dacc2118d9130573bd5&ckt=3&m_onoff=0&pn=&drm_type_value=default&v=v1&bkp=0",
-    "title": "史家绝唱",
-    "file_path": "videodl_outputs\\YoukuVideoClient\\史家绝唱.m3u",
-    "ext": "m3u",
-    "err_msg": "",
-    "download_with_ffmpeg": true,
-    "download_with_aria2c": false,
-    "enable_nm3u8dlre": false,
-    "identifier": "XNDUxOTc1NDg4MA==",
-    "guess_video_ext_result": {
-      "ext": "m3u",
-      "sniffer": "requests.head",
-      "ok": true
-    },
-    "audio_download_url": "",
-    "guess_audio_ext_result": {},
-    "audio_ext": "m4a",
-    "audio_file_path": "",
-    "default_download_headers": null,
-    "default_download_cookies": null
-  }
-]
-```
-
-Then you can also call the video downloading function to download the video parsed by videodl. The code is as follows,
+(1) Create a `VideoClient`
 
 ```python
 from videodl import videodl
 
-video_client = videodl.VideoClient(allowed_video_sources=['YoukuVideoClient'])
-video_infos = video_client.parsefromurl("https://v.youku.com/v_show/id_XNDUxOTc1NDg4MA==.html")
-video_client.download(video_infos=video_infos)
+video_client = videodl.VideoClient()
 ```
 
-#### Parse and Download Speedup
+This creates a high-level client that can:
 
-To reduce parsing time, you can specify which parser to use for the video you’re downloading, *i.e.*,
+- choose a suitable parser
+- parse a URL into one or more `VideoInfo` objects
+- download the parsed videos
 
-```bash
-videodl -i "BILIBILI VIDEO URL" -a BilibiliVideoClient
-```
-
-is better than,
-
-```bash
-videodl -i "BILIBILI VIDEO URL"
-```
-
-If you know the video URL you want to parse is not covered by the platform-specific clients and you’d like to use a generic parser directly, set `apply_common_video_clients_only` to `True`.
-For example, you can run `videodl -i "URL" -g` in the terminal, or do the same in code as shown below,
-
-```python
-from videodl import videodl
-
-video_client = videodl.VideoClient(apply_common_video_clients_only=True)
-video_client.startparseurlcmdui()
-```
-
-Better yet, specify the generic parser you want to use. For example, to download a Douyin/TikTok video, run,
-
-```bash
-videodl -i "https://www.douyin.com/jingxuan?modal_id=7578412593719577899" -g -a "KedouVideoClient"
-videodl -i "https://www.douyin.com/jingxuan?modal_id=7580605435187596559" -g -a "SnapWCVideoClient"
-videodl -i "https://www.tiktok.com/@mustsharenews/video/7581408863128161552?lang=en" -g -a "SnapWCVideoClient"
-```
-
-If you want to use aria2c to accelerate the download of non-HLS/m3u8 streams, such as mp4 files, you can do the following,
-
-```python
-from videodl import videodl
-
-video_client = videodl.VideoClient(allowed_video_sources=['BilibiliVideoClient'])
-video_infos = video_client.parsefromurl("https://www.bilibili.com/bangumi/play/ss26801")
-for v in video_infos: v['download_with_aria2c'] = True
-video_client.download(video_infos=video_infos)
-```
-
-If you want to use N_m3u8DL-RE to speed up the download of HLS/m3u8 streams, you can do the following 
-(*starting from videofetch 0.4.0, as long as the environment variables include N_m3u8DL-RE, the program will automatically invoke N_m3u8DL-RE to accelerate video downloads.*),
+(2) Parse and download in one step
 
 ```python
 from videodl import videodl
 
 video_client = videodl.VideoClient()
 video_infos = video_client.parsefromurl("https://www.acfun.cn/v/ac36491489")
-for v in video_infos: v['enable_nm3u8dlre'] = True
-video_client.download(video_infos=video_infos)
+video_client.download(video_infos)
 ```
 
-#### VIP / Premium Video Parsing
-
-For VIP (premium) video links, you have two options to parse and download the video. 
-
-The first option is to use a third-party parsing service. 
-For example, for an IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL (Movies and TV shows), you can run the following command,
-
-```bash
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a IM1907VideoClient (Recommended, 1080p)
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a SENJiexiVideoClient (Recommended)
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a JXM3U8VideoClient
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a XMFlvVideoClient
-videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a GVVIPVideoClient
-videodl -i "YOUKU/TENCENT" -g -a LvlongVideoClient
-```
-
-Of course, it’s worth noting that this approach may come with some drawbacks, for example, some third-party parsing services may occasionally insert a few seconds of unwanted ads into the downloaded video.
-These ads are not added by videodl, they are inserted by the online parsing website. 
-We recommend using ffmpeg to trim out the ad segments ([Example Script](https://github.com/CharlesPikachu/videodl/blob/master/scripts/ffmpeg_segment_remover.py)).
-
-The second option is to parse and download VIP (premium) videos directly via the platform’s native APIs (you’ll need to provide cookies from an account logged in with an active membership on that platform),
+(3) Start interactive mode from Python
 
 ```python
 from videodl import videodl
 
-your_vip_cookies_with_str_or_dict_format = ""
-init_video_clients_cfg = dict()
-init_video_clients_cfg['IQiyiVideoClient'] = {'default_parse_cookies': your_vip_cookies_with_str_or_dict_format}
-video_client = videodl.VideoClient(init_video_clients_cfg=init_video_clients_cfg, allowed_video_sources=['IQiyiVideoClient'])
+video_client = videodl.VideoClient()
 video_client.startparseurlcmdui()
 ```
 
-Alternatively, you can run the following command directly in the terminal,
-
-```bash
-videodl -i "URL" -c "{'IQiyiVideoClient': {'default_parse_cookies': your_vip_cookies_with_str_or_dict_format}}" -a IQiyiVideoClient
-```
-
-If the code above can successfully extract the VIP video URL but the download fails, try also passing your membership cookies during the download step,
+(4) Use only selected clients
 
 ```python
 from videodl import videodl
 
-your_vip_cookies_with_str_or_dict_format = ""
-init_video_clients_cfg = dict()
-init_video_clients_cfg['TencentVideoClient'] = {'default_parse_cookies': your_vip_cookies_with_str_or_dict_format, 'default_download_cookies': your_vip_cookies_with_str_or_dict_format}
-video_client = videodl.VideoClient(init_video_clients_cfg=init_video_clients_cfg, allowed_video_sources=['TencentVideoClient'])
-video_client.startparseurlcmdui()
+video_client = videodl.VideoClient(
+    allowed_video_sources=["AcFunVideoClient"]
+)
+video_infos = video_client.parsefromurl("https://www.acfun.cn/v/ac36491489")
+video_client.download(video_infos)
 ```
 
-Alternatively, you can run the following command directly in the terminal,
+(5) Use only common / generic clients
+
+```python
+from videodl import videodl
+
+video_client = videodl.VideoClient(apply_common_video_clients_only=True)
+video_infos = video_client.parsefromurl("URL")
+video_client.download(video_infos)
+```
+
+#### Parse First, Then Inspect the Result
+
+Sometimes it is useful to inspect the parsed result before downloading.
+
+```python
+from videodl import videodl
+
+video_client = videodl.VideoClient(allowed_video_sources=["AcFunVideoClient"])
+video_infos = video_client.parsefromurl("https://www.acfun.cn/v/ac36491489")
+
+for info in video_infos:
+    print(info["source"])
+    print(info["title"])
+    print(info["download_url"])
+    print(info["save_path"])
+    print(info["ext"])
+    print(info["err_msg"])
+```
+
+A parsed item is a `VideoInfo` object. It behaves like both a dataclass object and a dictionary.
+
+For example, both styles work:
+
+```python
+info = video_infos[0]
+print(info.title)
+print(info["title"])
+```
+
+Common fields include:
+
+- `source`: which client produced this result
+- `title`: video title
+- `download_url`: resolved media URL
+- `save_path`: output file path
+- `ext`: file extension
+- `err_msg`: parsing error, if any
+- `download_with_ffmpeg`: whether ffmpeg should be used
+- `download_with_aria2c`: whether aria2c should be used
+- `enable_nm3u8dlre`: whether N_m3u8DL-RE should be used
+
+#### Download a Parsed Result Later
+
+Once `video_infos` is ready, download it like this:
+
+```python
+video_client.download(video_infos)
+```
+
+You can also modify the parsed result before downloading.
+
+Example: enable `aria2c` for a direct file download:
+
+```python
+for info in video_infos:
+    info["download_with_aria2c"] = True
+
+video_client.download(video_infos)
+```
+
+Example: enable `N_m3u8DL-RE` for HLS / m3u8 downloads:
+
+```python
+for info in video_infos:
+    info["enable_nm3u8dlre"] = True
+
+video_client.download(video_infos)
+```
+
+Example: force `ffmpeg` download:
+
+```python
+for info in video_infos:
+    info["download_with_ffmpeg"] = True
+
+video_client.download(video_infos)
+```
+
+#### Common Configuration Examples
+
+(1) Change the output directory
+
+```python
+from videodl import videodl
+
+video_client = videodl.VideoClient(
+    init_video_clients_cfg={
+        "AcFunVideoClient": {
+            "work_dir": "downloads"
+        }
+    },
+    allowed_video_sources=["AcFunVideoClient"]
+)
+```
+
+(2) Pass cookies for parsing or downloading
+
+```python
+from videodl import videodl
+
+cookies = "your cookies here"
+
+video_client = videodl.VideoClient(
+    init_video_clients_cfg={
+        "SomeVideoClient": {
+            "default_parse_cookies": cookies,
+            "default_download_cookies": cookies,
+        }
+    },
+    allowed_video_sources=["SomeVideoClient"]
+)
+```
+
+(3) Pass custom request options
+
+`requests_overrides` is useful when a client needs extra headers, cookies, timeout settings, or proxies.
+
+```python
+from videodl import videodl
+
+video_client = videodl.VideoClient(
+    requests_overrides={
+        "AcFunVideoClient": {
+            "headers": {
+                "User-Agent": "Mozilla/5.0"
+            },
+            "proxies": {
+                "http": "http://127.0.0.1:7890",
+                "https": "http://127.0.0.1:7890"
+            }
+        }
+    },
+    allowed_video_sources=["AcFunVideoClient"]
+)
+```
+
+(4) Set download threads per client
+
+```python
+from videodl import videodl
+
+video_client = videodl.VideoClient(
+    clients_threadings={
+        "AcFunVideoClient": 8
+    },
+    allowed_video_sources=["AcFunVideoClient"]
+)
+```
+
+#### Direct Media URLs
+
+If the input URL is already a direct media link, videodl will try to handle it directly without needing a platform-specific parser.
+
+```python
+from videodl import videodl
+
+video_client = videodl.VideoClient()
+video_infos = video_client.parsefromurl("https://example.com/video.mp4")
+video_client.download(video_infos)
+```
+
+#### Tips
+
+(1) Prefer specific clients when possible
+
+This is usually faster:
+
+```python
+video_client = videodl.VideoClient(allowed_video_sources=["AcFunVideoClient"])
+```
+
+than searching through all supported clients.
+
+(2) Generic parsers are useful when platform-specific parsing does not work
+
+Use:
+
+```python
+videodl.VideoClient(apply_common_video_clients_only=True)
+```
+
+or on the CLI:
 
 ```bash
-videodl -i "URL" -c "{'TencentVideoClient': {'default_parse_cookies': your_vip_cookies_with_str_or_dict_format, 'default_download_cookies': your_vip_cookies_with_str_or_dict_format}}" -a TencentVideoClient
+videodl -g -i "URL"
 ```
+
+(3) Some download accelerators require external tools
+
+Depending on how a video is parsed, videodl may work with:
+
+- `ffmpeg`
+- `aria2c`
+- `N_m3u8DL-RE`
+
+Make sure they are installed and available in your environment before enabling them.
+
+
+(4) A parse result may contain multiple videos
+
+Some URLs may return more than one `VideoInfo`, so always treat the return value of `parsefromurl()` as a list.
