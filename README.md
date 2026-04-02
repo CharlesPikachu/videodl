@@ -58,7 +58,7 @@
 
 # 🆕 What's New
 
-- 2026-04-02: Released videofetch v0.8.0 - refactored the base video client class to make the video downloading logic clearer and more extensible; refactored the video info class to provide more comprehensive functionality and more IDE-friendly hints; fixed bugs and invalidation issues in multiple generic parsers/downloaders and specialized parsers/downloaders.
+- 2026-04-02: Released videofetch v0.8.0 - refactored the base video client class to make the video downloading logic clearer and more extensible; refactored the video info class to provide more comprehensive functionality and more IDE-friendly hints; fixed bugs and invalidation issues in multiple supported video clients.
 - 2026-03-27: Released videofetch v0.7.2 - added a new general-purpose video parsing interface; added support for video parsing and downloading from the player.pl site; fixed some potential bugs.
 - 2026-03-25: Released videofetch v0.7.1 - added a universal video parsing API; enhanced the robustness of certain code segments; more comprehensive and flexible requirements.
 
