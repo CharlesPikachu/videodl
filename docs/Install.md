@@ -57,7 +57,7 @@ Specifically, these CLI tools include,
   ```bash
   mp4decrypt --version
   ```
-  If it returns the version information successfully, Bento4 is installed correctly, otherwise the installation has failed or the tool is not in your PATH.
+  If it returns the version information successfully, Bento4 is installed correctly, otherwise the installation has failed or the tool is not in your `PATH`.
 
 - **[Node.js](https://nodejs.org/en)**: Currently, Node.js is only used in `YouTubeVideoClient`, `CCTVVideoClient` and `TencentVideoClient` to execute certain JavaScript code for video parsing. 
   Therefore, if you don’t need to use `YouTubeVideoClient`, `CCTVVideoClient` and `TencentVideoClient`, you can safely skip installing this CLI tool.

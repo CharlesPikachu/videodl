@@ -58,9 +58,9 @@
 
 # 🆕 What's New
 
+- 2026-04-02: Released videofetch v0.8.0 - refactored the base video client class to make the video downloading logic clearer and more extensible; refactored the video info class to provide more comprehensive functionality and more IDE-friendly hints; fixed bugs and invalidation issues in multiple generic parsers/downloaders and specialized parsers/downloaders.
 - 2026-03-27: Released videofetch v0.7.2 - added a new general-purpose video parsing interface; added support for video parsing and downloading from the player.pl site; fixed some potential bugs.
 - 2026-03-25: Released videofetch v0.7.1 - added a universal video parsing API; enhanced the robustness of certain code segments; more comprehensive and flexible requirements.
-- 2026-03-23: Released videofetch v0.7.0 - removed Playwright-related dependencies and replaced them with DrissionPage; improved support for parsing and downloading videos from platforms such as Xinpianchang and Kuaishou; added multiple general-purpose video parsers and downloaders; fixed several known bugs.
 
 
 # 🚀 Introduction
@@ -236,7 +236,7 @@ Specifically, these CLI tools include,
   ```bash
   mp4decrypt --version
   ```
-  If it returns the version information successfully, Bento4 is installed correctly, otherwise the installation has failed or the tool is not in your PATH.
+  If it returns the version information successfully, Bento4 is installed correctly, otherwise the installation has failed or the tool is not in your `PATH`.
 
 - **[Node.js](https://nodejs.org/en)**: Currently, Node.js is only used in `YouTubeVideoClient`, `CCTVVideoClient` and `TencentVideoClient` to execute certain JavaScript code for video parsing. 
   Therefore, if you don’t need to use `YouTubeVideoClient`, `CCTVVideoClient` and `TencentVideoClient`, you can safely skip installing this CLI tool.
