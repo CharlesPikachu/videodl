@@ -31,8 +31,7 @@ Specifically, these CLI tools include,
   ```
   If the installation is correct, you should see detailed version information instead of a "command not found" or "'ffmpeg' is not recognized" error.
 
-- **[N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE)**: 
-  FFmpeg is a general-purpose media tool that can download standard HLS/m3u8 streams, but it assumes that the playlist and segment URLs strictly follow the protocol. 
+- **[N_m3u8DL-RE](https://github.com/nilaoda/N_m3u8DL-RE)**: FFmpeg is a general-purpose media tool that can download standard HLS/m3u8 streams, but it assumes that the playlist and segment URLs strictly follow the protocol. 
   N_m3u8DL-RE is a specialized m3u8 downloader that adds extensive logic for handling encryption, anti-leech headers, redirects, and malformed playlists, so it can capture many "protected" or non-standard videos that FFmpeg fails on. 
   In many cases it’s also faster, because N_m3u8DL-RE can download HLS segments in parallel with optimized retries/merging, while FFmpeg typically pulls segments sequentially by default.
   ❗ **Therefore, we recommend that all videodl users install N_m3u8DL-RE to ensure videodl delivers the best possible performance.** ❗
@@ -51,6 +50,14 @@ Specifically, these CLI tools include,
   ```
   If N_m3u8DL-RE is installed correctly, `N_m3u8DL-RE --version` will print the N_m3u8DL-RE version (*e.g.*, `0.5.1+c1f6db5639397dde362c31b31eebd88c796c90da`).
   If you see a similar `command not found` / `not recognized` error, N_m3u8DL-RE is not installed correctly or not available on your `PATH`.
+
+- **[Bento4](https://www.bento4.com/)**: Bento4 is an open-source MP4/DASH/HLS/CMAF toolkit, and in the N_m3u8DL-RE ecosystem it is mainly related as the source of auxiliary utilities such as "mp4decrypt" for handling certain packaged media workflows.
+  Therefore, when using N_m3u8DL-RE to handle some packaged media workflows that involve encryption (*e.g.*, `TBNUKVideoClient`, `PlayerPLVideoClient` and `PlusFIFAVideoClient`), you need to make sure the Bento4 tools are available in your runtime environment.
+  A quick way to verify Bento4 is that you should be able to run
+  ```bash
+  mp4decrypt --version
+  ```
+  If it returns the version information successfully, Bento4 is installed correctly, otherwise the installation has failed or the tool is not in your PATH.
 
 - **[Node.js](https://nodejs.org/en)**: Currently, Node.js is only used in `YouTubeVideoClient`, `CCTVVideoClient` and `TencentVideoClient` to execute certain JavaScript code for video parsing. 
   Therefore, if you don’t need to use `YouTubeVideoClient`, `CCTVVideoClient` and `TencentVideoClient`, you can safely skip installing this CLI tool.
