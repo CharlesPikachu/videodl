@@ -33,7 +33,7 @@ VideoClient(
 
 Arguments:
 
-- **`allowed_video_sources`**:
+- **`allowed_video_sources`**
   
   A list of enabled client names.
   - If this is `None` or empty, `VideoClient` enables all registered clients.
@@ -44,7 +44,7 @@ Arguments:
   allowed_video_sources = ["AcFunVideoClient"]
   ```
 
-- **`init_video_clients_cfg`**:
+- **`init_video_clients_cfg`**
 
   Per-client initialization settings.
   - The key is the client name.
@@ -79,7 +79,7 @@ Arguments:
   }
   ```
 
-- **`clients_threadings`**:
+- **`clients_threadings`**
 
   Per-client download thread counts.
   - The key is the client name.
@@ -93,7 +93,7 @@ Arguments:
   }
   ```
 
-- **`requests_overrides`**:
+- **`requests_overrides`**
   
   Per-client request settings used during parsing and downloading.
   
@@ -112,7 +112,7 @@ Arguments:
   }
   ```
 
-- **`apply_common_video_clients_only`**:
+- **`apply_common_video_clients_only`**
   
   Whether to use only the generic parsers.
   - `False`: try platform-specific clients first, then generic parsers if needed.
@@ -273,7 +273,7 @@ BaseVideoClient(
 
 Arguments:
 
-- **`auto_set_proxies`**:
+- **`auto_set_proxies`**
   
   Automatically fetch and apply proxies for requests.
   Use this when a source frequently blocks direct requests.
@@ -325,17 +325,17 @@ Arguments:
 
   Optional settings for the proxy client used when `auto_set_proxies=True`.
 
-- **default_search_cookies**
+- **`default_search_cookies`**
 
   Default cookies used for search.
   This is helpful for sites that require login cookies or other session information.
 
-- **default_download_cookies**
+- **`default_download_cookies`**
 
   Default cookies used for download.
   This is helpful for sites that require login cookies or other session information.
 
-- **default_parse_cookies**
+- **`default_parse_cookies`**
 
   Default cookies used for parse.
   This is helpful for sites that require login cookies or other session information.
