@@ -185,8 +185,8 @@ class MergeVideoAudioFFmpegCommand(FFmpegCommandFactory):
         return builder.tolist()
 
 
-'''DownloadFromLocalFileFFmpegCommand'''
-class DownloadFromLocalFileFFmpegCommand(FFmpegCommandFactory):
+'''DownloadFromLocalTxtFileFFmpegCommand'''
+class DownloadFromLocalTxtFileFFmpegCommand(FFmpegCommandFactory):
     '''build'''
     def build(self, video_info: VideoInfo, request_overrides: Optional[Mapping[str, Any]] = None, mods: Optional[ModType] = None) -> list[str]:
         request_overrides, download_url, output_file = request_overrides or {}, video_info.download_url, video_info.save_path
@@ -198,8 +198,8 @@ class DownloadFromLocalFileFFmpegCommand(FFmpegCommandFactory):
         return builder.tolist()
 
 
-'''DownloadFromUrlFFmpegCommand'''
-class DownloadFromUrlFFmpegCommand(FFmpegCommandFactory):
+'''DownloadWithFFmpegCommand'''
+class DownloadWithFFmpegCommand(FFmpegCommandFactory):
     '''build'''
     def build(self, video_info: VideoInfo, header_opt: str, audio_header_opt: str, request_overrides: Optional[Mapping[str, Any]] = None, mods: Optional[ModType] = None) -> list[str]:
         request_overrides, download_url, audio_download_url, output_file = request_overrides or {}, video_info.download_url, video_info.audio_download_url, video_info.save_path

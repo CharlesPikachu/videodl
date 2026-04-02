@@ -26,7 +26,7 @@ from pathvalidate import sanitize_filepath, sanitize_filename
 from ..utils.domains import obtainhostname, hostmatchessuffix
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from rich.progress import Progress, TextColumn, BarColumn, DownloadColumn, TransferSpeedColumn, TimeRemainingColumn, TimeElapsedColumn, ProgressColumn, Task
-from ..utils.cmd import MergeCCTVTsFilesFFmpegCommand, DownloadFromLocalFileFFmpegCommand, DownloadFromUrlFFmpegCommand, DownloadWithNM3U8DLRECommand, DownloadWithAria2cCommand, MergeVideoAudioFFmpegCommand
+from ..utils.cmd import MergeCCTVTsFilesFFmpegCommand, DownloadFromLocalTxtFileFFmpegCommand, DownloadWithFFmpegCommand, DownloadWithNM3U8DLRECommand, DownloadWithAria2cCommand, MergeVideoAudioFFmpegCommand
 from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, cookies2dict, generateuniquetmppath, shortenpathsinvideoinfos, optionalimport, optionalimportfrom, cookies2string, LoggerHandle, VideoInfo, FileTypeSniffer
 
 
@@ -180,9 +180,9 @@ class BaseVideoClient():
         except subprocess.CalledProcessError as err: self.logger_handle.error(f'{self.source}._downloadfromcctv >>> {video_info.download_url} (Error: {err})', disable_print=self.disable_print)
         # return
         return downloaded_video_infos
-    '''_downloadfromlocalfilewithffmpeg'''
+    '''_downloadfromlocaltxtfilewithffmpeg'''
     @usedownloadheaderscookies
-    def _downloadfromlocalfilewithffmpeg(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None) -> list[VideoInfo]:
+    def _downloadfromlocaltxtfilewithffmpeg(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None) -> list[VideoInfo]:
         # init
         if not video_info.with_valid_download_url: return downloaded_video_infos
         (video_info := copy.deepcopy(video_info)).save_path = self._ensureuniquefilepath(video_info.save_path)
@@ -201,14 +201,14 @@ class BaseVideoClient():
         original_file_path = video_info.download_url; video_info.download_url = video_info.download_url[:-4] + "_ffmpeg.txt"
         with open(video_info.download_url, "w", encoding="utf-8", newline="\n") as fp: fp.write("ffconcat version 1.0\n" + "".join(f"file {ffconcat_quote_func(download_url)}\n" for download_url in download_urls))
         # start to download
-        cmd = DownloadFromLocalFileFFmpegCommand().build(video_info=video_info, request_overrides=request_overrides, mods=video_info.ffmpeg_settings)
+        cmd = DownloadFromLocalTxtFileFFmpegCommand().build(video_info=video_info, request_overrides=request_overrides, mods=video_info.ffmpeg_settings)
         try: subprocess.run(cmd, check=True, capture_output=(True if self.disable_print else False), text=True, encoding='utf-8', errors='ignore'); downloaded_video_infos.append(video_info); os.path.exists(video_info.download_url) and os.remove(video_info.download_url); os.path.exists(original_file_path) and os.remove(original_file_path)
-        except subprocess.CalledProcessError as err: self.logger_handle.error(f'{self.source}._downloadfromlocalfilewithffmpeg >>> {video_info.download_url} (Error: {err})', disable_print=self.disable_print)
+        except subprocess.CalledProcessError as err: self.logger_handle.error(f'{self.source}._downloadfromlocaltxtfilewithffmpeg >>> {video_info.download_url} (Error: {err})', disable_print=self.disable_print)
         # return
         return downloaded_video_infos
-    '''_downloadfromurlwithffmpeg'''
+    '''_downloadwithffmpeg'''
     @usedownloadheaderscookies
-    def _downloadfromurlwithffmpeg(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None) -> list[VideoInfo]:
+    def _downloadwithffmpeg(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None) -> list[VideoInfo]:
         # init
         if not video_info.with_valid_download_url: return downloaded_video_infos
         (video_info := copy.deepcopy(video_info)).save_path = self._ensureuniquefilepath(video_info.save_path)
@@ -224,9 +224,9 @@ class BaseVideoClient():
         build_ffmpeg_headers_option_func = lambda headers: ("" if not headers else "\r\n".join(f"{k}: {v}" for k, v in headers.items() if k is not None and v is not None))
         # start to download
         header_opt, audio_header_opt = build_ffmpeg_headers_option_func(default_headers), build_ffmpeg_headers_option_func(audio_default_headers)
-        cmd = DownloadFromUrlFFmpegCommand().build(video_info=video_info, header_opt=header_opt, audio_header_opt=audio_header_opt, request_overrides=request_overrides, mods=video_info.ffmpeg_settings)
+        cmd = DownloadWithFFmpegCommand().build(video_info=video_info, header_opt=header_opt, audio_header_opt=audio_header_opt, request_overrides=request_overrides, mods=video_info.ffmpeg_settings)
         try: subprocess.run(cmd, check=True, capture_output=(True if self.disable_print else False), text=True, encoding='utf-8', errors='ignore'); downloaded_video_infos.append(video_info)
-        except subprocess.CalledProcessError as err: self.logger_handle.error(f'{self.source}._downloadfromurlwithffmpeg >>> {video_info.download_url} (Error: {err})', disable_print=self.disable_print)
+        except subprocess.CalledProcessError as err: self.logger_handle.error(f'{self.source}._downloadwithffmpeg >>> {video_info.download_url} (Error: {err})', disable_print=self.disable_print)
         # return
         return downloaded_video_infos
     '''_downloadwithnm3u8dlre'''
@@ -300,31 +300,30 @@ class BaseVideoClient():
         if not video_info.with_valid_download_url: return downloaded_video_infos
         if video_info.ext in {'m4s'}: video_info.update(dict(ext='mp4', save_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.mp4')))
         if video_info.audio_ext in {'m4s'}: video_info.update(dict(audio_ext='mp4', audio_save_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.audio.m4a')))
-        # YouTubeVideoClient
+        judge_local_file_ext_func = lambda p: Path(str(p)).suffix[1:].lower() if p else ""
+        # youtube video client
         if video_info.source in {'YouTubeVideoClient'}: return self._downloadfromyoutube(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
-        # CCTVVideoClient
+        # cctv video client
         if video_info.source in {'CCTVVideoClient'} and video_info.get('hls_key') in {'hls_h5e_url'}: return self._downloadfromcctv(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
-        # All in one downloader
+        # all in one downloader for downlowning both video and audio
         if video_info.with_valid_audio_download_url: return self._downloadwithnaiveallinone(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
-        # FFmpeg downloader
+        # ffmpeg downloader for dealing with HLS urls / files
         valid_hls_exts_for_auto_set_ffpmeg, cannot_use_nm3u8dlre_sources = {'m3u8', 'm3u', 'mpd'}, {'TedVideoClient', 'XinpianchangVideoClient'}
         if any((video_info.ext.lower() in valid_hls_exts_for_auto_set_ffpmeg, FileTypeSniffer.pickextfromurl(video_info.download_url) in valid_hls_exts_for_auto_set_ffpmeg)): ext = video_info.ext if video_info.ext in {'mkv'} else 'mp4'; video_info.update(dict(ext=ext, download_with_ffmpeg=True, save_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.{ext}')))
         no_nm3u8dlre_warnings = ('"enable_nm3u8dlre" has been set to True, but N_m3u8DL-RE was not found in the environment variables.' 'Please visit https://github.com/nilaoda/N_m3u8DL-RE to download and install the version of N_m3u8DL-RE that matches your system,' 'and then add it to your environment variables. Now, we will switch "enable_nm3u8dlre" to False and try downloading again.')
-        # --from url
-        if video_info.download_with_ffmpeg and (not os.path.exists(video_info.download_url)):
+        # --from url or local hls files except for .txt file
+        if video_info.download_with_ffmpeg and ((not os.path.exists(video_info.download_url)) or (os.path.exists(video_info.download_url) and (judge_local_file_ext_func(video_info.download_url) not in {'txt'}))):
             video_info.enable_nm3u8dlre = True if (shutil.which('N_m3u8DL-RE') and (video_info.get('enable_nm3u8dlre') is None) and (video_info.source not in cannot_use_nm3u8dlre_sources)) else video_info.enable_nm3u8dlre
             if video_info.enable_nm3u8dlre and (not shutil.which('N_m3u8DL-RE')): video_info.enable_nm3u8dlre = False; self.logger_handle.warning(f'{self.source}._download >>> {video_info.download_url} (Warning: {no_nm3u8dlre_warnings})', disable_print=self.disable_print)
             ext = video_info.ext if video_info.ext in {'mkv'} else 'mp4'; video_info.update(dict(ext=ext, download_with_ffmpeg=True, save_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.{ext}')))
-            return (self._downloadfromurlwithffmpeg(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress) if (not video_info.enable_nm3u8dlre) else self._downloadwithnm3u8dlre(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress))
-        # --from local file
-        if video_info.download_with_ffmpeg and os.path.exists(video_info.download_url):
-            video_info.enable_nm3u8dlre = True if (shutil.which('N_m3u8DL-RE') and (video_info.get('enable_nm3u8dlre') is None) and (video_info.source not in cannot_use_nm3u8dlre_sources)) else video_info.enable_nm3u8dlre
-            if video_info.enable_nm3u8dlre and (not shutil.which('N_m3u8DL-RE')): video_info.enable_nm3u8dlre = False; self.logger_handle.warning(f'{self.source}._download >>> {video_info.download_url} (Warning: {no_nm3u8dlre_warnings})', disable_print=self.disable_print)
+            return (self._downloadwithffmpeg(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress) if (not video_info.enable_nm3u8dlre) else self._downloadwithnm3u8dlre(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress))
+        # --from local .txt file
+        elif video_info.download_with_ffmpeg and os.path.exists(video_info.download_url) and (judge_local_file_ext_func(video_info.download_url) in {'txt'}):
             ext = video_info.ext if video_info.ext in {'mkv'} else 'mp4'; video_info.update(dict(ext=ext, download_with_ffmpeg=True, save_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.{ext}')))
-            return (self._downloadfromurlwithffmpeg(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress) if (not video_info.enable_nm3u8dlre) else self._downloadwithnm3u8dlre(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress))
-        # Aria2c downloader
+            return self._downloadfromlocaltxtfilewithffmpeg(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
+        # aria2c downloader for speeding up mp4 like files download
         if video_info.download_with_aria2c: return self._downloadwitharia2c(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
-        # Naive downloader
+        # naive implementition of file downloader
         (video_info := copy.deepcopy(video_info)).save_path = self._ensureuniquefilepath(video_info.save_path)
         request_overrides = dict(request_overrides or {}); touchdir(os.path.dirname(video_info.save_path))
         if not request_overrides.get('proxies'): request_overrides['proxies'] = self._autosetproxies()

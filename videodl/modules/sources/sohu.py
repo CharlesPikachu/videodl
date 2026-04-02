@@ -59,10 +59,8 @@ class SohuVideoClient(BaseVideoClient):
             if len(download_urls) == 1:
                 video_info.update(dict(download_url=download_urls[0]))
             else:
-                ffmpeg_target_file_path = os.path.join(self.work_dir, self.source, f'{vid}.txt')
-                touchdir(os.path.dirname(ffmpeg_target_file_path))
-                with open(ffmpeg_target_file_path, "w", encoding="utf-8") as fp:
-                    for url in download_urls: fp.write(f"{url}\n")
+                touchdir(os.path.dirname((ffmpeg_target_file_path := os.path.join(self.work_dir, self.source, f'{vid}.txt'))))
+                with open(ffmpeg_target_file_path, "w", encoding="utf-8") as fp: fp.writelines(f"{url}\n" for url in download_urls)
                 video_info.update(dict(download_url=ffmpeg_target_file_path, download_with_ffmpeg=True))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithmytv >>> {url} (Error: {err})')))
@@ -111,10 +109,8 @@ class SohuVideoClient(BaseVideoClient):
             if len(download_urls) == 1:
                 video_info.update(dict(download_url=download_urls[0]))
             else:
-                ffmpeg_target_file_path = os.path.join(self.work_dir, self.source, f'{vid}.txt')
-                touchdir(os.path.dirname(ffmpeg_target_file_path))
-                with open(ffmpeg_target_file_path, "w", encoding="utf-8") as fp:
-                    for url in download_urls: fp.write(f"{url}\n")
+                touchdir(os.path.dirname((ffmpeg_target_file_path := os.path.join(self.work_dir, self.source, f'{vid}.txt'))))
+                with open(ffmpeg_target_file_path, "w", encoding="utf-8") as fp: fp.writelines(f"{url}\n" for url in download_urls)
                 video_info.update(dict(download_url=ffmpeg_target_file_path, download_with_ffmpeg=True))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithhotvrs >>> {url} (Error: {err})')))
