@@ -38,7 +38,7 @@ class WittyTVVideoClient(BaseVideoClient):
         self._initsession()
     '''_getbearertoken'''
     def _getbearertoken(self, request_overrides: dict = None):
-        request_overrides = request_overrides or {}
+        request_overrides = dict(request_overrides or {})
         (resp := self.post(WittyTVVideoClient.LOGIN_URL, json={'client_id': 'client_id', 'appName': 'embed//mediasetplay-embed'}, **request_overrides)).raise_for_status()
         device_id = resp2json(resp=resp)["response"]["beToken"]
         return device_id

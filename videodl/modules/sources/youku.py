@@ -34,7 +34,7 @@ class YoukuVideoClient(BaseVideoClient):
         return {'3gp': 'h6', '3gphd': 'h5', 'flv': 'h4', 'flvhd': 'h4', 'mp4': 'h3', 'mp4hd': 'h3', 'mp4hd2': 'h4', 'mp4hd3': 'h4', 'hd2': 'h2', 'hd3': 'h1'}.get(fm)
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = None):
+    def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
         if not self.belongto(url=url): return []
         request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source, download_with_ffmpeg=True), yieldtimerelatedtitle(self.source)
@@ -53,7 +53,7 @@ class YoukuVideoClient(BaseVideoClient):
             video_info.update(dict(download_url=(download_url := video_urls_sorted[0]['url'])))
             video_title = legalizestring(safeextractfromdict(video_data, ['video', 'title'], null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             cover_url = safeextractfromdict(raw_data, ['data', 'video', 'logo'], None) or safeextractfromdict(raw_data, ['data', 'preview', 'thumb_hd', 0], None)
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:

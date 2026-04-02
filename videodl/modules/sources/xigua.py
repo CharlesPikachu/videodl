@@ -25,7 +25,7 @@ class XiguaVideoClient(BaseVideoClient):
         self._initsession()
     '''_parsefromurlwithmixiguadouyin'''
     @useparseheaderscookies
-    def _parsefromurlwithmixiguadouyin(self, url: str, request_overrides: dict = None):
+    def _parsefromurlwithmixiguadouyin(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
         if not self.belongto(url=url): return []
         request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
@@ -38,7 +38,7 @@ class XiguaVideoClient(BaseVideoClient):
             video_info.update(dict(download_url=(download_url := raw_data["loaderData"]["video_(id)/page"]['videoInfoRes']["item_list"][0]["video"]["play_addr"]["url_list"][0])))
             video_title = legalizestring(safeextractfromdict(raw_data["loaderData"]["video_(id)/page"]['videoInfoRes']["item_list"][0], ['desc'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             cover_url = safeextractfromdict(raw_data, ['loaderData', 'video_(id)/page', 'videoInfoRes', 'item_list', 0, 'video', 'cover', 'url_list', 0], None)
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
@@ -51,7 +51,7 @@ class XiguaVideoClient(BaseVideoClient):
     def parsefromurl(self, url: str, request_overrides: dict = None):
         for parser in [self._parsefromurlwithmixiguadouyin]:
             video_infos = parser(url, request_overrides)
-            if any(((info.get("download_url") or "").upper() not in ("", "NULL")) for info in (video_infos or [])): break
+            if any(video_info.with_valid_download_url for video_info in (video_infos or [])): break
         return video_infos
     '''belongto'''
     @staticmethod

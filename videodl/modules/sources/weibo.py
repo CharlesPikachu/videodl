@@ -26,7 +26,7 @@ class WeiboVideoClient(BaseVideoClient):
         self._initsession()
     '''_parsefromurlwithmweibo'''
     @useparseheaderscookies
-    def _parsefromurlwithmweibo(self, url: str, request_overrides: dict = None):
+    def _parsefromurlwithmweibo(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # init
         if not self.belongto(url=url): return []
         request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
@@ -42,7 +42,7 @@ class WeiboVideoClient(BaseVideoClient):
             download_url = sorted_download_urls[0][1] if sorted_download_urls else raw_data['data']['page_info']['media_info']['stream_url']; video_info.update(dict(download_url=download_url))
             video_title = legalizestring(safeextractfromdict(raw_data["data"]['page_info'], ['title'], None) or safeextractfromdict(raw_data["data"]['page_info'], ['page_title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             cover_url = safeextractfromdict(raw_data, ['data', 'page_info', 'page_pic', 'url'], None)
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
@@ -52,7 +52,7 @@ class WeiboVideoClient(BaseVideoClient):
         return [video_info]
     '''_parsefromurlwithh5videoweibo'''
     @useparseheaderscookies
-    def _parsefromurlwithh5videoweibo(self, url: str, request_overrides: dict = None):
+    def _parsefromurlwithh5videoweibo(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # init
         if not self.belongto(url=url): return []
         request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
@@ -70,7 +70,7 @@ class WeiboVideoClient(BaseVideoClient):
             download_url = f"https:{sorted_download_urls[0][1]}" if sorted_download_urls else raw_data["data"]["Component_Play_Playinfo"]["stream_url"]; video_info.update(dict(download_url=download_url))
             video_title = legalizestring(safeextractfromdict(raw_data["data"]["Component_Play_Playinfo"], ['title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             cover_url = safeextractfromdict(raw_data, ['data', 'Component_Play_Playinfo', 'cover_image'], None)
             if cover_url and not cover_url.startswith('http'): cover_url = "https:" + cover_url
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
@@ -81,7 +81,7 @@ class WeiboVideoClient(BaseVideoClient):
         return [video_info]
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = None):
+    def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         parsed_url = urlparse(url)
         try: vid = parse_qs(parsed_url.query, keep_blank_values=True)['fid'][0]
         except: vid = parsed_url.path.strip('/').split('/')[-1]

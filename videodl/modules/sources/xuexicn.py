@@ -46,7 +46,7 @@ class XuexiCNVideoClient(BaseVideoClient):
                 video_title = (lambda t: f"ep{len(video_infos)+1}-{root_video_title}-{t}" if root_video_title and len(sub_items) > 1 else f"ep{len(video_infos)+1}-{t}" if len(sub_items) > 1 else t)(sub_item.get('title', null_backup_title))
                 video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-                ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+                ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
                 cover_url = safeextractfromdict(sub_item, ['videos', 0, 'thumbnails', 0, 'data', 0, 'url'], None)
                 video_info_page.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f"{vid}-{sub_item['sn']}", cover_url=cover_url)); video_infos.append(video_info_page)
         except Exception as err:

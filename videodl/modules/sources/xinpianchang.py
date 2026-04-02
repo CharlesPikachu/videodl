@@ -47,7 +47,7 @@ class XinpianchangVideoClient(BaseVideoClient):
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(safeextractfromdict(raw_data[f'media/{vid}'], ['data', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=safeextractfromdict(raw_data[f'media/{vid}'], ['data', 'cover'], None)))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithwww >>> {url} (Error: {err})')))
@@ -55,7 +55,7 @@ class XinpianchangVideoClient(BaseVideoClient):
         # return
         return [video_info]
     '''_parsefromurlwithstock'''
-    def _parsefromurlwithstock(self, url: str, request_overrides: dict = None):
+    def _parsefromurlwithstock(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
         if not self.belongto(url=url): return []
         request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
@@ -74,7 +74,7 @@ class XinpianchangVideoClient(BaseVideoClient):
             video_info.update(dict(download_url=result['video_url'])); assert result['video_url']
             video_title = legalizestring(result['title'] or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=result['video_url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=result['cover']))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithstock >>> {url} (Error: {err})')))
@@ -83,7 +83,7 @@ class XinpianchangVideoClient(BaseVideoClient):
         return [video_info]
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = None):
+    def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         video_infos = (self._parsefromurlwithstock if ('stock.xinpianchang.com' in obtainhostname(url)) else self._parsefromurlwithwww)(url, request_overrides)
         return video_infos
     '''belongto'''

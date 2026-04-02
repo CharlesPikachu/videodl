@@ -40,8 +40,7 @@ class UnityVideoClient(BaseVideoClient):
                 if not isinstance(section, dict): continue
                 section_title, body = str(section.get("title", "")).strip(), section.get("body", []) or []
                 for block in body:
-                    if not isinstance(block, dict): continue
-                    if block.get("_type") not in ("learn-gcpVideoBlock",): continue
+                    if (not isinstance(block, dict)) or (block.get("_type") not in ("learn-gcpVideoBlock",)): continue
                     ov = block.get("overviewVideo") or {}; url = ov.get("url") or ov.get("videoURL")
                     url = url or (next((v for v in ov.values() if isinstance(v, str) and v.startswith("http")), "") if isinstance(ov, dict) else "")
                     if not url or (not (".mp4" in url or ".m3u8" in url)): continue
@@ -54,7 +53,7 @@ class UnityVideoClient(BaseVideoClient):
                 (video_info_page := copy.deepcopy(video_info)).update(dict(download_url=v['url']))
                 video_title = legalizestring(v['title'], replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=v['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-                ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info_page['ext']
+                ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info_page.ext
                 video_info_page.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=cover_url)); video_infos.append(video_info_page)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
