@@ -82,7 +82,7 @@ class VideoClient():
             video_infos = self.parsefromurl(url=user_input)
             self.download(video_infos=video_infos)
     '''parsefromurl'''
-    def parsefromurl(self, url: str):
+    def parsefromurl(self, url: str) -> list[VideoInfo]:
         video_infos: list[VideoInfo] = []
         # direct media link
         if self.web_media_grabber.isprobablydirectmedia(url, self.requests_overrides.get(self.web_media_grabber.source, {}))[0]: return self.web_media_grabber.parsefromurl(url, self.requests_overrides.get(self.web_media_grabber.source, {}))
@@ -114,21 +114,21 @@ class VideoClient():
         # return
         return video_infos
     '''download'''
-    def download(self, video_infos: list[VideoInfo]):
-        classified_video_infos: dict[str, list] = {}
+    def download(self, video_infos: list[VideoInfo]) -> list[VideoInfo]:
+        classified_video_infos: dict[str, list[VideoInfo]] = {}; downloaded_video_infos: list[VideoInfo] = []
         for video_info in video_infos:
             if video_info.source in classified_video_infos: classified_video_infos[video_info.source].append(video_info)
             else: classified_video_infos[video_info.source] = [video_info]
         for source, source_video_infos in classified_video_infos.items():
-            if source in (self.web_media_grabber.source,): self.web_media_grabber.download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}))
+            if source in (self.web_media_grabber.source,): downloaded_video_infos.extend(self.web_media_grabber.download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {})))
             elif source in self.video_clients:
                 if isinstance(self.video_clients[source], dict): self.video_clients[source] = BuildVideoClient(module_cfg=self.video_clients[source]['cfg'])
                 video_client: BaseVideoClient | dict[str, BaseVideoClient] = self.video_clients[source]
-                video_client.download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}))
+                downloaded_video_infos.extend(video_client.download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {})))
             else:
                 if isinstance(self.common_video_clients[source], dict): self.common_video_clients[source] = BuildCommonVideoClient(module_cfg=self.common_video_clients[source]['cfg'])
                 common_video_client: BaseVideoClient | dict[str, BaseVideoClient] = self.common_video_clients[source]
-                common_video_client.download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {}))
+                downloaded_video_infos.extend(common_video_client.download(video_infos=source_video_infos, num_threadings=self.clients_threadings.get(source, 5), request_overrides=self.requests_overrides.get(source, {})))
     '''processinputs'''
     def processinputs(self, input_tip='', prefix: str = '\n', restart_ui: str = 'startparseurlcmdui'):
         # accept user inputs

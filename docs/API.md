@@ -8,6 +8,7 @@ It focuses on three parts:
 - `BaseVideoClient`: the base class used by site-specific clients.
 - `VideoInfo`: the result object returned by parsing and downloading methods.
 
+
 ## `VideoClient`
 
 `VideoClient` is the main class for external use.
@@ -124,12 +125,12 @@ Arguments:
 Parse a video URL and return one or more `VideoInfo` objects.
 
 ```python
-parsefromurl(url: str) -> list[VideoInfo]
+VideoClient.parsefromurl(url: str) -> list[VideoInfo]
 ```
 
 Parsing behavior:
 
-When `parsefromurl()` is called, `VideoClient` uses the following strategy:
+When `VideoClient.parsefromurl()` is called, `VideoClient` uses the following strategy:
 
 1. Check whether the URL looks like a direct media link.
 2. If not, try platform-specific clients, unless `apply_common_video_clients_only=True`.
@@ -167,4 +168,339 @@ for info in video_infos:
     print(info.save_path)
 ```
 
+#### `VideoClient.download()`
+
+Download parsed videos.
+
+```python
+VideoClient.download(video_infos: list[VideoInfo]) -> list[VideoInfo]
+```
+
+`VideoClient` automatically groups items by `source` and sends them to the correct underlying client.
+
+Notes:
+
+- `video_infos` should usually be the output of `VideoClient.parsefromurl()`.
+- Thread counts come from `clients_threadings`.
+- Request settings come from `requests_overrides`.
+
+Example:
+
+```python
+video_infos = client.parsefromurl("https://www.acfun.cn/v/ac123456")
+client.download(video_infos)
+```
+
+#### `VideoClient.startparseurlcmdui()`
+
+Start the interactive terminal UI.
+
+```python
+VideoClient.startparseurlcmdui() -> None
+```
+
+In this mode, the program repeatedly asks for a video URL, parses it, and downloads the result.
+
+Special inputs:
+
+- `q`: quit
+- `r`: restart
+
+This is mainly for command-line use.
+
+
+## `BaseVideoClient`
+
+`BaseVideoClient` is the base class for all site-specific clients.
+
+Module path:
+
+`videodl.modules.sources.BaseVideoClient`
+
+Examples of subclasses include clients such as,
+
+- `videodl.modules.sources.AcFunVideoClient`
+- `videodl.modules.sources.BilibiliVideoClient`
+- `videodl.modules.sources.XiguaVideoClient`
+- `videodl.modules.sources.YouTubeVideoClient`
+- `videodl.modules.sources.CCTVVideoClient`
+- `videodl.modules.sources.YoukuVideoClient`
+- `videodl.modules.sources.KuaishouVideoClient`
+- `videodl.modules.sources.WeiboVideoClient`
+- `videodl.modules.sources.KakaoVideoClient`
+- `videodl.modules.sources.OasisVideoClient`
+- `videodl.modules.sources.TedVideoClient`
+- `videodl.modules.sources.HaokanVideoClient`
+- `videodl.modules.sources.BaiduTiebaVideoClient`
+- `videodl.modules.sources.MeipaiVideoClient`
+- `videodl.modules.sources.SixRoomVideoClient`
+- `videodl.modules.sources.RednoteVideoClient`
+- `videodl.modules.sources.MGTVVideoClient`
+- `videodl.modules.sources.HuyaVideoClient`
+- ...
+- `videodl.modules.common.BugPkVideoClient`
+- `videodl.modules.common.SnapAnyVideoClient`
+- `videodl.modules.common.XMFlvVideoClient`
+- `videodl.modules.common.KedouVideoClient`
+- `videodl.modules.common.QZXDPToolsVideoClient`
+- ...
+
+In most cases, external users do not create `BaseVideoClient` directly. Instead, they either:
+
+- use `VideoClient`, or
+- use a concrete subclass built on top of `BaseVideoClient`.
+
+Constructor:
+
+```python
+BaseVideoClient(
+    auto_set_proxies: bool = False,
+    random_update_ua: bool = False,
+    enable_parse_curl_cffi: bool = False,
+    enable_search_curl_cffi: bool = False,
+    enable_download_curl_cffi: bool = False,
+    max_retries: int = 5,
+    maintain_session: bool = False,
+    logger_handle = None,
+    disable_print: bool = False,
+    work_dir: str = "videodl_outputs",
+    freeproxy_settings: dict | None = None,
+    default_search_cookies: dict | None = None,
+    default_download_cookies: dict | None = None,
+    default_parse_cookies: dict | None = None,
+)
+```
+
+Arguments:
+
+- **`auto_set_proxies`**:
+  
+  Automatically fetch and apply proxies for requests.
+  Use this when a source frequently blocks direct requests.
+
+- **`random_update_ua`**
+
+  Randomly refresh the `User-Agent` when a new session is created.
+  This can help reduce repeated identical requests.
+
+- **`enable_parse_curl_cffi`**
+
+  Use `curl_cffi` sessions instead of normal `requests` sessions for parsing.
+  This option is useful for some sites with stricter request checks.
+
+- **`enable_search_curl_cffi`**
+
+  Use `curl_cffi` sessions instead of normal `requests` sessions for searching.
+  This option is useful for some sites with stricter request checks.
+
+- **`enable_download_curl_cffi`**
+
+  Use `curl_cffi` sessions instead of normal `requests` sessions for downloading.
+  This option is useful for some sites with stricter request checks.
+
+- **`max_retries`**
+
+  Maximum number of retries for HTTP requests.
+
+- **`maintain_session`**
+
+  Whether to reuse the same HTTP session across requests.
+  - `False`: recreate the session more often.
+  - `True`: keep cookies and session state between requests.
+
+- **`logger_handle`**
+
+  Optional logger instance.
+  If not provided, a default logger is created.
+
+- **`disable_print`**
+
+  Whether to suppress console output.
+
+- **`work_dir`**
+
+  Root directory for outputs.
+
+- **`freeproxy_settings`**
+
+  Optional settings for the proxy client used when `auto_set_proxies=True`.
+
+- **default_search_cookies**
+
+  Default cookies used for search.
+  This is helpful for sites that require login cookies or other session information.
+
+- **default_download_cookies**
+
+  Default cookies used for download.
+  This is helpful for sites that require login cookies or other session information.
+
+- **default_parse_cookies**
+
+  Default cookies used for parse.
+  This is helpful for sites that require login cookies or other session information.
+
+#### `BaseVideoClient.parsefromurl()`
+
+Parse a URL and return `VideoInfo` objects.
+
+```python
+BaseVideoClient.parsefromurl(url: str, request_overrides: dict | None = None) -> list[VideoInfo]
+```
+
+This method is defined by subclasses. `BaseVideoClient` itself only provides the interface.
+
+`request_overrides` usually contains request-related fields such as:
+
+- `headers`
+- `cookies`
+- `proxies`
+
+Each returned `VideoInfo` should normally include at least:
+
+- `source`
+- `download_url`
+- `save_path`
+
+A typical subclass may also fill fields such as:
+
+- `title`
+- `identifier`
+- `cover_url`
+- `raw_data`
+- `err_msg`
+
+Example:
+
+```python
+video_infos = some_client.parsefromurl(
+    "https://example.com/video/123",
+    request_overrides={
+        "headers": {"User-Agent": "Mozilla/5.0"},
+        "cookies": {"sessionid": "example"},
+    },
+)
+```
+
+#### `BaseVideoClient.download()`
+
+Download one or more videos.
+
+```python
+BaseVideoClient.download(
+    video_infos: list[VideoInfo],
+    num_threadings: int = 5,
+    request_overrides: dict | None = None,
+) -> list[VideoInfo]
+```
+
+This method handles concurrency and chooses the actual download strategy automatically.
+
+Depending on the data in each `VideoInfo`, the downloader may use:
+
+- normal HTTP download,
+- `ffmpeg`,
+- `N_m3u8DL-RE`,
+- `aria2c`,
+- separate video/audio download followed by merge.
+
+Returns:
+
+- a list of successfully downloaded `VideoInfo` objects.
+
+Example:
+
+```python
+downloaded = some_client.download(video_infos, num_threadings=3)
+
+for item in downloaded:
+    print(item.save_path)
+```
+
+#### `BaseVideoClient.belongto()`
+
+Check whether a URL belongs to a given source.
+
+```python
+BaseVideoClient.belongto(url: str, valid_domains: list[str] | set[str] | None = None) -> bool
+```
+
+This is mainly a helper for client implementations, but it can also be useful when building custom routing logic.
+
+Example:
+
+```python
+BaseVideoClient.belongto(
+    "https://www.acfun.cn/v/ac123456",
+    valid_domains={"acfun.cn"},
+)
+# True
+```
+
+#### Request helpers for subclass implementations
+
+`BaseVideoClient` also provides retry-enabled request helpers:
+
+- `get(url, **kwargs)`
+- `post(url, **kwargs)`
+
+These methods are mainly intended for subclass authors, not for normal end users.
+
+
+## `VideoInfo`
+
+`VideoInfo` is the core data object returned by parsing methods and consumed by download methods.
+
+It behaves like both:
+
+- an object, for example `info.title`,
+- and a dictionary, for example `info["title"]`.
+
+Common fields:
+
+- `source`: client name, such as `"AcFunVideoClient"`
+- `title`: video title
+- `cover_url`: cover image URL if available
+- `raw_data`: original parsed data
+- `err_msg`: error message if parsing failed
+- `identifier`: unique ID for the video
+- `download_url`: main video download URL or local intermediate file
+- `save_path`: output file path
+- `ext`: output file extension
+- `default_download_headers`: optional per-item headers
+- `default_download_cookies`: optional per-item cookies
+- `audio_download_url`
+- `audio_save_path`
+- `audio_ext`
+- `default_audio_download_headers`
+- `default_audio_download_cookies`
+- `download_with_ffmpeg`
+- `enable_nm3u8dlre`
+- `download_with_aria2c`
+- `ffmpeg_settings`
+- `nm3u8dlre_settings`
+- `aria2c_settings`
+
+Useful properties:
+
+- **`with_valid_download_url`**:
+
+  Returns `True` when the main download URL is valid.
+
+- **`with_valid_audio_download_url`**
+
+  Returns `True` when the audio download URL is valid.
+
+Example:
+
+```python
+{
+    "source": "AcFunVideoClient",
+    "title": "Example Video",
+    "download_url": "https://example.com/video.m3u8",
+    "save_path": "videodl_outputs/AcFunVideoClient/Example Video.mp4",
+    "ext": "mp4",
+    "identifier": "ac123456"
+}
+```
 
