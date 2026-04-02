@@ -135,7 +135,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://weibo.com/tv/v/HApWK8FAc?fid=1034:4386795211940756',
     ],
     'RednoteVideoClient': [
-        'http://xhslink.com/o/A7MOvT2d4IM',
+        'http://xhslink.com/o/4aeC2uNASel',
         'http://xhslink.com/o/6us6UGep1Zw',
         'http://xhslink.com/o/8t08X6dROt5',
         'http://xhslink.com/o/1lB9dX0Vt2t',
@@ -457,6 +457,8 @@ VIDEODL_TEST_SAMPLES = {
     ],
     'ABCVideoClient': [
         'https://www.abc.net.au/btn/classroom/wwi-centenary/10527914',
+        'https://www.abc.net.au/btn/classroom/climate-whiplash/106487762',
+        'https://www.abc.net.au/btn/classroom/roblox-safety/106351518',
         'https://www.abc.net.au/news/2023-06-25/wagner-boss-orders-troops-back-to-bases-to-avoid-bloodshed/102520540',
     ],
     'TBNUKVideoClient': [
