@@ -74,7 +74,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'TencentVideoClient': TencentVideoClient,           'UnityVideoClient': UnityVideoClient,               'WWEVideoClient': WWEVideoClient,                   'WeSingVideoClient': WeSingVideoClient,
         'WeiboVideoClient': WeiboVideoClient,               'WeishiVideoClient': WeishiVideoClient,             'WittyTVVideoClient': WittyTVVideoClient,           'XiguaVideoClient': XiguaVideoClient,
         'XinpianchangVideoClient': XinpianchangVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,           'YinyuetaiVideoClient': YinyuetaiVideoClient,       'YouTubeVideoClient': YouTubeVideoClient,
-        'YoukuVideoClient': YoukuVideoClient,               'ZhihuVideoClient': ZhihuVideoClient,               'ZuiyouVideoClient': ZuiyouVideoClient,
+        'YoukuVideoClient': YoukuVideoClient,               'ZhihuVideoClient': ZhihuVideoClient,               'ZuiyouVideoClient': ZuiyouVideoClient, 
     }
 
 

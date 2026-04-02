@@ -41,7 +41,7 @@ class BeaconVideoClient(BaseVideoClient):
             video_title = legalizestring(safeextractfromdict(raw_data['playlist_result'], ['playlist', 0, 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             cover_url = safeextractfromdict(raw_data['playlist_result'], ['playlist', 0, 'images', -1, 'src'], None)
             vid = safeextractfromdict(raw_data['playlist_result'], ['playlist', 0, 'mediaid'], None) or vid
-            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info["ext"]}'), identifier=vid, cover_url=cover_url))
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info.ext}'), identifier=vid, cover_url=cover_url))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

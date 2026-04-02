@@ -35,11 +35,11 @@ class HaokanVideoClient(BaseVideoClient):
             vid = parse_qs(urlparse(url).query, keep_blank_values=True)['vid'][0]
             (resp := self.get(f"https://haokan.baidu.com/v?_format=json&vid={vid}", **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp.json())))
-            download_url = next((r.get('url', '') for r in sorted(raw_data["data"]["apiData"]["curVideoMeta"]["clarityUrl"], key=lambda x: float(x.get("videoSize", 0)), reverse=True) if r.get('url', '')), '')
+            download_url = next((r.get('url', '') for r in sorted(raw_data["data"]["apiData"]["curVideoMeta"]["clarityUrl"], key=lambda x: float(x.get("videoSize", 0)), reverse=True) if str(r.get('url', '')).startswith('http')), '')
             video_info.update(dict(download_url=(download_url := raw_data["data"]["apiData"]["curVideoMeta"]['playurl'] if not download_url else download_url)))
             video_title = legalizestring(raw_data["data"]["apiData"]["curVideoMeta"].get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             cover_url = safeextractfromdict(raw_data, ['data', 'apiData', 'curVideoMeta', 'poster'], None)
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:

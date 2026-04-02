@@ -84,7 +84,7 @@ class BilibiliVideoClient(BaseVideoClient):
                 audio_formats: list[dict] = [item for item in audio_formats if item.get('url')]
                 if len(audio_formats) == 0: video_infos.append(video_page_info); continue
                 guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-                if (audio_ext := guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info['audio_ext']) in ['m4s']: audio_ext = 'm4a'
+                if (audio_ext := guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info.audio_ext) in ['m4s']: audio_ext = 'm4a'
                 video_page_info.update(dict(audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_save_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}'))); video_infos.append(video_page_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefrombangumiepurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
@@ -122,7 +122,7 @@ class BilibiliVideoClient(BaseVideoClient):
                 audio_formats: list[dict] = [item for item in audio_formats if item.get('url')]
                 if len(audio_formats) == 0: video_infos.append(video_page_info); continue
                 guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-                if (audio_ext := guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info['audio_ext']) in ['m4s']: audio_ext = 'm4a'
+                if (audio_ext := guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info.audio_ext) in ['m4s']: audio_ext = 'm4a'
                 video_page_info.update(dict(audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_save_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}'))); video_infos.append(video_page_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefrombangumissurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
@@ -158,7 +158,7 @@ class BilibiliVideoClient(BaseVideoClient):
                 audio_formats: list[dict] = [item for item in audio_formats if item.get('url')]
                 if len(audio_formats) == 0: video_infos.append(video_page_info); continue
                 guess_audio_ext_result = FileTypeSniffer.getfileextensionfromurl(url=audio_formats[0]['url'], headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-                if (audio_ext := guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info['audio_ext']) in ['m4s']: audio_ext = 'm4a'
+                if (audio_ext := guess_audio_ext_result['ext'] if guess_audio_ext_result['ext'] and guess_audio_ext_result['ext'] != 'NULL' else video_info.audio_ext) in ['m4s']: audio_ext = 'm4a'
                 video_page_info.update(dict(audio_download_url=audio_formats[0]['url'], guess_audio_ext_result=guess_audio_ext_result, audio_ext=audio_ext, audio_save_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}'))); video_infos.append(video_page_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromcheeseepurl >>> {url} (Error: {err})'))); video_infos.append(video_info)

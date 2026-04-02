@@ -40,7 +40,7 @@ class C56VideoClient(BaseVideoClient):
             raw_data = json_repair.loads(m.group(1)); sohu_video_url = raw_data['sohu']['video_url']
             video_info: VideoInfo = self.sohu_parser.parsefromurl(sohu_video_url, request_overrides=request_overrides)[0]
             video_title = legalizestring(raw_data.get('Subject', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            video_info.update(dict(identifier=vid, raw_data=raw_data, title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info["ext"]}'), source=self.source, cover_url=raw_data.get('img')))
+            video_info.update(dict(identifier=vid, raw_data=raw_data, title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{video_info.ext}'), source=self.source, cover_url=raw_data.get('img')))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

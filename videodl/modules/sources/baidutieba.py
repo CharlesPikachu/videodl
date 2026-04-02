@@ -63,9 +63,8 @@ class BaiduTiebaVideoClient(BaseVideoClient):
                 video_title = legalizestring(record.get('title') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
                 (video_page_info := copy.deepcopy(video_info)).update(dict(download_url=(download_url := record.get('video_url'))))
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-                ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-                video_page_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=urlparse(download_url).path.strip('/').split('/')[-1].split('.')[0], cover_url=record.get("cover")))
-                video_infos.append(video_page_info)
+                ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
+                video_page_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=urlparse(download_url).path.strip('/').split('/')[-1].split('.')[0], cover_url=record.get("cover"))); video_infos.append(video_page_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

@@ -107,8 +107,7 @@ class IQiyiVideoClient(BaseVideoClient):
     def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
         if not self.belongto(url=url): return []
-        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source, enable_nm3u8dlre=True), yieldtimerelatedtitle(self.source)
-        device_id, video_infos = self._generatedeviceid(), []
+        request_overrides, video_info, null_backup_title, device_id, video_infos = request_overrides or {}, VideoInfo(source=self.source, enable_nm3u8dlre=True), yieldtimerelatedtitle(self.source), self._generatedeviceid(), []
         # try parse
         try:
             raw_data = self._getvideocoverinfo(url, device_id=device_id, request_overrides=request_overrides)
