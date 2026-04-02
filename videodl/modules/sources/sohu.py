@@ -27,7 +27,7 @@ class SohuVideoClient(BaseVideoClient):
     def _parsefromurlwithmytv(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
         if not self.belongto(url=url): return []
-        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source, enable_nm3u8dlre=False), yieldtimerelatedtitle(self.source)
         # try parse
         try:
             # --obtain vid
@@ -74,7 +74,7 @@ class SohuVideoClient(BaseVideoClient):
     def _parsefromurlwithhotvrs(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
         if not self.belongto(url=url): return []
-        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source, enable_nm3u8dlre=False), yieldtimerelatedtitle(self.source)
         # try parse
         try:
             # --obtain vid
