@@ -308,7 +308,7 @@ class BaseVideoClient():
         # all in one downloader for downlowning both video and audio
         if video_info.with_valid_audio_download_url: return self._downloadwithnaiveallinone(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # ffmpeg downloader for dealing with HLS urls / files
-        valid_hls_exts_for_auto_set_ffpmeg, cannot_use_nm3u8dlre_sources = {'m3u8', 'm3u', 'mpd'}, {'TedVideoClient', 'XinpianchangVideoClient'}
+        valid_hls_exts_for_auto_set_ffpmeg, cannot_use_nm3u8dlre_sources = {'m3u8', 'm3u', 'mpd'}, {'XinpianchangVideoClient'}
         if any((video_info.ext.lower() in valid_hls_exts_for_auto_set_ffpmeg, FileTypeSniffer.pickextfromurl(video_info.download_url) in valid_hls_exts_for_auto_set_ffpmeg)): ext = video_info.ext if video_info.ext in {'mkv'} else 'mp4'; video_info.update(dict(ext=ext, download_with_ffmpeg=True, save_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.{ext}')))
         no_nm3u8dlre_warnings = ('"enable_nm3u8dlre" has been set to True, but N_m3u8DL-RE was not found in the environment variables.' 'Please visit https://github.com/nilaoda/N_m3u8DL-RE to download and install the version of N_m3u8DL-RE that matches your system,' 'and then add it to your environment variables. Now, we will switch "enable_nm3u8dlre" to False and try downloading again.')
         # --from url or local hls files except for .txt file

@@ -33,7 +33,7 @@ class TedVideoClient(BaseVideoClient):
     def parsefromurl(self, url: str, request_overrides: dict = None):
         # prepare
         if not self.belongto(url=url): return []
-        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source, nm3u8dlre_settings={"--auto-select": False, "-sv": "best", "-sa": "best", "-M": "format=mp4:skip_sub=true"}), yieldtimerelatedtitle(self.source)
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
