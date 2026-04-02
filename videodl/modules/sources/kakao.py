@@ -47,11 +47,11 @@ class KakaoVideoClient(BaseVideoClient):
                 except Exception: continue
                 fmt_raw_data = resp2json(resp=resp); raw_data['readyNplay'] = fmt_raw_data
                 download_url = safeextractfromdict(fmt_raw_data, ['videoLocation', 'url'], None)
-                if download_url and download_url.startswith('http'): break
+                if download_url and str(download_url).startswith('http'): break
             video_info.update(dict(download_url=download_url))
             video_title = legalizestring(clip.get('title') or clip_link.get('displayTitle') or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             cover_url = safeextractfromdict(raw_data, ['clipLink', 'clip', 'thumbnailUrl'], None)
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:

@@ -40,7 +40,7 @@ class PlusFIFAVideoClient(BaseVideoClient):
         self._initsession()
     '''_getdeviceid'''
     def _getdeviceid(self, request_overrides: dict = None):
-        request_overrides = request_overrides or {}
+        request_overrides = dict(request_overrides or {})
         (resp := self.post(PlusFIFAVideoClient.DEVICES_URL, json={'model': 'model', 'manufacturer': 'manufacturer', 'profile': 'WEB', 'store': 'CHILI'}, **request_overrides)).raise_for_status()
         return resp2json(resp=resp)['id']
     '''parsefromurl'''

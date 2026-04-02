@@ -37,7 +37,7 @@ class PipixVideoClient(BaseVideoClient):
             video_info.update(dict(download_url=(download_url := data["video"]["video_high"]["url_list"][0]["url"] if not download_url else download_url)))
             video_title = legalizestring(data.get('content', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies, skip_urllib_parse=True)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             cover_url = safeextractfromdict(raw_data, ['data', 'cell_comments', 0, 'comment_info', 'item', 'cover', 'url_list', 0, 'url'], None)
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=item_id, cover_url=cover_url))
         except Exception as err:

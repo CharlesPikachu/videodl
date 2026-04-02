@@ -51,7 +51,7 @@ class Open163VideoClient(BaseVideoClient):
                 elif len(raw_data['data']['videoList']) > 1: video_title = f"ep{len(video_infos)+1}-{video_title}"
                 video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-                ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+                ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
                 video_info_page.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f"{item.get('mid')}-{item.get('plid')}", cover_url=item.get('imgPath'))); video_infos.append(video_info_page)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)

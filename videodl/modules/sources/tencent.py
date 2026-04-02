@@ -406,7 +406,7 @@ class TencentVQQVideoClient(BaseVideoClient):
             return cover_info
     '''parsefromurl'''
     @useparseheaderscookies
-    def parsefromurl(self, url: str, request_overrides: dict = None):
+    def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
         if not self.belongto(url=url): return []
         request_overrides, video_info, null_backup_title, video_infos = request_overrides or {}, VideoInfo(source=self.source, enable_nm3u8dlre=True), yieldtimerelatedtitle(self.source), []
@@ -664,8 +664,8 @@ class TencentVideoClient(BaseVideoClient):
         try:
             if re.match(r'https?://v\.qq\.com' + r'/x/(?:page|cover/(?P<series_id>\w+))/(?P<id>\w+)', url) or re.match(r'https?://v\.qq\.com' + r'/x/cover/(?P<id>\w+)\.html/?(?:[?#]|$)', url):
                 try:
-                    video_infos: list[dict] = self.vqq_video_client.parsefromurl(url, request_overrides)
-                    if any(((info.get("download_url") or "").upper() not in ("", "NULL")) for info in (video_infos or [])): return video_infos
+                    video_infos: list[VideoInfo] = self.vqq_video_client.parsefromurl(url, request_overrides)
+                    if any(video_info.with_valid_download_url for video_info in (video_infos or [])): return video_infos
                 except Exception: video_infos = []
                 video_infos = []; raw_data = self._vqqextractvideo(url, request_overrides=request_overrides)
                 formats: list[dict] = raw_data['formats']; formats.sort(key=lambda f: ((f.get('width') or 0) * (f.get('height') or 0), f.get('vbr') or 0, f.get('abr') or 0, f.get('fps') or 0), reverse=True)

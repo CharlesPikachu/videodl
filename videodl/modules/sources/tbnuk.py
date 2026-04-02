@@ -58,7 +58,7 @@ class TBNUKVideoClient(BaseVideoClient):
             except Exception: video_title = legalizestring(null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             video_info.update(download_url=download_url, title=video_title)
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             cover_url = next((meta.get('content') for meta in BeautifulSoup(html_str, 'lxml').find_all('meta', property='og:image') if meta.get('content')), "")
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
@@ -89,7 +89,7 @@ class TBNUKVideoClient(BaseVideoClient):
             except Exception: video_title = legalizestring(null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             video_info.update(download_url=download_url, title=video_title)
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             cover_url = next((meta.get('content') for meta in BeautifulSoup(html_str, 'lxml').find_all('meta', property='og:image') if meta.get('content')), "")
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
@@ -128,7 +128,7 @@ class TBNUKVideoClient(BaseVideoClient):
     def parsefromurl(self, url: str, request_overrides: dict = None):
         for parser in [self._parsefromurlwithwatch, self._parsefromurlwithshows, self._parsefromurlwithlive]:
             video_infos = parser(url, request_overrides)
-            if any(((info.get("download_url") or "").upper() not in ("", "NULL")) for info in (video_infos or [])): break
+            if any(video_info.with_valid_download_url for video_info in (video_infos or [])): break
         return video_infos
     '''belongto'''
     @staticmethod

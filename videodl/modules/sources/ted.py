@@ -44,7 +44,7 @@ class TedVideoClient(BaseVideoClient):
             download_url = safeextractfromdict(player_data, ['resources', 'hls', 'stream'], '') or safeextractfromdict(sorted(safeextractfromdict(player_data, ['resources', 'h264'], []), key=lambda x: x.get('bitrate', 0), reverse=True), [0, 'file'], '') or safeextractfromdict(sorted(safeextractfromdict(player_data, ['resources', 'rtmp'], []), key=lambda x: x.get('width', 0) * x.get('height', 0), reverse=True), [0, 'file'], '')
             video_info.update(dict(download_url=download_url))
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             video_title = safeextractfromdict(raw_data["props"]["pageProps"]["videoData"], ['title'], None) or null_backup_title
             video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
             cover_url = safeextractfromdict(raw_data, ['props', 'pageProps', 'videoData', 'primaryImageSet', 0, 'url'], None)

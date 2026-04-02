@@ -92,7 +92,7 @@ class PlayerPLVideoClient(BaseVideoClient):
                 for episode_idx, episode in enumerate(episodes):
                     (raw_data_eps := copy.deepcopy(raw_data)).update({'EPISODE_DETAILS': episode})
                     video_info_eps = self._parsefromurlsinglevideo(episode["shareUrl"], request_overrides=request_overrides)
-                    if any(((info.get("download_url") or "").upper() in ("", "NULL")) for info in (video_info_eps or [])): continue
+                    if any((not info.with_valid_download_url) for info in (video_info_eps or [])): continue
                     video_info_eps[0].raw_data['ROOT'] = raw_data_eps; video_info_eps[0].title = f"S{season_idx+1}E{episode_idx+1} {video_info_eps[0].title}"
                     video_info_eps[0].save_path = os.path.join(self.work_dir, self.source, f'{video_info_eps[0].title}.{video_info_eps[0].ext}'); video_infos.extend(video_info_eps)
         else:

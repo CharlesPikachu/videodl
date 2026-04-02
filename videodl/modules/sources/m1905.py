@@ -106,8 +106,7 @@ class M1905VideoClient(BaseVideoClient):
     '''_getvideocoverinfo'''
     def _getvideocoverinfo(self, url, request_overrides: dict = None):
         for typ, pat in enumerate(M1905VideoClient.VIDEO_URL_PATS, 1):
-            match, cover_info = pat.match(url), None
-            if not match: continue
+            if not (match := pat.match(url)): continue
             if typ == 1: cover_info = self._getcoverinfosd(url, request_overrides)
             elif typ == 2: urls_dict = self._getcoverinfo(M1905VideoClient.VIDEO_COVER_FORMAT.format(match.group(1)), request_overrides)[-1]; cover_info = (self._getcoverinfohd(urls_dict["hd"], request_overrides) if urls_dict and urls_dict.get("hd") and (self.default_cookies or not urls_dict.get("sd")) else self._getcoverinfosd(urls_dict["sd"], request_overrides) if urls_dict and urls_dict.get("sd") else None)
             else: cover_info = self._getcoverinfohd(url, request_overrides); cover_info = (self._getcoverinfosd(urls_dict["sd"], request_overrides) if cover_info and cover_info["type"] == M1905VideoClient.VideoTypes.MOVIE and not self.default_cookies and (urls_dict := self._getcoverinfo(M1905VideoClient.VIDEO_COVER_FORMAT.format(cover_info["cover_id"]), request_overrides)[-1]) and urls_dict.get("sd") else cover_info)
@@ -121,8 +120,7 @@ class M1905VideoClient(BaseVideoClient):
         params = {'cid': vi['V'], 'expiretime': nonce + 600, 'nonce': nonce, 'page': vi['url'], 'playerid': self._randomplayerid(), 'type': "hls", 'uuid': self._randomstring()}
         params['signature'] = self._signature(params, M1905VideoClient.APP_ID)
         (resp := self.get(M1905VideoClient.PROFILE_CONFIG_URL, params=params, **request_overrides)).raise_for_status()
-        data = json_repair.loads(resp.text[len("null("): -1]).get('data')
-        if not data or not isinstance(data, dict): return
+        if not (data := json_repair.loads(resp.text[len("null("): -1]).get('data')) or not isinstance(data, dict): return
         preferred_defn = M1905VideoClient.M1905_DEFN_MAP_S2I['free']["uhd"]
         for defn in ([preferred_defn] + [defn for defn in M1905VideoClient.M1905_DEFINITION['free'] if defn != preferred_defn]):
             host = safeextractfromdict(data, ['quality', defn, 'host'], None); sign = safeextractfromdict(data, ['sign', defn, 'sign'], None); path = safeextractfromdict(data, ['path', defn, 'path'], None)

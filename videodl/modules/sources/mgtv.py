@@ -58,12 +58,12 @@ class MGTVVideoClient(BaseVideoClient):
             download_url = raw_data['getSource']['data']['stream_domain'][0] + max(streams, key=lambda s: int(s.get("filebitrate", 0)))['url']; video_info.update(dict(download_url=download_url))
             video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'info', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             if guess_video_ext_result['ext'] in {'json', 'NULL', None, 'null', 'None'}:
                 (resp := self.get(download_url, **request_overrides)).raise_for_status()
                 video_info.update(dict(download_url=(download_url := resp2json(resp=resp)['info'])))
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-                ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
+                ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             cover_url = safeextractfromdict(raw_data, ['data', 'info', 'thumb'], None)
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=cover_url))
         except Exception as err:
