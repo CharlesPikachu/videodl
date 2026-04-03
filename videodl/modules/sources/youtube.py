@@ -7,10 +7,11 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
+import requests
 from .base import BaseVideoClient
 from ..utils.youtubeutils import YouTube
 from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, safeextractfromdict, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, safeextractfromdict, resp2json, VideoInfo, FileTypeSniffer
 
 
 '''YouTubeVideoClient'''
@@ -22,13 +23,63 @@ class YouTubeVideoClient(BaseVideoClient):
         self.default_download_headers = {}
         self.default_headers = self.default_parse_headers
         self._initsession()
+    '''_parsefromurlwithvidssave'''
+    def _parsefromurlwithvidssave(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
+        # prepare
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
+        # try parse
+        try:
+            vid = parse_qs(urlparse(url).query, keep_blank_values=True)['v'][0]
+            headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36", "referer": "https://vidssave.com/"}
+            (resp := self.post('https://api.vidssave.com/api/contentsite_api/media/parse', headers=headers, data={"link": url, "domain": "api-ak.vidssave.com", "origin": "cache", "auth": "20250901majwlqo"}, **request_overrides)).raise_for_status()
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)))); resources = [r for r in raw_data['data']['resources'] if isinstance(r, dict) and str(r.get('format')).lower() in {'mp4'}]
+            video_info.update(dict(download_url=sorted(resources, key=lambda item: item.get('size', 0) or 0, reverse=True)[0]['download_url']))
+            video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=video_info.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, identifier=vid, cover_url=safeextractfromdict(raw_data, ['data', 'thumbnail'], None)))
+        except Exception as err:
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithvidssave >>> {url} (Error: {err})')))
+            self.logger_handle.error(err_msg, disable_print=self.disable_print)
+        # return
+        return [video_info]
+    '''_parsefromurlwithdownr'''
+    def _parsefromurlwithdownr(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
+        # prepare
+        if not self.belongto(url=url): return []
+        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
+        # try parse
+        try:
+            vid = parse_qs(urlparse(url).query, keep_blank_values=True)['v'][0]
+            headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36", "referer": "https://downr.org/"}
+            cookies = requests.utils.dict_from_cookiejar(self.get('https://downr.org/.netlify/functions/analytics', **request_overrides).cookies)
+            (resp := self.post('https://downr.org/.netlify/functions/nyt', headers=headers, cookies=cookies, json={"url": url}, **request_overrides)).raise_for_status()
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
+            video_medias: list[dict] = [item for item in raw_data['medias'] if item['type'] in ('video',)]
+            audio_medias: list[dict] = [item for item in raw_data['medias'] if item['type'] in ('audio',)]
+            video_medias: list[dict] = sorted(video_medias, key=lambda item: (item.get('height') * item.get('width'), item.get('bitrate')), reverse=True)
+            audio_medias: list[dict] = sorted(audio_medias, key=lambda item: (item.get('bitrate'), float(item.get('audioSampleRate') or 0)), reverse=True)
+            download_url, ext, audio_download_url, audio_ext = video_medias[0]['url'], video_medias[0]['ext'], audio_medias[0]['url'], audio_medias[0]['ext']
+            video_info.update(dict(download_url=download_url, ext=ext, audio_download_url=audio_download_url, audio_ext=audio_ext))
+            video_title = legalizestring(safeextractfromdict(raw_data, ['title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), audio_save_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}'), identifier=vid, cover_url=safeextractfromdict(raw_data, ['thumbnail'], None)))
+        except Exception as err:
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithdownr >>> {url} (Error: {err})')))
+            self.logger_handle.error(err_msg, disable_print=self.disable_print)
+        # return
+        return [video_info]
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
         if not self.belongto(url=url): return []
         request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
-        # try parse
+        # try parse with some third part apis
+        for parser in [self._parsefromurlwithvidssave, self._parsefromurlwithdownr]:
+            video_infos = parser(url, request_overrides)
+            if any(video_info.with_valid_download_url for video_info in (video_infos or [])): return video_infos
+        # try parse with official apis
         try:
             vid = parse_qs(urlparse(url).query, keep_blank_values=True)['v'][0]
             yt = YouTube(video_id=vid); video_info.update(dict(raw_data=(raw_data := yt.vid_info)))

@@ -302,7 +302,7 @@ class BaseVideoClient():
         if video_info.audio_ext in {'m4s'}: video_info.update(dict(audio_ext='mp4', audio_save_path=os.path.join(self.work_dir, self.source, f'{video_info.title}.audio.m4a')))
         judge_local_file_ext_func = lambda p: Path(str(p)).suffix[1:].lower() if p else ""
         # youtube video client
-        if video_info.source in {'YouTubeVideoClient'}: return self._downloadfromyoutube(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
+        if video_info.source in {'YouTubeVideoClient'} and isinstance(video_info.download_url, YouTubeStreamObj): return self._downloadfromyoutube(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # cctv video client
         if video_info.source in {'CCTVVideoClient'} and video_info.get('hls_key') in {'hls_h5e_url'}: return self._downloadfromcctv(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # all in one downloader for downlowning both video and audio
