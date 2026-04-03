@@ -286,11 +286,11 @@ class BaseVideoClient():
         # merge video and audio
         audio_save_path, audio_ext, video_save_path, ext = downloaded_audio_infos[0].save_path, downloaded_audio_infos[0].ext, downloaded_video_info[0].save_path, downloaded_video_info[0].ext
         file_path_for_merge_video_audio = generateuniquetmppath(dir=os.path.join(self.work_dir, self.source), ext=ext)
-        for merge_factory in (MergeVideoAudioCopyFFmpegCommand, MergeVideoAudioAudioTranscodeFFmpegCommand, MergeVideoAudioFullTranscodeFFmpegCommand):
+        for merge_factory in (MergeVideoAudioAudioTranscodeFFmpegCommand, MergeVideoAudioFullTranscodeFFmpegCommand, MergeVideoAudioCopyFFmpegCommand):
             cmd = merge_factory().build(video_file_path=video_save_path, audio_file_path=audio_save_path, output_file_path=file_path_for_merge_video_audio, mods=video_info.ffmpeg_settings)
             try: subprocess.run(cmd, check=True, capture_output=(True if self.disable_print else False), text=True, encoding='utf-8', errors='ignore')
             except subprocess.CalledProcessError as err: self.logger_handle.error(f'{self.source}._downloadwithnaiveallinone >>> {video_info.download_url} (Error: {err})', disable_print=self.disable_print); continue
-            if MergeVideoAudioCopyFFmpegCommand.hasaudiostream(file_path_for_merge_video_audio): break
+            if MergeVideoAudioCopyFFmpegCommand.hasaudiostream(file_path_for_merge_video_audio) or (not shutil.which('ffprobe')): break
         shutil.move(file_path_for_merge_video_audio, video_save_path); os.path.exists(audio_save_path) and os.remove(audio_save_path)
         # return
         downloaded_video_info[0].audio_download_url, downloaded_video_info[0].audio_save_path = audio_download_url, audio_save_path

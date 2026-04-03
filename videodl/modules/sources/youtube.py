@@ -7,7 +7,10 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
+import time
+import random
 import requests
+import json_repair
 from .base import BaseVideoClient
 from ..utils.youtubeutils import YouTube
 from urllib.parse import parse_qs, urlparse
@@ -28,13 +31,21 @@ class YouTubeVideoClient(BaseVideoClient):
         # prepare
         if not self.belongto(url=url): return []
         request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
+        get_download_link_func = lambda text: next((link for line in str(text).splitlines() if line.startswith("data:") for link in [json_repair.loads(line[5:].strip()).get("download_link")] if link), None)
         # try parse
         try:
             vid = parse_qs(urlparse(url).query, keep_blank_values=True)['v'][0]
             headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36", "referer": "https://vidssave.com/"}
-            (resp := self.post('https://api.vidssave.com/api/contentsite_api/media/parse', headers=headers, data={"link": url, "domain": "api-ak.vidssave.com", "origin": "cache", "auth": "20250901majwlqo"}, **request_overrides)).raise_for_status()
-            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)))); resources = [r for r in raw_data['data']['resources'] if isinstance(r, dict) and str(r.get('format')).lower() in {'mp4'}]
-            video_info.update(dict(download_url=sorted(resources, key=lambda item: item.get('size', 0) or 0, reverse=True)[0]['download_url']))
+            (resp := self.post('https://api.vidssave.com/api/contentsite_api/media/parse', headers=headers, data={"link": url, "domain": "api-ak.vidssave.com", "origin": "source", "auth": "20250901majwlqo"}, **request_overrides)).raise_for_status()
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)))); resources = [r for r in raw_data['data']['resources'] if isinstance(r, dict) and (str(r.get('format')).lower() in {'mp4'}) and (r.get('download_url') or r.get('resource_content'))][::-1]
+            resources = sorted(resources, key=lambda item: item.get('size', 0) or 0, reverse=True); video_info.download_url = resources[0]['download_url']
+            if not video_info.with_valid_download_url:
+                (resp := self.post('https://api.vidssave.com/api/contentsite_api/media/download', data={'auth': '20250901majwlqo', 'domain': 'api-ak.vidssave.com', 'request': resources[0]['resource_content'], 'no_encrypt': '1'}, **request_overrides)).raise_for_status()
+                max_retries_for_download_no_cache_contents, time_sleep_interval = 30, 0.5
+                for _ in range(max_retries_for_download_no_cache_contents):
+                    (resp := self.get('https://api.vidssave.com/sse/contentsite_api/media/download_query', params={'auth': '20250901majwlqo', 'domain': 'api-ak.vidssave.com', 'task_id': resp2json(resp=resp)['data']['task_id'], 'download_domain': 'vidssave.com', 'origin': 'content_site'}, **request_overrides)).raise_for_status()
+                    if not (download_url := get_download_link_func(resp.text)): time.sleep(time_sleep_interval + random.random()); continue
+                    video_info.update(dict(download_url=download_url)); break
             video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=video_info.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
