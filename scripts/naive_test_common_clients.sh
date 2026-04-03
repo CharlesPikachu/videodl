@@ -52,6 +52,8 @@ videodl -i "https://www.bilibili.com/video/BV1D5Q6BdEAM/" -g -a SpapiVideoClient
 videodl -i "https://x.com/iluminatibot/status/1996651394963734976" -g -a VgetVideoClient
 # VideoFKVideoClient
 videodl -i "https://www.facebook.com/facebook/videos/facebook-blue-never-looked-so-good-video-by-molchanovamuamusic-by-fausto-papetti/1185846950029459/" -g -a VideoFKVideoClient
+# VeedMateVideoClient
+videodl -i "https://x.com/jushendo/status/2036224267084333475" -g -a VeedMateVideoClient
 # WoofVideoClient
 videodl -i "https://www.instagram.com/reel/DWAGcteCVar/" -g -a WoofVideoClient
 # XiazaitoolVideoClient

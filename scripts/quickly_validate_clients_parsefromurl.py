@@ -504,6 +504,12 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.le.com/ptv/vplay/26322741.html',
         'https://www.le.com/ptv/vplay/77974306.html',
     ],
+    'VeedMateVideoClient': [
+        'https://www.youtube.com/watch?v=d006aGNWnic',
+        'https://www.tiktok.com/@nataliireynoldss/video/7615426833458236685',
+        'https://www.facebook.com/facebook/videos/how-it-feels-when-you-see-that-your-bestie-already-liked-the-reel-you-were-gonna/1507983703834653/',
+        'https://x.com/jushendo/status/2036224267084333475'
+    ],
 }
 
 
