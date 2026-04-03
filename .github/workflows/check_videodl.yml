@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout Repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -18,12 +18,12 @@ jobs:
       - name: Install unzip
         run: sudo apt-get update && sudo apt-get install -y unzip
 
-      - name: Set up Python
+      - name: Set Up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
       
-      - name: Set up Node.js
+      - name: Set Up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "24"
@@ -34,12 +34,14 @@ jobs:
         with:
           chrome-version: stable
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           pip install -r requirements.txt
           pip install -e .
+          sudo apt-get update
+          sudo apt-get install -y xvfb
       
-      - name: Install ffmpeg
+      - name: Install FFmpeg
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg
@@ -63,11 +65,11 @@ jobs:
           sudo mv Bento4-SDK-1-6-0-641.x86_64-unknown-linux/bin/* /usr/local/bin/
           mp4decrypt --version || true
 
-      - name: Run videodl checks
+      - name: Run Videodl Checks
         run: |
-          python scripts/daily_check_videodl.py --output daily_test_results/videodl_status.json
+          xvfb-run -a python scripts/daily_check_videodl.py --output daily_test_results/videodl_status.json
 
-      - name: Commit updated videodl status & preview videos
+      - name: Commit Updated Videodl Status & Preview Videos
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: update videodl status & preview videos"
