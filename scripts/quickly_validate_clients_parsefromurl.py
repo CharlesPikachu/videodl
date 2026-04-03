@@ -498,6 +498,12 @@ VIDEODL_TEST_SAMPLES = {
         "https://player.pl/seriale-online/pulapka-odcinki,13643", # 13 videos
         "https://player.pl/programy-online/one-night-squad-odcinki,31426", # 10 videos
     ],
+    'LeshiVideoClient': [
+        'https://www.le.com/ptv/vplay/78006876.html#vid=78006876',
+        'https://www.le.com/ptv/vplay/22011384.html',
+        'https://www.le.com/ptv/vplay/26322741.html',
+        'https://www.le.com/ptv/vplay/77974306.html',
+    ],
 }
 
 

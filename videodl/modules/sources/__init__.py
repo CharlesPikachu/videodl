@@ -24,6 +24,7 @@ from .kakao import KakaoVideoClient
 from .youku import YoukuVideoClient
 from .m1905 import M1905VideoClient
 from .iqiyi import IQiyiVideoClient
+from .leshi import LeshiVideoClient
 from .douyin import DouyinVideoClient
 from .artetv import ArteTVVideoClient
 from .reddit import RedditVideoClient
@@ -74,7 +75,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'TencentVideoClient': TencentVideoClient,           'UnityVideoClient': UnityVideoClient,               'WWEVideoClient': WWEVideoClient,                   'WeSingVideoClient': WeSingVideoClient,
         'WeiboVideoClient': WeiboVideoClient,               'WeishiVideoClient': WeishiVideoClient,             'WittyTVVideoClient': WittyTVVideoClient,           'XiguaVideoClient': XiguaVideoClient,
         'XinpianchangVideoClient': XinpianchangVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,           'YinyuetaiVideoClient': YinyuetaiVideoClient,       'YouTubeVideoClient': YouTubeVideoClient,
-        'YoukuVideoClient': YoukuVideoClient,               'ZhihuVideoClient': ZhihuVideoClient,               'ZuiyouVideoClient': ZuiyouVideoClient, 
+        'YoukuVideoClient': YoukuVideoClient,               'ZhihuVideoClient': ZhihuVideoClient,               'ZuiyouVideoClient': ZuiyouVideoClient,             'LeshiVideoClient': LeshiVideoClient,
     }
 
 

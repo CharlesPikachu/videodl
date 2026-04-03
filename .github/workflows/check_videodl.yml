@@ -15,7 +15,7 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Install unzip
+      - name: Install Unzip
         run: sudo apt-get update && sudo apt-get install -y unzip
 
       - name: Set Up Python
@@ -38,8 +38,6 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install -e .
-          sudo apt-get update
-          sudo apt-get install -y xvfb
       
       - name: Install FFmpeg
         run: |
@@ -67,7 +65,7 @@ jobs:
 
       - name: Run Videodl Checks
         run: |
-          xvfb-run -a python scripts/daily_check_videodl.py --output daily_test_results/videodl_status.json
+          python scripts/daily_check_videodl.py --output daily_test_results/videodl_status.json
 
       - name: Commit Updated Videodl Status & Preview Videos
         uses: stefanzweifel/git-auto-commit-action@v5
