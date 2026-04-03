@@ -8,6 +8,8 @@ WeChat Official Account (微信公众号):
 '''
 from __future__ import annotations
 import os
+import subprocess
+import json_repair
 from .data import VideoInfo
 from dataclasses import dataclass
 from typing import Any, Callable, Mapping, Optional, Sequence, Union
@@ -176,11 +178,76 @@ class MergeCCTVTsFilesFFmpegCommand(FFmpegCommandFactory):
         return builder.tolist()
 
 
-'''MergeVideoAudioFFmpegCommand'''
-class MergeVideoAudioFFmpegCommand(FFmpegCommandFactory):
+'''MergeVideoAudioCopyFFmpegCommand'''
+class MergeVideoAudioCopyFFmpegCommand(FFmpegCommandFactory):
+    '''hasaudiostream'''
+    @staticmethod
+    def hasaudiostream(file_path: str) -> bool:
+        cmd = ["ffprobe", "-v", "error", "-print_format", "json", "-show_streams", "-show_format", file_path]
+        if (result := subprocess.run(cmd, capture_output=True, text=True)).returncode != 0: return False
+        try: streams: list[dict] = json_repair.loads(result.stdout).get("streams", []); return any(s.get("codec_type") == "audio" for s in streams)
+        except Exception: return False
     '''build'''
     def build(self, video_file_path: str, audio_file_path: str, output_file_path: str, mods: Optional[ModType] = None) -> list[str]:
-        builder = (self.newbuilder().flag("-y").opt("-i", str(video_file_path)).opt("-i", str(audio_file_path)).opt("-c", "copy").opt("-map", "0:v:0").opt("-map", "1:a:0").positional(output_file_path))
+        builder = (self.newbuilder().flag("-y").opt("-i", str(video_file_path)).opt("-i", str(audio_file_path)).opt("-map", "0:v:0").opt("-map", "1:a:0").opt("-c:v", "copy").opt("-c:a", "copy").flag("-shortest"))
+        if os.path.splitext(output_file_path)[1].lower() in {".mp4", ".m4v", ".mov"}: builder.opt("-movflags", "+faststart")
+        builder.positional(output_file_path)
+        self.applymods(builder, mods)
+        return builder.tolist()
+
+
+'''MergeVideoAudioAudioTranscodeFFmpegCommand'''
+class MergeVideoAudioAudioTranscodeFFmpegCommand(FFmpegCommandFactory):
+    '''hasaudiostream'''
+    @staticmethod
+    def hasaudiostream(file_path: str) -> bool:
+        cmd = ["ffprobe", "-v", "error", "-print_format", "json", "-show_streams", "-show_format", file_path]
+        if (result := subprocess.run(cmd, capture_output=True, text=True)).returncode != 0: return False
+        try: streams: list[dict] = json_repair.loads(result.stdout).get("streams", []); return any(s.get("codec_type") == "audio" for s in streams)
+        except Exception: return False
+    '''audioencodeargsforoutput'''
+    @staticmethod
+    def audioencodeargsforoutput(output_file_path: str) -> list[tuple[str, str]]:
+        ext = os.path.splitext(output_file_path)[1].lower()
+        if ext in {".mp4", ".m4v", ".mov"}: return [("-c:a", "aac"), ("-b:a", "192k"), ("-ar", "48000"), ("-ac", "2")]
+        if ext in {".webm"}: return [("-c:a", "libopus"), ("-b:a", "160k"), ("-ar", "48000"), ("-ac", "2")]
+        if ext in {".ogg", ".ogv"}: return [("-c:a", "libopus"), ("-b:a", "160k"), ("-ar", "48000"), ("-ac", "2")]
+        if ext in {".avi"}: return [("-c:a", "libmp3lame"), ("-b:a", "192k"), ("-ar", "48000"), ("-ac", "2")]
+        return [("-c:a", "aac"), ("-b:a", "192k"), ("-ar", "48000"), ("-ac", "2")]
+    '''build'''
+    def build(self, video_file_path: str, audio_file_path: str, output_file_path: str, mods: Optional[ModType] = None) -> list[str]:
+        builder = (self.newbuilder().flag("-y").opt("-i", str(video_file_path)).opt("-i", str(audio_file_path)).opt("-map", "0:v:0").opt("-map", "1:a:0").opt("-c:v", "copy").flag("-shortest"))
+        for key, value in MergeVideoAudioAudioTranscodeFFmpegCommand.audioencodeargsforoutput(output_file_path): builder.opt(key, value)
+        if os.path.splitext(output_file_path)[1].lower() in {".mp4", ".m4v", ".mov"}: builder.opt("-movflags", "+faststart")
+        builder.positional(output_file_path)
+        self.applymods(builder, mods)
+        return builder.tolist()
+
+
+'''MergeVideoAudioFullTranscodeFFmpegCommand'''
+class MergeVideoAudioFullTranscodeFFmpegCommand(FFmpegCommandFactory):
+    '''hasaudiostream'''
+    @staticmethod
+    def hasaudiostream(file_path: str) -> bool:
+        cmd = ["ffprobe", "-v", "error", "-print_format", "json", "-show_streams", "-show_format", file_path]
+        if (result := subprocess.run(cmd, capture_output=True, text=True)).returncode != 0: return False
+        try: streams: list[dict] = json_repair.loads(result.stdout).get("streams", []); return any(s.get("codec_type") == "audio" for s in streams)
+        except Exception: return False
+    '''videoaudioencodeargsforoutput'''
+    @staticmethod
+    def videoaudioencodeargsforoutput(output_file_path: str) -> list[tuple[str, str]]:
+        ext = os.path.splitext(output_file_path)[1].lower()
+        if ext in {".mp4", ".m4v", ".mov"}: return [("-c:v", "libx264"), ("-preset", "medium"), ("-crf", "23"), ("-pix_fmt", "yuv420p"), ("-c:a", "aac"), ("-b:a", "192k"), ("-ar", "48000"), ("-ac", "2")]
+        if ext in {".webm"}: return [("-c:v", "libvpx-vp9"), ("-crf", "31"), ("-b:v", "0"), ("-c:a", "libopus"), ("-b:a", "160k"), ("-ar", "48000"), ("-ac", "2")]
+        if ext in {".ogg", ".ogv"}: return [("-c:v", "libtheora"), ("-q:v", "7"), ("-c:a", "libopus"), ("-b:a", "160k"), ("-ar", "48000"), ("-ac", "2")]
+        if ext in {".avi"}: return [("-c:v", "mpeg4"), ("-q:v", "5"), ("-c:a", "libmp3lame"), ("-b:a", "192k"), ("-ar", "48000"), ("-ac", "2")]
+        return [("-c:v", "libx264"), ("-preset", "medium"), ("-crf", "23"), ("-pix_fmt", "yuv420p"), ("-c:a", "aac"), ("-b:a", "192k"), ("-ar", "48000"), ("-ac", "2")]
+    '''build'''
+    def build(self, video_file_path: str, audio_file_path: str, output_file_path: str, mods: Optional[ModType] = None) -> list[str]:
+        builder = (self.newbuilder().flag("-y").opt("-i", str(video_file_path)).opt("-i", str(audio_file_path)).opt("-map", "0:v:0").opt("-map", "1:a:0").flag("-shortest"))
+        for key, value in MergeVideoAudioFullTranscodeFFmpegCommand.videoaudioencodeargsforoutput(output_file_path): builder.opt(key, value)
+        if os.path.splitext(output_file_path)[1].lower() in {".mp4", ".m4v", ".mov"}: builder.opt("-movflags", "+faststart")
+        builder.positional(output_file_path)
         self.applymods(builder, mods)
         return builder.tolist()
 
