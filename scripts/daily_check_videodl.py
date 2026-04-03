@@ -15,7 +15,7 @@ import argparse
 import subprocess
 from pathlib import Path
 from datetime import datetime, timezone
-from videodl.modules import VideoClientBuilder, BaseVideoClient
+from videodl.modules import VideoClientBuilder, BaseVideoClient, VideoInfo
 
 
 '''constants'''
@@ -542,14 +542,14 @@ def makepreviewvideo(sample_idx: int, sample: dict, base_dir: str):
         print(f"[Preview] No client class for {client_name}, skip.")
         return None
     client: BaseVideoClient = client_cls(work_dir=WORK_DIR)
-    video_info = dict(sample["parse_result"])
+    video_info = VideoInfo.fromdict(sample["parse_result"])
     print(f"[Preview] Downloading via {client_name}: {sample['test_url']}")
     try:
         video_info = client.download([video_info])[0]
     except Exception as err:
         print(f"[Preview] client.download failed: {err!r}")
-    src_path = video_info.get("file_path")
-    download_url = video_info.get("download_url")
+    src_path = video_info.save_path
+    download_url = video_info.download_url
     if src_path and os.path.exists(src_path):
         input_spec = src_path
     elif download_url and download_url != "NULL":
@@ -603,10 +603,9 @@ def runcheck(output_path: str):
                     video_infos = client.parsefromurl(url)
                     video_info = video_infos[0] if video_infos else {}
                     video_info.pop('raw_data')
-                    status["parse_result"] = video_info or {}
-                    download_url = (video_info or {}).get("download_url")
+                    status["parse_result"] = video_info.todict() if isinstance(video_info, VideoInfo) else {}
                     err_msg = (video_info or {}).get("err_msg")
-                    ok = bool(download_url and download_url != "NULL" and (not err_msg or err_msg == "NULL"))
+                    ok = bool(video_info.with_valid_download_url)
                     status["ok"] = ok
                     status["err_msg"] = err_msg
                 except Exception as err:

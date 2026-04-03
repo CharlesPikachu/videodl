@@ -401,7 +401,7 @@ video_client = videodl.VideoClient(
 
 #### Direct Media URLs
 
-If the input URL is already a direct media link, videodl will try to handle it directly without needing a platform-specific parser.
+If the input URL is already a direct media link, videodl will try to handle it directly without needing a platform-specific / general-purpose video client as a parser.
 
 ```python
 from videodl import videodl

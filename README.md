@@ -657,7 +657,7 @@ video_client = videodl.VideoClient(
 
 #### Direct Media URLs
 
-If the input URL is already a direct media link, videodl will try to handle it directly without needing a platform-specific parser.
+If the input URL is already a direct media link, videodl will try to handle it directly without needing a platform-specific / general-purpose video client as a parser.
 
 ```python
 from videodl import videodl
@@ -707,6 +707,8 @@ Make sure they are installed and available in your environment before enabling t
 (4) A parse result may contain multiple videos
 
 Some URLs may return more than one `VideoInfo`, so always treat the return value of `parsefromurl()` as a list.
+
+Please refer to the documentation for further details: https://videofetch.readthedocs.io/
 
 
 # 💡 Recommended Projects

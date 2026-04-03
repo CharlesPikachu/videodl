@@ -510,8 +510,8 @@ def main(save_path='test_results.pkl'):
         num_valid = 0
         for candidate_url in tqdm(VIDEODL_TEST_SAMPLES[client_name]):
             video_info = client.parsefromurl(candidate_url)[0]
-            status = {"name": client_name, "ok": False, "error_msg": None, "test_url": candidate_url, "parse_result": video_info}
-            if video_info['download_url'] == 'NULL' or not video_info['download_url'] or video_info['err_msg'] != 'NULL':
+            status = {"name": client_name, "ok": False, "error_msg": None, "test_url": candidate_url, "parse_result": video_info.todict()}
+            if not video_info.with_valid_download_url:
                 status.update(dict(error_msg=video_info['err_msg'], ok=False))
             else:
                 num_valid += 1
