@@ -21,34 +21,33 @@ COLORS = {'red': '\033[31m', 'green': '\033[32m', 'yellow': '\033[33m', 'blue': 
 '''LoggerHandle'''
 class LoggerHandle():
     appname, appauthor = 'videodl', 'zcjin'
-    def __init__(self):
-        # set up log dir
-        os.makedirs((log_dir := user_log_dir(appname=self.appname, appauthor=self.appauthor)), exist_ok=True)
-        self.log_file_path = os.path.join(log_dir, "videodl.log")
-        # config logging
-        logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", handlers=[logging.FileHandler(self.log_file_path, encoding="utf-8"), logging.StreamHandler()])
+    os.makedirs((log_dir := user_log_dir(appname=appname, appauthor=appauthor)), exist_ok=True)
+    log_file_path = os.path.join(log_dir, "videodl.log")
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", handlers=[logging.FileHandler(log_file_path, encoding="utf-8"), logging.StreamHandler()])
     '''log'''
     @staticmethod
     def log(level, message): logging.getLogger(LoggerHandle.appname).log(level, str(message))
     '''debug'''
-    def debug(self, message, disable_print=False): message = str(message); open(self.log_file_path, 'a', encoding='utf-8').write(message + '\n') if disable_print else LoggerHandle.log(logging.DEBUG, message)
+    @staticmethod
+    def debug(message: str, disable_print: bool = False): message = str(message); open(LoggerHandle.log_file_path, 'a', encoding='utf-8').write(message + '\n') if disable_print else LoggerHandle.log(logging.DEBUG, message)
     '''info'''
-    def info(self, message, disable_print=False): message = str(message); open(self.log_file_path, 'a', encoding='utf-8').write(message + '\n') if disable_print else LoggerHandle.log(logging.INFO, message)
+    @staticmethod
+    def info(message: str, disable_print: bool = False): message = str(message); open(LoggerHandle.log_file_path, 'a', encoding='utf-8').write(message + '\n') if disable_print else LoggerHandle.log(logging.INFO, message)
     '''warning'''
-    def warning(self, message, disable_print=False): message = str(message); open(self.log_file_path, 'a', encoding='utf-8').write(message + '\n') if disable_print else LoggerHandle.log(logging.WARNING, message if '\033[31m' in message else (message := colorize(message, 'red')))
+    @staticmethod
+    def warning(message: str, disable_print: bool = False): message = str(message); open(LoggerHandle.log_file_path, 'a', encoding='utf-8').write(message + '\n') if disable_print else LoggerHandle.log(logging.WARNING, message if '\033[31m' in message else colorize(message, 'red'))
     '''error'''
-    def error(self, message, disable_print=False): message = str(message); open(self.log_file_path, 'a', encoding='utf-8').write(message + '\n') if disable_print else LoggerHandle.log(logging.ERROR, message if '\033[31m' in message else (message := colorize(message, 'red')))
+    @staticmethod
+    def error(message: str, disable_print: bool = False): message = str(message); open(LoggerHandle.log_file_path, 'a', encoding='utf-8').write(message + '\n') if disable_print else LoggerHandle.log(logging.ERROR, message if '\033[31m' in message else colorize(message, 'red'))
 
 
 '''printtable'''
 def printtable(titles, items, terminal_right_space_len=4):
     assert isinstance(titles, collections.abc.Sequence) and isinstance(items, collections.abc.Sequence), 'title and items should be iterable'
-    table = PrettyTable(titles)
-    for item in items: table.add_row(item)
+    table = PrettyTable(titles); tuple(table.add_row(item) for item in items)
     max_width = shutil.get_terminal_size().columns - terminal_right_space_len
     assert max_width > 0, f'"terminal_right_space_len" should smaller than {shutil.get_terminal_size()}'
-    table.max_table_width = max_width
-    print(table)
+    table.max_table_width = max_width; print(table)
     return table
 
 
