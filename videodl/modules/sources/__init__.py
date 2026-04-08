@@ -38,6 +38,7 @@ from ..utils import BaseModuleBuilder
 from .wesing import WeSingVideoClient
 from .cctalk import CCtalkVideoClient
 from .beacon import BeaconVideoClient
+from .eastday import EastDayVideoClient
 from .kugoumv import KugouMVVideoClient
 from .wittytv import WittyTVVideoClient
 from .open163 import Open163VideoClient
@@ -79,7 +80,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'WeiboVideoClient': WeiboVideoClient,               'WeishiVideoClient': WeishiVideoClient,             'WittyTVVideoClient': WittyTVVideoClient,           'XiguaVideoClient': XiguaVideoClient,
         'XinpianchangVideoClient': XinpianchangVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,           'YinyuetaiVideoClient': YinyuetaiVideoClient,       'YouTubeVideoClient': YouTubeVideoClient,
         'YoukuVideoClient': YoukuVideoClient,               'ZhihuVideoClient': ZhihuVideoClient,               'ZuiyouVideoClient': ZuiyouVideoClient,             'LeshiVideoClient': LeshiVideoClient,
-        'KanKanNewsVideoClient': KanKanNewsVideoClient,     'NuVidVideoClient': NuVidVideoClient,               'ChinaDailyVideoClient': ChinaDailyVideoClient,
+        'KanKanNewsVideoClient': KanKanNewsVideoClient,     'NuVidVideoClient': NuVidVideoClient,               'ChinaDailyVideoClient': ChinaDailyVideoClient,     'EastDayVideoClient': EastDayVideoClient,
     }
 
 
