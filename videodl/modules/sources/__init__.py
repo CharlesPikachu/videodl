@@ -53,6 +53,7 @@ from .bilibili import BilibiliVideoClient
 from .yinyuetai import YinyuetaiVideoClient
 from .duxiaoshi import DuxiaoshiVideoClient
 from .dongchedi import DongchediVideoClient
+from .kankannews import KanKanNewsVideoClient
 from .baidutieba import BaiduTiebaVideoClient
 from .eyepetizer import EyepetizerVideoClient
 from .pipigaoxiao import PipigaoxiaoVideoClient
@@ -76,6 +77,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'WeiboVideoClient': WeiboVideoClient,               'WeishiVideoClient': WeishiVideoClient,             'WittyTVVideoClient': WittyTVVideoClient,           'XiguaVideoClient': XiguaVideoClient,
         'XinpianchangVideoClient': XinpianchangVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,           'YinyuetaiVideoClient': YinyuetaiVideoClient,       'YouTubeVideoClient': YouTubeVideoClient,
         'YoukuVideoClient': YoukuVideoClient,               'ZhihuVideoClient': ZhihuVideoClient,               'ZuiyouVideoClient': ZuiyouVideoClient,             'LeshiVideoClient': LeshiVideoClient,
+        'KanKanNewsVideoClient': KanKanNewsVideoClient,
     }
 
 
