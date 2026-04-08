@@ -510,6 +510,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.facebook.com/facebook/videos/how-it-feels-when-you-see-that-your-bestie-already-liked-the-reel-you-were-gonna/1507983703834653/',
         'https://x.com/jushendo/status/2036224267084333475'
     ],
+    'KanKanNewsVideoClient': [
+        'https://www.kankanews.com/detail/PbwRzE9qow4',
+        'https://www.kankanews.com/detail/ebyjZR5Lzy3',
+        'https://www.kankanews.com/detail/1W2v54r4zwA',
+    ],
 }
 
 
