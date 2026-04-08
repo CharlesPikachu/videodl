@@ -48,6 +48,7 @@ from .rednote import RednoteVideoClient
 from .sixroom import SixRoomVideoClient
 from .tencent import TencentVideoClient
 from .xuexicn import XuexiCNVideoClient
+from .cctvnews import CCTVNewsVideoClient
 from .playerpl import PlayerPLVideoClient
 from .plusfifa import PlusFIFAVideoClient
 from .kuaishou import KuaishouVideoClient
@@ -68,7 +69,7 @@ class VideoClientBuilder(BaseModuleBuilder):
     REGISTERED_MODULES = video_clients = {
         'ABCVideoClient': ABCVideoClient,                   'AcFunVideoClient': AcFunVideoClient,               'ArteTVVideoClient': ArteTVVideoClient,             'BaiduTiebaVideoClient': BaiduTiebaVideoClient,
         'BeaconVideoClient': BeaconVideoClient,             'BilibiliVideoClient': BilibiliVideoClient,         'C56VideoClient': C56VideoClient,                   'CCCVideoClient': CCCVideoClient,
-        'CCTVVideoClient': CCTVVideoClient,                 'CCtalkVideoClient': CCtalkVideoClient,             'DongchediVideoClient': DongchediVideoClient,       'DouyinVideoClient': DouyinVideoClient,
+        'CCtalkVideoClient': CCtalkVideoClient,             'DongchediVideoClient': DongchediVideoClient,       'DouyinVideoClient': DouyinVideoClient,             'CCTVNewsVideoClient': CCTVNewsVideoClient,
         'DuxiaoshiVideoClient': DuxiaoshiVideoClient,       'EyepetizerVideoClient': EyepetizerVideoClient,     'FoxNewsVideoClient': FoxNewsVideoClient,           'GeniusVideoClient': GeniusVideoClient,
         'HaokanVideoClient': HaokanVideoClient,             'HuyaVideoClient': HuyaVideoClient,                 'IQiyiVideoClient': IQiyiVideoClient,               'KakaoVideoClient': KakaoVideoClient,
         'Ku6VideoClient': Ku6VideoClient,                   'KuaishouVideoClient': KuaishouVideoClient,         'KugouMVVideoClient': KugouMVVideoClient,           'M1905VideoClient': M1905VideoClient,
@@ -81,6 +82,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'XinpianchangVideoClient': XinpianchangVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,           'YinyuetaiVideoClient': YinyuetaiVideoClient,       'YouTubeVideoClient': YouTubeVideoClient,
         'YoukuVideoClient': YoukuVideoClient,               'ZhihuVideoClient': ZhihuVideoClient,               'ZuiyouVideoClient': ZuiyouVideoClient,             'LeshiVideoClient': LeshiVideoClient,
         'KanKanNewsVideoClient': KanKanNewsVideoClient,     'NuVidVideoClient': NuVidVideoClient,               'ChinaDailyVideoClient': ChinaDailyVideoClient,     'EastDayVideoClient': EastDayVideoClient,
+        'CCTVVideoClient': CCTVVideoClient,                 
     }
 
 

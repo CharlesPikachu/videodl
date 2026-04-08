@@ -528,6 +528,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://nw.eastday.com/bjzx/20260403/cc9f70957fd8439da55c921920a6f73a.html',
         'https://nw.eastday.com/bjzx/20260405/c526eb2abb2d4fcdb1d96ea9f69fef18.html',
     ],
+    'CCTVNewsVideoClient': [
+        'https://content-static.cctvnews.cctv.com/snow-book/video.html?item_id=15184105708774284671',
+        'https://content-static.cctvnews.cctv.com/snow-book/index.html?item_id=7331185547682467513',
+    ],
 }
 
 

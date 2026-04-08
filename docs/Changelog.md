@@ -1,5 +1,7 @@
 # Development Log
 
+- 2026-04-08: Released videofetch v0.8.2 - added video parsing and downloading support for multiple sites, including CCTV News, Kankan News, China Daily, and Eastday; optimized parts of the code and fixed several bugs.
+
 - 2026-04-03: Released videofetch v0.8.1 - improved the downloadable video quality in the YouTube video client; added a native API for LeTV video parsing and downloading; added a general-purpose parsing API.
 
 - 2026-04-02: Released videofetch v0.8.0 - refactored the base video client class to make the video downloading logic clearer and more extensible; refactored the video info class to provide more comprehensive functionality and more IDE-friendly hints; fixed bugs and invalidation issues in multiple supported video clients.
