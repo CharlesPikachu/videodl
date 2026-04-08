@@ -30,7 +30,7 @@ from http.cookies import SimpleCookie
 from .importutils import optionalimport
 from urllib.parse import urlparse, unquote
 from pathvalidate import sanitize_filename
-from typing import Optional, Iterable, Any, TYPE_CHECKING
+from typing import Optional, Iterable, Any, Protocol, Callable, TYPE_CHECKING
 curl_cffi = optionalimport('curl_cffi')
 if TYPE_CHECKING: import curl_cffi as curl_cffi
 
@@ -123,9 +123,7 @@ def legalizestring(string: str, fit_gbk: bool = True, max_len: int = 255, fit_ut
     # null string
     if not string: return replace_null_string
     # naive clean
-    string = str(string).replace(r'\"', '"')
-    string = re.sub(r"<\\/", "</", string)
-    string = re.sub(r"\\/>", "/>", string)
+    string = re.sub(r"\\/>", "/>", re.sub(r"<\\/", "</", str(string).replace(r'\"', '"')))
     string = re.sub(r"\\u([0-9a-fA-F]{4})", lambda m: chr(int(m.group(1), 16)), string)
     # html.unescape
     string = string if (u := html.unescape(string)) == string else (u if (v := html.unescape(u)) == u else v)
@@ -178,7 +176,7 @@ def resp2json(resp: requests.Response) -> dict:
 '''usedownloadheaderscookies'''
 def usedownloadheaderscookies(func):
     @functools.wraps(func)
-    def wrapper(self, *args, **kwargs):
+    def wrapper(self: ClientProtocolObj, *args, **kwargs):
         self.default_headers = self.default_download_headers
         if hasattr(self, 'default_download_cookies'): self.default_cookies = self.default_download_cookies
         if hasattr(self, 'enable_download_curl_cffi'): self.enable_curl_cffi = self.enable_download_curl_cffi
@@ -190,7 +188,7 @@ def usedownloadheaderscookies(func):
 '''useparseheaderscookies'''
 def useparseheaderscookies(func):
     @functools.wraps(func)
-    def wrapper(self, *args, **kwargs):
+    def wrapper(self: ClientProtocolObj, *args, **kwargs):
         self.default_headers = self.default_parse_headers
         if hasattr(self, 'default_parse_cookies'): self.default_cookies = self.default_parse_cookies
         if hasattr(self, 'enable_parse_curl_cffi'): self.enable_curl_cffi = self.enable_parse_curl_cffi
@@ -202,7 +200,7 @@ def useparseheaderscookies(func):
 '''usesearchheaderscookies'''
 def usesearchheaderscookies(func):
     @functools.wraps(func)
-    def wrapper(self, *args, **kwargs):
+    def wrapper(self: ClientProtocolObj, *args, **kwargs):
         self.default_headers = self.default_search_headers
         if hasattr(self, 'default_search_cookies'): self.default_cookies = self.default_search_cookies
         if hasattr(self, 'enable_search_curl_cffi'): self.enable_curl_cffi = self.enable_search_curl_cffi
@@ -277,6 +275,23 @@ def yieldtimerelatedtitle(source: str):
     dt = datetime.fromtimestamp(time.time())
     date_str = dt.strftime("%Y-%m-%d-%H-%M-%S")
     return f'{date_str} {source}-unknowtitle'
+
+
+'''ClientProtocolObj'''
+class ClientProtocolObj(Protocol):
+    default_headers: dict[str, str]
+    default_search_headers: dict[str, str]
+    default_parse_headers: dict[str, str]
+    default_download_headers: dict[str, str]
+    default_cookies: dict[str, str]
+    default_search_cookies: dict[str, str]
+    default_parse_cookies: dict[str, str]
+    default_download_cookies: dict[str, str]
+    enable_curl_cffi: bool
+    enable_search_curl_cffi: bool
+    enable_parse_curl_cffi: bool
+    enable_download_curl_cffi: bool
+    _initsession: Callable[..., Any]
 
 
 '''SpinWithBackoff'''

@@ -21,8 +21,7 @@ class BaseModuleBuilder():
         self.validate()
     '''build'''
     def build(self, module_cfg: dict):
-        module_cfg = copy.deepcopy(module_cfg)
-        module_type = module_cfg.pop('type')
+        module_type = (module_cfg := copy.deepcopy(module_cfg)).pop('type')
         module = self.REGISTERED_MODULES[module_type](**module_cfg)
         return module
     '''register'''
