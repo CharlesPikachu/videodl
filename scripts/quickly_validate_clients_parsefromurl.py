@@ -518,6 +518,12 @@ VIDEODL_TEST_SAMPLES = {
     'NuVidVideoClient': [
         'https://www.nuvid.com/video/6513023/italian-babe',
     ],
+    'ChinaDailyVideoClient': [
+        'https://www.chinadaily.com.cn/a/202604/07/WS69d4c582a310d6866eb42089.html',
+        'https://cnews.chinadaily.com.cn/a/202604/08/WS69d5d5b4a310942cc49a6b84.html',
+        'https://www.chinadaily.com.cn/a/202603/29/WS69c858cba310d6866eb40728.html',
+        'https://cn.chinadaily.com.cn/a/202604/02/WS69ce24d5a310942cc49a632e.html',
+    ],
 }
 
 
