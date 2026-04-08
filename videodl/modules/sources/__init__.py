@@ -12,6 +12,7 @@ from .base import BaseVideoClient
 from .mgtv import MGTVVideoClient
 from .cctv import CCTVVideoClient
 from .sohu import SohuVideoClient
+from .nuvid import NuVidVideoClient
 from .tbnuk import TBNUKVideoClient
 from .unity import UnityVideoClient
 from .acfun import AcFunVideoClient
@@ -77,7 +78,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'WeiboVideoClient': WeiboVideoClient,               'WeishiVideoClient': WeishiVideoClient,             'WittyTVVideoClient': WittyTVVideoClient,           'XiguaVideoClient': XiguaVideoClient,
         'XinpianchangVideoClient': XinpianchangVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,           'YinyuetaiVideoClient': YinyuetaiVideoClient,       'YouTubeVideoClient': YouTubeVideoClient,
         'YoukuVideoClient': YoukuVideoClient,               'ZhihuVideoClient': ZhihuVideoClient,               'ZuiyouVideoClient': ZuiyouVideoClient,             'LeshiVideoClient': LeshiVideoClient,
-        'KanKanNewsVideoClient': KanKanNewsVideoClient,
+        'KanKanNewsVideoClient': KanKanNewsVideoClient,     'NuVidVideoClient': NuVidVideoClient,
     }
 
 

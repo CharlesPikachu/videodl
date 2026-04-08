@@ -515,6 +515,9 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.kankanews.com/detail/ebyjZR5Lzy3',
         'https://www.kankanews.com/detail/1W2v54r4zwA',
     ],
+    'NuVidVideoClient': [
+        'https://www.nuvid.com/video/6513023/italian-babe',
+    ],
 }
 
 
