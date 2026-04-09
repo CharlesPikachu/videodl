@@ -537,6 +537,12 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.163.com/v/video/VKP3BLEQV.html?clickfrom=video_hot',
         'https://www.163.com/v/video/VIN2DAA00.html?clickfrom=video_like',
     ],
+    'XinhuaNetVideoClient': [
+        'https://www.news.cn/fortune/20260409/01e2ba78799248769b889746e9a5bbe5/c.html',
+        'http://www.bj.xinhuanet.com/20251222/5452d059e00a4774ae94fe153cc15ef4/c.html',
+        'http://www.gx.news.cn/20260327/eaed509d04fa444b99a365136f079bd2/c.html',
+        'http://hn.news.cn/20250511/dc905b1e756c4b6f9514e58bc47c5afa/c.html',
+    ],
 }
 
 

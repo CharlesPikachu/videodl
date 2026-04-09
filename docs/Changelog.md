@@ -1,5 +1,7 @@
 # Development Log
 
+- 2026-04-09: Released videofetch v0.8.3 - added video parsing and download support for Xinhua News and NetEase News; fixed an issue causing unexpected session behavior during session maintenance and various minor code issues.
+
 - 2026-04-08: Released videofetch v0.8.2 - added video parsing and downloading support for multiple sites, including CCTV News, Kankan News, China Daily, and Eastday; optimized parts of the code and fixed several bugs.
 
 - 2026-04-03: Released videofetch v0.8.1 - improved the downloadable video quality in the YouTube video client; added a native API for LeTV video parsing and downloading; added a general-purpose parsing API.

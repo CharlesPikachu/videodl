@@ -54,6 +54,7 @@ from .playerpl import PlayerPLVideoClient
 from .plusfifa import PlusFIFAVideoClient
 from .kuaishou import KuaishouVideoClient
 from .bilibili import BilibiliVideoClient
+from .xinhuanet import XinhuaNetVideoClient
 from .yinyuetai import YinyuetaiVideoClient
 from .duxiaoshi import DuxiaoshiVideoClient
 from .dongchedi import DongchediVideoClient
@@ -83,7 +84,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'XinpianchangVideoClient': XinpianchangVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,           'YinyuetaiVideoClient': YinyuetaiVideoClient,       'YouTubeVideoClient': YouTubeVideoClient,
         'YoukuVideoClient': YoukuVideoClient,               'ZhihuVideoClient': ZhihuVideoClient,               'ZuiyouVideoClient': ZuiyouVideoClient,             'LeshiVideoClient': LeshiVideoClient,
         'KanKanNewsVideoClient': KanKanNewsVideoClient,     'NuVidVideoClient': NuVidVideoClient,               'ChinaDailyVideoClient': ChinaDailyVideoClient,     'EastDayVideoClient': EastDayVideoClient,
-        'CCTVVideoClient': CCTVVideoClient,                 'WWW163VideoClient': WWW163VideoClient,
+        'CCTVVideoClient': CCTVVideoClient,                 'WWW163VideoClient': WWW163VideoClient,             'XinhuaNetVideoClient': XinhuaNetVideoClient,
     }
 
 
