@@ -532,6 +532,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://content-static.cctvnews.cctv.com/snow-book/video.html?item_id=15184105708774284671',
         'https://content-static.cctvnews.cctv.com/snow-book/index.html?item_id=7331185547682467513',
     ],
+    'WWW163VideoClient': [
+        'https://www.163.com/v/video/VDHQNAVSD.html?clickfrom=video_like',
+        'https://www.163.com/v/video/VKP3BLEQV.html?clickfrom=video_hot',
+        'https://www.163.com/v/video/VIN2DAA00.html?clickfrom=video_like',
+    ],
 }
 
 

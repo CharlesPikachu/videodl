@@ -30,25 +30,19 @@ class Open163VideoClient(BaseVideoClient):
     def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
         if not self.belongto(url=url): return []
-        request_overrides, video_info, null_backup_title, video_infos = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source), []
+        request_overrides, video_info, null_backup_title, video_infos, quality_rank = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source), [], {"Sd": 1, "Hd": 2, "Shd": 3}
         # try parse
         try:
             pid = parse_qs(urlparse(url).query, keep_blank_values=True)['pid'][0]
             (resp := self.get(f"https://c.open.163.com/open/mob/movie/list.do?plid={pid}", **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)))); root_video_title = safeextractfromdict(raw_data, ['data', 'title'], None)
             for _, item in enumerate(raw_data['data']['videoList']):
-                if not isinstance(item, dict): continue
-                quality_rank, streams = {"Sd": 1, "Hd": 2, "Shd": 3}, []
-                for proto in ("mp4", "m3u8"):
-                    for level in ("Sd", "Hd", "Shd"):
-                        if not (url := item.get(f"{proto}{level}UrlOrign") or item.get(f"{proto}{level}Url") or "") or ((size := item.get(f"{proto}{level}SizeOrign") or item.get(f"{proto}{level}Size") or 0) == 0): continue
-                        streams.append({"proto": proto, "level": level, "url": url, "size": size, "rank": quality_rank[level]})
+                if not isinstance(item, dict) or not item: continue
+                streams = [{"proto": proto, "level": level, "url": url, "size": size, "rank": quality_rank[level]} for proto in ("mp4", "m3u8") for level in ("Sd", "Hd", "Shd") if (url := item.get(f"{proto}{level}UrlOrign") or item.get(f"{proto}{level}Url") or "") if (size := item.get(f"{proto}{level}SizeOrign") or item.get(f"{proto}{level}Size") or 0) != 0]
                 streams_sorted: list[dict] = sorted(streams, key=lambda s: (s["rank"], s["size"]), reverse=True)
-                streams_sorted: list[dict] = [item for item in streams_sorted if item.get('url')]
+                streams_sorted: list[dict] = [item for item in streams_sorted if item.get('url') and str(item.get('url')).startswith('http')]
                 download_url = streams_sorted[0]['url']; (video_info_page := copy.deepcopy(video_info)).update(dict(download_url=download_url))
-                video_title = item.get('title') or null_backup_title
-                if root_video_title and len(raw_data['data']['videoList']) > 1: video_title = f"{root_video_title}-ep{len(video_infos)+1}-{video_title}"
-                elif len(raw_data['data']['videoList']) > 1: video_title = f"ep{len(video_infos)+1}-{video_title}"
+                video_title = (f"{root_video_title}-ep{len(video_infos)+1}-{item.get('title') or null_backup_title}" if root_video_title and len(raw_data['data']['videoList']) > 1 else f"ep{len(video_infos)+1}-{item.get('title') or null_backup_title}" if len(raw_data['data']['videoList']) > 1 else item.get('title') or null_backup_title)
                 video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
