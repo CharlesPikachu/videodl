@@ -363,7 +363,7 @@ class BaseVideoClient():
                 futures = [executor.submit(self._download, video_info, vid, downloaded_video_infos, request_overrides, progress) for vid, video_info in enumerate(video_infos)]
                 for fut in as_completed(futures): fut.result(); progress.update(overall_task_id, advance=1)
         # logging
-        self.logger_handle.info(f'Finished downloading videos using {self.source}. Valid downloads: {len(downloaded_video_infos)}.', disable_print=self.disable_print)
+        self.logger_handle.info(f'Finished downloading videos from {self.source}. Valid downloads: {len(downloaded_video_infos)}.', disable_print=self.disable_print)
         # return
         return downloaded_video_infos
     '''belongto'''
