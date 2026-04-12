@@ -32,7 +32,7 @@ class YinyuetaiVideoClient(BaseVideoClient):
         # try parse
         try:
             vid = urlparse(url).path.strip('/').split('/')[-1]
-            (resp := self.get(f'https://video-api.yinyuetai.com/video/get?id={vid}', **request_overrides)).raise_for_status()
+            (resp := self.get(f'https://video-api.yinyuetai.com/video/get?id={vid}', verify=False, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             candidate_urls: list[dict] = raw_data["data"]["fullClip"]["urls"]; candidate_urls = [u for u in candidate_urls if u.get('url')]
             candidate_urls = sorted(candidate_urls, key=sortkey_func); download_url = candidate_urls[0]['url']; video_info.update(dict(download_url=download_url))
