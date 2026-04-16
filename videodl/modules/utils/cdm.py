@@ -28,9 +28,7 @@ def initcdm(pssh_value, cdm_wvd_file_path: str):
 '''closecdm'''
 def closecdm(cdm: Cdm, cdm_session_id, response):
     cdm.parse_license(cdm_session_id, response)
-    keys = []
-    for key in cdm.get_keys(cdm_session_id):
-        if "CONTENT" in key.type: keys += [f"{key.kid.hex}:{key.key.hex()}"]
+    keys = [f"{key.kid.hex}:{key.key.hex()}" for key in cdm.get_keys(cdm_session_id) if "CONTENT" in key.type]
     cdm.close(cdm_session_id)
     return keys
 
