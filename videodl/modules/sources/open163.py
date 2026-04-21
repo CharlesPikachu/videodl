@@ -10,7 +10,7 @@ import os
 import copy
 from .base import BaseVideoClient
 from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, taskprogress, FileTypeSniffer, VideoInfo
 
 
 '''Open163VideoClient'''
@@ -36,17 +36,18 @@ class Open163VideoClient(BaseVideoClient):
             pid = parse_qs(urlparse(url).query, keep_blank_values=True)['pid'][0]
             (resp := self.get(f"https://c.open.163.com/open/mob/movie/list.do?plid={pid}", **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)))); root_video_title = safeextractfromdict(raw_data, ['data', 'title'], None)
-            for _, item in enumerate(raw_data['data']['videoList']):
-                if not isinstance(item, dict) or not item: continue
-                streams = [{"proto": proto, "level": level, "url": url, "size": size, "rank": quality_rank[level]} for proto in ("mp4", "m3u8") for level in ("Sd", "Hd", "Shd") if (url := item.get(f"{proto}{level}UrlOrign") or item.get(f"{proto}{level}Url") or "") if (size := item.get(f"{proto}{level}SizeOrign") or item.get(f"{proto}{level}Size") or 0) != 0]
-                streams_sorted: list[dict] = sorted(streams, key=lambda s: (s["rank"], s["size"]), reverse=True)
-                streams_sorted: list[dict] = [item for item in streams_sorted if item.get('url') and str(item.get('url')).startswith('http')]
-                download_url = streams_sorted[0]['url']; (video_info_page := copy.deepcopy(video_info)).update(dict(download_url=download_url))
-                video_title = (f"{root_video_title}-ep{len(video_infos)+1}-{item.get('title') or null_backup_title}" if root_video_title and len(raw_data['data']['videoList']) > 1 else f"ep{len(video_infos)+1}-{item.get('title') or null_backup_title}" if len(raw_data['data']['videoList']) > 1 else item.get('title') or null_backup_title)
-                video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
-                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-                ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
-                video_info_page.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f"{item.get('mid')}-{item.get('plid')}", cover_url=item.get('imgPath'))); video_infos.append(video_info_page)
+            with taskprogress(description='Possible Multiple Videos Detected >>> Parsing One by One', total=len((extracted_video_items := raw_data['data']['videoList']))) as progress:
+                for _, extracted_video_item in enumerate(extracted_video_items):
+                    if not isinstance(extracted_video_item, dict) or not extracted_video_item: progress.advance(1); continue
+                    streams = [{"proto": proto, "level": level, "url": url, "size": size, "rank": quality_rank[level]} for proto in ("mp4", "m3u8") for level in ("Sd", "Hd", "Shd") if (url := extracted_video_item.get(f"{proto}{level}UrlOrign") or extracted_video_item.get(f"{proto}{level}Url") or "") if (size := extracted_video_item.get(f"{proto}{level}SizeOrign") or extracted_video_item.get(f"{proto}{level}Size") or 0) != 0]
+                    streams_sorted: list[dict] = sorted(streams, key=lambda s: (s["rank"], s["size"]), reverse=True)
+                    streams_sorted: list[dict] = [item for item in streams_sorted if item.get('url') and str(item.get('url')).startswith('http')]
+                    download_url = streams_sorted[0]['url']; (video_info_page := copy.deepcopy(video_info)).update(dict(download_url=download_url))
+                    video_title = (f"{root_video_title}-EP{len(video_infos)+1}-{extracted_video_item.get('title') or null_backup_title}" if root_video_title and len(raw_data['data']['videoList']) > 1 else f"EP{len(video_infos)+1}-{extracted_video_item.get('title') or null_backup_title}" if len(raw_data['data']['videoList']) > 1 else extracted_video_item.get('title') or null_backup_title)
+                    video_title = legalizestring(video_title, replace_null_string=null_backup_title).removesuffix('.')
+                    guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
+                    ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
+                    video_info_page.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f"{extracted_video_item.get('mid')}-{extracted_video_item.get('plid')}", cover_url=extracted_video_item.get('imgPath'))); video_infos.append(video_info_page); progress.advance(1)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

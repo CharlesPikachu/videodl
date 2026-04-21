@@ -115,7 +115,7 @@ class IQiyiVideoClient(BaseVideoClient):
                     (video_info_page := copy.deepcopy(video_info)).update(raw_data=raw_data, download_url=download_url)
                     video_title = legalizestring(extracted_normal_id['title'] or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
                     video_title = f'EP{len(video_infos)+1}-{video_title}' if len(raw_data['normal_ids']) > 1 else video_title
-                    video_info_page.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.m3u8'), ext='mp4', identifier=extracted_normal_id["V"], cover_url=raw_data.get('image_url'))); video_infos.append(video_info_page)
+                    video_info_page.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.m3u8'), ext='mp4', identifier=extracted_normal_id["V"], cover_url=raw_data.get('image_url'))); video_infos.append(video_info_page); progress.advance(1)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

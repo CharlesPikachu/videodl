@@ -17,7 +17,7 @@ import json_repair
 from bs4 import BeautifulSoup
 from urllib.parse import quote
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, safeextractfromdict, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, safeextractfromdict, taskprogress, VideoInfo
 
 
 '''M1905VideoClient'''
@@ -154,13 +154,14 @@ class M1905VideoClient(BaseVideoClient):
         # try parse
         try:
             raw_data = self._getvideocoverinfo(url, request_overrides=request_overrides)
-            for normal_id in raw_data['normal_ids']:
-                self._updatevideodwnldinfo(normal_id, request_overrides=request_overrides)
-                download_url = list(normal_id['defns'][0].values())[0]
-                (video_info_page := copy.deepcopy(video_info)).update(raw_data=raw_data, download_url=download_url)
-                video_title = legalizestring(raw_data['title'] or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                video_title = f'ep{len(video_infos)+1}-{video_title}' if len(raw_data['normal_ids']) > 1 else video_title
-                video_info_page.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.m3u8'), ext='mp4', identifier=normal_id["V"], cover_url=raw_data.get('image_url'))); video_infos.append(video_info_page)
+            with taskprogress(description='Possible Multiple Videos Detected >>> Parsing One by One', total=len((extracted_normal_ids := safeextractfromdict(raw_data, ['normal_ids'], [])))) as progress:
+                for extracted_normal_id in extracted_normal_ids:
+                    self._updatevideodwnldinfo(extracted_normal_id, request_overrides=request_overrides)
+                    download_url = list(extracted_normal_id['defns'][0].values())[0]
+                    (video_info_page := copy.deepcopy(video_info)).update(raw_data=raw_data, download_url=download_url)
+                    video_title = legalizestring(raw_data['title'] or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
+                    video_title = f'EP{len(video_infos)+1}-{video_title}' if len(raw_data['normal_ids']) > 1 else video_title
+                    video_info_page.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.m3u8'), ext='mp4', identifier=extracted_normal_id["V"], cover_url=raw_data.get('image_url'))); video_infos.append(video_info_page); progress.advance(1)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
