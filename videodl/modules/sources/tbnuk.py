@@ -12,7 +12,7 @@ import json_repair
 from bs4 import BeautifulSoup
 from .base import BaseVideoClient
 from urllib.parse import urlparse
-from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, resp2json, VideoInfo, FileTypeSniffer
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, resp2json, taskprogress, VideoInfo, FileTypeSniffer
 
 
 '''TBNUKVideoClient'''
@@ -109,15 +109,16 @@ class TBNUKVideoClient(BaseVideoClient):
             try: collection_title = re.findall(r'"af_content"[^:]*:[^"]*"([^"]+)"', resp.text)[0]; assert len(collection_title) > 0
             except: collection_title = urlparse(url).path.strip('/').split('/')[-1]
             card_nodes, seasons = BeautifulSoup(resp.text, 'lxml').find_all('div', class_=lambda c: c and "card-body" in c), {}
-            for card_node in card_nodes:
-                try: card_title = card_node.find(class_=lambda c: c and "card-title" in c).find("a", attrs={"href": True}); assert len((episode_url := card_title["href"])) > 0; season_index = int(re.search(r'season\s*(\d+)', card_node.find("span", attrs={"data-content-type": "season"}).get_text().strip(), flags=re.IGNORECASE).group(1)); episode_index = int(re.search(r'episode\s*(\d+)', card_node.find("span", attrs={"data-content-type": "episode"}).get_text().strip(), flags=re.IGNORECASE).group(1))
-                except Exception: continue
-                try: assert len((episode_title := card_title.get_text().strip())) > 0
-                except: episode_title = episode_url.split("/")[-1]
-                if seasons.get(season_index, None) is None: seasons[season_index] = []
-                video_info = self._parsefromurlwithwatch(episode_url, request_overrides=request_overrides)[0]
-                video_info.title = legalizestring(f'{collection_title} - EP{episode_index} - {episode_title}', replace_null_string=null_backup_title)
-                if video_info.download_url and str(video_info.download_url).startswith('http'): video_infos.append(video_info)
+            with taskprogress(description='Possible Multiple Videos Detected >>> Parsing One by One', total=len(card_nodes)) as progress:
+                for card_node in card_nodes:
+                    try: card_title = card_node.find(class_=lambda c: c and "card-title" in c).find("a", attrs={"href": True}); assert len((episode_url := card_title["href"])) > 0; season_index = int(re.search(r'season\s*(\d+)', card_node.find("span", attrs={"data-content-type": "season"}).get_text().strip(), flags=re.IGNORECASE).group(1)); episode_index = int(re.search(r'episode\s*(\d+)', card_node.find("span", attrs={"data-content-type": "episode"}).get_text().strip(), flags=re.IGNORECASE).group(1))
+                    except Exception: progress.advance(1); continue
+                    try: assert len((episode_title := card_title.get_text().strip())) > 0
+                    except Exception: episode_title = episode_url.split("/")[-1]
+                    if seasons.get(season_index, None) is None: seasons[season_index] = []
+                    video_info = self._parsefromurlwithwatch(episode_url, request_overrides=request_overrides)[0]
+                    video_info.title = legalizestring(f'{collection_title} - EP{episode_index} - {episode_title}', replace_null_string=null_backup_title)
+                    if video_info.download_url and str(video_info.download_url).startswith('http'): video_infos.append(video_info); progress.advance(1)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithshows >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
