@@ -4,6 +4,7 @@ from .ip import RandomIPGenerator
 from .aes import AESAlgorithmWrapper
 from .smuggler import BrightcoveSmuggler
 from .modulebuilder import BaseModuleBuilder
+from .progress import taskprogress, progresslog
 from .hls import CCTVHLSBestParser, TencentHLSHelper
 from .cdm import initcdm, closecdm, SearchPsshValueUtils
 from .io import touchdir, generateuniquetmppath, FileLock
