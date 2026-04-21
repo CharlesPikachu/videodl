@@ -14,7 +14,7 @@ import urllib.parse
 from .base import BaseVideoClient
 from dataclasses import dataclass, asdict
 from typing import Optional, List, Dict, Any
-from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, taskprogress, FileTypeSniffer, VideoInfo
 
 
 '''RedditMediaInfo'''
@@ -110,17 +110,16 @@ class RedditVideoClient(BaseVideoClient):
                 data: dict = post_js[0]["data"]["children"][0]["data"]; final_url = data.get("url")
                 raise RuntimeError(f'The video in this post is not hosted on Reddit; it is an external link: {final_url}')
             if media.is_playlist and media.playlist_items:
-                for _, item in enumerate(media.playlist_items, 1):
-                    hls_url, dash_url, vid = (self._augmenthlsquery(hls_url) if (hls_url := item.get("hls_url")) else dash_url if (dash_url := item.get("dash_url")) else hls_url), (dash_url if 'dash_url' in locals() else item.get("dash_url")), item["id"]
-                    if (not hls_url) or (not str(hls_url).startswith('http')): continue
-                    video_title = legalizestring(f'ep{len(video_infos)+1}-{media.title or null_backup_title}', replace_null_string=null_backup_title).removesuffix('.')
-                    guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=hls_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-                    ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
-                    (video_info_page := copy.deepcopy(video_info)).update(dict(raw_data=item, download_url=hls_url, title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, enable_nm3u8dlre=True, cover_url=media.cover_url)); video_infos.append(video_info_page)
+                with taskprogress(description='Possible Multiple Videos Detected >>> Parsing One by One', total=len(media.playlist_items)) as progress:
+                    for _, extracted_video_item in enumerate(media.playlist_items, 1):
+                        hls_url, dash_url, vid = (self._augmenthlsquery(hls_url) if (hls_url := extracted_video_item.get("hls_url")) else dash_url if (dash_url := extracted_video_item.get("dash_url")) else hls_url), (dash_url if 'dash_url' in locals() else extracted_video_item.get("dash_url")), extracted_video_item["id"]
+                        if (not hls_url) or (not str(hls_url).startswith('http')): progress.advance(1); continue
+                        video_title = legalizestring(f'EP{len(video_infos)+1}-{media.title or null_backup_title}', replace_null_string=null_backup_title).removesuffix('.')
+                        guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=hls_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
+                        ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
+                        (video_info_page := copy.deepcopy(video_info)).update(dict(raw_data=extracted_video_item, download_url=hls_url, title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, enable_nm3u8dlre=True, cover_url=media.cover_url)); video_infos.append(video_info_page); progress.advance(1)
             else:
-                if (download_url := media.hls_url or media.dash_url): download_url = self._augmenthlsquery(download_url)
-                elif media.fallback_url: download_url = media.fallback_url
-                else: raise Exception
+                download_url = self._augmenthlsquery(primary_url) if (primary_url := media.hls_url or media.dash_url) else media.fallback_url or None
                 video_title = legalizestring(media.title or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
                 guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
                 ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
