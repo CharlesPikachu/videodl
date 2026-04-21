@@ -16,7 +16,7 @@ import hashlib
 from .base import BaseVideoClient
 from urllib.parse import urlencode, quote
 from ..utils.domains import IQIYI_SUFFIXES
-from ..utils import legalizestring, useparseheaderscookies, resp2json, touchdir, yieldtimerelatedtitle, safeextractfromdict, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, touchdir, yieldtimerelatedtitle, safeextractfromdict, taskprogress, VideoInfo
 
 
 '''IQiyiVideoClient'''
@@ -64,12 +64,9 @@ class IQiyiVideoClient(BaseVideoClient):
         info, req_url, request_overrides = None, IQiyiVideoClient.PLAYER_INIT_URL, request_overrides or {}
         try:
             (resp := self.get(req_url, headers={'referer': url}, **request_overrides)).raise_for_status(); resp.encoding = 'utf-8'
-            tvid = IQiyiVideoClient.TVID_PAT_RE.search(resp.text).group('tvid')
-            params = {'entity_id': tvid, 'device_id': device_id, 'auth_cookie': '', 'pcv': IQiyiVideoClient.APP_VERSION, 'app_version': IQiyiVideoClient.APP_VERSION, 'ext': '', 'app_mode': 'standard', 'scale': 125, 'timestamp': int(time.time() * 1000), 'src': 'pca_tvg', 'os': '', 'conduit_id': ''}
-            params['sign'] = self._calcsign(params)
+            params = {'entity_id': (tvid := IQiyiVideoClient.TVID_PAT_RE.search(resp.text).group('tvid')), 'device_id': device_id, 'auth_cookie': '', 'pcv': IQiyiVideoClient.APP_VERSION, 'app_version': IQiyiVideoClient.APP_VERSION, 'ext': '', 'app_mode': 'standard', 'scale': 125, 'timestamp': int(time.time() * 1000), 'src': 'pca_tvg', 'os': '', 'conduit_id': ''}; params['sign'] = self._calcsign(params)
             (resp := self.get(IQiyiVideoClient.VIDEO_COVER_PREFIX, params=params, **request_overrides)).raise_for_status(); resp.encoding = 'utf-8'
-            raw_data = resp2json(resp=resp); data = raw_data['data']
-            image_url = safeextractfromdict(raw_data, ['data', 'base_data', 'image_url'], None)
+            data = (raw_data := resp2json(resp=resp))['data']; image_url = safeextractfromdict(raw_data, ['data', 'base_data', 'image_url'], None)
             info = {'image_url': image_url, 'url': url, 'referrer': url, 'title': data['base_data']['title'], 'year': data['base_data']['current_video_year'], 'cover_id': data['base_data']['qipu_id'], 'type': IQiyiVideoClient.VideoTypes.MOVIE if data['base_data']['album_source_type'] == '-1' else IQiyiVideoClient.VideoTypes.TV}
             vi: dict = {'V': tvid, 'E': 1, 'defns': {}, 'url': url, 'referrer': url}; info['normal_ids'] = [vi]; info['episode_all'] = 1
             if not (data := safeextractfromdict(data, ['template', 'tabs', 0, 'blocks', 2, 'data', 'data'], None)): return info
@@ -95,8 +92,7 @@ class IQiyiVideoClient(BaseVideoClient):
         params['vf'] = self._calcvf('/dash?' + urlencode(params))
         try:
             (resp := self.get(IQiyiVideoClient.VIDEO_CONFIG_URL + '?' + urlencode(params), **request_overrides)).raise_for_status(); resp.encoding = 'utf-8'
-            raw_data = resp2json(resp=resp); data = raw_data['data']
-            vd = [vd for vd in sorted(data['program']['video'], key=lambda x: x['bid'], reverse=True) if vd.get('m3u8') and vd['ff'] != 'dash'][0]
+            vd = [vd for vd in sorted(resp2json(resp=resp)['data']['program']['video'], key=lambda x: x['bid'], reverse=True) if vd.get('m3u8') and vd['ff'] != 'dash'][0]
             ts_urls = [ts for ts in vd['m3u8'].split('\n') if ts and not ts.startswith('#')]
             std_defn = IQiyiVideoClient.IQIYI_DEFN_MAP_I2S[vd['bid']]
             vi["defns"].setdefault(std_defn, []).append(dict(ext=vd['ff'], urls=ts_urls))
@@ -111,14 +107,15 @@ class IQiyiVideoClient(BaseVideoClient):
         # try parse
         try:
             raw_data = self._getvideocoverinfo(url, device_id=device_id, request_overrides=request_overrides)
-            for normal_id in raw_data['normal_ids']:
-                self._updatevideodwnldinfo(normal_id, device_id=device_id, request_overrides=request_overrides)
-                touchdir(os.path.dirname((download_url := os.path.join(self.work_dir, self.source, f'{normal_id["V"]}.m3u8'))))
-                with open(download_url, 'w') as fp: fp.write(normal_id['highest_defns_original'])
-                (video_info_page := copy.deepcopy(video_info)).update(raw_data=raw_data, download_url=download_url)
-                video_title = legalizestring(normal_id['title'] or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                video_title = f'ep{len(video_infos)+1}-{video_title}' if len(raw_data['normal_ids']) > 1 else video_title
-                video_info_page.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.m3u8'), ext='mp4', identifier=normal_id["V"], cover_url=raw_data.get('image_url'))); video_infos.append(video_info_page)
+            with taskprogress(description='Possible Multiple Videos Detected >>> Parsing One by One', total=len((extracted_normal_ids := safeextractfromdict(raw_data, ['normal_ids'], [])))) as progress:
+                for extracted_normal_id in extracted_normal_ids:
+                    self._updatevideodwnldinfo(extracted_normal_id, device_id=device_id, request_overrides=request_overrides)
+                    touchdir(os.path.dirname((download_url := os.path.join(self.work_dir, self.source, f'{extracted_normal_id["V"]}.m3u8'))))
+                    with open(download_url, 'w') as fp: fp.write(extracted_normal_id['highest_defns_original'])
+                    (video_info_page := copy.deepcopy(video_info)).update(raw_data=raw_data, download_url=download_url)
+                    video_title = legalizestring(extracted_normal_id['title'] or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
+                    video_title = f'EP{len(video_infos)+1}-{video_title}' if len(raw_data['normal_ids']) > 1 else video_title
+                    video_info_page.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.m3u8'), ext='mp4', identifier=extracted_normal_id["V"], cover_url=raw_data.get('image_url'))); video_infos.append(video_info_page)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
