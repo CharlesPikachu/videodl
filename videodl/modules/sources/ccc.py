@@ -9,7 +9,7 @@ WeChat Official Account (微信公众号):
 import os
 import re
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, resp2json, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, resp2json, taskprogress, FileTypeSniffer, VideoInfo
 
 
 '''CCCVideoClient'''
@@ -36,9 +36,9 @@ class CCCVideoClient(BaseVideoClient):
             (resp := self.get(f'https://media.ccc.de/public/events/{event_id}', **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp))))
             video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            fmt_rank = lambda rec: {"video/mp4": 2, "video/webm": 1}.get(rec.get("mime_type", ""), 0)
-            quality_key = lambda rec: ((1 if rec.get("high_quality") else 0), ((rec.get("width") or 0) * (rec.get("height") or 0)), (rec.get("width") or 0), (rec.get("height") or 0), fmt_rank(rec))
-            videos = [r for r in raw_data["recordings"] if isvideo_func(r)]; videos_sorted = sorted(videos, key=quality_key, reverse=True)
+            fmt_rank_func = lambda rec: {"video/mp4": 2, "video/webm": 1}.get(rec.get("mime_type", ""), 0)
+            quality_key_func = lambda rec: ((1 if rec.get("high_quality") else 0), ((rec.get("width") or 0) * (rec.get("height") or 0)), (rec.get("width") or 0), (rec.get("height") or 0), fmt_rank_func(rec))
+            videos = [r for r in raw_data["recordings"] if isvideo_func(r)]; videos_sorted = sorted(videos, key=quality_key_func, reverse=True)
             video_info.update(dict(download_url=(download_url := videos_sorted[0]['recording_url'])))
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
@@ -60,11 +60,12 @@ class CCCVideoClient(BaseVideoClient):
         if not m: return self._parsefromurlsinglevideo(url, request_overrides=request_overrides)
         try:
             (resp := self.get('https://media.ccc.de/public/conferences/' + m.group('id'), **request_overrides)).raise_for_status()
-            for event in resp2json(resp=resp)['events']:
-                if not isinstance(event, dict) or not event.get('frontend_link'): continue
-                if not (video_info := self._parsefromurlsinglevideo(event['frontend_link'], request_overrides=request_overrides)): continue
-                if not (video_info := video_info[0]).with_valid_download_url: continue
-                video_info.update(dict(title=f"ep{len(video_infos)+1}-{video_info.title}", save_path=os.path.join(self.work_dir, self.source, f'ep{len(video_infos)+1}-{video_info.title}.{video_info.ext}'))); video_infos.append(video_info)
+            with taskprogress(description='Possible Multiple Videos Detected >>> Parsing One by One', total=len((extracted_video_items := resp2json(resp=resp)['events']))) as progress:
+                for extracted_video_item in extracted_video_items:
+                    if not isinstance(extracted_video_item, dict) or not extracted_video_item.get('frontend_link'): progress.advance(1); continue
+                    if not (video_info := self._parsefromurlsinglevideo(extracted_video_item['frontend_link'], request_overrides=request_overrides)): progress.advance(1); continue
+                    if not (video_info := video_info[0]).with_valid_download_url: progress.advance(1); continue
+                    video_info.update(dict(title=f"EP{len(video_infos)+1}-{video_info.title}", save_path=os.path.join(self.work_dir, self.source, f'EP{len(video_infos)+1}-{video_info.title}.{video_info.ext}'))); video_infos.append(video_info); progress.advance(1)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

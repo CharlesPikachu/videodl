@@ -15,7 +15,7 @@ import hashlib
 import json_repair
 from .base import BaseVideoClient
 from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, FileTypeSniffer, VideoInfo
+from ..utils import legalizestring, useparseheaderscookies, resp2json, yieldtimerelatedtitle, safeextractfromdict, taskprogress, FileTypeSniffer, VideoInfo
 
 
 '''CCTVNewsVideoClient'''
@@ -51,14 +51,15 @@ class CCTVNewsVideoClient(BaseVideoClient):
             (resp := self.get(api_url, headers=request_headers, params=params, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := json_repair.loads(base64.b64decode(resp2json(resp=resp)['response']).decode('utf-8')))))
             # --parse videos
-            for video in safeextractfromdict(raw_data, ['data', 'videos'], []):
-                if not isinstance(video, dict) or not video.get('qualities'): continue
-                qualities: list[dict] = sorted(video['qualities'], key=lambda item: (item.get('width'), item.get('height'), item.get('size')), reverse=True)
-                (video_info_item := copy.deepcopy(video_info)).download_url = [q.get('url') for q in qualities if q.get('url') and str(q.get('url')).startswith('http')][0]
-                video_title = legalizestring(video.get('title') or safeextractfromdict(raw_data, ['data', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-                guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=video_info_item.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-                ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
-                video_info_item.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=safeextractfromdict(video, ['cover', 'url'], None))); video_infos.append(video_info_item)
+            with taskprogress(description='Possible Multiple Videos Detected >>> Parsing One by One', total=len((extracted_video_items := safeextractfromdict(raw_data, ['data', 'videos'], [])))) as progress:
+                for extracted_video_item in extracted_video_items:
+                    if not isinstance(extracted_video_item, dict) or not extracted_video_item.get('qualities'): progress.advance(1); continue
+                    qualities: list[dict] = sorted(extracted_video_item['qualities'], key=lambda item: (item.get('width'), item.get('height'), item.get('size')), reverse=True)
+                    (video_info_item := copy.deepcopy(video_info)).download_url = [q.get('url') for q in qualities if q.get('url') and str(q.get('url')).startswith('http')][0]
+                    video_title = legalizestring(extracted_video_item.get('title') or safeextractfromdict(raw_data, ['data', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
+                    guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=video_info_item.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
+                    ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
+                    video_info_item.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=safeextractfromdict(extracted_video_item, ['cover', 'url'], None))); video_infos.append(video_info_item); progress.advance(1)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
