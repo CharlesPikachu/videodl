@@ -1,5 +1,7 @@
 # Development Log
 
+- 2026-04-22: Released videofetch v0.8.4 - codebase partially optimized; added progress indicators for sites that support multi-video parsing; introduced video parsing and download support for Huanqiu and People’s Daily.
+
 - 2026-04-09: Released videofetch v0.8.3 - added video parsing and download support for Xinhua News and NetEase News; fixed an issue causing unexpected session behavior during session maintenance.
 
 - 2026-04-08: Released videofetch v0.8.2 - added video parsing and downloading support for multiple sites, including CCTV News, Kankan News, China Daily, and Eastday; optimized parts of the code and fixed several bugs.

@@ -548,6 +548,11 @@ VIDEODL_TEST_SAMPLES = {
         'http://v.people.cn/n1/2022/0907/c447654-32521390.html',
         'http://v.people.cn/n1/2026/0414/c431305-40701043.html',
     ],
+    'HuanQiuVideoClient': [
+        'https://v.huanqiu.com/article/4RGKR80sTBx',
+        'https://v.huanqiu.com/article/4REgaSpSqxO',
+        'https://china.huanqiu.com/article/4RGHFASqx7S',
+    ],
 }
 
 

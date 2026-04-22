@@ -58,9 +58,9 @@
 
 # 🆕 What's New
 
+- 2026-04-22: Released videofetch v0.8.4 - codebase partially optimized; added progress indicators for sites that support multi-video parsing; introduced video parsing and download support for Huanqiu and People’s Daily.
 - 2026-04-09: Released videofetch v0.8.3 - added video parsing and download support for Xinhua News and NetEase News; fixed an issue causing unexpected session behavior during session maintenance.
 - 2026-04-08: Released videofetch v0.8.2 - added video parsing and downloading support for multiple sites, including CCTV News, Kankan News, China Daily, and Eastday; optimized parts of the code and fixed several bugs.
-- 2026-04-03: Released videofetch v0.8.1 - improved the downloadable video quality in the YouTube video client; added a native API for LeTV video parsing and downloading; added a general-purpose parsing API.
 
 
 # 🚀 Introduction
@@ -100,6 +100,7 @@ The video platforms currently supported for parsing are,
 |                                                        | [EastDayVideoClient](https://www.eastday.com/)                                                         | [东方网](https://www.eastday.com/)                                                            | ✔️        | ✔️       | [eastday.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/eastday.py)             |
 |                                                        | [HaokanVideoClient](https://haokan.baidu.com/)                                                         | [好看视频](https://haokan.baidu.com/)                                                         | ✔️        | ✔️       | [haokan.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/haokan.py)               |
 |                                                        | [HuyaVideoClient](https://www.huya.com/)                                                               | [虎牙视频](https://www.huya.com/)                                                             | ✔️        | ✔️       | [huya.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/huya.py)                   |
+|                                                        | [HuanQiuVideoClient](https://www.huanqiu.com/)                                                         | [环球网](https://www.huanqiu.com/)                                                            | ✔️        | ✔️       | [huanqiu.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/huanqiu.py)             |
 |                                                        | [IQiyiVideoClient](https://www.iqiyi.com/)                                                             | [爱奇艺](https://www.iqiyi.com/)                                                              | ✔️        | ✔️       | [iqiyi.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/iqiyi.py)                 |
 |                                                        | [Ku6VideoClient](https://www.ku6.com/)                                                                 | [酷6网](https://www.ku6.com/)                                                                 | ✔️        | ✔️       | [ku6.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/ku6.py)                     |
 |                                                        | [KuaishouVideoClient](https://www.kuaishou.com/)                                                       | [快手](https://www.kuaishou.com/)                                                             | ✔️        | ✔️       | [kuaishou.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/kuaishou.py)           |

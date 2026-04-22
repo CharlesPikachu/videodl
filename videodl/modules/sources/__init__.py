@@ -50,6 +50,7 @@ from .rednote import RednoteVideoClient
 from .sixroom import SixRoomVideoClient
 from .tencent import TencentVideoClient
 from .xuexicn import XuexiCNVideoClient
+from .huanqiu import HuanQiuVideoClient
 from .cctvnews import CCTVNewsVideoClient
 from .playerpl import PlayerPLVideoClient
 from .plusfifa import PlusFIFAVideoClient
@@ -86,6 +87,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'YoukuVideoClient': YoukuVideoClient,               'ZhihuVideoClient': ZhihuVideoClient,               'ZuiyouVideoClient': ZuiyouVideoClient,             'LeshiVideoClient': LeshiVideoClient,
         'KanKanNewsVideoClient': KanKanNewsVideoClient,     'NuVidVideoClient': NuVidVideoClient,               'ChinaDailyVideoClient': ChinaDailyVideoClient,     'EastDayVideoClient': EastDayVideoClient,
         'CCTVVideoClient': CCTVVideoClient,                 'WWW163VideoClient': WWW163VideoClient,             'XinhuaNetVideoClient': XinhuaNetVideoClient,       'PeopleVideoClient': PeopleVideoClient,
+        'HuanQiuVideoClient': HuanQiuVideoClient,
     }
 
 
