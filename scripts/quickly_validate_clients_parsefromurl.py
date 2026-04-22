@@ -543,6 +543,11 @@ VIDEODL_TEST_SAMPLES = {
         'http://www.gx.news.cn/20260327/eaed509d04fa444b99a365136f079bd2/c.html',
         'http://hn.news.cn/20250511/dc905b1e756c4b6f9514e58bc47c5afa/c.html',
     ],
+    'PeopleVideoClient': [
+        'http://v.people.cn/n1/2026/0421/c431305-40705569.html',
+        'http://v.people.cn/n1/2022/0907/c447654-32521390.html',
+        'http://v.people.cn/n1/2026/0414/c431305-40701043.html',
+    ],
 }
 
 

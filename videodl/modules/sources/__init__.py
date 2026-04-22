@@ -39,6 +39,7 @@ from .wesing import WeSingVideoClient
 from .cctalk import CCtalkVideoClient
 from .beacon import BeaconVideoClient
 from .www163 import WWW163VideoClient
+from .people import PeopleVideoClient
 from .eastday import EastDayVideoClient
 from .kugoumv import KugouMVVideoClient
 from .wittytv import WittyTVVideoClient
@@ -84,7 +85,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'XinpianchangVideoClient': XinpianchangVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,           'YinyuetaiVideoClient': YinyuetaiVideoClient,       'YouTubeVideoClient': YouTubeVideoClient,
         'YoukuVideoClient': YoukuVideoClient,               'ZhihuVideoClient': ZhihuVideoClient,               'ZuiyouVideoClient': ZuiyouVideoClient,             'LeshiVideoClient': LeshiVideoClient,
         'KanKanNewsVideoClient': KanKanNewsVideoClient,     'NuVidVideoClient': NuVidVideoClient,               'ChinaDailyVideoClient': ChinaDailyVideoClient,     'EastDayVideoClient': EastDayVideoClient,
-        'CCTVVideoClient': CCTVVideoClient,                 'WWW163VideoClient': WWW163VideoClient,             'XinhuaNetVideoClient': XinhuaNetVideoClient,
+        'CCTVVideoClient': CCTVVideoClient,                 'WWW163VideoClient': WWW163VideoClient,             'XinhuaNetVideoClient': XinhuaNetVideoClient,       'PeopleVideoClient': PeopleVideoClient,
     }
 
 
