@@ -39,7 +39,7 @@ class IIILabVideoClient(BaseVideoClient):
         try:
             # --encrypt post data
             headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
-            with suppress(Exception): url = self.get(url, **request_overrides).url
+            with suppress(Exception): url = self.get(url, allow_redirects=True, **request_overrides).url
             site, timestamp = platformfromurl(url), str(int(time.time()))
             headers['G-Footer'] = hashlib.md5(f"{url}{site}{timestamp}{self.SALT}".encode('utf-8')).hexdigest(); headers['G-Timestamp'] = timestamp
             # --post request
