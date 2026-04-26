@@ -11,6 +11,7 @@ import re
 import time
 import copy
 import hashlib
+from contextlib import suppress
 from ..sources import BaseVideoClient
 from ..utils.domains import platformfromurl
 from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, safeextractfromdict
@@ -19,7 +20,7 @@ from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheade
 '''IIILabVideoClient'''
 class IIILabVideoClient(BaseVideoClient):
     source = 'IIILabVideoClient'
-    SALT = '2HT8gjE3xL'
+    SALT = 'JSnHKQfP1IlzIQzs'
     def __init__(self, **kwargs):
         super(IIILabVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
@@ -38,10 +39,11 @@ class IIILabVideoClient(BaseVideoClient):
         try:
             # --encrypt post data
             headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
+            with suppress(Exception): url = self.get(url, **request_overrides).url
             site, timestamp = platformfromurl(url), str(int(time.time()))
             headers['G-Footer'] = hashlib.md5(f"{url}{site}{timestamp}{self.SALT}".encode('utf-8')).hexdigest(); headers['G-Timestamp'] = timestamp
             # --post request
-            (resp := self.post('https://service.iiilab.com/iiilab/extract', json={'url': url, 'site': site}, headers=headers, **request_overrides)).raise_for_status()
+            (resp := self.post(f'https://{site}.iiilab.com/api/web/extract', json={'url': url, 'site': site}, headers=headers, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             # --video title
             video_title = legalizestring(raw_data.get('text', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
