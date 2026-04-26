@@ -554,6 +554,12 @@ VIDEODL_TEST_SAMPLES = {
         'https://v.huanqiu.com/article/4REgaSpSqxO',
         'https://china.huanqiu.com/article/4RGHFASqx7S',
     ],
+    'WzjunVideoClient': [
+        'https://www.douyin.com/jingxuan?modal_id=7605448430861849954',
+        'https://www.kuaishou.com/short-video/3xtnm8p6dqs8ud6?authorId=3xvs4y8pb2ki74g&streamSource=samecity&area=homexxnearby',
+        'https://www.bilibili.com/video/BV1RBoGBPEsL/?spm_id_from=333.1007.tianma.1-1-1.click',
+        'https://www.xiaohongshu.com/explore/69e47f74000000001a023684?xsec_token=ABY973bkanZ7HT65wULkpO9YDG77-1Kupes0JaHDayPDY=&xsec_source=pc_feed',
+    ],
 }
 
 

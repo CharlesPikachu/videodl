@@ -56,6 +56,8 @@ videodl -i "https://www.facebook.com/facebook/videos/facebook-blue-never-looked-
 videodl -i "https://x.com/jushendo/status/2036224267084333475" -g -a VeedMateVideoClient
 # WoofVideoClient
 videodl -i "https://www.instagram.com/reel/DWAGcteCVar/" -g -a WoofVideoClient
+# WoofVideoClient
+videodl -i "https://www.douyin.com/jingxuan?modal_id=7605448430861849954" -g -a WzjunVideoClient
 # XiazaitoolVideoClient
 videodl -i "https://www.tiktok.com/@disneymusic/video/7589346194372037943?lang=en" -g -a XiazaitoolVideoClient
 # XMFlvVideoClient

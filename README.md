@@ -58,9 +58,9 @@
 
 # 🆕 What's New
 
+- 2026-04-27: Released videofetch v0.8.5 - added general video parsing support based on the wzjun site; added support for parsing shared links from Pipixia videos; fixed the general video parsing feature for the iiilab site.
 - 2026-04-22: Released videofetch v0.8.4 - codebase partially optimized; added progress indicators for sites that support multi-video parsing; introduced video parsing and download support for Huanqiu and People’s Daily.
 - 2026-04-09: Released videofetch v0.8.3 - added video parsing and download support for Xinhua News and NetEase News; fixed an issue causing unexpected session behavior during session maintenance.
-- 2026-04-08: Released videofetch v0.8.2 - added video parsing and downloading support for multiple sites, including CCTV News, Kankan News, China Daily, and Eastday; optimized parts of the code and fixed several bugs.
 
 
 # 🚀 Introduction
@@ -184,6 +184,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [VgetVideoClient](https://vget.xyz/)                              | [Vget视频解析](https://vget.xyz/)                                       |   ✔️     |   ✔️     | [vget.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/vget.py)             |
 | [VideoFKVideoClient](https://www.videofk.com/)                    | [免费短视频下载器](https://www.videofk.com/)                            |   ✔️     |   ✔️     | [videofk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/videofk.py)       |
 | [WoofVideoClient](https://dl.woof.monster/)                       | [Woof视频解析 (基于Cobalt)](https://dl.woof.monster/)                   |   ✔️     |   ✔️     | [woof.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/woof.py)             |
+| [WzjunVideoClient](https://sd.wzjun.com/douyin)                   | [SD短视频下载工具](https://sd.wzjun.com/douyin)                         |   ✔️     |   ✔️     | [wzjun.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/wzjun.py)           |
 | [XiazaitoolVideoClient](https://www.xiazaitool.com/dy)            | [下载狗](https://www.xiazaitool.com/dy)                                 |   ✔️     |   ✔️     | [xiazaitool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/xiazaitool.py) |
 | [XMFlvVideoClient](https://jx.xmflv.com/)                         | [虾米解析](https://jx.xmflv.com/)                                       |   ✔️     |   ✔️     | [xmflv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/xmflv.py)           |
 | [XCVTSVideoClient](https://api.xcvts.cn/)                         | [小尘聚合短视频去水印](https://api.xcvts.cn/)                           |   ✔️     |   ✔️     | [xcvts.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/xcvts.py)           |
