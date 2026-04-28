@@ -560,6 +560,12 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.bilibili.com/video/BV1RBoGBPEsL/?spm_id_from=333.1007.tianma.1-1-1.click',
         'https://www.xiaohongshu.com/explore/69e47f74000000001a023684?xsec_token=ABY973bkanZ7HT65wULkpO9YDG77-1Kupes0JaHDayPDY=&xsec_source=pc_feed',
     ],
+    'VThreadsVideoClient': [
+        'https://www.facebook.com/facebook/videos/me-directing-a-reel-for-my-bestie-video-and-music-by-julian-rad/846382125018055/',
+        'http://youtube.com/watch?v=xrUyk79DLbg&list=RDRkQy3NlG1eo&index=3',
+        'https://www.youtube.com/watch?v=RkQy3NlG1eo&list=RDRkQy3NlG1eo&start_radio=1',
+        'https://www.reddit.com/r/videos/comments/1sxqaov/jimmy_kimmel_defends_widow_joke_as_light_roast/',
+    ],
 }
 
 
