@@ -41,10 +41,10 @@ class VThreadsVideoClient(BaseVideoClient):
             # --video title
             video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --download url
-            video_info.update(dict(download_url=urljoin('https://vthreads.top/', raw_data['data']['medias'][-1]['url'])))
+            video_info.update(dict(download_url=urljoin('https://vthreads.top/', raw_data['data']['medias'][0]['url'])))
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=video_info.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            guess_video_ext_result['ext'] = 'avi' if raw_data['data']['medias'][-1]['format'] in {'merge'} else guess_video_ext_result['ext']
+            guess_video_ext_result['ext'] = 'avi' if raw_data['data']['medias'][0]['format'] in {'merge'} else guess_video_ext_result['ext']
             if (ext := guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']) in {'bin', 'm4s'}: ext = 'mp4'
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=safeextractfromdict(raw_data, ['data', 'thumbnail'], None))); video_infos.append(video_info)
         except Exception as err:
