@@ -58,7 +58,7 @@
 
 # 🆕 What's New
 
-- 2026-04-28: Released videofetch v0.8.6 - add a general-purpose video parser and video parsing/download support for the Ming Pao website.
+- 2026-04-28: Released videofetch v0.8.6 - add a general-purpose video parser/downloader (supported by "vthreads.top") and video parsing/download support for the Ming Pao website.
 - 2026-04-27: Released videofetch v0.8.5 - added general video parsing support based on the wzjun site; added support for parsing shared links from Pipixia videos; fixed the general video parsing feature for the iiilab site.
 - 2026-04-22: Released videofetch v0.8.4 - codebase partially optimized; added progress indicators for sites that support multi-video parsing; introduced video parsing and download support for Huanqiu and People’s Daily.
 
