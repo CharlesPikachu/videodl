@@ -58,9 +58,9 @@
 
 # 🆕 What's New
 
+- 2026-04-28: Released videofetch v0.8.6 - add a general-purpose video parser and video parsing/download support for the Ming Pao website.
 - 2026-04-27: Released videofetch v0.8.5 - added general video parsing support based on the wzjun site; added support for parsing shared links from Pipixia videos; fixed the general video parsing feature for the iiilab site.
 - 2026-04-22: Released videofetch v0.8.4 - codebase partially optimized; added progress indicators for sites that support multi-video parsing; introduced video parsing and download support for Huanqiu and People’s Daily.
-- 2026-04-09: Released videofetch v0.8.3 - added video parsing and download support for Xinhua News and NetEase News; fixed an issue causing unexpected session behavior during session maintenance.
 
 
 # 🚀 Introduction
@@ -110,6 +110,7 @@ The video platforms currently supported for parsing are,
 |                                                        | [MeipaiVideoClient](https://www.meipai.com/)                                                           | [美拍](https://www.meipai.com/)                                                               | ✔️        | ✔️       | [meipai.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/meipai.py)               |
 |                                                        | [MGTVVideoClient](https://www.mgtv.com/)                                                               | [芒果TV](https://www.mgtv.com/)                                                               | ✔️        | ✔️       | [mgtv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/mgtv.py)                   |
 |                                                        | [M1905VideoClient](https://www.1905.com/)                                                              | [1905电影网](https://www.1905.com/)                                                           | ✔️        | ✔️       | [m1905.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/m1905.py)                 |
+|                                                        | [MingpaoVideoClient](https://www.mingpao.com/)                                                         | [明报](https://www.mingpao.com/)                                                              | ✔️        | ✔️       | [mingpao.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/mingpao.py)             |
 |                                                        | [OasisVideoClient](https://m.oasis.weibo.cn/v1/h5/share?uid=1642632024&luicode=10000012&lfid=hyhp_lz)  | [新浪绿洲](https://m.oasis.weibo.cn/v1/h5/share?uid=1642632024&luicode=10000012&lfid=hyhp_lz) | ✔️        | ✔️       | [oasis.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/oasis.py)                 |
 |                                                        | [Open163VideoClient](https://open.163.com/)                                                            | [网易公开课](https://open.163.com/)                                                           | ✔️        | ✔️       | [open163.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/open163.py)             |
 |                                                        | [PearVideoClient](https://www.pearvideo.com/)                                                          | [梨视频](https://www.pearvideo.com/)                                                          | ✔️        | ✔️       | [pear.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/pear.py)                   |

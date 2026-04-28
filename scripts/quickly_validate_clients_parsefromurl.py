@@ -566,6 +566,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.youtube.com/watch?v=RkQy3NlG1eo&list=RDRkQy3NlG1eo&start_radio=1',
         'https://www.reddit.com/r/videos/comments/1sxqaov/jimmy_kimmel_defends_widow_joke_as_light_roast/',
     ],
+    'MingpaoVideoClient': [
+        'https://news.mingpao.com/pns/%e5%89%af%e5%88%8a/article/20260428/s00005/1777310866112/%e6%96%b0%e8%88%88%e6%9d%bf%e7%b6%b2%e7%90%83%e6%98%93%e5%ad%b8%e9%9b%a3%e7%b2%be-%e3%80%8c%e7%a5%9e%e9%9a%8a%e5%8f%8b%e3%80%8d%e7%89%86%e7%b6%b2%e6%94%b9%e8%ae%8a%e7%90%83%e9%81%93%e8%87%b4%e5%8b%9d#goog_rewarded',
+        'https://ol.mingpao.com/ldy/showbiz/news/20260428/1777312630734/%e5%91%a8%e6%bd%a4%e7%99%bc%e5%8b%b8%e5%b0%91%e9%a3%b2%e9%85%92-%e6%a2%81%e5%ae%b6%e8%bc%9d%e6%89%81%e5%98%b4-%e3%80%8a%e5%af%92%e6%88%b01994%e3%80%8b%e9%a6%96%e6%98%a0%e5%8b%89%e5%8b%b5%e5%be%8c%e8%bc%a9-%e8%ae%9a%e9%83%ad%e5%af%8c%e5%9f%8e%e3%80%8c%e5%a5%bd%e9%9d%9a%e4%bb%94%e3%80%8d',
+        'https://ol.mingpao.com/ldy/showbiz/latest/20260428/1777371217643/edan%e6%bc%94%e6%b8%af%e7%89%88%e3%80%8a%e6%82%a0%e9%95%b7%e5%81%87%e6%9c%9f%e3%80%8b-%e7%90%86%e8%a7%a3%e7%b6%b2%e6%b0%91%e5%85%a9%e6%a5%b5%e5%8f%8d%e6%87%89-%e8%88%87jer%e6%85%b0%e5%95%8f%e9%98%bfmo%e5%ae%b6%e4%ba%ba',
+    ],
 }
 
 
