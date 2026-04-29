@@ -11,7 +11,7 @@ from tqdm import tqdm
 from videodl.modules import VideoClientBuilder, BaseVideoClient
 
 
-'''constants'''
+'''settings'''
 VIDEODL_TEST_SAMPLES = {
     'WebMediaGrabber': [
         'https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/video',
