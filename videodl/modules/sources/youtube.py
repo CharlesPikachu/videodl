@@ -7,14 +7,12 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
-import time
-import random
 import requests
-import json_repair
+from contextlib import suppress
 from .base import BaseVideoClient
 from ..utils.youtubeutils import YouTube
 from urllib.parse import parse_qs, urlparse
-from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, safeextractfromdict, resp2json, VideoInfo, FileTypeSniffer
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, safeextractfromdict, resp2json, floatornone, VideoInfo
 
 
 '''YouTubeVideoClient'''
@@ -22,36 +20,40 @@ class YouTubeVideoClient(BaseVideoClient):
     source = 'YouTubeVideoClient'
     def __init__(self, **kwargs):
         super(YouTubeVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {}
-        self.default_download_headers = {}
+        self.default_parse_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"}
+        self.default_download_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"}
         self.default_headers = self.default_parse_headers
         self._initsession()
-    '''_parsefromurlwithvidssave'''
-    def _parsefromurlwithvidssave(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
+    '''_parsefromurlwithytdown'''
+    def _parsefromurlwithytdown(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
         if not self.belongto(url=url): return []
-        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
-        get_download_link_func = lambda text: next((link for line in str(text).splitlines() if line.startswith("data:") for link in [json_repair.loads(line[5:].strip()).get("download_link")] if link), None)
+        request_overrides, video_info, null_backup_title, vid = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source), parse_qs(urlparse(url).query, keep_blank_values=True)['v'][0]
+        headers = {"origin": "https://app.ytdown.to", "referer": "https://app.ytdown.to/en27/", "sec-ch-ua": "\"Google Chrome\";v=\"147\", \"Not.A/Brand\";v=\"8\", \"Chromium\";v=\"147\"", "sec-ch-ua-mobile": "?0", "sec-ch-ua-platform": "\"Windows\"", "sec-fetch-dest": "empty", "sec-fetch-mode": "cors", "sec-fetch-site": "same-origin", "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36"}
         # try parse
         try:
-            vid = parse_qs(urlparse(url).query, keep_blank_values=True)['v'][0]
-            headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36", "referer": "https://vidssave.com/"}
-            (resp := self.post('https://api.vidssave.com/api/contentsite_api/media/parse', headers=headers, data={"link": url, "domain": "api-ak.vidssave.com", "origin": "source", "auth": "20250901majwlqo"}, **request_overrides)).raise_for_status()
-            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)))); resources = [r for r in raw_data['data']['resources'] if isinstance(r, dict) and (str(r.get('format')).lower() in {'mp4'}) and (r.get('download_url') or r.get('resource_content'))][::-1]
-            resources = sorted(resources, key=lambda item: item.get('size', 0) or 0, reverse=True); video_info.download_url = resources[0]['download_url']
-            if not video_info.with_valid_download_url:
-                (resp := self.post('https://api.vidssave.com/api/contentsite_api/media/download', data={'auth': '20250901majwlqo', 'domain': 'api-ak.vidssave.com', 'request': resources[0]['resource_content'], 'no_encrypt': '1'}, **request_overrides)).raise_for_status()
-                max_retries_for_download_no_cache_contents, time_sleep_interval = 30, 0.5
-                for _ in range(max_retries_for_download_no_cache_contents):
-                    (resp := self.get('https://api.vidssave.com/sse/contentsite_api/media/download_query', params={'auth': '20250901majwlqo', 'domain': 'api-ak.vidssave.com', 'task_id': resp2json(resp=resp)['data']['task_id'], 'download_domain': 'vidssave.com', 'origin': 'content_site'}, **request_overrides)).raise_for_status()
-                    if not (download_url := get_download_link_func(resp.text)): time.sleep(time_sleep_interval + random.random()); continue
-                    video_info.update(dict(download_url=download_url)); break
-            video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=video_info.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
-            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, identifier=vid, cover_url=safeextractfromdict(raw_data, ['data', 'thumbnail'], None)))
+            (resp := requests.post('https://app.ytdown.to/proxy.php', data={'url': url}, headers=headers, **request_overrides)).raise_for_status()
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
+            video_medias = [item for item in raw_data['api']['mediaItems'] if isinstance(item, dict) and (str(item.get('type')).lower() in {'video'}) and str(item.get('mediaUrl')).startswith('http')]
+            video_medias = sorted(video_medias, key=lambda item: floatornone(str(item.get('mediaFileSize')).split(' ')[0]), reverse=True)
+            audio_medias = [item for item in raw_data['api']['mediaItems'] if isinstance(item, dict) and (str(item.get('type')).lower() in {'audio'}) and str(item.get('mediaUrl')).startswith('http')]
+            audio_medias = sorted(audio_medias, key=lambda item: floatornone(str(item.get('mediaFileSize')).split(' ')[0]), reverse=True)
+            for video_media in video_medias:
+                (resp := requests.post('https://app.ytdown.to/proxy.php', data={'url': video_media['mediaUrl']}, headers=headers, **request_overrides)).raise_for_status()
+                download_url, ext, download_url_can_be_visited = resp2json(resp=resp)['api']['fileUrl'], str(video_media['mediaExtension']).lower(), False; (stream_headers := headers.copy()).update({"Range": "bytes=0-0"})
+                with suppress(Exception): resp = None; (resp := requests.get(download_url, stream=True, headers=stream_headers, allow_redirects=True, verify=False, **request_overrides)).raise_for_status(); download_url_can_be_visited = True
+                if hasattr(resp, 'text') and download_url_can_be_visited: break
+            for audio_media in audio_medias:
+                (resp := requests.post('https://app.ytdown.to/proxy.php', data={'url': audio_media['mediaUrl']}, headers=headers, **request_overrides)).raise_for_status()
+                audio_download_url, audio_ext, audio_download_url_can_be_visited = resp2json(resp=resp)['api']['fileUrl'], str(audio_media['mediaExtension']).lower(), False; (stream_headers := headers.copy()).update({"Range": "bytes=0-0"})
+                with suppress(Exception): resp = None; (resp := requests.get(audio_download_url, stream=True, headers=stream_headers, allow_redirects=True, verify=False, **request_overrides)).raise_for_status(); audio_download_url_can_be_visited = True
+                if hasattr(resp, 'text') and audio_download_url_can_be_visited: break
+            if not download_url_can_be_visited or not audio_download_url_can_be_visited: return []
+            video_info.update(dict(download_url=download_url, ext=ext, audio_download_url=audio_download_url, audio_ext=audio_ext, default_download_headers=headers, default_audio_download_headers=headers))
+            video_title = legalizestring(safeextractfromdict(raw_data, ['api', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), audio_save_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}'), identifier=vid, cover_url=safeextractfromdict(raw_data, ['api', 'imagePreviewUrl'], None)))
         except Exception as err:
-            video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithvidssave >>> {url} (Error: {err})')))
+            video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlwithytdown >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
         # return
         return [video_info]
@@ -59,20 +61,27 @@ class YouTubeVideoClient(BaseVideoClient):
     def _parsefromurlwithdownr(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
         if not self.belongto(url=url): return []
-        request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
+        request_overrides, video_info, null_backup_title, vid = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source), parse_qs(urlparse(url).query, keep_blank_values=True)['v'][0]
+        headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36", "referer": "https://downr.org/"}
         # try parse
         try:
-            vid = parse_qs(urlparse(url).query, keep_blank_values=True)['v'][0]
-            headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36", "referer": "https://downr.org/"}
-            cookies = requests.utils.dict_from_cookiejar(self.get('https://downr.org/.netlify/functions/analytics', **request_overrides).cookies)
-            (resp := self.post('https://downr.org/.netlify/functions/nyt', headers=headers, cookies=cookies, json={"url": url}, **request_overrides)).raise_for_status()
+            cookies = requests.utils.dict_from_cookiejar(requests.get('https://downr.org/.netlify/functions/analytics', headers=headers, **request_overrides).cookies)
+            (resp := requests.post('https://downr.org/.netlify/functions/nyt', headers=headers, cookies=cookies, json={"url": url}, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             video_medias: list[dict] = [item for item in raw_data['medias'] if item['type'] in ('video',)]
-            audio_medias: list[dict] = [item for item in raw_data['medias'] if item['type'] in ('audio',)]
             video_medias: list[dict] = sorted(video_medias, key=lambda item: (item.get('height') * item.get('width'), item.get('bitrate')), reverse=True)
+            audio_medias: list[dict] = [item for item in raw_data['medias'] if item['type'] in ('audio',)]
             audio_medias: list[dict] = sorted(audio_medias, key=lambda item: (item.get('bitrate'), float(item.get('audioSampleRate') or 0)), reverse=True)
-            download_url, ext, audio_download_url, audio_ext = video_medias[0]['url'], video_medias[0]['ext'], audio_medias[0]['url'], audio_medias[0]['ext']
-            video_info.update(dict(download_url=download_url, ext=ext, audio_download_url=audio_download_url, audio_ext=audio_ext))
+            for video_media in video_medias:
+                download_url, ext, download_url_can_be_visited = video_media['url'], video_media['ext'], False; (stream_headers := headers.copy()).update({"Range": "bytes=0-0"})
+                with suppress(Exception): resp = None; (resp := requests.get(download_url, stream=True, headers=stream_headers, allow_redirects=True, verify=False, **request_overrides)).raise_for_status(); download_url_can_be_visited = True
+                if hasattr(resp, 'text') and download_url_can_be_visited: break
+            for audio_media in audio_medias:
+                audio_download_url, audio_ext, audio_download_url_can_be_visited = audio_media['url'], audio_media['ext'], False; (stream_headers := headers.copy()).update({"Range": "bytes=0-0"})
+                with suppress(Exception): resp = None; (resp := requests.get(audio_download_url, stream=True, headers=stream_headers, allow_redirects=True, verify=False, **request_overrides)).raise_for_status(); audio_download_url_can_be_visited = True
+                if hasattr(resp, 'text') and audio_download_url_can_be_visited: break
+            if not download_url_can_be_visited or not audio_download_url_can_be_visited: return []
+            video_info.update(dict(download_url=download_url, ext=ext, audio_download_url=audio_download_url, audio_ext=audio_ext, default_download_headers=headers, default_audio_download_headers=headers))
             video_title = legalizestring(safeextractfromdict(raw_data, ['title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), audio_save_path=os.path.join(self.work_dir, self.source, f'{video_title}.audio.{audio_ext}'), identifier=vid, cover_url=safeextractfromdict(raw_data, ['thumbnail'], None)))
         except Exception as err:
@@ -87,7 +96,7 @@ class YouTubeVideoClient(BaseVideoClient):
         if not self.belongto(url=url): return []
         request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
         # try parse with some third part apis
-        for parser in [self._parsefromurlwithvidssave, self._parsefromurlwithdownr]:
+        for parser in [self._parsefromurlwithytdown, self._parsefromurlwithdownr]:
             video_infos = parser(url, request_overrides)
             if any(video_info.with_valid_download_url for video_info in (video_infos or [])): return video_infos
         # try parse with official apis
