@@ -8,6 +8,7 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import copy
+import time
 from urllib.parse import urljoin
 from ..sources import BaseVideoClient
 from ..utils import RandomIPGenerator
@@ -38,10 +39,17 @@ class VThreadsVideoClient(BaseVideoClient):
             headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
             (resp := self.get(f'https://vthreads.top/api/extract?url={url}&lang=zh', headers=headers, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)), default_download_headers=self.default_download_headers))
+            # --submit task
+            (resp := self.get(urljoin('https://vthreads.top/', raw_data['data']['medias'][0]['url']), headers=headers, **request_overrides)).raise_for_status()
+            max_check_status_retry_times, time_interval_for_check_status, task_id = 20, 2, resp2json(resp=resp)['task_id']
+            for _ in range(max_check_status_retry_times):
+                (resp := self.get(f'https://vthreads.top/api/check_status/{task_id}', headers=headers, **request_overrides)).raise_for_status()
+                if resp2json(resp=resp).get('download_url') and resp2json(resp=resp).get('status') in {'SUCCESS'}: break
+                if resp2json(resp=resp).get('status') in {'DOWNLOADING'}: time.sleep(time_interval_for_check_status); continue
             # --video title
             video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --download url
-            video_info.update(dict(download_url=urljoin('https://vthreads.top/', raw_data['data']['medias'][0]['url'])))
+            video_info.update(dict(download_url=urljoin('https://vthreads.top/', resp2json(resp=resp)['download_url'])))
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=video_info.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             guess_video_ext_result['ext'] = 'avi' if raw_data['data']['medias'][0]['format'] in {'merge'} else guess_video_ext_result['ext']
