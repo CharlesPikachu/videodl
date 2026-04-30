@@ -257,10 +257,7 @@ class DownloadFromLocalTxtFileFFmpegCommand(FFmpegCommandFactory):
     '''build'''
     def build(self, video_info: VideoInfo, request_overrides: Optional[Mapping[str, Any]] = None, mods: Optional[ModType] = None) -> list[str]:
         request_overrides, download_url, output_file = request_overrides or {}, video_info.download_url, video_info.save_path
-        builder = (self.newbuilder().flag("-y").opt("-protocol_whitelist", "file,http,https,tcp,tls"))
-        proxies = request_overrides.get("proxies", {}) if isinstance(request_overrides, Mapping) else {}
-        if (proxy_url := next(iter((proxies or {}).values()), None)): builder.opt("-http_proxy", proxy_url)
-        builder = (builder.opt("-f", "concat").opt("-safe", "0").opt("-i", download_url).opt("-c", "copy").positional(output_file))
+        builder = (self.newbuilder().flag("-y").opt("-protocol_whitelist", "file,http,https,tcp,tls").opt("-f", "concat").opt("-safe", "0").opt("-i", download_url).opt("-c", "copy").positional(output_file))
         self.applymods(builder, mods)
         return builder.tolist()
 

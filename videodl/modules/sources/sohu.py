@@ -9,6 +9,7 @@ WeChat Official Account (微信公众号):
 import os
 import re
 from bs4 import BeautifulSoup
+from contextlib import suppress
 from .base import BaseVideoClient
 from ..utils import legalizestring, useparseheaderscookies, resp2json, touchdir, yieldtimerelatedtitle, safeextractfromdict, VideoInfo
 
@@ -32,7 +33,7 @@ class SohuVideoClient(BaseVideoClient):
         try:
             # --obtain vid
             (resp := self.get(url, **request_overrides)).raise_for_status(); soup = BeautifulSoup(resp.text, 'html.parser')
-            script_tag, vid = soup.find("script", string=lambda t: t and "var vid" in t), None
+            script_tag, vid = soup.find("script", string=lambda t: t and "var vid" in t), None; script_tag: BeautifulSoup = script_tag
             if script_tag: m = re.search(r'var\s+vid\s*=\s*"(\d+)"', script_tag.get_text()) or re.search(r"var\s+vid\s*=\s*'(\d+)'", script_tag.get_text()); vid = m.group(1) if m else None
             if vid is None: li = soup.find("li", attrs={"data-vid": True}); vid = li["data-vid"].strip()
             # --request for the first time to obtain new vid
@@ -42,17 +43,14 @@ class SohuVideoClient(BaseVideoClient):
             # --request again using new vid with higher video quality
             (resp := self.get(f'http://my.tv.sohu.com/play/videonew.do?vid={vid}&referer=http://my.tv.sohu.com', **request_overrides)).raise_for_status()
             raw_data[f'{vid}_videonew.do'] = resp2json(resp=resp); video_info.update(dict(raw_data=raw_data))
-            mp4_palyurls, download_urls = raw_data[f'{vid}_videonew.do']["data"]["mp4PlayUrl"], []
-            download_urls.extend(("https:" + u) if u.startswith("//") else u for u in mp4_palyurls if u)
+            mp4_palyurls, download_urls, parsed_download_urls = raw_data[f'{vid}_videonew.do']["data"]["mp4PlayUrl"], [], []
+            download_urls.extend(("https:" + u) if u.startswith("//") else u for u in mp4_palyurls if u and isinstance(u, str))
             # --some download urls need parse twice
-            parsed_download_urls = []
             for download_url in download_urls:
-                try: (resp := self.get(download_url, **request_overrides)).raise_for_status(); download_url = resp2json(resp=resp)['servers'][0]['url']
-                except Exception: continue
-                if download_url: parsed_download_urls.append(download_url)
-            if parsed_download_urls: download_urls = parsed_download_urls
+                with suppress(Exception): (resp := self.get(download_url, **request_overrides)).raise_for_status(); download_url = resp2json(resp=resp)['servers'][0]['url']; parsed_download_urls.append(download_url)
+            if parsed_download_urls: download_urls = [p_down_url for p_down_url in parsed_download_urls if p_down_url]
             # --construct other video info
-            video_title = legalizestring(raw_data["data"].get('tvName', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
+            video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'tvName'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             cover_url = safeextractfromdict(raw_data, ['data', 'coverImg'], None)
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', vid=vid, identifier=vid, cover_url=cover_url))
             # --if multiple video split
@@ -77,7 +75,7 @@ class SohuVideoClient(BaseVideoClient):
         try:
             # --obtain vid
             (resp := self.get(url, **request_overrides)).raise_for_status(); soup = BeautifulSoup(resp.text, 'html.parser')
-            script_tag, vid = soup.find("script", string=lambda t: t and "var vid" in t), None
+            script_tag, vid = soup.find("script", string=lambda t: t and "var vid" in t), None; script_tag: BeautifulSoup = script_tag
             if script_tag: m = re.search(r'var\s+vid\s*=\s*"(\d+)"', script_tag.get_text()) or re.search(r"var\s+vid\s*=\s*'(\d+)'", script_tag.get_text()); vid = m.group(1) if m else None
             if vid is None: li = soup.find("li", attrs={"data-vid": True}); vid = li["data-vid"].strip()
             # --video raw data
@@ -92,15 +90,12 @@ class SohuVideoClient(BaseVideoClient):
             params = {'vid': vid, 'ver': '1', 'ssl': '1', 'uid': '17636986544987061902', 'pflag': 'pch5', 'prod': 'h5n', 'platform_source': 'pc'}
             (resp := self.get('https://hot.vrs.sohu.com/vrs_pc_play.action', params=params, **request_overrides)).raise_for_status()
             raw_data[f'{vid}_vrs_pc_play.action'] = resp2json(resp=resp); video_info.update(dict(raw_data=raw_data))
-            mp4_palyurls, download_urls = raw_data[f'{vid}_vrs_pc_play.action']["data"]["mp4PlayUrl"], []
-            download_urls.extend(("https:" + u) if u.startswith("//") else u for u in mp4_palyurls if u)
+            mp4_palyurls, download_urls, parsed_download_urls = raw_data[f'{vid}_vrs_pc_play.action']["data"]["mp4PlayUrl"], [], []
+            download_urls.extend(("https:" + u) if u.startswith("//") else u for u in mp4_palyurls if u and isinstance(u, str))
             # --some download urls need parse twice
-            parsed_download_urls = []
             for download_url in download_urls:
-                try: (resp := self.get(download_url, **request_overrides)).raise_for_status(); download_url = resp2json(resp=resp)['servers'][0]['url']
-                except Exception: continue
-                if download_url: parsed_download_urls.append(download_url)
-            if parsed_download_urls: download_urls = parsed_download_urls
+                with suppress(Exception): (resp := self.get(download_url, **request_overrides)).raise_for_status(); download_url = resp2json(resp=resp)['servers'][0]['url']; parsed_download_urls.append(download_url)
+            if parsed_download_urls: download_urls = [p_down_url for p_down_url in parsed_download_urls if p_down_url]
             # --construct other video info
             video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'tvName'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             cover_url = safeextractfromdict(raw_data, ['data', 'coverImg'], None)

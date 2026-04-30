@@ -18,13 +18,13 @@ import requests
 import subprocess
 from pathlib import Path
 from rich.text import Text
-from typing import TYPE_CHECKING
 from fake_useragent import UserAgent
 from platformdirs import user_log_dir
 from ..utils.youtubeutils import Stream as YouTubeStreamObj
 from pathvalidate import sanitize_filepath, sanitize_filename
 from ..utils.domains import obtainhostname, hostmatchessuffix
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Any, Callable, Mapping, Optional, TYPE_CHECKING
 from rich.progress import Progress, TextColumn, BarColumn, DownloadColumn, TransferSpeedColumn, TimeRemainingColumn, TimeElapsedColumn, ProgressColumn, Task
 from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, cookies2dict, generateuniquetmppath, shortenpathsinvideoinfos, optionalimport, optionalimportfrom, cookies2string, LoggerHandle, VideoInfo, FileTypeSniffer
 from ..utils.cmd import MergeCCTVTsFilesFFmpegCommand, DownloadFromLocalTxtFileFFmpegCommand, DownloadWithFFmpegCommand, DownloadWithNM3U8DLRECommand, DownloadWithAria2cCommand, MergeVideoAudioAudioTranscodeFFmpegCommand, MergeVideoAudioCopyFFmpegCommand, MergeVideoAudioFullTranscodeFFmpegCommand
@@ -190,16 +190,17 @@ class BaseVideoClient():
         if not request_overrides.get('proxies'): request_overrides['proxies'] = self._autosetproxies()
         default_headers = copy.deepcopy(video_info.default_download_headers or request_overrides.get('headers') or self.default_headers or {})
         default_cookies = copy.deepcopy(video_info.default_download_cookies or request_overrides.get('cookies') or self.default_cookies or {})
-        if default_cookies: default_headers['Cookie'] = cookies2string(default_cookies)
+        if default_cookies: default_headers['cookie' if 'cookie' in default_headers else 'Cookie'] = cookies2string(default_cookies)
         # some pre-defined functions
+        clean_func = lambda value: str(value).replace("\r", "").replace("\n", "").strip()
         ffconcat_quote_func = lambda value: "'" + ("" if value is None else str(value)).replace("'", r"'\''") + "'"
-        build_ffmpeg_headers_option_func = lambda default_headers: ("" if not default_headers else (lambda clean: "headers=" + r"\r\n".join(f"{clean(k)}: {clean(v)}" for k, v in default_headers.items()) + r"\r\n")(lambda x: str(x).replace("\r", "").replace("\n", "").strip()))
+        is_special_header = lambda k: str(k).lower() == "user-agent" or str(k).lower() in ("referer", "referrer")
+        build_ffconcat_options_func = lambda headers=None, proxies=None: (lambda hs, proxy_url: ([("user_agent" if k.lower() == "user-agent" else "referer", v) for k, v in hs if is_special_header(k)] + ([("headers", r"\r\n".join(f"{k}: {v}" for k, v in hs if not is_special_header(k)) + r"\r\n")] if any(not is_special_header(k) for k, _ in hs) else []) + ([("http_proxy", clean_func(proxy_url))] if proxy_url else [])))([(k, v) for k, v in ((clean_func(k), clean_func(v)) for k, v in (headers or {}).items() if k is not None and v is not None) if k], next(iter((proxies or {}).values()), None) if isinstance(proxies, dict) else None)
         # prepare txt file for ffmpeg to process
-        header_opt = build_ffmpeg_headers_option_func(default_headers)
-        with open(video_info.download_url, "r", encoding="utf-8") as fp: raw_urls = [line.strip() for line in fp if line.strip()]
-        download_urls = [f"{url}|{header_opt}" if header_opt else url for url in raw_urls]
+        with open(video_info.download_url, "r", encoding="utf-8") as fp: download_urls = [line.strip() for line in fp if line.strip()]
         original_file_path = video_info.download_url; video_info.download_url = video_info.download_url[:-4] + "_ffmpeg.txt"
-        with open(video_info.download_url, "w", encoding="utf-8", newline="\n") as fp: fp.write("ffconcat version 1.0\n" + "".join(f"file {ffconcat_quote_func(download_url)}\n" for download_url in download_urls))
+        ffconcat_options = build_ffconcat_options_func(default_headers, request_overrides.get("proxies"))
+        with open(video_info.download_url, "w", encoding="utf-8", newline="\n") as fp: fp.write("ffconcat version 1.0\n" + "".join(f"file {ffconcat_quote_func(download_url)}\n" + "".join(f"option {k} {ffconcat_quote_func(v)}\n" for k, v in ffconcat_options) for download_url in download_urls))
         # start to download
         cmd = DownloadFromLocalTxtFileFFmpegCommand().build(video_info=video_info, request_overrides=request_overrides, mods=video_info.ffmpeg_settings)
         try: subprocess.run(cmd, check=True, capture_output=(True if self.disable_print else False), text=True, encoding='utf-8', errors='ignore'); downloaded_video_infos.append(video_info); os.path.exists(video_info.download_url) and os.remove(video_info.download_url); os.path.exists(original_file_path) and os.remove(original_file_path)
@@ -216,12 +217,12 @@ class BaseVideoClient():
         if not request_overrides.get('proxies'): request_overrides['proxies'] = self._autosetproxies()
         default_headers = copy.deepcopy(video_info.default_download_headers or request_overrides.get('headers') or self.default_headers or {})
         default_cookies = copy.deepcopy(video_info.default_download_cookies or request_overrides.get('cookies') or self.default_cookies or {})
-        if default_cookies: default_headers['Cookie'] = cookies2string(default_cookies)
+        if default_cookies: default_headers['cookie' if 'cookie' in default_headers else 'Cookie'] = cookies2string(default_cookies)
         audio_default_headers = copy.deepcopy(video_info.default_audio_download_headers or request_overrides.get('headers') or self.default_headers or {})
         audio_default_cookies = copy.deepcopy(video_info.default_audio_download_cookies or request_overrides.get('cookies') or self.default_cookies or {})
-        if audio_default_cookies: audio_default_headers['Cookie'] = cookies2string(audio_default_cookies)
+        if audio_default_cookies: audio_default_headers['cookie' if 'cookie' in audio_default_headers else 'Cookie'] = cookies2string(audio_default_cookies)
         # some pre-defined functions
-        build_ffmpeg_headers_option_func = lambda headers: ("" if not headers else "\r\n".join(f"{k}: {v}" for k, v in headers.items() if k is not None and v is not None))
+        build_ffmpeg_headers_option_func: Callable[[Optional[Mapping[str, Any]]], str] = lambda headers: ("" if not headers else (lambda clean: "".join(f"{clean(k)}: {clean(v)}\r\n" for k, v in headers.items() if k is not None and v is not None and clean(k)))(lambda x: str(x).replace("\r", "").replace("\n", "").strip()))
         # start to download
         header_opt, audio_header_opt = build_ffmpeg_headers_option_func(default_headers), build_ffmpeg_headers_option_func(audio_default_headers)
         cmd = DownloadWithFFmpegCommand().build(video_info=video_info, header_opt=header_opt, audio_header_opt=audio_header_opt, request_overrides=request_overrides, mods=video_info.ffmpeg_settings)
@@ -239,7 +240,7 @@ class BaseVideoClient():
         if not request_overrides.get('proxies'): request_overrides['proxies'] = self._autosetproxies()
         default_headers = copy.deepcopy(video_info.default_download_headers or request_overrides.get('headers') or self.default_headers or {})
         default_cookies = copy.deepcopy(video_info.default_download_cookies or request_overrides.get('cookies') or self.default_cookies or {})
-        if default_cookies: default_headers['Cookie'] = cookies2string(default_cookies)
+        if default_cookies: default_headers['cookie' if 'cookie' in default_headers else 'Cookie'] = cookies2string(default_cookies)
         # start to download
         log_file_path = generateuniquetmppath(dir=user_log_dir(appname='videodl', appauthor='zcjin'), ext='log')
         cmd = DownloadWithNM3U8DLRECommand().build(video_info=video_info, default_headers=default_headers, request_overrides=request_overrides, mods=video_info.nm3u8dlre_settings, log_file_path=log_file_path)
@@ -257,7 +258,7 @@ class BaseVideoClient():
         if not request_overrides.get('proxies'): request_overrides['proxies'] = self._autosetproxies()
         default_headers = copy.deepcopy(video_info.default_download_headers or request_overrides.get('headers') or self.default_headers or {})
         default_cookies = copy.deepcopy(video_info.default_download_cookies or request_overrides.get('cookies') or self.default_cookies or {})
-        if default_cookies: default_headers['Cookie'] = cookies2string(default_cookies)
+        if default_cookies: default_headers['cookie' if 'cookie' in default_headers else 'Cookie'] = cookies2string(default_cookies)
         # start to download
         cmd = DownloadWithAria2cCommand().build(video_info=video_info, default_headers=default_headers, request_overrides=request_overrides, mods=video_info.aria2c_settings)
         try: subprocess.run(cmd, check=True, capture_output=(True if self.disable_print else False), text=True, encoding='utf-8', errors='ignore'); downloaded_video_infos.append(video_info); os.path.exists(video_info.download_url) and os.remove(video_info.download_url)
