@@ -65,6 +65,7 @@ from .kankannews import KanKanNewsVideoClient
 from .baidutieba import BaiduTiebaVideoClient
 from .eyepetizer import EyepetizerVideoClient
 from .chinadaily import ChinaDailyVideoClient
+from .dailymotion import DailyMotionVideoClient
 from .pipigaoxiao import PipigaoxiaoVideoClient
 from .xinpianchang import XinpianchangVideoClient
 
@@ -88,7 +89,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'YoukuVideoClient': YoukuVideoClient,               'ZhihuVideoClient': ZhihuVideoClient,               'ZuiyouVideoClient': ZuiyouVideoClient,             'LeshiVideoClient': LeshiVideoClient,
         'KanKanNewsVideoClient': KanKanNewsVideoClient,     'NuVidVideoClient': NuVidVideoClient,               'ChinaDailyVideoClient': ChinaDailyVideoClient,     'EastDayVideoClient': EastDayVideoClient,
         'CCTVVideoClient': CCTVVideoClient,                 'WWW163VideoClient': WWW163VideoClient,             'XinhuaNetVideoClient': XinhuaNetVideoClient,       'PeopleVideoClient': PeopleVideoClient,
-        'HuanQiuVideoClient': HuanQiuVideoClient,           'MingpaoVideoClient': MingpaoVideoClient,
+        'HuanQiuVideoClient': HuanQiuVideoClient,           'MingpaoVideoClient': MingpaoVideoClient,           'DailyMotionVideoClient': DailyMotionVideoClient,
     }
 
 
