@@ -1,6 +1,6 @@
 # Development Log
 
-- 2026-05-01: Released videofetch v0.8.7 - added support for video parsing and downloading from Dailymotion; fixed a bug where YouTube video downloads might retrieve invalid links; fixed issues with some general parsing sources and addressed potential bugs.
+- 2026-05-01: Released videofetch v0.8.7 - added support for video parsing and downloading from Dailymotion; fixed a bug where YouTube video downloads might retrieve invalid links; fixed issues with some general parsing sources ("vthreads.top") and addressed potential bugs in ffmpeg commands.
 
 - 2026-04-28: Released videofetch v0.8.6 - add a general-purpose video parser/downloader (supported by "vthreads.top") and video parsing/download support for the Ming Pao website.
 

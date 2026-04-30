@@ -571,6 +571,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://ol.mingpao.com/ldy/showbiz/news/20260428/1777312630734/%e5%91%a8%e6%bd%a4%e7%99%bc%e5%8b%b8%e5%b0%91%e9%a3%b2%e9%85%92-%e6%a2%81%e5%ae%b6%e8%bc%9d%e6%89%81%e5%98%b4-%e3%80%8a%e5%af%92%e6%88%b01994%e3%80%8b%e9%a6%96%e6%98%a0%e5%8b%89%e5%8b%b5%e5%be%8c%e8%bc%a9-%e8%ae%9a%e9%83%ad%e5%af%8c%e5%9f%8e%e3%80%8c%e5%a5%bd%e9%9d%9a%e4%bb%94%e3%80%8d',
         'https://ol.mingpao.com/ldy/showbiz/latest/20260428/1777371217643/edan%e6%bc%94%e6%b8%af%e7%89%88%e3%80%8a%e6%82%a0%e9%95%b7%e5%81%87%e6%9c%9f%e3%80%8b-%e7%90%86%e8%a7%a3%e7%b6%b2%e6%b0%91%e5%85%a9%e6%a5%b5%e5%8f%8d%e6%87%89-%e8%88%87jer%e6%85%b0%e5%95%8f%e9%98%bfmo%e5%ae%b6%e4%ba%ba',
     ],
+    'DailyMotionVideoClient': [
+        'https://www.dailymotion.com/video/x9v9wsw',
+        'https://www.dailymotion.com/video/xa6wluq',
+        'https://www.dailymotion.com/video/x8oc3c1',
+    ],
 }
 
 
