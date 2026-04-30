@@ -16,6 +16,14 @@ fcntl = __import__("fcntl") if os.name != "nt" else None
 msvcrt = __import__("msvcrt") if os.name == "nt" else None
 
 
+'''safeunlinkpathobj'''
+def safeunlinkpathobj(path: Path, max_retries=20, delay=0.1):
+    for _ in range(max_retries):
+        try: path.unlink(missing_ok=True); return True
+        except Exception: time.sleep(delay)
+    return False
+
+
 '''touchdir'''
 def touchdir(directory, exist_ok: bool = True, mode: int = 511, auto_sanitize: bool = True):
     if auto_sanitize: directory = sanitize_filepath(directory)

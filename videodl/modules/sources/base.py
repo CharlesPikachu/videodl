@@ -18,16 +18,18 @@ import requests
 import subprocess
 from pathlib import Path
 from rich.text import Text
+from urllib.parse import urljoin
 from fake_useragent import UserAgent
 from platformdirs import user_log_dir
+from m3u8.model import InitializationSection
 from ..utils.youtubeutils import Stream as YouTubeStreamObj
 from pathvalidate import sanitize_filepath, sanitize_filename
 from ..utils.domains import obtainhostname, hostmatchessuffix
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Callable, Mapping, Optional, TYPE_CHECKING
 from rich.progress import Progress, TextColumn, BarColumn, DownloadColumn, TransferSpeedColumn, TimeRemainingColumn, TimeElapsedColumn, ProgressColumn, Task
-from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, cookies2dict, generateuniquetmppath, shortenpathsinvideoinfos, optionalimport, optionalimportfrom, cookies2string, LoggerHandle, VideoInfo, FileTypeSniffer
-from ..utils.cmd import MergeCCTVTsFilesFFmpegCommand, DownloadFromLocalTxtFileFFmpegCommand, DownloadWithFFmpegCommand, DownloadWithNM3U8DLRECommand, DownloadWithAria2cCommand, MergeVideoAudioAudioTranscodeFFmpegCommand, MergeVideoAudioCopyFFmpegCommand, MergeVideoAudioFullTranscodeFFmpegCommand
+from ..utils import touchdir, useparseheaderscookies, usedownloadheaderscookies, usesearchheaderscookies, cookies2dict, generateuniquetmppath, shortenpathsinvideoinfos, optionalimport, optionalimportfrom, cookies2string, safeunlinkpathobj, LoggerHandle, VideoInfo, FileTypeSniffer
+from ..utils.cmd import MergeCCTVTsFilesFFmpegCommand, DownloadFromLocalTxtFileFFmpegCommand, DownloadWithFFmpegCommand, DownloadWithNM3U8DLRECommand, DownloadWithAria2cCommand, MergeVideoAudioAudioTranscodeFFmpegCommand, MergeVideoAudioCopyFFmpegCommand, MergeVideoAudioFullTranscodeFFmpegCommand, RemuxCopyFFmpegCommand
 
 
 '''VideoAwareColumn'''
@@ -110,12 +112,12 @@ class BaseVideoClient():
         return unique_file_path
     '''_search'''
     @usesearchheaderscookies
-    def _search(self):
-        raise NotImplementedError()
+    def _search(self, keyword: str) -> list[VideoInfo]:
+        raise NotImplementedError('not be implemented')
     '''search'''
     @usesearchheaderscookies
-    def search(self):
-        raise NotImplementedError()
+    def search(self, keyword: str) -> list[VideoInfo]:
+        raise NotImplementedError('not be implemented')
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
@@ -178,6 +180,32 @@ class BaseVideoClient():
         processed_files_fp.close(); merge_ts_files_cmd = MergeCCTVTsFilesFFmpegCommand().build(video_info=video_info, ts_work_dir=ts_work_dir, mods=video_info.ffmpeg_settings)
         try: subprocess.run(merge_ts_files_cmd, check=True, capture_output=(True if self.disable_print else False), text=True, encoding='utf-8', errors='ignore'); shutil.rmtree(ts_work_dir, ignore_errors=True); downloaded_video_infos.append(video_info)
         except subprocess.CalledProcessError as err: self.logger_handle.error(f'{self.source}._downloadfromcctv >>> {video_info.download_url} (Error: {err})', disable_print=self.disable_print)
+        # return
+        return downloaded_video_infos
+    '''_downloadfromdailymotion'''
+    @usedownloadheaderscookies
+    def _downloadfromdailymotion(self, video_info: VideoInfo, video_info_index: int = 0, downloaded_video_infos: list = [], request_overrides: dict = None, progress: Progress | None = None) -> list[VideoInfo]:
+        # init
+        if not video_info.with_valid_download_url: return downloaded_video_infos
+        (video_info := copy.deepcopy(video_info)).save_path = self._ensureuniquefilepath(video_info.save_path)
+        request_overrides = dict(request_overrides or {}); touchdir(os.path.dirname(video_info.save_path))
+        # start to download
+        try:
+            (resp := self.get((download_url := video_info.download_url), **request_overrides)).raise_for_status()
+            if (loaded_m3u8_obj := m3u8.loads(resp.content.decode("utf-8", errors="ignore"), uri=download_url)).playlists:
+                download_url = (best := max(loaded_m3u8_obj.playlists, key=lambda p: p.stream_info.bandwidth or 0)).absolute_uri or urljoin(download_url, best.uri)
+                (resp := self.get(download_url, **request_overrides)).raise_for_status(); loaded_m3u8_obj = m3u8.loads(resp.content.decode("utf-8", errors="ignore"), uri=download_url)
+            desc_name = f"[{video_info_index+1}] {os.path.basename(video_info.save_path)[:15] + '...'}" if len(os.path.basename(video_info.save_path)) > 15 else f"[{video_info_index+1}] {os.path.basename(video_info.save_path)[:15]}"
+            video_task_id, tmp_download_path, seen_init = progress.add_task(desc_name, total=len(loaded_m3u8_obj.segments), kind="m3u8download"), Path(video_info.save_path).with_suffix(".tmp.mp4"), set(); tmp_fp_obj = tmp_download_path.open('wb')
+            for _, segment in enumerate(loaded_m3u8_obj.segments):
+                init_section: InitializationSection = getattr(segment, "init_section", None)
+                if init_section and init_section.uri and (init_url := (init_section.absolute_uri or urljoin(download_url, init_section.uri))) not in seen_init: tmp_fp_obj.write(self.get(init_url, **request_overrides).content); seen_init.add(init_url)
+                tmp_fp_obj.write(self.get(segment.absolute_uri or urljoin(download_url, segment.uri), **request_overrides).content); progress.update(video_task_id, advance=1)
+            tmp_fp_obj.close(); remux_copy_cmd = RemuxCopyFFmpegCommand().build(tmp_download_path, video_info.save_path, mods=video_info.ffmpeg_settings)
+            subprocess.run(remux_copy_cmd, check=True, capture_output=(True if self.disable_print else False), text=True, encoding='utf-8', errors='ignore')
+            safeunlinkpathobj(tmp_download_path, max_retries=20, delay=0.2); downloaded_video_infos.append(video_info)
+        except Exception as err:
+            self.logger_handle.error(f'{self.source}._downloadfromdailymotion >>> {video_info.download_url} (Error: {err})', disable_print=self.disable_print)
         # return
         return downloaded_video_infos
     '''_downloadfromlocaltxtfilewithffmpeg'''
@@ -309,6 +337,8 @@ class BaseVideoClient():
         if video_info.source in {'YouTubeVideoClient'} and isinstance(video_info.download_url, YouTubeStreamObj): return self._downloadfromyoutube(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # cctv video client
         if video_info.source in {'CCTVVideoClient'} and video_info.get('hls_key') in {'hls_h5e_url'}: return self._downloadfromcctv(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
+        # dailymotion video client
+        if video_info.source in {'DailyMotionVideoClient'}: return self._downloadfromdailymotion(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # all in one downloader for downlowning both video and audio
         if video_info.with_valid_audio_download_url: return self._downloadwithnaiveallinone(video_info=video_info, video_info_index=video_info_index, downloaded_video_infos=downloaded_video_infos, request_overrides=request_overrides, progress=progress)
         # ffmpeg downloader for dealing with HLS urls / files

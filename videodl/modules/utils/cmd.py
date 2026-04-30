@@ -281,6 +281,15 @@ class DownloadWithFFmpegCommand(FFmpegCommandFactory):
         return builder.tolist()
 
 
+'''RemuxCopyFFmpegCommand'''
+class RemuxCopyFFmpegCommand(FFmpegCommandFactory):
+    '''build'''
+    def build(self, input_file_path: str, output_file_path: str, mods: Optional[ModType] = None) -> list[str]:
+        builder = (self.newbuilder().flag("-y").opt("-i", str(input_file_path)).opt("-c", "copy").positional(str(output_file_path)))
+        self.applymods(builder, mods)
+        return builder.tolist()
+
+
 '''NM3U8DLRECommandFactory'''
 class NM3U8DLRECommandFactory:
     def __init__(self, executable: str = "N_m3u8DL-RE"):

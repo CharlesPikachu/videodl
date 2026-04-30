@@ -8,11 +8,9 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import re
-import copy
 import random
-import requests
 from .base import BaseVideoClient
-from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, resp2json, safeextractfromdict, cookies2string, VideoInfo, FileTypeSniffer
+from ..utils import legalizestring, useparseheaderscookies, yieldtimerelatedtitle, resp2json, safeextractfromdict, VideoInfo, FileTypeSniffer
 
 
 '''DailyMotionVideoClient'''
@@ -56,10 +54,8 @@ class DailyMotionVideoClient(BaseVideoClient):
             raw_data['metadata_resp'] = resp2json(resp=resp); qualities: dict = raw_data['metadata_resp']['qualities']
             video_info.update(dict(download_url=str(next((m.get('url') for media_list in qualities.values() for m in media_list if isinstance(m, dict) and m.get('type') == 'application/x-mpegURL'), '')).split('#')[0]))
             video_title = legalizestring(safeextractfromdict(raw_data, ['metadata_resp', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=video_info.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             cover_url = safeextractfromdict(raw_data, ['metadata_resp', 'thumbnails', '1080'], None) or safeextractfromdict(raw_data, ['metadata_resp', 'filmstrip_url'], None)
-            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_id, cover_url=cover_url))
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.mp4'), ext='mp4', identifier=video_id, cover_url=cover_url))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
