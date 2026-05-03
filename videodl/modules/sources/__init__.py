@@ -26,6 +26,7 @@ from .youku import YoukuVideoClient
 from .m1905 import M1905VideoClient
 from .iqiyi import IQiyiVideoClient
 from .leshi import LeshiVideoClient
+from .rutube import RutubeVideoClient
 from .douyin import DouyinVideoClient
 from .artetv import ArteTVVideoClient
 from .reddit import RedditVideoClient
@@ -89,7 +90,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'YoukuVideoClient': YoukuVideoClient,               'ZhihuVideoClient': ZhihuVideoClient,               'ZuiyouVideoClient': ZuiyouVideoClient,             'LeshiVideoClient': LeshiVideoClient,
         'KanKanNewsVideoClient': KanKanNewsVideoClient,     'NuVidVideoClient': NuVidVideoClient,               'ChinaDailyVideoClient': ChinaDailyVideoClient,     'EastDayVideoClient': EastDayVideoClient,
         'CCTVVideoClient': CCTVVideoClient,                 'WWW163VideoClient': WWW163VideoClient,             'XinhuaNetVideoClient': XinhuaNetVideoClient,       'PeopleVideoClient': PeopleVideoClient,
-        'HuanQiuVideoClient': HuanQiuVideoClient,           'MingpaoVideoClient': MingpaoVideoClient,           'DailyMotionVideoClient': DailyMotionVideoClient,
+        'HuanQiuVideoClient': HuanQiuVideoClient,           'MingpaoVideoClient': MingpaoVideoClient,           'DailyMotionVideoClient': DailyMotionVideoClient,   'RutubeVideoClient': RutubeVideoClient,
     }
 
 
