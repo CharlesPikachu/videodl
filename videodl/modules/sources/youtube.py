@@ -96,7 +96,7 @@ class YouTubeVideoClient(BaseVideoClient):
         if not self.belongto(url=url): return []
         request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
         # try parse with some third part apis
-        for parser in [self._parsefromurlwithytdown, self._parsefromurlwithdownr]:
+        for parser in [self._parsefromurlwithytdown, self._parsefromurlwithytdown, self._parsefromurlwithdownr]:
             video_infos = parser(url, request_overrides)
             if any(video_info.with_valid_download_url for video_info in (video_infos or [])): return video_infos
         # try parse with official apis
