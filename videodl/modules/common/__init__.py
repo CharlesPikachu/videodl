@@ -42,8 +42,8 @@ from .xiazaitool import XiazaitoolVideoClient
 '''CommonVideoClientBuilder'''
 class CommonVideoClientBuilder(BaseModuleBuilder):
     REGISTERED_MODULES = {
-        'SnapAnyVideoClient': SnapAnyVideoClient,        'GVVideoClient': GVVideoClient,                  'IM1907VideoClient': IM1907VideoClient,          'XMFlvVideoClient': XMFlvVideoClient,
-        'IIILabVideoClient': IIILabVideoClient,          'RayVideoClient': RayVideoClient,                'SnapWCVideoClient': SnapWCVideoClient,          'VeedMateVideoClient': VeedMateVideoClient,
+        'SnapAnyVideoClient': SnapAnyVideoClient,        'GVVideoClient': GVVideoClient,                  'SnapWCVideoClient': SnapWCVideoClient,          'IM1907VideoClient': IM1907VideoClient,
+        'XMFlvVideoClient': XMFlvVideoClient,            'IIILabVideoClient': IIILabVideoClient,          'RayVideoClient': RayVideoClient,                'VeedMateVideoClient': VeedMateVideoClient,
         'VideoFKVideoClient': VideoFKVideoClient,        'VThreadsVideoClient': VThreadsVideoClient,      'SENJiexiVideoClient': SENJiexiVideoClient,      'JXM3U8VideoClient': JXM3U8VideoClient,
         'VgetVideoClient': VgetVideoClient,              'AnyFetcherVideoClient': AnyFetcherVideoClient,  'PVVideoClient': PVVideoClient,                  'KedouVideoClient': KedouVideoClient,
         'ODwonVideoClient': ODwonVideoClient,            'KuKuToolVideoClient': KuKuToolVideoClient,      'SpapiVideoClient': SpapiVideoClient,            'WzjunVideoClient': WzjunVideoClient,

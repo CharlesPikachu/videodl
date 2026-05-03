@@ -35,11 +35,11 @@ class SnapAnyVideoClient(BaseVideoClient):
         # try parse
         try:
             # --encrypt post data
-            headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
-            site = platformfromurl(url); timestamp = str(int(time.time() * 1000))
-            headers['G-Footer'] = hashlib.md5(f"{url}{site}{timestamp}{self.SALT}".encode('utf-8')).hexdigest(); headers['G-Timestamp'] = timestamp; headers['Accept-Language'] = site
+            headers, timestamp, site_lang = copy.deepcopy(self.default_headers), str(int(time.time() * 1000)), 'zh'; RandomIPGenerator().addrandomipv4toheaders(headers)
+            sign_str = f"{url}{site_lang}{timestamp}{self.SALT}"; g_footer = hashlib.md5(sign_str.encode('utf-8')).hexdigest()
+            headers.update({"Accept": "*/*", "Accept-Language": site_lang, "G-Timestamp": timestamp, "G-Footer": g_footer, "Content-Type": "application/json", "Origin": "https://snapany.com", "Referer": "https://snapany.com/",})
             # --post request
-            (resp := self.post('https://api.snapany.com/v1/extract', json={"link": url}, headers=headers, **request_overrides)).raise_for_status()
+            (resp := self.post('https://api.snapany.com/v1/extract/post', json={"link": url}, headers=headers, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             # --video title
             video_title = legalizestring(raw_data.get('text', null_backup_title) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
