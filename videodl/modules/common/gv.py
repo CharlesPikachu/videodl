@@ -22,15 +22,31 @@ from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheade
 '''GVVideoClient'''
 class GVVideoClient(BaseVideoClient):
     source = 'GVVideoClient'
-    AES_KEY = "kedou@8989!63336"
-    IV_BASE64 = "a2Vkb3VAODk4OSE2MzIzMw=="
-    RSA_PUBLIC_KEY_BASE64 = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkJZWIUIje8VjJ3okESY8stCs/a95hTUqK3fD/AST0F8mf7rTLoHCaW+AjmrqVR9NM/tvQNni67b5tGC5z3PD6oROJJ24QfcAW9urz8WjtrS/pTAfGeP/2AMCZfCu9eECidy16U2oQzBl9Q0SPoz0paJ9AfgcrHa0Zm3RVPL7JvOUzscL4AnirYImPsdaHZ52hAwz5y9bYoiWzUkuG7LvnAxO6JHQ71B3VTzM3ZmstS7wBsQ4lIbD318b49x+baaXVmC3yPW/E4Ol+OBZIBMWhzl7FgwIpgbGmsJSsqrOq3D8IgjS12K5CgkOT7EB/sil7lscgc22E5DckRpMYRG8dwIDAQAB"
     def __init__(self, **kwargs):
         super(GVVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
-        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
+        self.default_parse_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36", "Origin": "https://greenvideo.cc", "Referer": "https://greenvideo.cc/", "kdsystem": "GreenVideo", "Accept": "application/json, text/plain, */*"}
+        self.default_download_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"}
         self.default_headers = self.default_parse_headers
         self._initsession()
+    '''_getdynamickeys'''
+    def _getdynamickeys(self, request_overrides: dict = None):
+        (resp := self.get("https://greenvideo.cc/api/auth/keys", timeout=10, **(request_overrides or {}))).raise_for_status()
+        return resp2json(resp=resp)['data']['k1'], resp2json(resp=resp)['data']['k2']
+    '''_decryptk2withpublickey'''
+    def _decryptk2withpublickey(self, k1_pem, k2_b64):
+        rsa_key, c = RSA.import_key(k1_pem), int.from_bytes(base64.b64decode(k2_b64), byteorder='big')
+        m_bytes = pow(c, rsa_key.e, rsa_key.n).to_bytes(rsa_key.size_in_bytes(), byteorder='big')
+        aes_key = m_bytes[idx+1:].decode('utf-8') if (idx := m_bytes.find(b'\x00', 2)) != -1 else m_bytes.lstrip(b'\x00').decode('utf-8')
+        return aes_key
+    '''_encryptpayload'''
+    def _encryptpayload(self, video_url, k1, k2):
+        aes_key_str = self._decryptk2withpublickey((k1_pem := f"-----BEGIN PUBLIC KEY-----\n{k1}\n-----END PUBLIC KEY-----"), k2)
+        json_string = json.dumps({"url": video_url}, separators=(",", ":"), ensure_ascii=False)
+        aes_cipher = AES.new(aes_key_str.encode("utf-8"), AES.MODE_CBC, base64.b64decode("a2Vkb3VAODk4OSE2MzIzMw=="))
+        aes_encrypted_str = base64.b64encode(aes_cipher.encrypt(pad(json_string.encode('utf-8'), AES.block_size))).decode("utf-8")
+        rsa_cipher, data_to_encrypt, chunk_size = PKCS1_v1_5.new(RSA.import_key(k1_pem)), aes_encrypted_str.encode('utf-8'), 245
+        final_encrypted_bytes = b''.join(rsa_cipher.encrypt(data_to_encrypt[i:i + chunk_size]) for i in range(0, len(data_to_encrypt), chunk_size))
+        return base64.b64encode(final_encrypted_bytes).decode("utf-8")
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
@@ -41,15 +57,10 @@ class GVVideoClient(BaseVideoClient):
         if platformfromurl(url) in {'weibo'}: video_info.update(dict(default_download_headers=self.WEIBO_REFERENCE_HEADERS, default_audio_download_headers=self.WEIBO_REFERENCE_HEADERS))
         # try parse
         try:
-            # --encrypt post data
-            json_string = json.dumps({"url": url}, separators=(",", ":"), ensure_ascii=False)
-            aes_key_bytes = self.AES_KEY.encode("utf-8"); iv_bytes = base64.b64decode(self.IV_BASE64); data_bytes = json_string.encode("utf-8")
-            aes_cipher = AES.new(aes_key_bytes, AES.MODE_CBC, iv_bytes); aes_encrypted = base64.b64encode(aes_cipher.encrypt(pad(data_bytes, AES.block_size))).decode("utf-8")
-            rsa_public_key = RSA.import_key(base64.b64decode(self.RSA_PUBLIC_KEY_BASE64)); rsa_cipher = PKCS1_v1_5.new(rsa_public_key)
-            rsa_encrypted = base64.b64encode(rsa_cipher.encrypt(aes_encrypted.encode("utf-8"))).decode("utf-8")
-            headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
             # --post request
-            (resp := self.post('https://greenvideo.cc/api/video/cnSimpleExtract', json=rsa_encrypted, headers=headers, **request_overrides)).raise_for_status()
+            headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers); headers.update({"Content-Type": "application/json"})
+            k1, k2 = self._getdynamickeys(request_overrides=request_overrides); encrypted_data = self._encryptpayload(url, k1, k2)
+            (resp := self.post('https://greenvideo.cc/api/video/cnSimpleExtract', json=encrypted_data, headers=headers, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)))); data_items = raw_data["data"]["videoItemVoList"]
             # --sort by quality
             video_items: list[dict] = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and ((x.get('fileType') in {"video"}) or (x.get('quality') not in {'音频', '封面'}))]
