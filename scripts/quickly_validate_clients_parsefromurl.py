@@ -576,6 +576,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.dailymotion.com/video/xa6wluq',
         'https://www.dailymotion.com/video/x8oc3c1',
     ],
+    'RutubeVideoClient': [
+        'https://rutube.ru/video/381e239f73b2d475bc0c2e459f531abb/',
+        'https://rutube.ru/video/3eac3b4561676c17df9132a9a1e62e3e/',
+        'https://rutube.ru/video/private/884fb55f07a97ab673c7d654553e0f48/?p=x2QojCumHTS3rsKHWXN8Lg',
+    ],
 }
 
 
