@@ -1,0 +1,48 @@
+name: G4F Issue Auto Reply
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  reply:
+    runs-on: ubuntu-latest
+
+    if: ${{ github.event.issue.user.type != 'Bot' }}
+
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -U "g4f[all]" requests openai
+      
+      - name: Create g4f Dirs
+        run: mkdir -p ~/.g4f/cookies
+
+      - name: Generate and Post Issue Reply
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          G4F_MODELS: ${{ vars.G4F_MODELS }}
+          ECYLT_FREE_GPT_ENABLED: ${{ vars.ECYLT_FREE_GPT_ENABLED || 'true' }}
+          ECYLT_FREE_GPT_URL: ${{ vars.ECYLT_FREE_GPT_URL || 'https://api.ecylt.top/v1/free_gpt/chat_json.php' }}
+          OPENAI_COMPATIBLE_API_KEY: ${{ secrets.OPENAI_COMPATIBLE_API_KEY }}
+          OPENAI_COMPATIBLE_BASE_URL: ${{ vars.OPENAI_COMPATIBLE_BASE_URL }}
+          OPENAI_COMPATIBLE_MODEL: ${{ vars.OPENAI_COMPATIBLE_MODEL }}
+          G4F_TIMEOUT_SECONDS: "90"
+          MAX_REPLY_CHARS: "65536"
+        run: |
+          python ./scripts/g4f_issue_reply.py
