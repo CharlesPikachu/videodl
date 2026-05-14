@@ -324,6 +324,11 @@ class EcyltFreeGPTIssueReplyBot(G4FIssueReplyBot):
     '''extractreplytext'''
     @staticmethod
     def extractreplytext(data: dict[str, Any]) -> str:
+        if isinstance(messages := data.get("messages"), list):
+            for message in reversed(messages):
+                if not isinstance(message, dict): continue
+                if message.get("role") != "assistant": continue
+                if isinstance((content := message.get("content")), str) and content.strip(): return content.strip()
         candidate_keys = ["reply", "message", "content", "answer", "text", "response", "result", "data"]
         for key in candidate_keys:
             if isinstance((value := data.get(key)), str) and value.strip(): return value.strip()
