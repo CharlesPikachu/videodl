@@ -34,7 +34,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.acfun.cn/v/ac36491489',
     ],
     'HaokanVideoClient': [
-        'https://haokan.baidu.com/v?vid=7754398076535398724',
+        'https://haokan.baidu.com/v?vid=15390752125208368436',
         'https://haokan.baidu.com/v?vid=7224830823778858146',
     ],
     'TedVideoClient': [
@@ -102,7 +102,8 @@ VIDEODL_TEST_SAMPLES = {
     'MeipaiVideoClient': [
         'http://www.meipai.com/media/6995325250108940314',
         'http://www.meipai.com/media/6983711035636086653',
-        'https://www.meipai.com/media/6977515645069710577',
+        'http://www.meipai.com/media/6977515645069710577',
+        'http://www.meipai.com/media/6987697906285039991',
     ],
     'DuxiaoshiVideoClient': [
         'http://quanmin.baidu.com/sv?source=share-h5&pd=qm_share_search&vid=12474281128791424380', 
@@ -146,9 +147,9 @@ VIDEODL_TEST_SAMPLES = {
     ],
     'RednoteVideoClient': [
         'http://xhslink.com/o/4aeC2uNASel',
-        'http://xhslink.com/o/4CKj0aSSeO9',
-        'http://xhslink.com/o/8t08X6dROt5',
-        'http://xhslink.com/o/1lB9dX0Vt2t',
+        'http://xhslink.com/o/90PTZaZuCvC',
+        'http://xhslink.com/o/5cHAeQspuEf',
+        'http://xhslink.com/o/74L1xM2Vw2f',
     ],
     'CCTVVideoClient': [
         'https://v.cctv.com/2021/06/05/VIDEwn0n7VRJokIL7rBi2ink210605.shtml?spm=C90324.Pfdd0SYeqktv.Eri5TUDwaTXO.6',
