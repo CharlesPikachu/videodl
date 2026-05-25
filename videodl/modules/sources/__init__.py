@@ -1,4 +1,5 @@
 '''initialize'''
+from .iyf import IYFVideoClient
 from .abc import ABCVideoClient
 from .wwe import WWEVideoClient
 from .ted import TedVideoClient
@@ -91,6 +92,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'KanKanNewsVideoClient': KanKanNewsVideoClient,     'NuVidVideoClient': NuVidVideoClient,               'ChinaDailyVideoClient': ChinaDailyVideoClient,     'OrientalDailyVideoClient': OrientalDailyVideoClient,
         'CCTVVideoClient': CCTVVideoClient,                 'WWW163VideoClient': WWW163VideoClient,             'XinhuaNetVideoClient': XinhuaNetVideoClient,       'PeopleVideoClient': PeopleVideoClient,
         'HuanQiuVideoClient': HuanQiuVideoClient,           'MingpaoVideoClient': MingpaoVideoClient,           'DailyMotionVideoClient': DailyMotionVideoClient,   'RutubeVideoClient': RutubeVideoClient,
+        'IYFVideoClient': IYFVideoClient,
     }
 
 

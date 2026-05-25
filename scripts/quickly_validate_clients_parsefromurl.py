@@ -582,6 +582,13 @@ VIDEODL_TEST_SAMPLES = {
         'https://rutube.ru/video/3eac3b4561676c17df9132a9a1e62e3e/',
         'https://rutube.ru/video/private/884fb55f07a97ab673c7d654553e0f48/?p=x2QojCumHTS3rsKHWXN8Lg',
     ],
+    'IYFVideoClient': [
+        'https://www.iyf.tv/watch?v=F7Hbb4wwJY450xfmJBG2U0',
+        'https://www.iyf.tv/play/45oXXfbVIT3',
+        'https://www.iyf.tv/play/OI9OUij8EK2',
+        'https://www.iyf.tv/watch?v=tHqeI1Gd0HPfzUKzH27SwF',
+        'https://www.iyf.tv/watch?v=lOnWQAdqYDacpPTgywnKY2',
+    ],
 }
 
 
