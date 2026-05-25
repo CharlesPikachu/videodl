@@ -535,9 +535,9 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.chinadaily.com.cn/a/202603/29/WS69c858cba310d6866eb40728.html',
         'https://cn.chinadaily.com.cn/a/202604/02/WS69ce24d5a310942cc49a632e.html',
     ],
-    'EastDayVideoClient': [
-        'https://nw.eastday.com/bjzx/20260403/cc9f70957fd8439da55c921920a6f73a.html',
-        'https://nw.eastday.com/bjzx/20260405/c526eb2abb2d4fcdb1d96ea9f69fef18.html',
+    'OrientalDailyVideoClient': [
+        'https://www.orientaldaily.com.my/news/videos/2026/05/21/820304',
+        'https://www.orientaldaily.com.my/news/videos/2026/05/24/820968',
     ],
     'CCTVNewsVideoClient': [
         'https://content-static.cctvnews.cctv.com/snow-book/video.html?item_id=15184105708774284671',

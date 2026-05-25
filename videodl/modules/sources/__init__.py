@@ -41,7 +41,6 @@ from .cctalk import CCtalkVideoClient
 from .beacon import BeaconVideoClient
 from .www163 import WWW163VideoClient
 from .people import PeopleVideoClient
-from .eastday import EastDayVideoClient
 from .kugoumv import KugouMVVideoClient
 from .wittytv import WittyTVVideoClient
 from .open163 import Open163VideoClient
@@ -69,6 +68,7 @@ from .chinadaily import ChinaDailyVideoClient
 from .dailymotion import DailyMotionVideoClient
 from .pipigaoxiao import PipigaoxiaoVideoClient
 from .xinpianchang import XinpianchangVideoClient
+from .orientaldaily import OrientalDailyVideoClient
 
 
 '''VideoClientBuilder'''
@@ -88,7 +88,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'WeiboVideoClient': WeiboVideoClient,               'WeishiVideoClient': WeishiVideoClient,             'WittyTVVideoClient': WittyTVVideoClient,           'XiguaVideoClient': XiguaVideoClient,
         'XinpianchangVideoClient': XinpianchangVideoClient, 'XuexiCNVideoClient': XuexiCNVideoClient,           'YinyuetaiVideoClient': YinyuetaiVideoClient,       'YouTubeVideoClient': YouTubeVideoClient,
         'YoukuVideoClient': YoukuVideoClient,               'ZhihuVideoClient': ZhihuVideoClient,               'ZuiyouVideoClient': ZuiyouVideoClient,             'LeshiVideoClient': LeshiVideoClient,
-        'KanKanNewsVideoClient': KanKanNewsVideoClient,     'NuVidVideoClient': NuVidVideoClient,               'ChinaDailyVideoClient': ChinaDailyVideoClient,     'EastDayVideoClient': EastDayVideoClient,
+        'KanKanNewsVideoClient': KanKanNewsVideoClient,     'NuVidVideoClient': NuVidVideoClient,               'ChinaDailyVideoClient': ChinaDailyVideoClient,     'OrientalDailyVideoClient': OrientalDailyVideoClient,
         'CCTVVideoClient': CCTVVideoClient,                 'WWW163VideoClient': WWW163VideoClient,             'XinhuaNetVideoClient': XinhuaNetVideoClient,       'PeopleVideoClient': PeopleVideoClient,
         'HuanQiuVideoClient': HuanQiuVideoClient,           'MingpaoVideoClient': MingpaoVideoClient,           'DailyMotionVideoClient': DailyMotionVideoClient,   'RutubeVideoClient': RutubeVideoClient,
     }
