@@ -1,5 +1,7 @@
 # Development Log
 
+- 2026-05-25: Released videofetch v0.8.9 - remove support for the eastday.com site; add video parsing and download support for the Malaysian Oriental Daily News and iYF.tv sites.
+
 - 2026-05-04: Released videofetch v0.8.8 - fix the general video parsing and downloading capabilities for the SnapAny and GreenVideo sites; add support for parsing and downloading from the Rutube site.
 
 - 2026-05-01: Released videofetch v0.8.7 - added support for video parsing and downloading from Dailymotion; fixed a bug where YouTube video downloads might retrieve invalid links; fixed issues with some general parsing sources ("vthreads.top") and addressed potential bugs in ffmpeg commands.
