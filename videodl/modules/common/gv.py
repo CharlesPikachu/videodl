@@ -62,7 +62,7 @@ class GVVideoClient(BaseVideoClient):
             # --post request
             headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers); headers.update({"Content-Type": "application/json"})
             k1, k2 = self._getdynamickeys(request_overrides=request_overrides); encrypted_data = self._encryptpayload(url, k1, k2)
-            (resp := self.post('https://greenvideo.cc/api/video/cnSimpleExtract', data=encrypted_data, headers=headers, timeout=20, **request_overrides)).raise_for_status()
+            (resp := self.post('https://greenvideo.cc/api/video/cnSimpleExtract', data=encrypted_data, headers=headers, timeout=10, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)))); data_items = raw_data["data"]["videoItemVoList"]
             # --sort by quality
             video_items: list[dict] = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and ((x.get('fileType') in {"video"}) or (x.get('quality') not in {'音频', '封面'}))]

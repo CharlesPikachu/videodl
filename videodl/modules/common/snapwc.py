@@ -38,8 +38,8 @@ class SnapWCVideoClient(BaseVideoClient):
     def __init__(self, **kwargs):
         super(SnapWCVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
-            'accept': '*/*', 'accept-encoding': 'gzip, deflate, br, zstd', 'accept-language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7', 'content-type': 'application/json', 'origin': 'https://snapwc.com', 'sec-fetch-site': 'same-site',
-            'priority': 'u=1, i', 'referer': 'https://snapwc.com/', 'sec-ch-ua': '"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"', 'sec-ch-ua-mobile': '?0', 'sec-ch-ua-platform': '"Windows"', 'x-locale': 'zh-CN',
+            'accept': '*/*', 'accept-language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7', 'content-type': 'application/json', 'origin': 'https://snapwc.com', 'sec-fetch-site': 'same-site', 'x-locale': 'zh-CN',
+            'priority': 'u=1, i', 'referer': 'https://snapwc.com/', 'sec-ch-ua': '"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"', 'sec-ch-ua-mobile': '?0', 'sec-ch-ua-platform': '"Windows"', 
             'sec-fetch-dest': 'empty', 'sec-fetch-mode': 'cors', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36',
         }
         self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
@@ -78,18 +78,19 @@ class SnapWCVideoClient(BaseVideoClient):
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
         # prepare
-        request_overrides, null_backup_title, video_infos = request_overrides or {}, yieldtimerelatedtitle(self.source), []
+        request_overrides, null_backup_title, video_infos = {"timeout": (10, 60), **(request_overrides or {})}, yieldtimerelatedtitle(self.source), []
         video_info = VideoInfo(source=self.source, enable_nm3u8dlre=False, download_with_ffmpeg=True) if BaseVideoClient.belongto(url, {"ted.com", "xinpianchang.com", "ifeng.com"}) else VideoInfo(source=self.source, enable_nm3u8dlre=True)
         if platformfromurl(url) in {'bilibili'}: video_info.update(dict(default_download_headers=self.BILIBILI_REFERENCE_HEADERS, default_audio_download_headers=self.BILIBILI_REFERENCE_HEADERS))
         if platformfromurl(url) in {'weibo'}: video_info.update(dict(default_download_headers=self.WEIBO_REFERENCE_HEADERS, default_audio_download_headers=self.WEIBO_REFERENCE_HEADERS))
         sortbysizedesc_func = lambda items: sorted(items, key=lambda x: (1 if int(x.get("size") or 0) == 0 else 0, -int(x.get("size") or 0)))
         # try parse
         try:
+            # --init headers
+            headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
             # -- init cookies
-            self.post('https://api.snapwc.com/api.visitor/init', json={}, **request_overrides)
+            self.post('https://api.snapwc.com/api.visitor/init', headers=headers, json={}, **request_overrides)
             self.default_headers['cookie'] = cookies2string(requests.utils.dict_from_cookiejar(self.session.cookies))
             self.default_parse_headers['cookie'] = cookies2string(requests.utils.dict_from_cookiejar(self.session.cookies))
-            headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
             page_session_id, client_timestamp = str(uuid.uuid4()), datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
             base_event_data = {"page_session_id": page_session_id, "client_timestamp": client_timestamp, "page_path": "/zh", "page_search": "", "page_hash": "", "referrer_host": "", "has_visitor_id": True}
             self.post('https://api.snapwc.com/api.event/log', headers=headers, json={"name": "frontend_visitor_init_reused", "data": base_event_data, "channel": "frontend_debug"}, **request_overrides)
