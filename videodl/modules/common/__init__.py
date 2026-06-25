@@ -3,7 +3,6 @@ from .bv import BVVideoClient
 from .pv import PVVideoClient
 from .gv import GVVideoClient
 from .ray import RayVideoClient
-from .xzdx import XZDXVideoClient
 from .vget import VgetVideoClient
 from .kit9 import KIT9VideoClient
 from .woof import WoofVideoClient
@@ -17,7 +16,6 @@ from .xcvts import XCVTSVideoClient
 from .odown import ODwonVideoClient
 from .wzjun import WzjunVideoClient
 from .qwkuns import QwkunsVideoClient
-from .lvlong import LvlongVideoClient
 from .snapwc import SnapWCVideoClient
 from .nologo import NoLogoVideoClient
 from .im1907 import IM1907VideoClient
@@ -50,8 +48,7 @@ class CommonVideoClientBuilder(BaseModuleBuilder):
         'QwkunsVideoClient': QwkunsVideoClient,          'XiaolvfangVideoClient': XiaolvfangVideoClient,  'BVVideoClient': BVVideoClient,                  'WoofVideoClient': WoofVideoClient,
         'KIT9VideoClient': KIT9VideoClient,              'MiZhiVideoClient': MiZhiVideoClient,            'QZXDPToolsVideoClient': QZXDPToolsVideoClient,  'BugPkVideoClient': BugPkVideoClient,
         'NoLogoVideoClient': NoLogoVideoClient,          'GVVIPVideoClient': GVVIPVideoClient,            'QingtingVideoClient': QingtingVideoClient,      'XCVTSVideoClient': XCVTSVideoClient,
-        'LongZhuVideoClient': LongZhuVideoClient,        'XiazaitoolVideoClient': XiazaitoolVideoClient,  'ZanqianbaVideoClient': ZanqianbaVideoClient,    'XZDXVideoClient': XZDXVideoClient,
-        'LvlongVideoClient': LvlongVideoClient,           
+        'LongZhuVideoClient': LongZhuVideoClient,        'XiazaitoolVideoClient': XiazaitoolVideoClient,  'ZanqianbaVideoClient': ZanqianbaVideoClient,    
     }
 
 

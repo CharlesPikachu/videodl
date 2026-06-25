@@ -289,7 +289,6 @@ Examples of subclasses include clients such as,
 - `videodl.modules.common.KedouVideoClient`
 - `videodl.modules.common.KuKuToolVideoClient`
 - `videodl.modules.common.LongZhuVideoClient`
-- `videodl.modules.common.LvlongVideoClient`
 - `videodl.modules.common.MiZhiVideoClient`
 - `videodl.modules.common.NoLogoVideoClient`
 - `videodl.modules.common.ODwonVideoClient`
@@ -307,7 +306,6 @@ Examples of subclasses include clients such as,
 - `videodl.modules.common.WoofVideoClient`
 - `videodl.modules.common.XCVTSVideoClient`
 - `videodl.modules.common.XMFlvVideoClient`
-- `videodl.modules.common.XZDXVideoClient`
 - `videodl.modules.common.XiaolvfangVideoClient`
 - `videodl.modules.common.XiazaitoolVideoClient`
 - `videodl.modules.common.ZanqianbaVideoClient`

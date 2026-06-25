@@ -22,8 +22,6 @@ videodl -i "https://www.douyin.com/jingxuan?modal_id=7563478365211987259" -g -a 
 videodl -i "https://show.meitu.com/detail?feed_id=6873229026351926275" -g -a KIT9VideoClient
 # LongZhuVideoClient
 videodl -i "https://share.xiaochuankeji.cn/hybrid/share/post?pid=415655156" -g -a LongZhuVideoClient
-# LvlongVideoClient
-videodl -i "https://v.qq.com/x/cover/hcx1ffsjpj63xuj/e0024mhahej.html" -g -a LvlongVideoClient
 # MiZhiVideoClient
 videodl -i "https://v.6.cn/minivideo/7466460" -g -a MiZhiVideoClient
 # NoLogoVideoClient
@@ -70,8 +68,6 @@ videodl -i "https://v.kuaishou.com/8CU76w" -g -a XCVTSVideoClient
 videodl -i "https://weibo.com/tv/show/1034:5271766164242555?mid=5271766441395892" -g -a XiaolvfangVideoClient
 
 ########################################################## Maybe Invalid #########################################################
-# XZDXVideoClient
-videodl -i "https://www.douyin.com/jingxuan?modal_id=7585277829261151542" -g -a XZDXVideoClient
 # ZanqianbaVideoClient
 videodl -i "https://www.toutiao.com/video/7585120439421108278/?log_from=33b1706a090018_1766131556972" -g -a ZanqianbaVideoClient
 ########################################################## Maybe Invalid #########################################################

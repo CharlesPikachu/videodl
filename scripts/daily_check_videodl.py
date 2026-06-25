@@ -362,11 +362,6 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.bilibili.com/video/BV1eQYwzwEz4',
         'https://ishare.ifeng.com/c/vs/v006uROwi--XAO9zMVtJUUewd8gnoa2qfWilMSzGxeoAPn7lWjN87mNtuzWQFWWXIvGIc?spss=np&crowdid=7355482289721053225&recallChannel=&aman=fgr0432r3rMfgMeQ04UODIR0Mj8M0N6TUyrNTBdkZjWYy1x00v',
     ],
-    'XZDXVideoClient': [
-        'https://www.bilibili.com/video/BV12oS5B5Eye/?spm_id_from=333.1007.tianma.6-4-22.click',
-        'https://www.douyin.com/jingxuan?modal_id=7585277829261151542',
-        'https://www.kuaishou.com/short-video/3xd8b4qa8vtn6ie?authorId=3xmup9yp228r3ze&streamSource=find&area=homexxbrilliant',
-    ],
     'PVVideoClient': [
         'https://www.youtube.com/watch?v=lBNYpPmjH8M',
         'https://www.bilibili.com/video/BV1vjmYBqETJ',
@@ -396,10 +391,6 @@ VIDEODL_TEST_SAMPLES = {
         'https://v.youku.com/v_show/id_XNjUwMjQxMjI0MA==.html',
         'https://v.pptv.com/show/31nibfeVLuiclc2kI.html',
         'https://www.mgtv.com/b/292920/3592322.html',
-    ],
-    'LvlongVideoClient': [
-        'https://v.qq.com/x/cover/hcx1ffsjpj63xuj/e0024mhahej.html',
-        'https://v.qq.com/x/cover/yg5drpt31xz2a1v/u4101uxlr02.html',
     ],
     'ODwonVideoClient': [
         'https://www.bilibili.com/video/BV1abi9BfEZU',
