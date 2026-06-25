@@ -7,14 +7,17 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
-import re
 import copy
+import time
 import base64
+import hashlib
 import urllib.parse
+import json_repair
 from Cryptodome.Cipher import AES
 from ..sources import BaseVideoClient
+from Cryptodome.Util.Padding import unpad
 from ..utils.domains import platformfromurl
-from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, yieldtimerelatedtitle
+from ..utils import VideoInfo, FileTypeSniffer, RandomIPGenerator, useparseheaderscookies, legalizestring, yieldtimerelatedtitle, resp2json, extracttitlefromurl
 
 
 '''JXM3U8VideoClient'''
@@ -22,17 +25,23 @@ class JXM3U8VideoClient(BaseVideoClient):
     source = 'JXM3U8VideoClient'
     def __init__(self, **kwargs):
         super(JXM3U8VideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
-        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
+        self.default_parse_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36", "accept": "application/json, text/javascript, */*; q=0.01", "content-type": "application/x-www-form-urlencoded; charset=UTF-8", "origin": "https://jx.xmflv.com", "referer": "https://jx.xmflv.com/"}
+        self.default_download_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36", "origin": "https://jx.xmflv.com", "referer": "https://jx.xmflv.com/"}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''_decryptvideourl'''
-    def _decryptvideourl(self, encrypted_url: str, uid: str):
-        key_string, iv_string = f'2890{uid}tB959C', '2F131BE91247866E'
-        key, iv = key_string.encode('utf-8'), iv_string.encode('utf-8')
-        decrypted_bytes = AES.new(key, AES.MODE_CBC, iv).decrypt(base64.b64decode(encrypted_url))
-        padding_len = decrypted_bytes[-1]; unpadded_bytes = decrypted_bytes[:-padding_len]
-        return unpadded_bytes.decode('utf-8')
+    def _decryptvideourl(self, encrypted_data: str, key: str, iv: str) -> str:
+        cipher = AES.new(key.encode('utf-8'), AES.MODE_CBC, iv.encode('utf-8')); encrypted_bytes = base64.b64decode(encrypted_data); decrypted_bytes = cipher.decrypt(encrypted_bytes)
+        return unpad(decrypted_bytes, AES.block_size).decode('utf-8')
+    '''_generatekey'''
+    def _generatekey(self, time_str: str, url: str) -> str:
+        return hashlib.md5((str(time_str) + url).encode('utf-8')).hexdigest()
+    '''_generatesign'''
+    def _generatesign(self, key_str: str) -> str:
+        aes_key, aes_iv, text_bytes = hashlib.md5(key_str.encode('utf-8')).hexdigest().encode('utf-8'), b'fUU9eRmkYzsgbkEK', key_str.encode('utf-8')
+        if (pad_len := 16 - len(text_bytes) % 16) != 16: text_bytes += b'\x00' * pad_len
+        cipher = AES.new(aes_key, AES.MODE_CBC, aes_iv)
+        return base64.b64encode(cipher.encrypt(text_bytes)).decode('utf-8')
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
@@ -43,27 +52,27 @@ class JXM3U8VideoClient(BaseVideoClient):
         if platformfromurl(url) in {'weibo'}: video_info.update(dict(default_download_headers=self.WEIBO_REFERENCE_HEADERS, default_audio_download_headers=self.WEIBO_REFERENCE_HEADERS))
         # try parse
         try:
-            # --get request
+            # --generate corresponding parameters
             headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
-            (resp := self.get(f"https://jx.m3u8.tv/jiexi/?url={url}", headers=headers, **request_overrides)).raise_for_status(); headers.update({"Referer": f"https://jx.m3u8.tv/jiexi/?url={url}"})
-            m = re.search(r'<iframe.*?src=[\'\"](.*?)[\'\"]', resp.text, re.IGNORECASE | re.DOTALL)
-            if (iframe_1_url := m.group(1)).startswith('/'): iframe_1_url = urllib.parse.urljoin("https://jx.m3u8.tv", iframe_1_url)
-            (resp := self.get(iframe_1_url, headers=headers, **request_overrides)).raise_for_status(); headers.update({"Referer": iframe_1_url})
-            iframe_2_url = re.search(r'<iframe.*?src=[\'\"](.*?)[\'\"]', resp.text, re.IGNORECASE | re.DOTALL).group(1)
-            (resp := self.get(iframe_2_url, headers=headers, **request_overrides)).raise_for_status(); headers.update({"Referer": iframe_2_url})
-            m = re.search(r'<iframe.*?src=[\'\"](.*?)[\'\"]', resp.text, re.IGNORECASE | re.DOTALL)
-            if (iframe_3_url := m.group(1)).startswith('/'): iframe_3_url = f"https://{urllib.parse.urlparse(iframe_2_url).netloc}{iframe_3_url}"
-            (resp := self.get(iframe_3_url, headers=headers, **request_overrides)).raise_for_status(); headers.update({"Referer": iframe_3_url})
-            raw_data = {'encrypted_url': re.search(r'"url"\s*:\s*"([^"]+)"', resp.text).group(1).replace('\\/', '/'), 'uid': re.search(r'"uid"\s*:\s*"([^"]+)"', resp.text).group(1)}
-            raw_data['decrypted_url'] = self._decryptvideourl(raw_data['encrypted_url'], uid=raw_data['uid']); video_info.update(dict(raw_data=raw_data))
+            time_str, encoded_url = str(int(time.time() * 1000)), urllib.parse.quote(url, safe='')
+            key, sign = self._generatekey(time_str, encoded_url), self._generatesign(self._generatekey(time_str, encoded_url))
+            # --post request
+            (resp := self.post("https://cache.0567890.xyz:4433/Api", data={'tm': time_str, 'url': encoded_url, 'key': key, 'sign': sign}, headers=headers, **request_overrides)).raise_for_status()
+            if (raw_data := {'Api': resp2json(resp=resp)})['Api'].get('code') != 200 or not raw_data['Api'].get('data'): raise RuntimeError(raw_data['Api'])
+            # --decrypt encrypted url
+            decrypted_str = self._decryptvideourl(raw_data['Api']['data'], raw_data['Api']['key'], raw_data['Api']['iv'])
+            decrypted_data = json_repair.loads(decrypted_str[decrypted_str.find('{'):]) if '{' in decrypted_str else json_repair.loads(decrypted_str)
+            decrypted_data = {k: (v.replace('\\/', '/') if isinstance(v, str) else v) for k, v in decrypted_data.items()}
+            raw_data['Api']['decrypted_str'], raw_data['Api']['decrypted_data'] = decrypted_str, decrypted_data
+            video_info.update(dict(raw_data=raw_data, download_url=(download_url := decrypted_data['url'])))
             # --video title
-            video_title = legalizestring(urllib.parse.urlparse(raw_data['decrypted_url']).path.strip('/').split('/')[-1].removesuffix('.m3u8'), replace_null_string=null_backup_title).removesuffix('.')
-            # --download url
-            video_info.update(dict(download_url=raw_data['decrypted_url']))
+            video_title = legalizestring(decrypted_data.get('name') or extracttitlefromurl(url) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
+            if "解析失败啦" == video_title: raise Exception(f'Fail to parse {url}')
             # --other infos
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=video_info.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=None)); video_infos.append(video_info)
+            if decrypted_data.get('type') in {'hls'} or '.m3u8' in download_url.lower() or '/m3u8/' in download_url.lower(): ext = 'm3u8'; guess_video_ext_result['ext'] = 'm3u8'
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=decrypted_data.get('pic'))); video_infos.append(video_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)

@@ -10,6 +10,7 @@ import os
 import json
 import copy
 import base64
+from contextlib import suppress
 from Cryptodome.Cipher import AES
 from Cryptodome.PublicKey import RSA
 from ..sources import BaseVideoClient
@@ -22,12 +23,9 @@ from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheade
 '''KedouVideoClient'''
 class KedouVideoClient(BaseVideoClient):
     source = 'KedouVideoClient'
-    AES_KEY = "kedou@8989!63336"
-    IV_BASE64 = "a2Vkb3VAODk4OSE2MzIzMw=="
-    RSA_PUBLIC_KEY_BASE64 = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkJZWIUIje8VjJ3okESY8stCs/a95hTUqK3fD/AST0F8mf7rTLoHCaW+AjmrqVR9NM/tvQNni67b5tGC5z3PD6oROJJ24QfcAW9urz8WjtrS/pTAfGeP/2AMCZfCu9eECidy16U2oQzBl9Q0SPoz0paJ9AfgcrHa0Zm3RVPL7JvOUzscL4AnirYImPsdaHZ52hAwz5y9bYoiWzUkuG7LvnAxO6JHQ71B3VTzM3ZmstS7wBsQ4lIbD318b49x+baaXVmC3yPW/E4Ol+OBZIBMWhzl7FgwIpgbGmsJSsqrOq3D8IgjS12K5CgkOT7EB/sil7lscgc22E5DckRpMYRG8dwIDAQAB"
     def __init__(self, **kwargs):
         super(KedouVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
+        self.default_parse_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36', 'Accept': 'application/json', 'Content-Type': 'application/json', 'Origin': 'https://www.kedou.life', 'kdsystem': 'Kedou'}
         self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
         self.default_headers = self.default_parse_headers
         self._initsession()
@@ -43,13 +41,15 @@ class KedouVideoClient(BaseVideoClient):
         try:
             # --encrypt post data
             json_string = json.dumps({"url": url}, separators=(",", ":"), ensure_ascii=False)
-            aes_key_bytes = self.AES_KEY.encode("utf-8"); iv_bytes = base64.b64decode(self.IV_BASE64); data_bytes = json_string.encode("utf-8")
-            aes_cipher = AES.new(aes_key_bytes, AES.MODE_CBC, iv_bytes); aes_encrypted = base64.b64encode(aes_cipher.encrypt(pad(data_bytes, AES.block_size))).decode("utf-8")
-            rsa_public_key = RSA.import_key(base64.b64decode(self.RSA_PUBLIC_KEY_BASE64)); rsa_cipher = PKCS1_v1_5.new(rsa_public_key)
-            rsa_encrypted = base64.b64encode(rsa_cipher.encrypt(aes_encrypted.encode("utf-8"))).decode("utf-8")
             headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
+            (keys_resp := self.get('https://www.kedou.life/api/auth/keys', headers=headers, **request_overrides)).raise_for_status()
+            keys_data = resp2json(resp=keys_resp)["data"]; rsa_public_key = RSA.import_key(base64.b64decode(keys_data["k1"])); k2_bytes = base64.b64decode(keys_data["k2"])
+            aes_key_bytes = pow(int.from_bytes(k2_bytes, "big"), rsa_public_key.e, rsa_public_key.n).to_bytes(rsa_public_key.size_in_bytes(), "big")
+            aes_key_bytes = aes_key_bytes[aes_key_bytes.find(b"\x00", 2) + 1:]; iv_bytes = b"kedou@8989!63233"; data_bytes = json_string.encode("utf-8")
+            aes_cipher = AES.new(aes_key_bytes, AES.MODE_CBC, iv_bytes); aes_encrypted = base64.b64encode(aes_cipher.encrypt(pad(data_bytes, AES.block_size))).decode("utf-8")
+            rsa_cipher = PKCS1_v1_5.new(rsa_public_key); rsa_encrypted = base64.b64encode(rsa_cipher.encrypt(aes_encrypted.encode("utf-8"))).decode("utf-8")
             # --post request
-            (resp := self.post('https://www.kedou.life/api/video/extract/v2', json=rsa_encrypted, headers=headers, **request_overrides)).raise_for_status()
+            (resp := self.post('https://www.kedou.life/api/video/extract/v2', data=rsa_encrypted, headers=headers, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)))); data_items = raw_data["data"]["videoItemVoList"]
             # --sort by quality
             video_items: list[dict] = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and ((x.get('fileType') in {"video"}) or (x.get('quality') not in {'音频', '封面'}))]
@@ -64,8 +64,7 @@ class KedouVideoClient(BaseVideoClient):
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            try: cover_url = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and ((x.get('fileType') in {"image"}) or (x.get('quality') in {'封面'}))][0]['baseUrl']
-            except Exception: cover_url = None
+            with suppress(Exception): cover_url = None; cover_url = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and ((x.get('fileType') in {"image"}) or (x.get('quality') in {'封面'}))][0]['baseUrl']
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=safeextractfromdict(raw_data, ['data', 'vid'], None) or video_title, cover_url=cover_url))
             if audio_download_url and str(audio_download_url).startswith('http'):
                 video_info.update(dict(guess_audio_ext_result=(guess_audio_ext_result := FileTypeSniffer.getfileextensionfromurl(url=audio_download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies))))
