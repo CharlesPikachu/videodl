@@ -9,9 +9,8 @@ WeChat Official Account (微信公众号):
 import os
 import copy
 from ..sources import BaseVideoClient
-from ..utils import RandomIPGenerator
 from ..utils.domains import platformfromurl
-from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, safeextractfromdict
+from ..utils import VideoInfo, FileTypeSniffer, RandomIPGenerator, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, safeextractfromdict
 
 
 '''QZXDPToolsVideoClient'''

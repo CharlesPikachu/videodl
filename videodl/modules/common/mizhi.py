@@ -40,6 +40,7 @@ class MiZhiVideoClient(BaseVideoClient):
             # --video title
             video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --download url
+            if not raw_data['data']['url']: raise RuntimeError(f'fail to fetch download url for {url}')
             video_info.update(dict(download_url=(download_url := f'https:{download_url}' if not str(download_url := raw_data['data']['url']).startswith('http') else download_url)))
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)

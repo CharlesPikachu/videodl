@@ -13,9 +13,8 @@ import time
 import base64
 import hashlib
 from ..sources import BaseVideoClient
-from ..utils import RandomIPGenerator
 from ..utils.domains import platformfromurl
-from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, safeextractfromdict
+from ..utils import VideoInfo, FileTypeSniffer, RandomIPGenerator, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, safeextractfromdict
 
 
 '''ZanqianbaVideoClient'''
