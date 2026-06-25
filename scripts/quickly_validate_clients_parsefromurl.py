@@ -575,6 +575,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://haokan.baidu.com/v?vid=2794203183592426331',
         'https://www.douyin.com/jingxuan?modal_id=7650003584993512731',
     ],
+    'QingQiuVideoClient': [
+        'https://www.bilibili.com/video/BV1efj96nEEM/',
+        'https://www.douyin.com/jingxuan?modal_id=7622143125963803958',
+        'https://www.tiktok.com/@tk021413z5p/video/7623055720631536927',
+    ],
 }
 
 

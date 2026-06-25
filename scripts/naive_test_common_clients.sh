@@ -36,6 +36,8 @@ videodl -i "https://www.youtube.com/watch?v=lBNYpPmjH8M" -g -a PVVideoClient
 videodl -i "https://www.douyin.com/jingxuan/theater?modal_id=7580778868509933947" -g -a QingtingVideoClient
 # QZXDPToolsVideoClient
 videodl -i "https://www.huya.com/video/play/1090411452.html" -g -a QZXDPToolsVideoClient
+# QingQiuVideoClient
+videodl -i "https://www.douyin.com/jingxuan?modal_id=7622143125963803958" -g -a QingQiuVideoClient
 # RayVideoClient
 videodl -i "https://www.youtube.com/watch?v=a0AyNzV3yk8" -g -a RayVideoClient
 # SnapAnyVideoClient

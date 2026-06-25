@@ -296,6 +296,7 @@ Examples of subclasses include clients such as,
 - `videodl.modules.common.PVVideoClient`
 - `videodl.modules.common.QZXDPToolsVideoClient`
 - `videodl.modules.common.QingtingVideoClient`
+- `videodl.modules.common.QingQiuVideoClient`
 - `videodl.modules.common.RayVideoClient`
 - `videodl.modules.common.SENJiexiVideoClient`
 - `videodl.modules.common.SnapAnyVideoClient`

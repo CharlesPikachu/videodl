@@ -21,10 +21,10 @@ from .im1907 import IM1907VideoClient
 from .iiilab import IIILabVideoClient
 from ..utils import BaseModuleBuilder
 from .jxm3u8 import JXM3U8VideoClient
-from .yinziai import YinZiAIVideoClient
 from .videofk import VideoFKVideoClient
 from .longzhu import LongZhuVideoClient
 from .snapany import SnapAnyVideoClient
+from .qingqiu import QingQiuVideoClient
 from .vthreads import VThreadsVideoClient
 from .veedmate import VeedMateVideoClient
 from .qingting import QingtingVideoClient
@@ -45,7 +45,7 @@ class CommonVideoClientBuilder(BaseModuleBuilder):
         'VideoFKVideoClient': VideoFKVideoClient,        'VThreadsVideoClient': VThreadsVideoClient,      'SENJiexiVideoClient': SENJiexiVideoClient,      'JXM3U8VideoClient': JXM3U8VideoClient,
         'VgetVideoClient': VgetVideoClient,              'AnyFetcherVideoClient': AnyFetcherVideoClient,  'PVVideoClient': PVVideoClient,                  'KedouVideoClient': KedouVideoClient,
         'ODwonVideoClient': ODwonVideoClient,            'KuKuToolVideoClient': KuKuToolVideoClient,      'APICXVideoClient': APICXVideoClient,            'SpapiVideoClient': SpapiVideoClient,
-        'YinZiAIVideoClient': YinZiAIVideoClient,        'WzjunVideoClient': WzjunVideoClient,            'XiaolvfangVideoClient': XiaolvfangVideoClient,  'BVVideoClient': BVVideoClient,
+        'QingQiuVideoClient': QingQiuVideoClient,        'WzjunVideoClient': WzjunVideoClient,            'XiaolvfangVideoClient': XiaolvfangVideoClient,  'BVVideoClient': BVVideoClient,
         'KIT9VideoClient': KIT9VideoClient,              'MiZhiVideoClient': MiZhiVideoClient,            'QZXDPToolsVideoClient': QZXDPToolsVideoClient,  'BugPkVideoClient': BugPkVideoClient,
         'NoLogoVideoClient': NoLogoVideoClient,          'GVVIPVideoClient': GVVIPVideoClient,            'QingtingVideoClient': QingtingVideoClient,      'XCVTSVideoClient': XCVTSVideoClient,
         'XiazaitoolVideoClient': XiazaitoolVideoClient,  'ZanqianbaVideoClient': ZanqianbaVideoClient,    'LongZhuVideoClient': LongZhuVideoClient,        
