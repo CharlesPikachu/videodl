@@ -18,8 +18,8 @@ class NoLogoVideoClient(BaseVideoClient):
     source = 'NoLogoVideoClient'
     def __init__(self, **kwargs):
         super(NoLogoVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"}
-        self.default_download_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"}
+        self.default_parse_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36", "Referer": "https://nologo.code24.top/"}
+        self.default_download_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -34,7 +34,7 @@ class NoLogoVideoClient(BaseVideoClient):
         try:
             # --get request
             headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
-            (resp := self.get(f'https://nologo.code24.top/api/download/verify?url={url}', headers=headers, **request_overrides)).raise_for_status()
+            (resp := self.get(f'https://nologo.code24.top/api/water-mask/download/verify?url={url}', headers=headers, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             # --video title
             video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'title'], None) or safeextractfromdict(raw_data, ['data', 'desc'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')

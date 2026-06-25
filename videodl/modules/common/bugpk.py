@@ -19,8 +19,8 @@ class BugPkVideoClient(BaseVideoClient):
     source = 'BugPkVideoClient'
     def __init__(self, **kwargs):
         super(BugPkVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"}
-        self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'}
+        self.default_parse_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"}
+        self.default_download_headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36"}
         self.default_headers = self.default_parse_headers
         self._initsession()
     '''parsefromurl'''
@@ -35,7 +35,7 @@ class BugPkVideoClient(BaseVideoClient):
         try:
             # --get request
             headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
-            (resp := self.get(f'https://api.bugpk.com/api/short_videos?url={url}', headers=headers, **request_overrides)).raise_for_status()
+            (resp := self.get(f'https://api.bugpk.com/api/short_videos?url={url}', headers=headers, verify=False, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             # --video title
             video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
