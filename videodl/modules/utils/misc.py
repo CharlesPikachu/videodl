@@ -139,7 +139,7 @@ def legalizestring(string: str, fit_gbk: bool = True, max_len: int = 255, fit_ut
     # sanitize_filename
     string = sanitize_filename(string, max_len=max_len)
     # fix encoding
-    if fit_gbk: string = string.encode("gbk", errors="ignore").decode("gbk", errors="ignore")
+    if fit_gbk: string = string.encode("gb18030", errors="ignore").decode("gb18030", errors="ignore")
     if fit_utf8: string = string.encode("utf-8", errors="ignore").decode("utf-8", errors="ignore")
     # return
     string = re.sub(r"\s+", " ", string).strip()
