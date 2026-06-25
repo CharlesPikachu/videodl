@@ -7,12 +7,14 @@ WeChat Official Account (微信公众号):
     Charles的皮卡丘
 '''
 import os
+import re
 import copy
 import time
+import base64
 import random
 from ..sources import BaseVideoClient
 from ..utils.domains import platformfromurl
-from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, safeextractfromdict
+from ..utils import RandomIPGenerator, VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle
 
 
 '''VeedMateVideoClient'''
@@ -21,8 +23,8 @@ class VeedMateVideoClient(BaseVideoClient):
     def __init__(self, **kwargs):
         super(VeedMateVideoClient, self).__init__(**kwargs)
         self.default_parse_headers = {
-            "accept": "*/*", "accept-encoding": "gzip, deflate, br, zstd", "accept-language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7", "origin": "https://veedmate.com", "priority": "u=1, i", "referer": "https://veedmate.com/", "sec-ch-ua": '"Chromium";v="146", "Not-A.Brand";v="24", "Google Chrome";v="146"', 
-            "sec-ch-ua-platform": '"Windows"', "sec-fetch-dest": "empty", "sec-fetch-mode": "cors", "sec-fetch-site": "cross-site", "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36", "sec-ch-ua-mobile": "?0",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+            "accept": "*/*", "origin": "https://veedmate.com", "referer": "https://veedmate.com/",
         }
         self.default_download_headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36'}
     '''parsefromurl'''
@@ -37,19 +39,24 @@ class VeedMateVideoClient(BaseVideoClient):
         try:
             # --get request
             headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
-            params = {'allow_extended_duration': '0', 'copyright': '0', 'format': '1080', 'url': url, 'no_merge': '0'}
-            (resp := self.get('https://auralis-b5it.onrender.com/api/download?', params=params, headers=headers, **request_overrides)).raise_for_status()
-            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)))); progress_url = raw_data['progress_url']
+            (resp := self.get('https://veedmate.com/', headers=headers, **request_overrides)).raise_for_status()
+            config_text = '\n'.join([base64.b64decode(x).decode('utf-8', 'ignore') for x in re.findall(r'data:text/javascript;base64,([^"\']+)', resp.text)])
+            ajax_url = re.findall(r'ajaxUrl:"([^"]+)"', config_text)[0]; nonce = re.findall(r'nonce:"([^"]+)"', config_text)[0]
+            post_data = {'action': 'vd_download', 'nonce': nonce, 'url': url, 'resolution': '1080p'}
+            (resp := self.post(ajax_url, data=post_data, headers=headers, **request_overrides)).raise_for_status()
+            video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)))); status_params = {'action': 'vd_status', 'job_id': raw_data['job_id']}
+            if raw_data.get('_server'): status_params.update(dict(server=raw_data['_server']))
             while True:
-                (resp := self.get(progress_url, **request_overrides)).raise_for_status(); raw_data['progress_resp'] = resp2json(resp=resp)
-                if raw_data['progress_resp']['success'] in {1, '1'}: break
+                (resp := self.get(ajax_url, params=status_params, headers=headers, **request_overrides)).raise_for_status(); raw_data['progress_resp'] = resp2json(resp=resp)
+                if raw_data['progress_resp'].get('status') == 'completed' and raw_data['progress_resp'].get('download_url'): break
+                if raw_data['progress_resp'].get('status') == 'failed' or raw_data['progress_resp'].get('error'): raise RuntimeError(raw_data['progress_resp'])
                 time.sleep(0.5 + random.random())
             # --extract
-            video_title = legalizestring(raw_data.get('title', null_backup_title) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-            video_info.update(dict(download_url=(download_url := raw_data['progress_resp']['download_url'])))
+            video_title = legalizestring((progress_resp := raw_data['progress_resp']).get('title', null_backup_title) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
+            video_info.update(dict(download_url=(download_url := progress_resp['download_url'])))
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=video_title, cover_url=safeextractfromdict(raw_data, ['info', 'image'], None))); video_infos.append(video_info)
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=progress_resp.get('job_id') or video_title, cover_url=progress_resp.get('thumbnail'))); video_infos.append(video_info)
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}.parsefromurl >>> {url} (Error: {err})'))); video_infos.append(video_info)
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
