@@ -580,6 +580,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.douyin.com/jingxuan?modal_id=7622143125963803958',
         'https://www.tiktok.com/@tk021413z5p/video/7623055720631536927',
     ],
+    'KuLeuVideoClient': [
+        'https://www.bilibili.com/video/BV13KV46cELP/?spm_id_from=333.1007.tianma.1-1-1.click',
+        'https://www.douyin.com/jingxuan?modal_id=7625608925320056100',
+        'https://www.kuaishou.com/short-video/3xwitcvkzj7z5c2?authorId=3x8xpehau4wybq6&streamSource=samecity&area=homexxnearby',
+    ],
 }
 
 

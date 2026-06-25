@@ -22,6 +22,8 @@ videodl -i "https://www.bilibili.com/bangumi/play/ep371068" -g -a KedouVideoClie
 videodl -i "https://www.douyin.com/jingxuan?modal_id=7563478365211987259" -g -a KuKuToolVideoClient
 # KIT9VideoClient
 videodl -i "https://show.meitu.com/detail?feed_id=6873229026351926275" -g -a KIT9VideoClient
+# KuLeuVideoClient
+videodl -i "https://www.kuaishou.com/short-video/3xwitcvkzj7z5c2?authorId=3x8xpehau4wybq6&streamSource=samecity&area=homexxnearby" -g -a KuLeuVideoClient
 # LongZhuVideoClient
 videodl -i "https://share.xiaochuankeji.cn/hybrid/share/post?pid=415655156" -g -a LongZhuVideoClient
 # MiZhiVideoClient

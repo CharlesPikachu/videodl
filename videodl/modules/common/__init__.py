@@ -15,6 +15,7 @@ from .mizhi import MiZhiVideoClient
 from .xcvts import XCVTSVideoClient
 from .odown import ODwonVideoClient
 from .wzjun import WzjunVideoClient
+from .kuleu import KuLeuVideoClient
 from .snapwc import SnapWCVideoClient
 from .nologo import NoLogoVideoClient
 from .im1907 import IM1907VideoClient
@@ -46,9 +47,9 @@ class CommonVideoClientBuilder(BaseModuleBuilder):
         'VgetVideoClient': VgetVideoClient,              'AnyFetcherVideoClient': AnyFetcherVideoClient,  'PVVideoClient': PVVideoClient,                  'KedouVideoClient': KedouVideoClient,
         'ODwonVideoClient': ODwonVideoClient,            'KuKuToolVideoClient': KuKuToolVideoClient,      'APICXVideoClient': APICXVideoClient,            'SpapiVideoClient': SpapiVideoClient,
         'QingQiuVideoClient': QingQiuVideoClient,        'WzjunVideoClient': WzjunVideoClient,            'XiaolvfangVideoClient': XiaolvfangVideoClient,  'BVVideoClient': BVVideoClient,
-        'KIT9VideoClient': KIT9VideoClient,              'MiZhiVideoClient': MiZhiVideoClient,            'QZXDPToolsVideoClient': QZXDPToolsVideoClient,  'BugPkVideoClient': BugPkVideoClient,
-        'NoLogoVideoClient': NoLogoVideoClient,          'GVVIPVideoClient': GVVIPVideoClient,            'QingtingVideoClient': QingtingVideoClient,      'XCVTSVideoClient': XCVTSVideoClient,
-        'XiazaitoolVideoClient': XiazaitoolVideoClient,  'ZanqianbaVideoClient': ZanqianbaVideoClient,    'LongZhuVideoClient': LongZhuVideoClient,        
+        'KuLeuVideoClient': KuLeuVideoClient,            'KIT9VideoClient': KIT9VideoClient,              'MiZhiVideoClient': MiZhiVideoClient,            'QZXDPToolsVideoClient': QZXDPToolsVideoClient,
+        'BugPkVideoClient': BugPkVideoClient,            'NoLogoVideoClient': NoLogoVideoClient,          'GVVIPVideoClient': GVVIPVideoClient,            'QingtingVideoClient': QingtingVideoClient,
+        'XCVTSVideoClient': XCVTSVideoClient,            'XiazaitoolVideoClient': XiazaitoolVideoClient,  'ZanqianbaVideoClient': ZanqianbaVideoClient,    'LongZhuVideoClient': LongZhuVideoClient,        
     }
 
 

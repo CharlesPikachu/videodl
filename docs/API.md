@@ -289,6 +289,7 @@ Examples of subclasses include clients such as,
 - `videodl.modules.common.KIT9VideoClient`
 - `videodl.modules.common.KedouVideoClient`
 - `videodl.modules.common.KuKuToolVideoClient`
+- `videodl.modules.common.KuLeuVideoClient`
 - `videodl.modules.common.LongZhuVideoClient`
 - `videodl.modules.common.MiZhiVideoClient`
 - `videodl.modules.common.NoLogoVideoClient`
