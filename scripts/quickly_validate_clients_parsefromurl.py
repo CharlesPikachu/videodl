@@ -585,6 +585,9 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.douyin.com/jingxuan?modal_id=7625608925320056100',
         'https://www.kuaishou.com/short-video/3xwitcvkzj7z5c2?authorId=3x8xpehau4wybq6&streamSource=samecity&area=homexxnearby',
     ],
+    'JisuYunVideoClient': [
+        'https://www.iqiyi.com/v_tenslt1rzg.html',
+    ],
 }
 
 

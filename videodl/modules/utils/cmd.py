@@ -304,7 +304,7 @@ class NM3U8DLRECommandFactory:
 
 '''DownloadWithNM3U8DLRECommand'''
 class DownloadWithNM3U8DLRECommand(NM3U8DLRECommandFactory):
-    DISABLE_CHECK_SEGMENTS_COUNT_SOURCES = {"XMFlvVideoClient", "IM1907VideoClient", "VgetVideoClient"}
+    DISABLE_CHECK_SEGMENTS_COUNT_SOURCES = {"XMFlvVideoClient", "IM1907VideoClient", "VgetVideoClient", "JisuYunVideoClient"}
     '''build'''
     def build(self, video_info: VideoInfo, default_headers: Optional[Mapping[str, Any]] = None, request_overrides: Optional[Mapping[str, Any]] = None, mods: Optional[ModType] = None, log_file_path: Optional[str] = None) -> list[str]:
         request_overrides, default_headers, download_url, output_file = request_overrides or {}, default_headers or {}, video_info.download_url, video_info.save_path

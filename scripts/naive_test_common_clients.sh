@@ -16,6 +16,8 @@ videodl -i "https://www.le.com/ptv/vplay/77916175.html#vid=77916175" -g -a IIILa
 videodl -i "https://www.mgtv.com/b/823245/24067596.html" -g -a IM1907VideoClient
 # JXM3U8VideoClient
 videodl -i "https://www.iqiyi.com/v_xkt6z3z798.html" -g -a JXM3U8VideoClient
+# JisuYunVideoClient
+videodl -i "https://www.iqiyi.com/v_tenslt1rzg.html" -g -a JisuYunVideoClient
 # KedouVideoClient
 videodl -i "https://www.bilibili.com/bangumi/play/ep371068" -g -a KedouVideoClient
 # KuKuToolVideoClient

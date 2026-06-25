@@ -169,6 +169,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | [IIILabVideoClient](https://roar.iiilab.com/)                     | [兽音译者](https://roar.iiilab.com/)                                    |   ✔️     |   ✔️     | [iiilab.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/iiilab.py)         |
 | [IM1907VideoClient](https://im1907.top/)                          | [IM1907电影解析网](https://im1907.top/)                                 |   ✔️     |   ✔️     | [im1907.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/im1907.py)         |
 | [JXM3U8VideoClient](https://jx.m3u8.tv/jiexi/?url=)               | [M3U8.TV解析](https://jx.m3u8.tv/jiexi/?url=)                           |   ✔️     |   ✔️     | [jxm3u8.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/jxm3u8.py)         |
+| [JisuYunVideoClient](https://jx.2s0.cn/player/?url=)              | [极速云解析](https://jx.2s0.cn/player/?url=)                            |   ✔️     |   ✔️     | [jisuyun.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/jisuyun.py)       |
 | [KedouVideoClient](https://www.kedou.life/)                       | [Kedou视频解析](https://www.kedou.life/)                                |   ✔️     |   ✔️     | [kedou.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kedou.py)           |
 | [KuKuToolVideoClient](https://dy.kukutool.com/)                   | [KuKuTool视频解析](https://dy.kukutool.com/)                            |   ✔️     |   ✔️     | [kukutool.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kukutool.py)     |
 | [KIT9VideoClient](https://apis.kit9.cn/api/aggregate_videos/)     | [聚合短视频解析](https://apis.kit9.cn/api/aggregate_videos/)            |   ✔️     |   ✔️     | [kit9.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/kit9.py)             |
@@ -394,6 +395,7 @@ videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a SENJiex
 videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a JXM3U8VideoClient
 videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a XMFlvVideoClient
 videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a GVVIPVideoClient
+videodl -i "IQIYI/YOUKU/TENCENT/PPTV/MGTV/CCTV/BILIBILI VIDEO URL" -g -a JisuYunVideoClient
 # Examples
 videodl -i "https://www.iqiyi.com/v_cy4phe8b08.html" -g -a IM1907VideoClient
 videodl -i "https://v.qq.com/x/cover/mzc002001nl46xm/t410130yz0y.html" -g -a IM1907VideoClient

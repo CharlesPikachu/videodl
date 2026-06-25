@@ -286,6 +286,7 @@ Examples of subclasses include clients such as,
 - `videodl.modules.common.IIILabVideoClient`
 - `videodl.modules.common.IM1907VideoClient`
 - `videodl.modules.common.JXM3U8VideoClient`
+- `videodl.modules.common.JisuYunVideoClient`
 - `videodl.modules.common.KIT9VideoClient`
 - `videodl.modules.common.KedouVideoClient`
 - `videodl.modules.common.KuKuToolVideoClient`
