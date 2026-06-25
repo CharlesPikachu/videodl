@@ -10,6 +10,7 @@ import os
 import json
 import copy
 import base64
+from contextlib import suppress
 from Cryptodome.Cipher import AES
 from Cryptodome.PublicKey import RSA
 from ..sources import BaseVideoClient
@@ -44,8 +45,9 @@ class GVVideoClient(BaseVideoClient):
         json_string = json.dumps({"url": video_url}, separators=(",", ":"), ensure_ascii=False)
         aes_cipher = AES.new(aes_key_str.encode("utf-8"), AES.MODE_CBC, base64.b64decode("a2Vkb3VAODk4OSE2MzIzMw=="))
         aes_encrypted_str = base64.b64encode(aes_cipher.encrypt(pad(json_string.encode('utf-8'), AES.block_size))).decode("utf-8")
-        rsa_cipher, data_to_encrypt, chunk_size = PKCS1_v1_5.new(RSA.import_key(k1_pem)), aes_encrypted_str.encode('utf-8'), 245
-        final_encrypted_bytes = b''.join(rsa_cipher.encrypt(data_to_encrypt[i:i + chunk_size]) for i in range(0, len(data_to_encrypt), chunk_size))
+        rsa_cipher = PKCS1_v1_5.new((rsa_key := RSA.import_key(k1_pem)))
+        data_to_encrypt, chunk_size = aes_encrypted_str.encode("utf-8"), rsa_key.size_in_bytes() - 11
+        final_encrypted_bytes = b"".join(rsa_cipher.encrypt(data_to_encrypt[i:i + chunk_size]) for i in range(0, len(data_to_encrypt), chunk_size))
         return base64.b64encode(final_encrypted_bytes).decode("utf-8")
     '''parsefromurl'''
     @useparseheaderscookies
@@ -60,7 +62,7 @@ class GVVideoClient(BaseVideoClient):
             # --post request
             headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers); headers.update({"Content-Type": "application/json"})
             k1, k2 = self._getdynamickeys(request_overrides=request_overrides); encrypted_data = self._encryptpayload(url, k1, k2)
-            (resp := self.post('https://greenvideo.cc/api/video/cnSimpleExtract', json=encrypted_data, headers=headers, **request_overrides)).raise_for_status()
+            (resp := self.post('https://greenvideo.cc/api/video/cnSimpleExtract', data=encrypted_data, headers=headers, timeout=20, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp)))); data_items = raw_data["data"]["videoItemVoList"]
             # --sort by quality
             video_items: list[dict] = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and ((x.get('fileType') in {"video"}) or (x.get('quality') not in {'音频', '封面'}))]
@@ -75,8 +77,7 @@ class GVVideoClient(BaseVideoClient):
             # --other infos
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info['ext']
-            try: cover_url = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and ((x.get('fileType') in {"image"}) or (x.get('quality') in {'封面'}))][0]['baseUrl']
-            except Exception: cover_url = None
+            with suppress(Exception): cover_url = None; cover_url = [x for x in data_items if isinstance(x, dict) and x.get("baseUrl") and str(x["baseUrl"]).startswith('http') and ((x.get('fileType') in {"image"}) or (x.get('quality') in {'封面'}))][0]['baseUrl']
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=safeextractfromdict(raw_data, ['data', 'vid'], None) or video_title, cover_url=cover_url))
             if audio_download_url and str(audio_download_url).startswith('http'):
                 video_info.update(dict(guess_audio_ext_result=(guess_audio_ext_result := FileTypeSniffer.getfileextensionfromurl(url=audio_download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies))))
