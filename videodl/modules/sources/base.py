@@ -48,6 +48,7 @@ class VideoAwareColumn(ProgressColumn):
 '''BaseVideoClient'''
 class BaseVideoClient():
     source = 'BaseVideoClient'
+    decrypt_func = lambda s: base64.b64decode(str(s)[len('charlespikachu'):].encode('utf-8')).decode('utf-8')
     LESHI_BASE64_ENCODE_PATTERN = re.compile(r'data:[^;]+;base64,([A-Za-z0-9+/=]+)')
     BILIBILI_REFERENCE_HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'Referer': 'https://www.bilibili.com/'}
     WEIBO_REFERENCE_HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'Referer': 'https://weibo.com/'}

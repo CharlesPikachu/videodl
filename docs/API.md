@@ -278,6 +278,7 @@ Examples of subclasses include clients such as,
 - `videodl.modules.sources.ZuiyouVideoClient`
 - ...
 - `videodl.modules.common.AnyFetcherVideoClient`
+- `videodl.modules.common.APICXVideoClient`
 - `videodl.modules.common.BVVideoClient`
 - `videodl.modules.common.BugPkVideoClient`
 - `videodl.modules.common.GVVIPVideoClient`

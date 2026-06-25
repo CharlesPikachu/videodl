@@ -161,6 +161,7 @@ I also plan to gradually add some general-purpose parsing interfaces. The curren
 | CommonVideoClient (EN)                                            | CommonVideoClient (CN)                                                  | ParseURL | Download | Core Code                                                                                                   |
 | :--------------------------------------------------------------   | :-------------------------------------------------------------          | :-----:  | :-----:  | :---------------------------------------------------------------------------------------------------------- |
 | [AnyFetcherVideoClient](https://anyfetcher.com/zh-cn)             | [万能视频下载器](https://anyfetcher.com/zh-cn)                          |   ✔️     |   ✔️     | [anyfetcher.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/anyfetcher.py) |
+| [APICXVideoClient](https://apicx.asia/doc/video_parse_api)        | [残像聚合视频解析](https://apicx.asia/doc/video_parse_api)              |   ✔️     |   ✔️     | [apicx.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/apicx.py)           |
 | [BVVideoClient](https://www.bestvideow.com/xhs)                   | [BestVideo下载器](https://www.bestvideow.com/xhs)                       |   ✔️     |   ✔️     | [bv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/bv.py)                 |
 | [BugPkVideoClient](https://sv.bugpk.com/)                         | [短视频解析工具](https://sv.bugpk.com/)                                 |   ✔️     |   ✔️     | [bugpk.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/bugpk.py)           |
 | [GVVideoClient](https://greenvideo.cc/)                           | [GreenVideo视频下载](https://greenvideo.cc/)                            |   ✔️     |   ✔️     | [gv.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/common/gv.py)                 |
@@ -415,6 +416,7 @@ videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL" -g -a SnapWCVideoClient
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL" -g -a KedouVideoClient
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL" -g -a KuKuToolVideoClient
+videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL" -g -a APICXVideoClient
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL" -g -a XiaolvfangVideoClient
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL" -g -a KIT9VideoClient
 videodl -i "DOUYIN/TIKTOK/KUAISHOU/XIAOHONGSHU/YOUTUBE/FACEBOOK/TITTER VIDEO URL" -g -a QZXDPToolsVideoClient

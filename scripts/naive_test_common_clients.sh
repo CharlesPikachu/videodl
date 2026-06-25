@@ -1,5 +1,7 @@
 # AnyFetcherVideoClient
 videodl -i "https://www.youtube.com/watch?v=093JOWo1vqE" -g -a AnyFetcherVideoClient
+# APICXVideoClient
+videodl -i "https://haokan.baidu.com/v?vid=2794203183592426331" -g -a APICXVideoClient
 # BVVideoClient
 videodl -i "https://www.tiktok.com/@j4y273/video/7582553332242271510" -g -a BVVideoClient
 # BugPkVideoClient

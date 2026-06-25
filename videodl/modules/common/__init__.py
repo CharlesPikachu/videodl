@@ -5,6 +5,7 @@ from .gv import GVVideoClient
 from .ray import RayVideoClient
 from .vget import VgetVideoClient
 from .kit9 import KIT9VideoClient
+from .apicx import APICXVideoClient
 from .spapi import SpapiVideoClient
 from .xmflv import XMFlvVideoClient
 from .gvvip import GVVIPVideoClient
@@ -20,6 +21,7 @@ from .im1907 import IM1907VideoClient
 from .iiilab import IIILabVideoClient
 from ..utils import BaseModuleBuilder
 from .jxm3u8 import JXM3U8VideoClient
+from .yinziai import YinZiAIVideoClient
 from .videofk import VideoFKVideoClient
 from .longzhu import LongZhuVideoClient
 from .snapany import SnapAnyVideoClient
@@ -42,11 +44,11 @@ class CommonVideoClientBuilder(BaseModuleBuilder):
         'XMFlvVideoClient': XMFlvVideoClient,            'IIILabVideoClient': IIILabVideoClient,          'RayVideoClient': RayVideoClient,                'VeedMateVideoClient': VeedMateVideoClient,
         'VideoFKVideoClient': VideoFKVideoClient,        'VThreadsVideoClient': VThreadsVideoClient,      'SENJiexiVideoClient': SENJiexiVideoClient,      'JXM3U8VideoClient': JXM3U8VideoClient,
         'VgetVideoClient': VgetVideoClient,              'AnyFetcherVideoClient': AnyFetcherVideoClient,  'PVVideoClient': PVVideoClient,                  'KedouVideoClient': KedouVideoClient,
-        'ODwonVideoClient': ODwonVideoClient,            'KuKuToolVideoClient': KuKuToolVideoClient,      'SpapiVideoClient': SpapiVideoClient,            'WzjunVideoClient': WzjunVideoClient,
-        'XiaolvfangVideoClient': XiaolvfangVideoClient,  'BVVideoClient': BVVideoClient,                  'KIT9VideoClient': KIT9VideoClient,              'MiZhiVideoClient': MiZhiVideoClient,
-        'QZXDPToolsVideoClient': QZXDPToolsVideoClient,  'BugPkVideoClient': BugPkVideoClient,            'NoLogoVideoClient': NoLogoVideoClient,          'GVVIPVideoClient': GVVIPVideoClient,
-        'QingtingVideoClient': QingtingVideoClient,      'XCVTSVideoClient': XCVTSVideoClient,            'LongZhuVideoClient': LongZhuVideoClient,        'XiazaitoolVideoClient': XiazaitoolVideoClient,  
-        'ZanqianbaVideoClient': ZanqianbaVideoClient,    
+        'ODwonVideoClient': ODwonVideoClient,            'KuKuToolVideoClient': KuKuToolVideoClient,      'APICXVideoClient': APICXVideoClient,            'SpapiVideoClient': SpapiVideoClient,
+        'YinZiAIVideoClient': YinZiAIVideoClient,        'WzjunVideoClient': WzjunVideoClient,            'XiaolvfangVideoClient': XiaolvfangVideoClient,  'BVVideoClient': BVVideoClient,
+        'KIT9VideoClient': KIT9VideoClient,              'MiZhiVideoClient': MiZhiVideoClient,            'QZXDPToolsVideoClient': QZXDPToolsVideoClient,  'BugPkVideoClient': BugPkVideoClient,
+        'NoLogoVideoClient': NoLogoVideoClient,          'GVVIPVideoClient': GVVIPVideoClient,            'QingtingVideoClient': QingtingVideoClient,      'XCVTSVideoClient': XCVTSVideoClient,
+        'XiazaitoolVideoClient': XiazaitoolVideoClient,  'ZanqianbaVideoClient': ZanqianbaVideoClient,    'LongZhuVideoClient': LongZhuVideoClient,        
     }
 
 

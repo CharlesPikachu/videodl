@@ -569,6 +569,12 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.iyf.tv/watch?v=tHqeI1Gd0HPfzUKzH27SwF',
         'https://www.iyf.tv/watch?v=lOnWQAdqYDacpPTgywnKY2',
     ],
+    'APICXVideoClient': [
+        'https://www.acfun.cn/v/ac48639303',
+        'https://www.kuaishou.com/short-video/3xa7xkt2ueynpz4?authorId=3x6av63hz3qnrnm&streamSource=samecity&area=homexxnearby',
+        'https://haokan.baidu.com/v?vid=2794203183592426331',
+        'https://www.douyin.com/jingxuan?modal_id=7650003584993512731',
+    ],
 }
 
 
