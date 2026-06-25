@@ -8,10 +8,13 @@ WeChat Official Account (微信公众号):
 '''
 import os
 import copy
+import time
+import random
+import string
+import hashlib
 from ..sources import BaseVideoClient
-from ..utils import RandomIPGenerator
 from ..utils.domains import platformfromurl
-from ..utils import VideoInfo, FileTypeSniffer, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, safeextractfromdict
+from ..utils import VideoInfo, FileTypeSniffer, RandomIPGenerator, useparseheaderscookies, legalizestring, resp2json, yieldtimerelatedtitle, safeextractfromdict
 
 
 '''QingtingVideoClient'''
@@ -19,10 +22,18 @@ class QingtingVideoClient(BaseVideoClient):
     source = 'QingtingVideoClient'
     def __init__(self, **kwargs):
         super(QingtingVideoClient, self).__init__(**kwargs)
-        self.default_parse_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"}
+        self.default_parse_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36", "accept": "application/json, text/plain, */*", "origin": "https://33tool.com", "referer": "https://33tool.com/video_parse/"}
         self.default_download_headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"}
         self.default_headers = self.default_parse_headers
         self._initsession()
+    '''_make33toolheaders'''
+    def _make33toolheaders(self):
+        timestamp = str(int(time.time())); nonce = ''.join(random.choices(string.ascii_lowercase + string.digits, k=11))
+        app_key, app_version, app_secret = "MyXtNUmF", "1.0.0", "TVlzc5bm"
+        sign_data = {"AppKey": app_key, "AppVersion": app_version, "Nonce": nonce, "Timestamp": timestamp}
+        sign_raw = ''.join(k + sign_data[k] for k in sorted(sign_data, key=lambda x: x.lower())) + app_secret
+        sign = hashlib.md5(sign_raw.encode("utf-8")).hexdigest().upper()
+        return {"Timestamp": timestamp, "Nonce": nonce, "App-Version": app_version, "Sign": sign}
     '''parsefromurl'''
     @useparseheaderscookies
     def parsefromurl(self, url: str, request_overrides: dict = None) -> list[VideoInfo]:
@@ -34,13 +45,14 @@ class QingtingVideoClient(BaseVideoClient):
         # try parse
         try:
             # --get request
-            headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
-            if "douyin.com" in url: (resp := self.get(f'https://api.33tool.com/api/parse/douyin?url={url}', headers=headers, **request_overrides)).raise_for_status()
-            elif "bilibili.com" in url or "b23.tv" in url: (resp := self.get(f'https://api.33tool.com/api/parse/bilibili?url={url}', headers=headers, **request_overrides)).raise_for_status()
-            elif "xiaohongshu.com" in url or "xhslink.com" in url: (resp := self.get(f'https://api.33tool.com/api/parse/redbook?url={url}', headers=headers, **request_overrides)).raise_for_status()
-            elif "kuaishou.com" in url: (resp := self.get(f'https://api.33tool.com/api/parse/kuaishou?url={url}', headers=headers, **request_overrides)).raise_for_status()
+            headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers); headers.update(self._make33toolheaders())
+            if "douyin.com" in url: (resp := self.get('https://api.33tool.com/api/parse/douyin', params={"url": url}, headers=headers, **request_overrides)).raise_for_status()
+            elif "bilibili.com" in url or "b23.tv" in url: (resp := self.get('https://api.33tool.com/api/parse/bilibili', params={"url": url}, headers=headers, **request_overrides)).raise_for_status()
+            elif "xiaohongshu.com" in url or "xhslink.com" in url: (resp := self.get('https://api.33tool.com/api/parse/redbook', params={"url": url}, headers=headers, **request_overrides)).raise_for_status()
+            elif "kuaishou.com" in url: (resp := self.get('https://api.33tool.com/api/parse/kuaishou', params={"url": url}, headers=headers, **request_overrides)).raise_for_status()
             else: raise NotImplementedError(f"{self.source} can only parse 'douyin', 'bilibili', 'xiaohongshu' and 'kuaishou'")
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
+            if raw_data.get('code') != 0: raise ValueError(raw_data)
             # --video title
             video_title = legalizestring(safeextractfromdict(raw_data, ['data', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             # --download url
