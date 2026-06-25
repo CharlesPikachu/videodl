@@ -34,8 +34,6 @@ videodl -i "https://www.youtube.com/watch?v=lBNYpPmjH8M" -g -a PVVideoClient
 videodl -i "https://www.douyin.com/jingxuan/theater?modal_id=7580778868509933947" -g -a QingtingVideoClient
 # QZXDPToolsVideoClient
 videodl -i "https://www.huya.com/video/play/1090411452.html" -g -a QZXDPToolsVideoClient
-# QwkunsVideoClient
-videodl -i "https://www.dailymotion.com/video/x9h93bs" -g -a QwkunsVideoClient
 # RayVideoClient
 videodl -i "https://www.youtube.com/watch?v=a0AyNzV3yk8" -g -a RayVideoClient
 # SnapAnyVideoClient
@@ -54,9 +52,7 @@ videodl -i "https://www.facebook.com/facebook/videos/facebook-blue-never-looked-
 videodl -i "https://x.com/jushendo/status/2036224267084333475" -g -a VeedMateVideoClient
 # VThreadsVideoClient
 videodl -i "https://www.facebook.com/facebook/videos/me-directing-a-reel-for-my-bestie-video-and-music-by-julian-rad/846382125018055/" -g -a VThreadsVideoClient
-# WoofVideoClient
-videodl -i "https://www.instagram.com/reel/DWAGcteCVar/" -g -a WoofVideoClient
-# WoofVideoClient
+# WzjunVideoClient
 videodl -i "https://www.douyin.com/jingxuan?modal_id=7605448430861849954" -g -a WzjunVideoClient
 # XiazaitoolVideoClient
 videodl -i "https://www.tiktok.com/@disneymusic/video/7589346194372037943?lang=en" -g -a XiazaitoolVideoClient

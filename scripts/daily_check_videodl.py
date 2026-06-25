@@ -470,17 +470,6 @@ VIDEODL_TEST_SAMPLES = {
         "https://watch.tbn.uk/shows/906eb770-23de-4fc7-a369-e87167a5256d/praise-uk",
         "https://watch.tbn.uk/live/1197",
     ],
-    'WoofVideoClient': [
-        'https://www.instagram.com/reel/DWAGcteCVar/',
-        'https://bsky.app/profile/atrupar.com/post/3mhdmjwygsd2e',
-        'https://www.dailymotion.com/video/xa26uyo',
-    ],
-    'QwkunsVideoClient': [
-        'https://www.instagram.com/reel/DV6qXd0CVgB/',
-        'https://bsky.app/profile/atrupar.com/post/3mhdsmy4coo2p',
-        'https://www.tiktok.com/@marianpaulineflores/video/7617021651158387975',
-        'https://www.dailymotion.com/video/x9h93bs',
-    ],
     'SpapiVideoClient': [
         'https://www.douyin.com/jingxuan?modal_id=7617448838516854050',
         'https://www.kuaishou.com/short-video/3xnpsz4qp2hgy9k?authorId=3xvs4y8pb2ki74g&streamSource=samecity&area=homexxnearby',
