@@ -41,9 +41,10 @@ class IIILabVideoClient(BaseVideoClient):
             headers = copy.deepcopy(self.default_headers); RandomIPGenerator().addrandomipv4toheaders(headers)
             with suppress(Exception): url = self.get(url, allow_redirects=True, **request_overrides).url
             site, timestamp = platformfromurl(url), str(int(time.time()))
+            headers.update({'Origin': f'https://{site}.iiilab.com', 'Referer': f'https://{site}.iiilab.com/'})
             headers['G-Footer'] = hashlib.md5(f"{url}{site}{timestamp}{self.SALT}".encode('utf-8')).hexdigest(); headers['G-Timestamp'] = timestamp
             # --post request
-            (resp := self.post(f'https://{site}.iiilab.com/api/web/extract', json={'url': url, 'site': site}, headers=headers, **request_overrides)).raise_for_status()
+            (resp := self.post('https://service.iiilab.com/api/web/extract', json={'url': url, 'site': site}, headers=headers, **request_overrides)).raise_for_status()
             video_info.update(dict(raw_data=(raw_data := resp2json(resp=resp))))
             # --video title
             video_title = legalizestring(raw_data.get('text', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
