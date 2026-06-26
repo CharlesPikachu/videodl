@@ -1,6 +1,6 @@
 # Development Log
 
-- 2026-06-26: Released videofetch v0.9.1 - added support for video parsing and downloading from myvideo.ge and newspicks.com; removed the web interface for Meipai video parsing/downloading and switched to the app interface.
+- 2026-06-26: Released videofetch v0.9.1 - added support for video parsing and downloading from myvideo.ge and newspicks.com; removed the web interface for Meipai video parsing and switched to the app interface.
 
 - 2026-06-26: Released videofetch v0.9.0 - for the common video client, fix all broken video clients, remove APIs that no longer provide free parsing services, and add multiple general-purpose video parsing interfaces; for platform-specific clients, remove support for dead sites and fix some broken APIs.
 
