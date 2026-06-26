@@ -587,6 +587,10 @@ VIDEODL_TEST_SAMPLES = {
         'https://newspicks.com/movie-series/11/?movieId=1813',
         'https://newspicks.com/movie-series/158/?movieId=3932'
     ],
+    'MyVideoGeVideoClient': [
+        'https://www.myvideo.ge/v/3941048',
+        'https://www.myvideo.ge/v/4352862',
+    ],
 }
 
 

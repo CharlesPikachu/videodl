@@ -57,6 +57,7 @@ from .cctvnews import CCTVNewsVideoClient
 from .playerpl import PlayerPLVideoClient
 from .kuaishou import KuaishouVideoClient
 from .bilibili import BilibiliVideoClient
+from .myvideoge import MyVideoGeVideoClient
 from .newspicks import NewsPicksVideoClient
 from .xinhuanet import XinhuaNetVideoClient
 from .yinyuetai import YinyuetaiVideoClient
@@ -92,7 +93,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'KanKanNewsVideoClient': KanKanNewsVideoClient,     'NuVidVideoClient': NuVidVideoClient,               'ChinaDailyVideoClient': ChinaDailyVideoClient,     'OrientalDailyVideoClient': OrientalDailyVideoClient,
         'CCTVVideoClient': CCTVVideoClient,                 'WWW163VideoClient': WWW163VideoClient,             'XinhuaNetVideoClient': XinhuaNetVideoClient,       'PeopleVideoClient': PeopleVideoClient,
         'HuanQiuVideoClient': HuanQiuVideoClient,           'MingpaoVideoClient': MingpaoVideoClient,           'DailyMotionVideoClient': DailyMotionVideoClient,   'RutubeVideoClient': RutubeVideoClient,
-        'NewsPicksVideoClient': NewsPicksVideoClient,
+        'NewsPicksVideoClient': NewsPicksVideoClient,       'MyVideoGeVideoClient': MyVideoGeVideoClient,
     }
 
 
