@@ -55,7 +55,6 @@ from .huanqiu import HuanQiuVideoClient
 from .mingpao import MingpaoVideoClient
 from .cctvnews import CCTVNewsVideoClient
 from .playerpl import PlayerPLVideoClient
-from .plusfifa import PlusFIFAVideoClient
 from .kuaishou import KuaishouVideoClient
 from .bilibili import BilibiliVideoClient
 from .xinhuanet import XinhuaNetVideoClient
@@ -83,7 +82,7 @@ class VideoClientBuilder(BaseModuleBuilder):
         'Ku6VideoClient': Ku6VideoClient,                   'KuaishouVideoClient': KuaishouVideoClient,         'KugouMVVideoClient': KugouMVVideoClient,           'M1905VideoClient': M1905VideoClient,
         'MGTVVideoClient': MGTVVideoClient,                 'MeipaiVideoClient': MeipaiVideoClient,             'OasisVideoClient': OasisVideoClient,               'Open163VideoClient': Open163VideoClient,
         'PearVideoClient': PearVideoClient,                 'PipigaoxiaoVideoClient': PipigaoxiaoVideoClient,   'PipixVideoClient': PipixVideoClient,               'PlayerPLVideoClient': PlayerPLVideoClient,
-        'PlusFIFAVideoClient': PlusFIFAVideoClient,         'RedditVideoClient': RedditVideoClient,             'RednoteVideoClient': RednoteVideoClient,           'SinaVideoClient': SinaVideoClient,
+        'IYFVideoClient': IYFVideoClient,                   'RedditVideoClient': RedditVideoClient,             'RednoteVideoClient': RednoteVideoClient,           'SinaVideoClient': SinaVideoClient,
         'SixRoomVideoClient': SixRoomVideoClient,           'SohuVideoClient': SohuVideoClient,                 'TBNUKVideoClient': TBNUKVideoClient,               'TedVideoClient': TedVideoClient,
         'TencentVideoClient': TencentVideoClient,           'UnityVideoClient': UnityVideoClient,               'WWEVideoClient': WWEVideoClient,                   'WeSingVideoClient': WeSingVideoClient,
         'WeiboVideoClient': WeiboVideoClient,               'WeishiVideoClient': WeishiVideoClient,             'WittyTVVideoClient': WittyTVVideoClient,           'XiguaVideoClient': XiguaVideoClient,
@@ -92,7 +91,6 @@ class VideoClientBuilder(BaseModuleBuilder):
         'KanKanNewsVideoClient': KanKanNewsVideoClient,     'NuVidVideoClient': NuVidVideoClient,               'ChinaDailyVideoClient': ChinaDailyVideoClient,     'OrientalDailyVideoClient': OrientalDailyVideoClient,
         'CCTVVideoClient': CCTVVideoClient,                 'WWW163VideoClient': WWW163VideoClient,             'XinhuaNetVideoClient': XinhuaNetVideoClient,       'PeopleVideoClient': PeopleVideoClient,
         'HuanQiuVideoClient': HuanQiuVideoClient,           'MingpaoVideoClient': MingpaoVideoClient,           'DailyMotionVideoClient': DailyMotionVideoClient,   'RutubeVideoClient': RutubeVideoClient,
-        'IYFVideoClient': IYFVideoClient,
     }
 
 

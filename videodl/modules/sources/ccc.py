@@ -28,21 +28,32 @@ class CCCVideoClient(BaseVideoClient):
         request_overrides, video_info, null_backup_title = request_overrides or {}, VideoInfo(source=self.source), yieldtimerelatedtitle(self.source)
         single_video_pattern = re.compile(r'https?://(?:www\.)?media\.ccc\.de/v/(?P<id>[^/?#&]+)')
         isvideo_func = lambda rec: isinstance(rec.get("mime_type"), str) and rec["mime_type"].startswith("video/")
+        fmt_rank_func = lambda rec: {"video/mp4": 2, "video/webm": 1}.get(rec.get("mime_type", ""), 0)
+        quality_key_func = lambda rec: ((1 if rec.get("high_quality") else 0), ((rec.get("width") or 0) * (rec.get("height") or 0)), (rec.get("width") or 0), (rec.get("height") or 0), fmt_rank_func(rec))
+        url_ext_func = lambda u: (re.search(r'\.([a-z0-9]+)(?:\?|$)', u, flags=re.IGNORECASE).group(1).lower() if re.search(r'\.([a-z0-9]+)(?:\?|$)', u, flags=re.IGNORECASE) else '')
+        url_quality_key_func = lambda u: (max([int(x) for x in re.findall(r'(?<!\d)(\d{3,4})p(?!\d)', u.lower())] or [0]), 0 if any(x in u.lower() for x in ['lq', 'iprod', 'low']) else 1, 1 if any(x in u.lower() for x in ['hq', 'hd', 'high']) else 0, {"mp4": 3, "mkv": 2, "webm": 1}.get(url_ext_func(u), 0))
+        html_clean_func = lambda text: re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', '', text or '').replace('&amp;', '&')).strip()
         # try parse
         try:
-            display_id = single_video_pattern.match(url).group('id')
-            (resp := self.get(url, **request_overrides)).raise_for_status()
-            event_id = re.search(r"\bdata-id\s*=\s*(['\"])(\d+)\1", resp.text, flags=re.IGNORECASE).group(2)
-            (resp := self.get(f'https://media.ccc.de/public/events/{event_id}', **request_overrides)).raise_for_status()
-            video_info.update(dict(raw_data=(raw_data := resp2json(resp))))
-            video_title = legalizestring(raw_data.get('title', null_backup_title), replace_null_string=null_backup_title).removesuffix('.')
-            fmt_rank_func = lambda rec: {"video/mp4": 2, "video/webm": 1}.get(rec.get("mime_type", ""), 0)
-            quality_key_func = lambda rec: ((1 if rec.get("high_quality") else 0), ((rec.get("width") or 0) * (rec.get("height") or 0)), (rec.get("width") or 0), (rec.get("height") or 0), fmt_rank_func(rec))
-            videos = [r for r in raw_data["recordings"] if isvideo_func(r)]; videos_sorted = sorted(videos, key=quality_key_func, reverse=True)
-            video_info.update(dict(download_url=(download_url := videos_sorted[0]['recording_url'])))
+            display_id = single_video_pattern.match(url).group('id'); (resp := self.get(url, **request_overrides)).raise_for_status(); webpage, event_id, raw_data, download_url = resp.text, None, {}, None
+            if (event_id_match := re.search(r"\bdata-id\s*=\s*(['\"])(\d+)\1", webpage, flags=re.IGNORECASE)):
+                try:
+                    (resp := self.get(f'https://media.ccc.de/public/events/{(event_id := event_id_match.group(2))}', **request_overrides)).raise_for_status()
+                    video_info.update(dict(raw_data=(raw_data := resp2json(resp))))
+                    videos = [r for r in raw_data.get("recordings", []) if isvideo_func(r)]; videos_sorted = sorted(videos, key=quality_key_func, reverse=True)
+                    if videos_sorted: video_info.update(dict(download_url=(download_url := videos_sorted[0]['recording_url'])))
+                except Exception:
+                    pass
+            if not download_url:
+                video_url_pattern = re.compile(r'https?://cdn\.media\.ccc\.de/[^"\'<>\s]+?\.(?:mp4|webm|mkv|mov)(?:\?[^"\'<>\s]*)?', flags=re.IGNORECASE)
+                videos_sorted = sorted(list(dict.fromkeys([u.replace('&amp;', '&') for u in video_url_pattern.findall(webpage)])), key=url_quality_key_func, reverse=True)
+                if not videos_sorted: raise ValueError('no video recordings found')
+                video_info.update(dict(raw_data=(raw_data := dict(webpage=webpage, recordings=[dict(recording_url=u) for u in videos_sorted])), download_url=(download_url := videos_sorted[0])))
+            video_title_match = re.search(r'<h1[^>]*>(.*?)</h1>', webpage, flags=re.IGNORECASE | re.DOTALL)
+            video_title = legalizestring(raw_data.get('title') or (html_clean_func(video_title_match.group(1)) if video_title_match else display_id) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
             guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
-            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
-            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f'{display_id}-{event_id}', cover_url=raw_data.get('poster_url')))
+            ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else (url_ext_func(download_url) or video_info.ext)
+            video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=f'{display_id}-{event_id}' if event_id else display_id, cover_url=raw_data.get('poster_url') or raw_data.get('thumb_url')))
         except Exception as err:
             video_info.update(dict(err_msg=(err_msg := f'{self.source}._parsefromurlsinglevideo >>> {url} (Error: {err})')))
             self.logger_handle.error(err_msg, disable_print=self.disable_print)
