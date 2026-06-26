@@ -39,14 +39,9 @@ class XinpianchangVideoClient(BaseVideoClient):
             app_key, vid = raw_data['props']['pageProps']['detail']['video']['appKey'], raw_data['props']['pageProps']['detail']['video']["vid"]
             (resp := self.get(f"https://mod-api.xinpianchang.com/mod/api/v2/media/{vid}?appKey={app_key}&extend=userInfo%2CuserStatus", **request_overrides)).raise_for_status()
             raw_data[f'media/{vid}'] = resp2json(resp=resp); resource: dict = raw_data[f'media/{vid}']['data']['resource']; video_info.update(dict(raw_data=raw_data))
-            for k, v in resource.items():
-                if k in ('dash', 'hls') and isinstance(v, dict): download_url = v.get('url'); break
-                elif k in ('progressive',) and isinstance(v, list):
-                    sorted_by_resolution = sorted(v, key=lambda x: (x.get('height', 0) * x.get('width', 0), x.get('filesize', 0)), reverse=True)
-                    download_url = [(item.get('url') or item.get('backupUrl')) for item in sorted_by_resolution if (item.get('url') or item.get('backupUrl'))][0]; break
-            video_info.update(dict(download_url=download_url))
+            video_info.update(dict(download_url=next((v.get('url') if k in ('dash', 'hls') and isinstance(v, dict) else next((item.get('url') or item.get('backupUrl') for item in sorted(v, key=lambda x: (x.get('height', 0) * x.get('width', 0), x.get('filesize', 0)), reverse=True) if item.get('url') or item.get('backupUrl')), None) for k, v in resource.items() if (k in ('dash', 'hls') and isinstance(v, dict)) or (k == 'progressive' and isinstance(v, list))), None)))
             video_title = legalizestring(safeextractfromdict(raw_data[f'media/{vid}'], ['data', 'title'], None) or null_backup_title, replace_null_string=null_backup_title).removesuffix('.')
-            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
+            guess_video_ext_result = FileTypeSniffer.getfileextensionfromurl(url=video_info.download_url, headers=self.default_download_headers, request_overrides=request_overrides, cookies=self.default_download_cookies)
             ext = guess_video_ext_result['ext'] if guess_video_ext_result['ext'] and guess_video_ext_result['ext'] != 'NULL' else video_info.ext
             video_info.update(dict(title=video_title, save_path=os.path.join(self.work_dir, self.source, f'{video_title}.{ext}'), ext=ext, guess_video_ext_result=guess_video_ext_result, identifier=vid, cover_url=safeextractfromdict(raw_data[f'media/{vid}'], ['data', 'cover'], None)))
         except Exception as err:
