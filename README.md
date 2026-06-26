@@ -58,9 +58,9 @@
 
 # 🆕 What's New
 
+- 2026-06-26: Released videofetch v0.9.0 - for the common video client, fix all broken video clients, remove APIs that no longer provide free parsing services, and add multiple general-purpose video parsing interfaces; for platform-specific clients, remove support for dead sites and fix some broken APIs.
 - 2026-05-25: Released videofetch v0.8.9 - remove support for the eastday.com site; add video parsing and download support for the Malaysian Oriental Daily News and iYF.tv sites.
 - 2026-05-04: Released videofetch v0.8.8 - fix the general video parsing and downloading capabilities for the SnapAny and GreenVideo sites; add support for parsing and downloading from the Rutube site.
-- 2026-05-01: Released videofetch v0.8.7 - added support for video parsing and downloading from Dailymotion; fixed a bug where YouTube video downloads might retrieve invalid links; fixed issues with some general parsing sources ("vthreads.top") and addressed potential bugs in ffmpeg commands.
 
 
 # 🚀 Introduction
@@ -144,7 +144,6 @@ The video platforms currently supported for parsing are,
 |                                                        | [KakaoVideoClient](https://tv.kakao.com/)                                                              | [KakaoTV](https://tv.kakao.com/)                                                              | ✔️        | ✔️       | [kakao.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/kakao.py)                 |
 |                                                        | [NuVidVideoClient](https://www.nuvid.com/)                                                             | [NuVid.com](https://www.nuvid.com/)                                                           | ✔️        | ✔️       | [nuvid.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/nuvid.py)                 |
 |                                                        | [OrientalDailyVideoClient](https://www.orientaldaily.com.my/)                                          | [马来西亚东方日报](https://www.orientaldaily.com.my/)                                         | ✔️        | ✔️       | [orientaldaily.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/orientaldaily.py) |
-|                                                        | [PlusFIFAVideoClient](https://www.plus.fifa.com/en/?gl=us)                                             | [FIFA+平台 (国际足联+)](https://www.plus.fifa.com/en/?gl=us)                                  | ✔️        | ✔️       | [plusfifa.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/plusfifa.py)           |
 |                                                        | [PlayerPLVideoClient](https://player.pl/international)                                                 | [Player.pl (波兰流行视频点播站)](https://player.pl/international)                             | ✔️        | ✔️       | [playerpl.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/playerpl.py)           |
 |                                                        | [RedditVideoClient](https://www.reddit.com/)                                                           | [红迪网](https://www.reddit.com/)                                                             | ✔️        | ✔️       | [reddit.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/reddit.py)               |
 |                                                        | [RutubeVideoClient](https://rutube.ru/)                                                                | [俄罗斯版 YouTube](https://rutube.ru/)                                                        | ✔️        | ✔️       | [rutube.py](https://github.com/CharlesPikachu/videodl/blob/master/videodl/modules/sources/rutube.py)               |
@@ -235,7 +234,7 @@ Specifically, these CLI tools include,
   CCTVVideoClient, FoxNewsVideoClient, TencentVideoClient, GVVIPVideoClient, 
   SnapAnyVideoClient, VgetVideoClient, ArteTVVideoClient, XMFlvVideoClient, 
   RedditVideoClient, IIILabVideoClient, WWEVideoClient, IQiyiVideoClient,
-  PlusFIFAVideoClient, IM1907VideoClient, M1905VideoClient, SENJiexiVideoClient, etc.
+  JisuYunVideoClient, IM1907VideoClient, M1905VideoClient, SENJiexiVideoClient, etc.
   ```
   and downloads from many other sites that provide m3u8/HLS streams may also be significantly limited.
   As with FFmpeg, after installation you should make sure this tool can be run directly from the command line, *i.e.*, its location is included in your system `PATH`.
@@ -247,7 +246,7 @@ Specifically, these CLI tools include,
   If you see a similar `command not found` / `not recognized` error, N_m3u8DL-RE is not installed correctly or not available on your `PATH`.
 
 - **[Bento4](https://www.bento4.com/)**: Bento4 is an open-source MP4/DASH/HLS/CMAF toolkit, and in the N_m3u8DL-RE ecosystem it is mainly related as the source of auxiliary utilities such as "mp4decrypt" for handling certain packaged media workflows.
-  Therefore, when using N_m3u8DL-RE to handle some packaged media workflows that involve encryption (*e.g.*, `TBNUKVideoClient`, `PlayerPLVideoClient` and `PlusFIFAVideoClient`), you need to make sure the Bento4 tools are available in your runtime environment.
+  Therefore, when using N_m3u8DL-RE to handle some packaged media workflows that involve encryption (*e.g.*, `TBNUKVideoClient` and `PlayerPLVideoClient`), you need to make sure the Bento4 tools are available in your runtime environment.
   A quick way to verify Bento4 is that you should be able to run
   ```bash
   mp4decrypt --version
@@ -453,11 +452,6 @@ videodl -i "https://www.bilibili.com/video/av8903802/" -a BilibiliVideoClient
 videodl -i "CCTV VIDEO URL" -a CCTVVideoClient
 # Examples
 videodl -i "https://v.cctv.com/2026/01/09/VIDE0ifonRhsuR952gJ3zUKu260109.shtml?spm=C90324.PE6LRxWJhH5P.S23920.3" -a CCTVVideoClient
-
-# PLUSFIFA (国际足联+比赛视频)
-videodl -i "PLUSFIFA VIDEO URL" -a PlusFIFAVideoClient
-# Examples
-videodl -i "https://www.plus.fifa.com/en/content/fc-sochaux-montbeliard-vs-lb-chateauroux/6ff75563-c6fc-4b08-b324-54771dbd7029" -a PlusFIFAVideoClient
 ```
 
 In practice, the general-purpose video parsers listed under [Supported Video Client](https://github.com/CharlesPikachu/videodl/tree/master?tab=readme-ov-file#-supported-video-client) can handle parsing and downloading videos from most major platforms. 

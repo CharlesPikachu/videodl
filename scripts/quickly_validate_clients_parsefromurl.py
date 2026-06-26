@@ -93,7 +93,6 @@ VIDEODL_TEST_SAMPLES = {
     'MeipaiVideoClient': [
         'http://www.meipai.com/media/6995325250108940314',
         'http://www.meipai.com/media/6983711035636086653',
-        'http://www.meipai.com/media/6977515645069710577',
         'http://www.meipai.com/media/6987697906285039991',
     ],
     'DuxiaoshiVideoClient': [
@@ -137,10 +136,11 @@ VIDEODL_TEST_SAMPLES = {
         'https://weibo.com/tv/v/HApWK8FAc?fid=1034:4386795211940756',
     ],
     'RednoteVideoClient': [
-        'http://xhslink.com/o/4aeC2uNASel',
         'http://xhslink.com/o/90PTZaZuCvC',
         'http://xhslink.com/o/5cHAeQspuEf',
-        'http://xhslink.com/o/74L1xM2Vw2f',
+        'http://xhslink.com/o/69q4KGNdyG',
+        'http://xhslink.com/o/4GUbrB6dvLr',
+        'http://xhslink.com/o/7LmFimZYx8m',
     ],
     'CCTVVideoClient': [
         'https://v.cctv.com/2021/06/05/VIDEwn0n7VRJokIL7rBi2ink210605.shtml?spm=C90324.Pfdd0SYeqktv.Eri5TUDwaTXO.6',
@@ -208,7 +208,7 @@ VIDEODL_TEST_SAMPLES = {
         'https://open.163.com/newview/movie/free?pid=CGJTHROS9&mid=SGJTHVGI2',
     ],
     'CCtalkVideoClient': [
-        'https://www.cctalk.com/v/17604950351552?sid=1760494906733025',
+        'https://www.cctalk.com/v/16951079244174?sid=1695107820126253',
         'https://www.cctalk.com/v/17576427071521?sid='
     ],
     'KedouVideoClient': [
@@ -396,10 +396,6 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.mgtv.com/b/823245/24067596.html',
         'https://www.bilibili.com/bangumi/play/ss12548',
     ],
-    'PlusFIFAVideoClient': [
-        "https://www.plus.fifa.com/en/player/580e692e-e8fc-4ad1-a649-5ec0af83f94d?catalogId=5f24e303-ff42-499f-9d7a-b4f8e0eff2ce",
-        "https://www.plus.fifa.com/en/content/fc-sochaux-montbeliard-vs-lb-chateauroux/6ff75563-c6fc-4b08-b324-54771dbd7029",
-    ],
     'WittyTVVideoClient': [
         "https://www.wittytv.it/amici/giovedi-22-gennaio-il-quotidiano-di-amici/",
         "https://www.wittytv.it/ce-posta-per-te/quarta-puntata-sabato-3-febbraio/",
@@ -455,7 +451,6 @@ VIDEODL_TEST_SAMPLES = {
         'https://www.abc.net.au/news/2023-06-25/wagner-boss-orders-troops-back-to-bases-to-avoid-bloodshed/102520540',
     ],
     'TBNUKVideoClient': [
-        "https://watch.tbn.uk/watch/replay/53253478",
         "https://watch.tbn.uk/watch/vod/52157303/identity-and-belonging",
         "https://watch.tbn.uk/shows/c171a631-ca92-4715-9df4-51567542481c/the-sessions-with-cynthia-garrett",
         "https://watch.tbn.uk/shows/906eb770-23de-4fc7-a369-e87167a5256d/praise-uk",

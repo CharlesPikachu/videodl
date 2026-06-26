@@ -253,7 +253,6 @@ Examples of subclasses include clients such as,
 - `videodl.modules.sources.PipigaoxiaoVideoClient`
 - `videodl.modules.sources.PipixVideoClient`
 - `videodl.modules.sources.PlayerPLVideoClient`
-- `videodl.modules.sources.PlusFIFAVideoClient`
 - `videodl.modules.sources.RedditVideoClient`
 - `videodl.modules.sources.RednoteVideoClient`
 - `videodl.modules.sources.SinaVideoClient`

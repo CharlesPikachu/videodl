@@ -40,7 +40,7 @@ Specifically, these CLI tools include,
   CCTVVideoClient, FoxNewsVideoClient, TencentVideoClient, GVVIPVideoClient, 
   SnapAnyVideoClient, VgetVideoClient, ArteTVVideoClient, XMFlvVideoClient, 
   RedditVideoClient, IIILabVideoClient, WWEVideoClient, IQiyiVideoClient,
-  PlusFIFAVideoClient, IM1907VideoClient, M1905VideoClient, SENJiexiVideoClient, etc.
+  JisuYunVideoClient, IM1907VideoClient, M1905VideoClient, SENJiexiVideoClient, etc.
   ```
   and downloads from many other sites that provide m3u8/HLS streams may also be significantly limited.
   As with FFmpeg, after installation you should make sure this tool can be run directly from the command line, *i.e.*, its location is included in your system `PATH`.
@@ -52,7 +52,7 @@ Specifically, these CLI tools include,
   If you see a similar `command not found` / `not recognized` error, N_m3u8DL-RE is not installed correctly or not available on your `PATH`.
 
 - **[Bento4](https://www.bento4.com/)**: Bento4 is an open-source MP4/DASH/HLS/CMAF toolkit, and in the N_m3u8DL-RE ecosystem it is mainly related as the source of auxiliary utilities such as "mp4decrypt" for handling certain packaged media workflows.
-  Therefore, when using N_m3u8DL-RE to handle some packaged media workflows that involve encryption (*e.g.*, `TBNUKVideoClient`, `PlayerPLVideoClient` and `PlusFIFAVideoClient`), you need to make sure the Bento4 tools are available in your runtime environment.
+  Therefore, when using N_m3u8DL-RE to handle some packaged media workflows that involve encryption (*e.g.*, `TBNUKVideoClient` and `PlayerPLVideoClient`), you need to make sure the Bento4 tools are available in your runtime environment.
   A quick way to verify Bento4 is that you should be able to run
   ```bash
   mp4decrypt --version

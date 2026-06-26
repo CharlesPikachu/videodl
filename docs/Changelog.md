@@ -1,5 +1,7 @@
 # Development Log
 
+- 2026-06-26: Released videofetch v0.9.0 - for the common video client, fix all broken video clients, remove APIs that no longer provide free parsing services, and add multiple general-purpose video parsing interfaces; for platform-specific clients, remove support for dead sites and fix some broken APIs.
+
 - 2026-05-25: Released videofetch v0.8.9 - remove support for the eastday.com site; add video parsing and download support for the Malaysian Oriental Daily News and iYF.tv sites.
 
 - 2026-05-04: Released videofetch v0.8.8 - fix the general video parsing and downloading capabilities for the SnapAny and GreenVideo sites; add support for parsing and downloading from the Rutube site.
