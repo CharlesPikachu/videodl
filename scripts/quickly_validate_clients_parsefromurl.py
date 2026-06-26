@@ -583,6 +583,10 @@ VIDEODL_TEST_SAMPLES = {
     'JisuYunVideoClient': [
         'https://www.iqiyi.com/v_tenslt1rzg.html',
     ],
+    'NewsPicksVideoClient': [
+        'https://newspicks.com/movie-series/11/?movieId=1813',
+        'https://newspicks.com/movie-series/158/?movieId=3932'
+    ],
 }
 
 
