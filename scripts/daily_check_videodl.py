@@ -559,7 +559,7 @@ VIDEODL_TEST_SAMPLES = {
     'DailyMotionVideoClient': [
         'https://www.dailymotion.com/video/x9v9wsw',
         'https://www.dailymotion.com/video/xa6wluq',
-        'https://www.dailymotion.com/video/x8oc3c1',
+        'https://www.dailymotion.com/video/x8ocv9e',
     ],
     'RutubeVideoClient': [
         'https://rutube.ru/video/381e239f73b2d475bc0c2e459f531abb/',
