@@ -75,7 +75,7 @@ If this project helps with work, research, or everyday use, please consider givi
 
 <div align="center">
   <a href="https://proxy-seller.com/?partner=1858DBA587BC4600">
-    <img src=".github/sponsors/bannermain.png" alt="Proxy-Seller" width="750"/>
+    <img src=".github/sponsors/bannermain.png" alt="Proxy-Seller" width="450"/>
   </a>
 </div>
 
