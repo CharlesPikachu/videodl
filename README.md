@@ -71,6 +71,17 @@ With an easy-to-understand Python codebase and lightweight design, it is suitabl
 If this project helps with work, research, or everyday use, please consider giving it a star ⭐ — your support helps more people discover the project and motivates future improvements. 🙌
 
 
+# 🤝 Sponsor
+
+<div align="center">
+  <a href="https://proxy-seller.com/?partner=1858DBA587BC4600">
+    <img src=".github/sponsors/bannermain.png" alt="Proxy-Seller" width="750"/>
+  </a>
+</div>
+
+[**Proxy-Seller**](https://proxy-seller.com/?partner=1858DBA587BC4600) gives you reliable proxy infrastructure for any workflow: private residential, mobile (4G/5G/LTE), ISP, and datacenter IPv4/IPv6 proxies, all with HTTP(S) and SOCKS5 support. Tap into 47M+ residential IPs across 220+ locations, target exactly the country, city, or ISP you need, and count on 99.7% uptime backed by 24/7 support. Get **15% off** with promo code **`VIDEODL`**.
+
+
 # 📜 Statement
 
 This repository is created solely for learning purposes (commercial use is prohibited). 
